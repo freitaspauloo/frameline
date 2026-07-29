@@ -1,54 +1,36 @@
-# Relay
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-**Relay** is a designer-owned platform to **showcase and sell digital design assets** — starting with **backgrounds**.
+## Getting Started
 
-It's built as a portfolio project with two jobs to do at once:
+First, run the development server:
 
-1. **Portfolio** — a beautifully crafted showcase that demonstrates the designer's visual craft, taste, and attention to detail. The site itself is a portfolio piece; its polish is part of the product.
-2. **Storefront** — a self-serve commerce experience where visitors can browse, preview, license, purchase, and download assets, with both free and premium tiers.
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-## The idea
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-I'm a designer, and I want a single home that is both a credibility signal ("this person can design *and* ship a product") and a revenue channel — fully under my own brand and creative control, instead of getting lost in a crowded marketplace that takes a big cut.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## Starting point: backgrounds
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-The first asset category is **backgrounds** — wallpapers, abstract compositions, gradients, textures, and patterns. The platform is being designed so more categories (icons, illustrations, UI kits, mockups, etc.) can be added later without re-architecting.
+## Learn More
 
-## What "done" looks like for the MVP
+To learn more about Next.js, take a look at the following resources:
 
-> A fast, visually stunning site where a visitor can discover backgrounds, view rich previews, buy or download one in under a minute — and where the designer can publish a new asset in under five minutes.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-**MVP highlights:**
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-- Visual, filterable catalog of backgrounds (subcategory, color, orientation, free/premium) + search
-- Rich asset detail pages with high-quality previews, in-context mockups, specs, and plain-language licensing
-- Free downloads + paid purchases via hosted, PCI-compliant checkout with instant, signed-URL delivery
-- Curated collections for storytelling and discovery
-- A dead-simple admin flow for uploading, pricing, and publishing assets
-- SEO-ready, responsive, accessible, and fast (Core Web Vitals in the "good" range)
+## Deploy on Vercel
 
-## Monetization
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-- **Free tier** as the funnel (traffic, email capture, trust in file quality)
-- **One-off purchases** with clear **Personal** and **Commercial** license tiers
-- **Bundles** and, later, an **all-access pass** as the catalog deepens
-
-## Recommended stack (proposed)
-
-Not locked in yet, but the leading recommendation for a solo operator optimizing for SEO, image quality, and polish:
-
-- **Next.js (App Router) + TypeScript** on **Vercel**
-- **Tailwind CSS** (+ optional shadcn/ui primitives) and **Framer Motion**
-- **Postgres** (Neon/Supabase) with **Prisma or Drizzle**
-- Private object storage (**Cloudflare R2 / S3**) with signed-URL delivery
-- **Stripe Checkout + Stripe Tax** (or a merchant-of-record like Lemon Squeezy/Paddle) for payments
-- Passwordless buyer auth, transactional email (Resend/Postmark), privacy-friendly analytics
-
-## Documentation
-
-- 📄 **[Product Requirements Document](docs/PRD.md)** — the full PRD covering goals, personas, scope, functional/non-functional requirements, data model, licensing, tech stack, KPIs, roadmap, and open questions.
-
-## Status
-
-Greenfield — this repo currently holds the project vision and PRD. Implementation has not started yet.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
