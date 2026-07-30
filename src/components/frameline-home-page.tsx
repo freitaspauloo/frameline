@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { Dithering } from "@paper-design/shaders-react";
 import {
+  RiArrowDownLine,
   RiArrowRightLine,
   RiCheckLine,
   RiFileCopyLine,
@@ -11,7 +12,9 @@ import {
 
 import { MarketingFooter } from "@/components/marketing-footer";
 import { MarketingNavbar } from "@/components/marketing-navbar";
+import { MaterialPreview } from "@/components/material-preview";
 import {
+  MarketingRailCross,
   MarketingRuledCell,
   MarketingRuledGrid,
   MarketingSection,
@@ -26,43 +29,20 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
-  AuroraMesh,
-  GrainField,
-  InkDither,
   MATERIALS_CATALOG,
-  type MaterialCatalogEntry,
+  getFeaturedCollections,
+  getCollectionMaterials,
 } from "@/materials";
 import { cn } from "@/lib/utils";
 
 const HERO_INK = "#3A58F0";
 const HERO_PAPER = "#FFFFFF";
+const CATALOG_PREVIEW_SLOTS = 9;
 
 const INSTALL_SNIPPET = `npx shadcn@latest add @frameline/aurora-mesh`;
-
-const USAGE_SCENES = [
-  {
-    slug: "aurora-mesh" as const,
-    context: "Hero",
-    title: "Marketing shell",
-    body: "Full-bleed mesh behind a short headline and one CTA group.",
-  },
-  {
-    slug: "ink-dither" as const,
-    context: "Empty",
-    title: "Empty / loading",
-    body: "High-contrast dither for states that need presence without clutter.",
-  },
-  {
-    slug: "grain-field" as const,
-    context: "Auth",
-    title: "Quiet surfaces",
-    body: "Soft grain under cards, auth shells, and understated panels.",
-  },
-] as const;
 
 const FAQ_ITEMS = [
   {
@@ -97,34 +77,20 @@ const PRICING_TEASERS = [
   },
 ] as const;
 
-function MaterialPreview({ entry }: { entry: MaterialCatalogEntry }) {
-  const common = "absolute inset-0 h-full w-full";
-
-  switch (entry.slug) {
-    case "aurora-mesh":
-      return <AuroraMesh className={common} forceStatic />;
-    case "ink-dither":
-      return <InkDither className={common} forceStatic />;
-    case "grain-field":
-      return <GrainField className={common} forceStatic />;
-    default:
-      return (
-        <div
-          className={common}
-          style={{
-            backgroundImage: `linear-gradient(135deg, ${entry.fallbackColors.join(", ")})`,
-          }}
-        />
-      );
-  }
-}
-
-function ScenePreview({ slug }: { slug: (typeof USAGE_SCENES)[number]["slug"] }) {
-  const common = "absolute inset-0 h-full w-full";
-  if (slug === "aurora-mesh") return <AuroraMesh className={common} forceStatic />;
-  if (slug === "ink-dither") return <InkDither className={common} forceStatic />;
-  return <GrainField className={common} forceStatic />;
-}
+const VALUE_PROPS = [
+  {
+    title: "Free to evaluate",
+    body: "Excellent free materials. Same craft bar as paid.",
+  },
+  {
+    title: "Install as source",
+    body: "CLI or copy JSX. You own the component in your repo.",
+  },
+  {
+    title: "Buy for depth",
+    body: "Paid unlocks signature materials and commercial clarity.",
+  },
+] as const;
 
 function SectionIntro({
   eyebrow,
@@ -143,7 +109,7 @@ function SectionIntro({
         <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
           {eyebrow}
         </p>
-        <h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
+        <h2 className="font-heading text-3xl font-light tracking-tight sm:text-4xl">
           {title}
         </h2>
         <p className="max-w-[48ch] text-base leading-relaxed text-muted-foreground">
@@ -158,6 +124,9 @@ function SectionIntro({
 export function FramelineHomePage() {
   const [copied, setCopied] = React.useState(false);
   const [reducedMotion, setReducedMotion] = React.useState(false);
+  const [heroInView, setHeroInView] = React.useState(true);
+  const heroDitherRef = React.useRef<HTMLDivElement>(null);
+  const featuredCollections = getFeaturedCollections();
 
   React.useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -165,6 +134,20 @@ export function FramelineHomePage() {
     sync();
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  React.useEffect(() => {
+    const el = heroDitherRef.current;
+    if (!el) return;
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        setHeroInView(entry.isIntersecting);
+      },
+      { rootMargin: "80px 0px", threshold: 0 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
 
   async function copyInstall() {
@@ -177,261 +160,238 @@ export function FramelineHomePage() {
     }
   }
 
+  const ditherSpeed = reducedMotion || !heroInView ? 0 : 0.4;
+
   return (
     <MarketingShell>
       {/* —— Hero —— */}
-      <section className="relative isolate flex min-h-dvh flex-col overflow-hidden bg-background">
+      <section className="relative isolate flex min-h-dvh flex-col bg-background">
         <MarketingNavbar />
 
-        <div
-          className={cn(
-            "mx-auto flex w-full max-w-7xl flex-col items-center border-b border-border pt-14 pb-10 text-center sm:pt-16 sm:pb-12 lg:pt-20",
-            marketingPadX,
-          )}
-        >
-          <div className="max-w-3xl space-y-5">
-            <h1
-              className="frameline-rise font-instrument text-[clamp(2.5rem,6.5vw,4.5rem)] font-normal leading-[1.05] tracking-[-0.02em] text-foreground"
-              style={{ animationDelay: "60ms" }}
-            >
-              Design assets for the AI era
-            </h1>
-
-            <p
-              className="frameline-rise mx-auto max-w-[38ch] text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg"
-              style={{ animationDelay: "160ms" }}
-            >
-              Shippable surface — so you don’t ship the default AI look.
-            </p>
-
-            <div
-              className="frameline-rise flex flex-wrap items-center justify-center gap-3 pt-2"
-              style={{ animationDelay: "260ms" }}
-            >
-              <Button
-                className="transition-transform duration-300 ease-[var(--ease-emil)] hover:-translate-y-0.5"
-                nativeButton={false}
-                render={<Link href="/materials" />}
-                size="lg"
+        <div className="relative z-10 mx-auto w-full max-w-7xl">
+          <div
+            className={cn(
+              "flex flex-col items-center pt-14 pb-10 text-center sm:pt-16 sm:pb-12 lg:pt-20",
+              marketingPadX,
+            )}
+          >
+            <div className="max-w-3xl space-y-5">
+              <h1
+                className="frameline-rise font-instrument text-[clamp(2.5rem,6.5vw,4.5rem)] font-normal leading-[1.05] tracking-[-0.02em] text-foreground"
+                style={{ animationDelay: "60ms" }}
               >
-                Browse materials
-              </Button>
-              <Button
-                className="transition-transform duration-300 ease-[var(--ease-emil)] hover:-translate-y-0.5"
-                nativeButton={false}
-                render={<Link href="/pricing" />}
-                size="lg"
-                variant="secondary"
+                Design assets for the AI era
+              </h1>
+
+              <p
+                className="frameline-rise whitespace-nowrap text-base leading-relaxed text-muted-foreground sm:text-lg"
+                style={{ animationDelay: "160ms" }}
               >
-                Pricing
-              </Button>
+                Shippable surface — so you don’t ship the default AI look.
+              </p>
+
+              <div
+                className="frameline-rise flex items-center justify-center pt-2"
+                style={{ animationDelay: "260ms" }}
+              >
+                <Button
+                  className="transition-transform duration-300 ease-[var(--ease-emil)] hover:translate-y-0.5"
+                  nativeButton={false}
+                  render={<a href="#browse" />}
+                  size="lg"
+                >
+                  Browse materials
+                  <RiArrowDownLine data-icon="inline-end" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
 
         <div
+          ref={heroDitherRef}
           aria-hidden
-          className="frameline-material-in relative mt-auto min-h-[52dvh] flex-1 overflow-hidden"
-          style={{ backgroundColor: HERO_PAPER }}
+          className="frameline-material-in relative mt-auto min-h-[52dvh] w-full flex-1 border-t border-border"
         >
-          <Dithering
-            className="absolute inset-0 h-full w-full"
-            colorBack={HERO_PAPER}
-            colorFront={HERO_INK}
-            scale={0.85}
-            shape="swirl"
-            size={2.5}
-            speed={reducedMotion ? 0 : 0.4}
-            style={{
-              position: "absolute",
-              inset: 0,
-              height: "100%",
-              width: "100%",
-            }}
-            type="4x4"
-          />
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent" />
+          <div
+            className="absolute inset-x-0 top-0 bottom-0 z-0 mx-auto max-w-7xl overflow-visible"
+            style={{ backgroundColor: HERO_PAPER }}
+          >
+            <MarketingRailCross edge="top" />
+            <MarketingRailCross edge="bottom" />
+            <div className="absolute inset-0 z-0 overflow-hidden">
+              <Dithering
+                className="absolute inset-0 h-full w-full"
+                colorBack={HERO_PAPER}
+                colorFront={HERO_INK}
+                maxPixelCount={1_280_000}
+                minPixelRatio={1}
+                scale={0.85}
+                shape="swirl"
+                size={2.5}
+                speed={ditherSpeed}
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  height: "100%",
+                  width: "100%",
+                }}
+                type="4x4"
+              />
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* —— Value props —— */}
-      <MarketingSection>
+      {/* —— Catalog preview —— */}
+      <MarketingSection id="browse">
         <MarketingSectionHeader>
           <SectionIntro
-            description="Gradients, textures, and motion — typed React components, token-bound, production-safe."
-            eyebrow="Why Frameline"
-            title="Surface that installs as code"
-          />
-        </MarketingSectionHeader>
-
-        <MarketingRuledGrid>
-          {[
-            {
-              title: "Free to evaluate",
-              body: "Excellent free materials. Same craft bar as paid.",
-            },
-            {
-              title: "Install as source",
-              body: "CLI or copy JSX. You own the component in your repo.",
-            },
-            {
-              title: "Buy for depth",
-              body: "Paid unlocks signature materials and commercial clarity.",
-            },
-          ].map((item) => (
-            <MarketingRuledCell key={item.title} className="space-y-2">
-              <h3 className="font-heading text-base font-medium tracking-tight">
-                {item.title}
-              </h3>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {item.body}
-              </p>
-            </MarketingRuledCell>
-          ))}
-        </MarketingRuledGrid>
-      </MarketingSection>
-
-      {/* —— Catalog —— */}
-      <MarketingSection>
-        <MarketingSectionHeader>
-          <SectionIntro
-            action={
-              <Button
-                nativeButton={false}
-                render={<Link href="/materials" />}
-                variant="outline"
-              >
-                Full catalog
-                <RiArrowRightLine data-icon="inline-end" />
-              </Button>
-            }
-            description="Live materials from the catalog. Open any one to tune props and copy JSX."
+            description="Production-ready materials you can install. Open any one to tune props and copy JSX."
             eyebrow="Catalog"
             title="Materials you can ship"
           />
         </MarketingSectionHeader>
 
         <MarketingRuledGrid>
-          {MATERIALS_CATALOG.map((entry) => (
-            <MarketingRuledCell key={entry.slug} className="p-0 sm:p-0 lg:p-0">
-              <Link
-                className="group block transition-colors hover:bg-muted/40"
-                href={`/materials/${entry.slug}`}
-              >
-                <div className="relative aspect-[16/10] overflow-hidden bg-foreground">
-                  <MaterialPreview entry={entry} />
-                </div>
-                <div className="space-y-2 border-t border-border p-6 sm:p-8">
-                  <div className="flex items-center justify-between gap-2">
-                    <h3 className="font-heading text-base font-medium tracking-tight">
-                      {entry.title}
-                    </h3>
-                    <Badge variant="secondary">
-                      {entry.tier === "free" ? "Free" : "Paid"}
-                    </Badge>
+          {Array.from({ length: CATALOG_PREVIEW_SLOTS }, (_, index) => {
+            const entry = MATERIALS_CATALOG[index];
+
+            if (!entry) {
+              return (
+                <MarketingRuledCell
+                  key={`soon-${index}`}
+                  className="p-0 sm:p-0 lg:p-0"
+                >
+                  <div className="flex h-full min-h-[16rem] flex-col">
+                    <div className="relative aspect-[16/10] bg-muted/50" />
+                    <div className="space-y-2 border-t border-border p-6 sm:p-8">
+                      <p className="font-mono text-[11px] text-muted-foreground">
+                        Soon
+                      </p>
+                      <h3 className="font-heading text-base font-medium tracking-tight text-muted-foreground">
+                        Coming soon
+                      </h3>
+                      <p className="text-sm leading-relaxed text-muted-foreground">
+                        More surfaces in the next drop.
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {entry.description}
-                  </p>
-                  <p className="pt-1 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                    {entry.useContexts.join(" · ")}
-                  </p>
-                </div>
-              </Link>
-            </MarketingRuledCell>
-          ))}
+                </MarketingRuledCell>
+              );
+            }
+
+            return (
+              <MarketingRuledCell
+                key={entry.slug}
+                className="p-0 sm:p-0 lg:p-0"
+              >
+                <Link
+                  className="group block transition-colors hover:bg-muted/40"
+                  href={`/materials/${entry.slug}`}
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden bg-foreground">
+                    <MaterialPreview entry={entry} />
+                  </div>
+                  <div className="space-y-2 border-t border-border p-6 sm:p-8">
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="font-heading text-base font-medium tracking-tight">
+                        {entry.title}
+                      </h3>
+                      <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                        {entry.tier === "free" ? "Free" : "Paid"}
+                      </span>
+                    </div>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {entry.description}
+                    </p>
+                  </div>
+                </Link>
+              </MarketingRuledCell>
+            );
+          })}
         </MarketingRuledGrid>
+
+        <div
+          className={cn(
+            "flex justify-center border-t border-border py-10",
+            marketingPadX,
+          )}
+        >
+          <Button
+            nativeButton={false}
+            render={<Link href="/materials" />}
+            size="lg"
+            variant="outline"
+          >
+            See full catalog
+            <RiArrowRightLine data-icon="inline-end" />
+          </Button>
+        </div>
       </MarketingSection>
 
-      {/* —— Inspo / in use —— */}
+      {/* —— Popular collections —— */}
       <MarketingSection>
         <MarketingSectionHeader>
           <SectionIntro
-            description="Drop materials into real product surfaces — heroes, empty states, and quiet shells."
-            eyebrow="Inspiration"
-            title="How materials land in product"
+            action={
+              <Button
+                nativeButton={false}
+                render={<Link href="/collections" />}
+                variant="outline"
+              >
+                See all
+                <RiArrowRightLine data-icon="inline-end" />
+              </Button>
+            }
+            description="Editorial drops — materials grouped by job, not by trend."
+            eyebrow="Collections"
+            title="Popular collections"
           />
         </MarketingSectionHeader>
 
-        <MarketingRuledGrid>
-          {USAGE_SCENES.map((scene) => (
-            <MarketingRuledCell key={scene.slug} className="space-y-5 p-0 sm:p-0 lg:p-0">
-              <div className="relative aspect-[4/5] overflow-hidden border-b border-border sm:aspect-[5/6]">
-                <ScenePreview slug={scene.slug} />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
+        <MarketingRuledGrid cols={2}>
+          {featuredCollections.map((collection) => {
+            const materials = getCollectionMaterials(collection);
+            const preview = materials[0];
 
-                {scene.slug === "aurora-mesh" ? (
-                  <div className="absolute inset-x-0 bottom-0 space-y-3 p-5">
-                    <p className="font-heading text-2xl font-semibold tracking-tight text-foreground">
-                      Describe it. See it. Ship it.
-                    </p>
-                    <div className="flex gap-2">
-                      <span className="inline-flex h-8 items-center bg-primary px-3 text-[0.625rem] font-semibold tracking-widest text-primary-foreground uppercase">
-                        Get started
-                      </span>
-                      <span className="inline-flex h-8 items-center bg-background/80 px-3 text-[0.625rem] font-semibold tracking-widest text-foreground uppercase backdrop-blur-sm">
-                        Docs
-                      </span>
-                    </div>
-                  </div>
-                ) : null}
-
-                {scene.slug === "ink-dither" ? (
-                  <div className="absolute inset-0 flex items-center justify-center p-6">
-                    <div className="w-full max-w-[14rem] space-y-3 border border-border bg-background/95 p-5 text-center backdrop-blur-md">
-                      <p className="font-heading text-sm font-semibold tracking-tight">
-                        No runs yet
-                      </p>
-                      <p className="text-xs leading-relaxed text-muted-foreground">
-                        Kick off a workflow to see status here.
-                      </p>
-                      <span className="inline-flex h-8 w-full items-center justify-center bg-primary text-[0.625rem] font-semibold tracking-widest text-primary-foreground uppercase">
-                        New run
-                      </span>
-                    </div>
-                  </div>
-                ) : null}
-
-                {scene.slug === "grain-field" ? (
-                  <div className="absolute inset-0 flex items-center justify-center p-6">
-                    <div className="w-full max-w-[15rem] space-y-4 border border-border bg-background/92 p-5 backdrop-blur-md">
-                      <p className="font-heading text-sm font-semibold tracking-tight">
-                        Sign in
-                      </p>
-                      <div className="space-y-2">
-                        <div className="h-9 border-b border-input bg-transparent" />
-                        <div className="h-9 border-b border-input bg-transparent" />
-                      </div>
-                      <span className="inline-flex h-9 w-full items-center justify-center bg-primary text-[0.625rem] font-semibold tracking-widest text-primary-foreground uppercase">
-                        Continue
-                      </span>
-                    </div>
-                  </div>
-                ) : null}
-              </div>
-
-              <div className="space-y-2 px-6 pb-8 sm:px-8 lg:px-10">
-                <Badge variant="secondary">{scene.context}</Badge>
-                <h3 className="font-heading text-base font-medium tracking-tight">
-                  {scene.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  {scene.body}
-                </p>
+            return (
+              <MarketingRuledCell
+                key={collection.slug}
+                className="p-0 sm:p-0 lg:p-0"
+              >
                 <Link
-                  className="inline-flex items-center gap-1 text-sm font-medium text-foreground transition-colors hover:text-muted-foreground"
-                  href={`/materials/${scene.slug}`}
+                  className="group block transition-colors hover:bg-muted/40"
+                  href={`/collections/${collection.slug}`}
                 >
-                  Open {scene.slug}
-                  <RiArrowRightLine className="size-3.5" />
+                  <div className="relative aspect-[21/9] overflow-hidden bg-foreground">
+                    {preview ? (
+                      <MaterialPreview entry={preview} />
+                    ) : (
+                      <div className="absolute inset-0 bg-muted" />
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between gap-4 border-t border-border p-6 sm:p-8">
+                    <div className="space-y-2">
+                      <h3 className="font-heading text-base font-medium tracking-tight">
+                        {collection.title}
+                      </h3>
+                      <p className="max-w-[40ch] text-sm leading-relaxed text-muted-foreground">
+                        {collection.description}
+                      </p>
+                    </div>
+                    <p className="shrink-0 font-mono text-[11px] text-muted-foreground">
+                      {materials.length} materials
+                    </p>
+                  </div>
                 </Link>
-              </div>
-            </MarketingRuledCell>
-          ))}
+              </MarketingRuledCell>
+            );
+          })}
         </MarketingRuledGrid>
       </MarketingSection>
 
-      {/* —— Install —— */}
+      {/* —— Product pillars —— */}
       <MarketingSection>
         <MarketingSplit
           left={
@@ -439,8 +399,8 @@ export function FramelineHomePage() {
               <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
                 Install
               </p>
-              <h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
-                One command. Source in your repo.
+              <h2 className="font-heading text-3xl font-light tracking-tight sm:text-4xl">
+                Install as source
               </h2>
               <p className="max-w-[42ch] text-base leading-relaxed text-muted-foreground">
                 Compatible with the shadcn registry flow. Install, import, theme
@@ -487,11 +447,69 @@ export function FramelineHomePage() {
               </pre>
               <Separator className="bg-background/15" />
               <pre className="overflow-x-auto font-mono text-[12px] leading-relaxed text-background/70">
-                {`import { AuroraMesh } from "@/components/ui/aurora-mesh"`}
+                {`import { AuroraMesh } from "@/materials"`}
               </pre>
             </div>
           }
         />
+      </MarketingSection>
+
+      <MarketingSection>
+        <MarketingSplit
+          left={
+            <div className="space-y-5">
+              <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                Configurator
+              </p>
+              <h2 className="font-heading text-3xl font-light tracking-tight sm:text-4xl">
+                Tune in the live preview
+              </h2>
+              <p className="max-w-[42ch] text-base leading-relaxed text-muted-foreground">
+                Open any material, adjust props, and copy JSX — the surface is
+                the product, not a PNG pack.
+              </p>
+              <Button
+                nativeButton={false}
+                render={<Link href="/materials/aurora-mesh" />}
+                size="lg"
+              >
+                Open Aurora Mesh
+                <RiArrowRightLine data-icon="inline-end" />
+              </Button>
+            </div>
+          }
+          right={
+            <div className="relative aspect-[16/10] overflow-hidden bg-foreground lg:aspect-auto lg:min-h-[20rem]">
+              {MATERIALS_CATALOG[0] ? (
+                <MaterialPreview entry={MATERIALS_CATALOG[0]} />
+              ) : null}
+            </div>
+          }
+        />
+      </MarketingSection>
+
+      {/* —— Why Frameline —— */}
+      <MarketingSection>
+        <MarketingSectionHeader>
+          <SectionIntro
+            description="Gradients, textures, and motion — typed React components, token-bound, production-safe."
+            eyebrow="Why Frameline"
+            title="Surface that installs as code"
+          />
+        </MarketingSectionHeader>
+
+        <MarketingRuledGrid>
+          {VALUE_PROPS.map((item) => (
+            <MarketingRuledCell key={item.title} className="space-y-2">
+              <h3 className="font-heading text-base font-medium tracking-tight">
+                {item.title}
+              </h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {item.body}
+              </p>
+            </MarketingRuledCell>
+          ))}
+        </MarketingRuledGrid>
       </MarketingSection>
 
       {/* —— Pricing tease —— */}
@@ -519,7 +537,7 @@ export function FramelineHomePage() {
               <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
                 {tier.name}
               </p>
-              <p className="font-heading text-3xl font-semibold tracking-tight">
+              <p className="font-heading text-3xl font-light tracking-tight sm:text-4xl">
                 {tier.price}
               </p>
               <p className="text-sm leading-relaxed text-muted-foreground">
@@ -538,7 +556,7 @@ export function FramelineHomePage() {
               <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
                 FAQ
               </p>
-              <h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
+              <h2 className="font-heading text-3xl font-light tracking-tight sm:text-4xl">
                 Before you install
               </h2>
               <p className="max-w-[36ch] text-base leading-relaxed text-muted-foreground">
@@ -569,7 +587,7 @@ export function FramelineHomePage() {
             marketingPadX,
           )}
         >
-          <h2 className="max-w-[16ch] font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
+          <h2 className="max-w-[16ch] font-heading text-3xl font-light tracking-tight sm:text-4xl">
             Stop shipping the default AI look.
           </h2>
           <p className="max-w-[40ch] text-base leading-relaxed text-muted-foreground">
@@ -586,11 +604,11 @@ export function FramelineHomePage() {
             </Button>
             <Button
               nativeButton={false}
-              render={<Link href="/docs/installation" />}
+              render={<Link href="/collections" />}
               size="lg"
               variant="outline"
             >
-              Read the docs
+              Explore collections
             </Button>
           </div>
         </div>

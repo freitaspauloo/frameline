@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { notFound } from "next/navigation";
 
 import { MarketingFooter } from "@/components/marketing-footer";
 import { MarketingNavbar } from "@/components/marketing-navbar";
@@ -13,31 +13,18 @@ import {
   MarketingSectionHeader,
   MarketingShell,
 } from "@/components/marketing-shell";
+import { Button } from "@/components/ui/button";
 import {
-  MATERIALS_CATALOG,
-  MATERIAL_TYPES,
-  isMaterialType,
-  type MaterialType,
+  getCollection,
+  getCollectionMaterials,
 } from "@/materials";
 import { cn } from "@/lib/utils";
 
-export function MaterialsCatalogPage({
-  typeFilter,
-}: {
-  typeFilter?: string;
-}) {
-  const activeType: MaterialType | undefined =
-    typeFilter && isMaterialType(typeFilter) ? typeFilter : undefined;
+export function CollectionDetailPage({ slug }: { slug: string }) {
+  const collection = getCollection(slug);
+  if (!collection) notFound();
 
-  const entries = useMemo(
-    () =>
-      activeType
-        ? MATERIALS_CATALOG.filter((m) => m.type === activeType)
-        : MATERIALS_CATALOG,
-    [activeType],
-  );
-
-  const typeMeta = MATERIAL_TYPES.find((t) => t.type === activeType);
+  const materials = getCollectionMaterials(collection);
 
   return (
     <MarketingShell>
@@ -45,48 +32,28 @@ export function MaterialsCatalogPage({
       <MarketingSection>
         <MarketingSectionHeader>
           <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-            Materials{activeType ? ` · ${activeType}` : " · v0"}
+            Collection
           </p>
           <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight sm:text-5xl">
-            {typeMeta ? typeMeta.title : "Surface as code"}
+            {collection.title}
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {typeMeta
-              ? typeMeta.description
-              : "Production-ready materials you can install. Open any material to tune props and copy JSX."}
+            {collection.description}
           </p>
-
-          <div className="mt-8 flex flex-wrap gap-2">
-            <Link
-              className={cn(
-                "px-3 py-1.5 text-[0.6875rem] font-semibold tracking-wide uppercase transition-colors",
-                !activeType
-                  ? "bg-foreground text-background"
-                  : "bg-muted text-muted-foreground hover:text-foreground",
-              )}
-              href="/materials"
+          <div className="mt-6">
+            <Button
+              nativeButton={false}
+              render={<Link href="/collections" />}
+              size="sm"
+              variant="outline"
             >
-              All
-            </Link>
-            {MATERIAL_TYPES.map((t) => (
-              <Link
-                key={t.type}
-                className={cn(
-                  "px-3 py-1.5 text-[0.6875rem] font-semibold tracking-wide uppercase transition-colors",
-                  activeType === t.type
-                    ? "bg-foreground text-background"
-                    : "bg-muted text-muted-foreground hover:text-foreground",
-                )}
-                href={`/materials?type=${t.type}`}
-              >
-                {t.title}
-              </Link>
-            ))}
+              All collections
+            </Button>
           </div>
         </MarketingSectionHeader>
 
         <MarketingRuledGrid>
-          {entries.map((entry) => (
+          {materials.map((entry) => (
             <MarketingRuledCell key={entry.slug} className="p-0 sm:p-0 lg:p-0">
               <Link
                 className="group block transition-colors hover:bg-muted/40"

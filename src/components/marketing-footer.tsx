@@ -13,9 +13,17 @@ const FOOTER_COLUMNS = [
   {
     title: "Product",
     links: [
+      { href: "/collections", label: "Collections" },
       { href: "/materials", label: "Materials" },
       { href: "/pricing", label: "Pricing" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
       { href: "/docs/installation", label: "Docs" },
+      { href: "/docs/installation", label: "Installation" },
+      { href: "/shadcn", label: "Design system" },
     ],
   },
   {
@@ -24,14 +32,6 @@ const FOOTER_COLUMNS = [
       { href: "/account/sign-in", label: "Sign in" },
       { href: "/account", label: "Account" },
       { href: "/checkout", label: "Checkout" },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { href: "/docs/installation", label: "Installation" },
-      { href: "/shadcn", label: "Design system" },
-      { href: "/materials", label: "Catalog" },
     ],
   },
 ] as const;
@@ -80,7 +80,7 @@ export function MarketingFooter() {
 
       <div
         className={cn(
-          "flex flex-col gap-3 py-6 sm:flex-row sm:items-center sm:justify-between",
+          "flex flex-col gap-3 border-t border-border py-6 sm:flex-row sm:items-center sm:justify-between",
           marketingPadX,
         )}
       >

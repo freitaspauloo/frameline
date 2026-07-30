@@ -4,7 +4,7 @@ import {
 } from "@/components/wireframes/primitives";
 import { WireframeShell } from "@/components/wireframes/shell";
 
-export default function WireframeDocStub({
+export function WireframeDocStub({
   title,
   route,
   blurb,
