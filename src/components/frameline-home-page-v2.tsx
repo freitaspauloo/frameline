@@ -1,0 +1,814 @@
+"use client";
+
+import * as React from "react";
+import Link from "next/link";
+import {
+  RiArrowDownLine,
+  RiArrowRightLine,
+  RiCheckLine,
+  RiFileCopyLine,
+} from "@remixicon/react";
+
+import { MarketingFooter } from "@/components/marketing-footer";
+import { MarketingNavbar } from "@/components/marketing-navbar";
+import { MaterialPreview } from "@/components/material-preview";
+import {
+  MarketingRailCross,
+  MarketingRuledCell,
+  MarketingRuledGrid,
+  MarketingSection,
+  MarketingSectionHeader,
+  MarketingShell,
+  MarketingSplit,
+  marketingPadX,
+} from "@/components/marketing-shell";
+import { FramelineLenis } from "@/components/motion/frameline-lenis";
+import { HeroDither } from "@/components/motion/hero-dither";
+import { LogoWall } from "@/components/motion/logo-wall";
+import { Magnetic } from "@/components/motion/magnetic";
+import {
+  MaterialSequence,
+  type MaterialSequenceStage,
+} from "@/components/motion/material-sequence";
+import { MaterialStrip } from "@/components/motion/material-strip";
+import { RailProgress } from "@/components/motion/rail-progress";
+import {
+  FramelineReveal,
+  InkRule,
+  IntroStagger,
+} from "@/components/motion/reveal";
+import {
+  SectionIndex,
+  type SectionIndexEntry,
+} from "@/components/motion/section-index";
+import { TypeOnView } from "@/components/motion/type-on-view";
+import { WordMask } from "@/components/motion/word-mask";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import {
+  MATERIALS_CATALOG,
+  getFeaturedCollections,
+  getCollectionMaterials,
+} from "@/materials";
+import { cn } from "@/lib/utils";
+
+const HERO_INK = "#3A58F0";
+const HERO_PAPER = "#FFFFFF";
+const CATALOG_PREVIEW_SLOTS = 9;
+
+const INSTALL_SNIPPET = `npx shadcn@latest add @frameline/aurora-mesh`;
+
+/** Drives the ledger index — order must match the DOM. */
+const SECTIONS: readonly SectionIndexEntry[] = [
+  { id: "top", label: "Index" },
+  { id: "clients", label: "Shipped with" },
+  { id: "browse", label: "Catalog" },
+  { id: "showcase", label: "Sequence" },
+  { id: "collections", label: "Collections" },
+  { id: "install", label: "Install" },
+  { id: "configurator", label: "Configurator" },
+  { id: "why", label: "Why Frameline" },
+  { id: "pricing", label: "Pricing" },
+  { id: "faq", label: "FAQ" },
+  { id: "start", label: "Start" },
+];
+
+/**
+ * Credits row. Deliberately fictional studio marks — placeholders set as type,
+ * so the band reads as editorial rather than as borrowed endorsement.
+ */
+const CREDITS = [
+  "Northline",
+  "Studio Kern",
+  "Halftone Co",
+  "Verso Labs",
+  "Atelier Nine",
+  "Ferro Type",
+  "Quiet Machines",
+  "Ledger & Co",
+] as const;
+
+/** Captions for the pinned mesh → dither → grain beat. */
+const SEQUENCE_COPY: Record<string, { caption: string; label: string }> = {
+  "aurora-mesh": {
+    caption:
+      "Mesh first — a soft multi-color field for the top of the page, wired to your tokens instead of a stock gradient.",
+    label: "Mesh",
+  },
+  "ink-dither": {
+    caption:
+      "Then dither — two tones, one halftone grid. The loud brand moment that still prints as paper.",
+    label: "Dither",
+  },
+  "grain-field": {
+    caption:
+      "Then grain — the quiet one. Texture under cards and auth shells where a gradient would shout.",
+    label: "Grain",
+  },
+};
+
+const FAQ_ITEMS = [
+  {
+    q: "Do I own the code after install?",
+    a: "Yes. Materials install as source in your repo — typed React components you can edit, theme, and ship.",
+  },
+  {
+    q: "What’s free vs paid?",
+    a: "Free materials are production-ready with the same craft bar. Paid unlocks signature materials and clearer commercial rights.",
+  },
+  {
+    q: "Does it fit my design system?",
+    a: "Materials are token-bound by default. Wire colors to your theme — they shouldn’t force Frameline’s palette.",
+  },
+] as const;
+
+const PRICING_TEASERS = [
+  {
+    name: "Free",
+    price: "$0",
+    blurb: "Evaluate with excellent free materials.",
+  },
+  {
+    name: "Personal",
+    price: "$99",
+    blurb: "All personal SKUs · commercial rights.",
+  },
+  {
+    name: "Team",
+    price: "$299",
+    blurb: "Client work · seats · invoice-ready.",
+  },
+] as const;
+
+const VALUE_PROPS = [
+  {
+    title: "Free to evaluate",
+    body: "Excellent free materials. Same craft bar as paid.",
+  },
+  {
+    title: "Install as source",
+    body: "CLI or copy JSX. You own the component in your repo.",
+  },
+  {
+    title: "Buy for depth",
+    body: "Paid unlocks signature materials and commercial clarity.",
+  },
+] as const;
+
+/** Marks a band for the ledger index without disturbing the ruled layout. */
+function SectionBand({
+  children,
+  label,
+}: {
+  children: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <div data-frameline-section data-label={label}>
+      {children}
+    </div>
+  );
+}
+
+function SectionIntro({
+  eyebrow,
+  title,
+  description,
+  action,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  action?: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+      <div className="max-w-2xl space-y-3">
+        <p
+          className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase"
+          data-reveal
+        >
+          {eyebrow}
+        </p>
+        <h2
+          className="font-heading text-3xl font-light tracking-tight sm:text-4xl"
+          data-reveal
+        >
+          {title}
+        </h2>
+        <p
+          className="max-w-[48ch] text-base leading-relaxed text-muted-foreground"
+          data-reveal
+        >
+          {description}
+        </p>
+      </div>
+      {action ? <div data-reveal>{action}</div> : null}
+    </div>
+  );
+}
+
+function InstallTerminal() {
+  const [copied, setCopied] = React.useState(false);
+
+  async function copyInstall() {
+    try {
+      await navigator.clipboard.writeText(INSTALL_SNIPPET);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
+  }
+
+  return (
+    <div className="space-y-3 bg-foreground p-5 text-background sm:p-6" data-reveal>
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-[0.625rem] font-semibold tracking-widest text-background/55 uppercase">
+          Terminal
+        </p>
+        <Button
+          className="text-background hover:bg-background/10 hover:text-background"
+          size="xs"
+          type="button"
+          variant="ghost"
+          onClick={copyInstall}
+        >
+          {copied ? <RiCheckLine /> : <RiFileCopyLine />}
+          {copied ? "Copied" : "Copy"}
+        </Button>
+      </div>
+      <pre className="overflow-x-auto font-mono text-[13px] leading-relaxed text-background">
+        <TypeOnView text={INSTALL_SNIPPET} />
+      </pre>
+      <Separator className="bg-background/15" />
+      <pre className="overflow-x-auto font-mono text-[12px] leading-relaxed text-background/70">
+        {`import { AuroraMesh } from "@/materials"`}
+      </pre>
+    </div>
+  );
+}
+
+const SEQUENCE_STAGES: MaterialSequenceStage[] = MATERIALS_CATALOG.filter(
+  (entry) => entry.slug in SEQUENCE_COPY,
+).map((entry) => ({ entry, ...SEQUENCE_COPY[entry.slug] }));
+
+export function FramelineHomePageV2() {
+  const featuredCollections = getFeaturedCollections();
+
+  return (
+    <FramelineLenis>
+      <FramelineReveal>
+        <MarketingShell>
+          <RailProgress />
+          <SectionIndex sections={SECTIONS} />
+
+          {/* —— Hero —— */}
+          <section
+            className="relative isolate flex min-h-dvh flex-col bg-background"
+            data-frameline-section
+            data-label="Index"
+            id="top"
+          >
+            <MarketingNavbar />
+
+            <IntroStagger delay={0.55}>
+              <div className="relative z-10 mx-auto w-full max-w-7xl">
+                <div
+                  className={cn(
+                    "flex flex-col items-center pt-16 pb-12 text-center sm:pt-20 sm:pb-14 lg:pt-24 lg:pb-16",
+                    marketingPadX,
+                  )}
+                >
+                  <div className="max-w-3xl space-y-7">
+                    <h1 className="font-instrument text-[clamp(2.5rem,6.5vw,4.5rem)] leading-[1.05] font-normal tracking-[-0.02em] text-foreground">
+                      <WordMask
+                        delay={0.28}
+                        text="Design assets for the AI era"
+                      />
+                    </h1>
+
+                    <p
+                      className="text-base leading-relaxed text-balance text-muted-foreground sm:text-lg"
+                      data-intro-step
+                    >
+                      Shippable surface — so you don’t ship the default AI look.
+                    </p>
+
+                    <div
+                      className="flex items-center justify-center pt-3"
+                      data-intro-step
+                    >
+                      <Magnetic>
+                        <Button
+                          nativeButton={false}
+                          render={<a href="#browse" />}
+                          size="lg"
+                        >
+                          Browse materials
+                          <RiArrowDownLine data-icon="inline-end" />
+                        </Button>
+                      </Magnetic>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </IntroStagger>
+
+            {/* Dither band with the product strip cutting across its foot. */}
+            <div className="relative mt-auto flex min-h-[52dvh] w-full flex-1 flex-col border-t border-border">
+              <div
+                aria-hidden
+                className="frameline-material-in absolute inset-0 z-0 mx-auto max-w-7xl overflow-visible"
+                style={{ backgroundColor: HERO_PAPER }}
+              >
+                <InkRule />
+                <MarketingRailCross edge="top" />
+                <MarketingRailCross edge="bottom" />
+                <HeroDither colorBack={HERO_PAPER} colorFront={HERO_INK} />
+              </div>
+
+              <div className="relative z-10 mx-auto mt-auto w-full max-w-7xl">
+                <MaterialStrip entries={MATERIALS_CATALOG} />
+              </div>
+            </div>
+          </section>
+
+          {/* —— Credits —— */}
+          <MarketingSection id="clients">
+            <InkRule />
+            <SectionBand label="Shipped with">
+              <div
+                className={cn(
+                  "relative flex flex-col gap-3 border-b border-border py-10 sm:flex-row sm:items-baseline sm:justify-between",
+                  marketingPadX,
+                )}
+              >
+                <MarketingRailCross edge="bottom" />
+                <p
+                  className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase"
+                  data-reveal
+                >
+                  Shipped with
+                </p>
+                <p
+                  className="max-w-[52ch] font-mono text-[11px] leading-relaxed text-muted-foreground"
+                  data-reveal
+                >
+                  Placeholder credits — the studios and shops Frameline is drawn
+                  for.
+                </p>
+              </div>
+              <LogoWall names={CREDITS} />
+            </SectionBand>
+          </MarketingSection>
+
+          {/* —— Catalog preview —— */}
+          <MarketingSection id="browse">
+            <InkRule />
+            <SectionBand label="Catalog">
+              <MarketingSectionHeader>
+                <SectionIntro
+                  description="Production-ready materials you can install. Open any one to tune props and copy JSX."
+                  eyebrow="Catalog"
+                  title="Materials you can ship"
+                />
+              </MarketingSectionHeader>
+
+              <MarketingRuledGrid>
+                {Array.from({ length: CATALOG_PREVIEW_SLOTS }, (_, index) => {
+                  const entry = MATERIALS_CATALOG[index];
+
+                  if (!entry) {
+                    return (
+                      <MarketingRuledCell
+                        key={`soon-${index}`}
+                        className="p-0 sm:p-0 lg:p-0"
+                      >
+                        <div className="flex h-full min-h-[16rem] flex-col" data-reveal>
+                          <div className="relative aspect-[16/10] bg-muted/50" />
+                          <div className="space-y-2 border-t border-border p-6 sm:p-8">
+                            <p className="font-mono text-[11px] text-muted-foreground">
+                              Soon
+                            </p>
+                            <h3 className="font-heading text-base font-medium tracking-tight text-muted-foreground">
+                              Coming soon
+                            </h3>
+                            <p className="text-sm leading-relaxed text-muted-foreground">
+                              More surfaces in the next drop.
+                            </p>
+                          </div>
+                        </div>
+                      </MarketingRuledCell>
+                    );
+                  }
+
+                  return (
+                    <MarketingRuledCell
+                      key={entry.slug}
+                      className="p-0 sm:p-0 lg:p-0"
+                    >
+                      <Link
+                        className="group block transition-colors hover:bg-muted/40"
+                        data-reveal
+                        href={`/materials/${entry.slug}`}
+                      >
+                        <div className="relative aspect-[16/10] overflow-hidden bg-foreground">
+                          <MaterialPreview entry={entry} />
+                        </div>
+                        <div className="space-y-2 border-t border-border p-6 sm:p-8">
+                          <div className="flex items-center justify-between gap-2">
+                            <h3 className="font-heading text-base font-medium tracking-tight">
+                              {entry.title}
+                            </h3>
+                            <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                              {entry.tier === "free" ? "Free" : "Paid"}
+                            </span>
+                          </div>
+                          <p className="text-sm leading-relaxed text-muted-foreground">
+                            {entry.description}
+                          </p>
+                        </div>
+                      </Link>
+                    </MarketingRuledCell>
+                  );
+                })}
+              </MarketingRuledGrid>
+
+              <div
+                className={cn(
+                  "flex justify-center border-t border-border py-10",
+                  marketingPadX,
+                )}
+              >
+                <div data-reveal>
+                  <Magnetic reach={72} strength={0.22}>
+                    <Button
+                      nativeButton={false}
+                      render={<Link href="/materials" />}
+                      size="lg"
+                      variant="outline"
+                    >
+                      See full catalog
+                      <RiArrowRightLine data-icon="inline-end" />
+                    </Button>
+                  </Magnetic>
+                </div>
+              </div>
+            </SectionBand>
+          </MarketingSection>
+
+          {/* —— Pinned sequence —— */}
+          <MarketingSection id="showcase">
+            <InkRule />
+            <SectionBand label="Sequence">
+              <MaterialSequence stages={SEQUENCE_STAGES} />
+            </SectionBand>
+          </MarketingSection>
+
+          {/* —— Popular collections —— */}
+          <MarketingSection id="collections">
+            <InkRule />
+            <SectionBand label="Collections">
+              <MarketingSectionHeader>
+                <SectionIntro
+                  action={
+                    <Button
+                      nativeButton={false}
+                      render={<Link href="/collections" />}
+                      variant="outline"
+                    >
+                      See all
+                      <RiArrowRightLine data-icon="inline-end" />
+                    </Button>
+                  }
+                  description="Editorial drops — materials grouped by job, not by trend."
+                  eyebrow="Collections"
+                  title="Popular collections"
+                />
+              </MarketingSectionHeader>
+
+              <MarketingRuledGrid cols={2}>
+                {featuredCollections.map((collection) => {
+                  const materials = getCollectionMaterials(collection);
+                  const preview = materials[0];
+
+                  return (
+                    <MarketingRuledCell
+                      key={collection.slug}
+                      className="p-0 sm:p-0 lg:p-0"
+                    >
+                      <Link
+                        className="group block transition-colors hover:bg-muted/40"
+                        data-reveal
+                        href={`/collections/${collection.slug}`}
+                      >
+                        <div className="relative aspect-[21/9] overflow-hidden bg-foreground">
+                          {preview ? (
+                            <MaterialPreview entry={preview} />
+                          ) : (
+                            <div className="absolute inset-0 bg-muted" />
+                          )}
+                        </div>
+                        <div className="flex items-center justify-between gap-4 border-t border-border p-6 sm:p-8">
+                          <div className="space-y-2">
+                            <h3 className="font-heading text-base font-medium tracking-tight">
+                              {collection.title}
+                            </h3>
+                            <p className="max-w-[40ch] text-sm leading-relaxed text-muted-foreground">
+                              {collection.description}
+                            </p>
+                          </div>
+                          <p className="shrink-0 font-mono text-[11px] text-muted-foreground">
+                            {materials.length} materials
+                          </p>
+                        </div>
+                      </Link>
+                    </MarketingRuledCell>
+                  );
+                })}
+              </MarketingRuledGrid>
+            </SectionBand>
+          </MarketingSection>
+
+          {/* —— Install —— */}
+          <MarketingSection id="install">
+            <InkRule />
+            <SectionBand label="Install">
+              <MarketingSplit
+                left={
+                  <div className="space-y-5">
+                    <p
+                      className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase"
+                      data-reveal
+                    >
+                      Install
+                    </p>
+                    <h2
+                      className="font-heading text-3xl font-light tracking-tight sm:text-4xl"
+                      data-reveal
+                    >
+                      Install as source
+                    </h2>
+                    <p
+                      className="max-w-[42ch] text-base leading-relaxed text-muted-foreground"
+                      data-reveal
+                    >
+                      Compatible with the shadcn registry flow. Install, import,
+                      theme against your tokens — no locked runtime.
+                    </p>
+                    <div className="flex flex-wrap gap-3 pt-1" data-reveal>
+                      <Button
+                        nativeButton={false}
+                        render={<Link href="/docs/installation" />}
+                        size="lg"
+                      >
+                        Installation docs
+                      </Button>
+                      <Button
+                        nativeButton={false}
+                        render={<Link href="/materials" />}
+                        size="lg"
+                        variant="outline"
+                      >
+                        Pick a material
+                      </Button>
+                    </div>
+                  </div>
+                }
+                right={<InstallTerminal />}
+              />
+            </SectionBand>
+          </MarketingSection>
+
+          {/* —— Configurator —— */}
+          <MarketingSection id="configurator">
+            <InkRule />
+            <SectionBand label="Configurator">
+              <MarketingSplit
+                left={
+                  <div className="space-y-5">
+                    <p
+                      className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase"
+                      data-reveal
+                    >
+                      Configurator
+                    </p>
+                    <h2
+                      className="font-heading text-3xl font-light tracking-tight sm:text-4xl"
+                      data-reveal
+                    >
+                      Tune in the live preview
+                    </h2>
+                    <p
+                      className="max-w-[42ch] text-base leading-relaxed text-muted-foreground"
+                      data-reveal
+                    >
+                      Open any material, adjust props, and copy JSX — the
+                      surface is the product, not a PNG pack.
+                    </p>
+                    <div data-reveal>
+                      <Button
+                        nativeButton={false}
+                        render={<Link href="/materials/aurora-mesh" />}
+                        size="lg"
+                      >
+                        Open Aurora Mesh
+                        <RiArrowRightLine data-icon="inline-end" />
+                      </Button>
+                    </div>
+                  </div>
+                }
+                right={
+                  <div
+                    className="relative aspect-[16/10] overflow-hidden bg-foreground lg:aspect-auto lg:min-h-[20rem]"
+                    data-reveal
+                  >
+                    {MATERIALS_CATALOG[0] ? (
+                      <MaterialPreview entry={MATERIALS_CATALOG[0]} />
+                    ) : null}
+                  </div>
+                }
+              />
+            </SectionBand>
+          </MarketingSection>
+
+          {/* —— Why Frameline —— */}
+          <MarketingSection id="why">
+            <InkRule />
+            <SectionBand label="Why Frameline">
+              <MarketingSectionHeader>
+                <SectionIntro
+                  description="Gradients, textures, and motion — typed React components, token-bound, production-safe."
+                  eyebrow="Why Frameline"
+                  title="Surface that installs as code"
+                />
+              </MarketingSectionHeader>
+
+              <MarketingRuledGrid>
+                {VALUE_PROPS.map((item) => (
+                  <MarketingRuledCell key={item.title} className="space-y-2">
+                    <h3
+                      className="font-heading text-base font-medium tracking-tight"
+                      data-reveal
+                    >
+                      {item.title}
+                    </h3>
+                    <p
+                      className="text-sm leading-relaxed text-muted-foreground"
+                      data-reveal
+                    >
+                      {item.body}
+                    </p>
+                  </MarketingRuledCell>
+                ))}
+              </MarketingRuledGrid>
+            </SectionBand>
+          </MarketingSection>
+
+          {/* —— Pricing tease —— */}
+          <MarketingSection id="pricing">
+            <InkRule />
+            <SectionBand label="Pricing">
+              <MarketingSectionHeader>
+                <SectionIntro
+                  action={
+                    <Button
+                      nativeButton={false}
+                      render={<Link href="/pricing" />}
+                      size="lg"
+                    >
+                      View pricing
+                    </Button>
+                  }
+                  description="Free to evaluate. Paid when you need signature depth and clear commercial rights."
+                  eyebrow="Pricing"
+                  title="Licenses that match how you ship"
+                />
+              </MarketingSectionHeader>
+
+              <MarketingRuledGrid>
+                {PRICING_TEASERS.map((tier) => (
+                  <MarketingRuledCell key={tier.name} className="space-y-3">
+                    <p
+                      className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase"
+                      data-reveal
+                    >
+                      {tier.name}
+                    </p>
+                    <p
+                      className="font-heading text-3xl font-light tracking-tight sm:text-4xl"
+                      data-reveal
+                    >
+                      {tier.price}
+                    </p>
+                    <p
+                      className="text-sm leading-relaxed text-muted-foreground"
+                      data-reveal
+                    >
+                      {tier.blurb}
+                    </p>
+                  </MarketingRuledCell>
+                ))}
+              </MarketingRuledGrid>
+            </SectionBand>
+          </MarketingSection>
+
+          {/* —— FAQ —— */}
+          <MarketingSection id="faq">
+            <InkRule />
+            <SectionBand label="FAQ">
+              <MarketingSplit
+                left={
+                  <div className="space-y-3">
+                    <p
+                      className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase"
+                      data-reveal
+                    >
+                      FAQ
+                    </p>
+                    <h2
+                      className="font-heading text-3xl font-light tracking-tight sm:text-4xl"
+                      data-reveal
+                    >
+                      Before you install
+                    </h2>
+                    <p
+                      className="max-w-[36ch] text-base leading-relaxed text-muted-foreground"
+                      data-reveal
+                    >
+                      Short answers on ownership, tiers, and theming.
+                    </p>
+                  </div>
+                }
+                right={
+                  <Accordion>
+                    {FAQ_ITEMS.map((item) => (
+                      <AccordionItem key={item.q} data-reveal value={item.q}>
+                        <AccordionTrigger>{item.q}</AccordionTrigger>
+                        <AccordionContent className="text-muted-foreground">
+                          {item.a}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                }
+              />
+            </SectionBand>
+          </MarketingSection>
+
+          {/* —— Closing CTA —— */}
+          <MarketingSection id="start">
+            <InkRule />
+            <SectionBand label="Start">
+              <div
+                className={cn(
+                  "flex flex-col items-start gap-6 py-16 lg:py-20",
+                  marketingPadX,
+                )}
+              >
+                <h2 className="max-w-[16ch] font-heading text-3xl font-light tracking-tight sm:text-4xl">
+                  <WordMask onView text="Stop shipping the default AI look." />
+                </h2>
+                <p
+                  className="max-w-[40ch] text-base leading-relaxed text-muted-foreground"
+                  data-reveal
+                >
+                  Browse the catalog, install a free material, and put real
+                  surface under your next build.
+                </p>
+                <div className="flex flex-wrap gap-3" data-reveal>
+                  <Magnetic>
+                    <Button
+                      nativeButton={false}
+                      render={<Link href="/materials" />}
+                      size="lg"
+                    >
+                      Browse materials
+                    </Button>
+                  </Magnetic>
+                  <Button
+                    nativeButton={false}
+                    render={<Link href="/collections" />}
+                    size="lg"
+                    variant="outline"
+                  >
+                    Explore collections
+                  </Button>
+                </div>
+              </div>
+            </SectionBand>
+          </MarketingSection>
+
+          <MarketingFooter />
+        </MarketingShell>
+      </FramelineReveal>
+    </FramelineLenis>
+  );
+}

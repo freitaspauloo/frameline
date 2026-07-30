@@ -7,10 +7,10 @@ import { MarketingFooter } from "@/components/marketing-footer";
 import { MarketingNavbar } from "@/components/marketing-navbar";
 import { MaterialPreview } from "@/components/material-preview";
 import {
+  MarketingPageHeader,
   MarketingRuledCell,
   MarketingRuledGrid,
   MarketingSection,
-  MarketingSectionHeader,
   MarketingShell,
 } from "@/components/marketing-shell";
 import {
@@ -20,6 +20,10 @@ import {
   type MaterialType,
 } from "@/materials";
 import { cn } from "@/lib/utils";
+
+/** Hairline filter — outline, not a soft pill. */
+const CHIP =
+  "border border-border px-4 py-2 text-[0.625rem] font-semibold tracking-widest uppercase transition-colors";
 
 export function MaterialsCatalogPage({
   typeFilter,
@@ -43,26 +47,27 @@ export function MaterialsCatalogPage({
     <MarketingShell>
       <MarketingNavbar />
       <MarketingSection>
-        <MarketingSectionHeader>
-          <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-            Materials{activeType ? ` · ${activeType}` : " · v0"}
-          </p>
-          <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight sm:text-5xl">
-            {typeMeta ? typeMeta.title : "Surface as code"}
-          </h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {typeMeta
+        <MarketingPageHeader
+          action={
+            <p className="font-mono text-[11px] text-muted-foreground">
+              {entries.length} {entries.length === 1 ? "material" : "materials"}
+            </p>
+          }
+          description={
+            typeMeta
               ? typeMeta.description
-              : "Production-ready materials you can install. Open any material to tune props and copy JSX."}
-          </p>
-
-          <div className="mt-8 flex flex-wrap gap-2">
+              : "Production-ready materials you can install. Open any material to tune props and copy JSX."
+          }
+          eyebrow={`Materials${activeType ? ` · ${activeType}` : ""}`}
+          title={typeMeta ? typeMeta.title : "Surface as code"}
+        >
+          <div className="flex flex-wrap gap-2">
             <Link
               className={cn(
-                "px-3 py-1.5 text-[0.6875rem] font-semibold tracking-wide uppercase transition-colors",
+                CHIP,
                 !activeType
-                  ? "bg-foreground text-background"
-                  : "bg-muted text-muted-foreground hover:text-foreground",
+                  ? "border-foreground bg-foreground text-background"
+                  : "text-muted-foreground hover:border-foreground hover:text-foreground",
               )}
               href="/materials"
             >
@@ -72,10 +77,10 @@ export function MaterialsCatalogPage({
               <Link
                 key={t.type}
                 className={cn(
-                  "px-3 py-1.5 text-[0.6875rem] font-semibold tracking-wide uppercase transition-colors",
+                  CHIP,
                   activeType === t.type
-                    ? "bg-foreground text-background"
-                    : "bg-muted text-muted-foreground hover:text-foreground",
+                    ? "border-foreground bg-foreground text-background"
+                    : "text-muted-foreground hover:border-foreground hover:text-foreground",
                 )}
                 href={`/materials?type=${t.type}`}
               >
@@ -83,7 +88,7 @@ export function MaterialsCatalogPage({
               </Link>
             ))}
           </div>
-        </MarketingSectionHeader>
+        </MarketingPageHeader>
 
         <MarketingRuledGrid>
           {entries.map((entry) => (
@@ -95,8 +100,8 @@ export function MaterialsCatalogPage({
                 <div className="relative aspect-[16/10] overflow-hidden bg-foreground">
                   <MaterialPreview entry={entry} />
                 </div>
-                <div className="space-y-2 border-t border-border p-6 sm:p-8">
-                  <div className="flex items-center justify-between gap-2">
+                <div className="space-y-2.5 border-t border-border p-6 sm:p-8 lg:p-10">
+                  <div className="flex items-center justify-between gap-3">
                     <h2 className="font-heading text-base font-medium tracking-tight">
                       {entry.title}
                     </h2>

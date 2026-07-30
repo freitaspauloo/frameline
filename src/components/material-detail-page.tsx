@@ -3,8 +3,17 @@
 import * as React from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { RiArrowLeftLine } from "@remixicon/react";
 
+import { MarketingFooter } from "@/components/marketing-footer";
 import { MarketingNavbar } from "@/components/marketing-navbar";
+import {
+  MarketingPageHeader,
+  MarketingSection,
+  MarketingShell,
+  marketingPad,
+} from "@/components/marketing-shell";
+import { Button } from "@/components/ui/button";
 import {
   AuroraMesh,
   GrainField,
@@ -12,12 +21,13 @@ import {
   getMaterial,
   type MaterialCatalogEntry,
 } from "@/materials";
-import { RelayButton } from "@/components/relay-ui";
 import { cn } from "@/lib/utils";
 
 type Props = {
   slug: string;
 };
+
+const ACCENT = "#3A58F0";
 
 function buildJsxSnippet(slug: string, props: Record<string, unknown>) {
   const entries = Object.entries(props).filter(
@@ -142,6 +152,29 @@ function useMaterialControls(slug: string) {
   };
 }
 
+/** Small ruled panel used down the configurator column. */
+function Panel({
+  action,
+  children,
+  title,
+}: {
+  action?: React.ReactNode;
+  children: React.ReactNode;
+  title: string;
+}) {
+  return (
+    <section className={marketingPad}>
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+          {title}
+        </h2>
+        {action}
+      </div>
+      <div className="mt-6">{children}</div>
+    </section>
+  );
+}
+
 export function MaterialDetailPage({ slug }: Props) {
   const entry = getMaterial(slug);
   if (!entry) notFound();
@@ -162,147 +195,174 @@ export function MaterialDetailPage({ slug }: Props) {
   }
 
   return (
-    <div className="min-h-dvh bg-relay-white text-relay-ink">
+    <MarketingShell>
       <MarketingNavbar />
-      <main className="mx-auto grid w-full max-w-7xl gap-10 px-6 pb-24 pt-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-12 lg:px-8">
-        <div>
-          <Link
-            className="font-mono text-[12px] text-relay-secondary hover:text-relay-ink"
-            href="/materials"
+      <MarketingSection>
+        <MarketingPageHeader
+          action={
+            <Button
+              nativeButton={false}
+              render={<Link href="/materials" />}
+              size="sm"
+              variant="outline"
+            >
+              <RiArrowLeftLine data-icon="inline-start" />
+              All materials
+            </Button>
+          }
+          description={entry.description}
+          eyebrow={`Material · ${entry.type} · ${entry.tier === "free" ? "Free" : "Paid"}`}
+          title={entry.title}
+        />
+
+        <div className="relative grid overflow-visible lg:grid-cols-[1.15fr_0.85fr] lg:divide-x lg:divide-border">
+          <div
+            className={cn(
+              "border-b border-border lg:border-b-0",
+              marketingPad,
+            )}
           >
-            ← Materials
-          </Link>
-          <h1 className="mt-3 font-display text-4xl tracking-tight">
-            {entry.title}
-          </h1>
-          <p className="mt-3 max-w-xl text-base text-relay-secondary">
-            {entry.description}
-          </p>
+            <div className="relative aspect-[16/10] overflow-hidden border border-border bg-foreground">
+              <LivePreview entry={entry} props={props} />
+            </div>
 
-          <div className="relative mt-8 aspect-[16/10] overflow-hidden rounded-relay-lg border border-relay-border bg-relay-ink shadow-relay-sm">
-            <LivePreview entry={entry} props={props} />
+            <dl className="mt-8 grid grid-cols-2 gap-x-8 gap-y-5 border-t border-border pt-8 sm:grid-cols-3">
+              <div className="space-y-1.5">
+                <dt className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                  Type
+                </dt>
+                <dd className="font-mono text-[11px] text-foreground">
+                  {entry.type}
+                </dd>
+              </div>
+              <div className="space-y-1.5">
+                <dt className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                  Contexts
+                </dt>
+                <dd className="font-mono text-[11px] text-foreground">
+                  {entry.useContexts.join(" · ")}
+                </dd>
+              </div>
+              <div className="space-y-1.5">
+                <dt className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                  Tags
+                </dt>
+                <dd className="font-mono text-[11px] text-foreground">
+                  {entry.tags.join(" · ")}
+                </dd>
+              </div>
+            </dl>
           </div>
-        </div>
 
-        <aside className="space-y-6">
-          <section className="rounded-relay-lg border border-relay-border bg-relay-panel p-5">
-            <h2 className="text-sm font-medium tracking-tight">Configurator</h2>
-            <div className="mt-4 space-y-4">
-              {controls.fields.map((field) => (
-                <label className="block" key={field.key}>
-                  <span className="flex justify-between font-mono text-[11px] text-relay-secondary">
-                    <span>{field.label}</span>
-                    <span>{Number(props[field.key as keyof typeof props]).toFixed(2)}</span>
-                  </span>
-                  <input
-                    className="mt-2 w-full accent-relay-blue"
-                    max={field.max}
-                    min={field.min}
-                    step={field.step}
-                    type="range"
-                    value={Number(props[field.key as keyof typeof props])}
-                    onChange={(e) =>
-                      setProps((prev) => ({
-                        ...prev,
-                        [field.key]: Number(e.target.value),
-                      }))
-                    }
-                  />
-                </label>
-              ))}
-              {"colors" in controls &&
-                controls.colors?.map((c) => (
-                  <label className="flex items-center justify-between gap-3" key={c.key}>
-                    <span className="font-mono text-[11px] text-relay-secondary">
-                      {c.label}
+          <div className="divide-y divide-border">
+            <Panel title="Configurator">
+              <div className="space-y-6">
+                {controls.fields.map((field) => (
+                  <label className="block" key={field.key}>
+                    <span className="flex justify-between font-mono text-[11px] text-muted-foreground">
+                      <span>{field.label}</span>
+                      <span className="text-foreground tabular-nums">
+                        {Number(
+                          props[field.key as keyof typeof props],
+                        ).toFixed(2)}
+                      </span>
                     </span>
                     <input
-                      type="color"
-                      value={String(props[c.key as keyof typeof props])}
+                      className="mt-3 w-full"
+                      max={field.max}
+                      min={field.min}
+                      step={field.step}
+                      style={{ accentColor: ACCENT }}
+                      type="range"
+                      value={Number(props[field.key as keyof typeof props])}
                       onChange={(e) =>
                         setProps((prev) => ({
                           ...prev,
-                          [c.key]: e.target.value,
+                          [field.key]: Number(e.target.value),
                         }))
                       }
                     />
                   </label>
                 ))}
-            </div>
-          </section>
-
-          <section className="rounded-relay-lg border border-relay-border bg-relay-panel p-5">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-sm font-medium tracking-tight">
-                {entry.tier === "free" ? "Install" : "Get access"}
-              </h2>
-              <span className="font-mono text-[11px] uppercase tracking-wide text-relay-secondary">
-                {entry.tier}
-              </span>
-            </div>
-            {entry.tier === "free" ? (
-              <div className="mt-4 space-y-3">
-                <RelayButton
-                  className="w-full"
-                  nativeButton={false}
-                  render={
-                    <Link href={`/docs/installation?material=${entry.slug}`} />
-                  }
-                >
-                  Install material
-                </RelayButton>
-                <RelayButton
-                  className="w-full"
-                  onClick={copySnippet}
-                  variant="secondary"
-                >
-                  {copied ? "Copied JSX" : "Copy JSX"}
-                </RelayButton>
-                <p className="text-sm text-relay-secondary">
-                  Free — no account required. Source lands in your repo.
-                </p>
+                {"colors" in controls &&
+                  controls.colors?.map((c) => (
+                    <label
+                      className="flex items-center justify-between gap-3 border-t border-border pt-5"
+                      key={c.key}
+                    >
+                      <span className="font-mono text-[11px] text-muted-foreground">
+                        {c.label}
+                      </span>
+                      <input
+                        className="size-7 cursor-pointer border border-border bg-transparent"
+                        type="color"
+                        value={String(props[c.key as keyof typeof props])}
+                        onChange={(e) =>
+                          setProps((prev) => ({
+                            ...prev,
+                            [c.key]: e.target.value,
+                          }))
+                        }
+                      />
+                    </label>
+                  ))}
               </div>
-            ) : (
-              <div className="mt-4 space-y-3">
-                <RelayButton
-                  className="w-full"
-                  nativeButton={false}
-                  render={
-                    <Link href={`/pricing?material=${entry.slug}`} />
-                  }
-                >
-                  Buy license
-                </RelayButton>
-                <RelayButton
-                  className="w-full"
-                  onClick={copySnippet}
-                  variant="secondary"
-                >
-                  {copied ? "Copied preview JSX" : "Copy preview JSX"}
-                </RelayButton>
-                <p className="text-sm text-relay-secondary">
-                  Install unlocks after purchase. Preview JSX is for evaluation.
-                </p>
-              </div>
-            )}
-          </section>
+            </Panel>
 
-          <section className="rounded-relay-lg border border-relay-border bg-relay-panel p-5">
-            <h2 className="text-sm font-medium tracking-tight">JSX</h2>
-            <pre
-              className={cn(
-                "mt-3 overflow-x-auto rounded-relay-md bg-relay-ink p-4",
-                "font-mono text-[11px] leading-relaxed text-relay-white",
-              )}
+            <Panel
+              action={
+                <span className="font-mono text-[11px] tracking-wide text-muted-foreground uppercase">
+                  {entry.tier}
+                </span>
+              }
+              title={entry.tier === "free" ? "Install" : "Get access"}
             >
-              {snippet}
-            </pre>
-            <p className="mt-3 font-mono text-[11px] text-relay-secondary">
-              contexts: {entry.useContexts.join(", ")}
-            </p>
-          </section>
-        </aside>
-      </main>
-    </div>
+              <div className="space-y-3">
+                <Button
+                  className="w-full"
+                  nativeButton={false}
+                  render={
+                    <Link
+                      href={
+                        entry.tier === "free"
+                          ? `/docs/installation?material=${entry.slug}`
+                          : `/pricing?material=${entry.slug}`
+                      }
+                    />
+                  }
+                  size="lg"
+                >
+                  {entry.tier === "free" ? "Install material" : "Buy license"}
+                </Button>
+                <Button
+                  className="w-full"
+                  size="lg"
+                  variant="outline"
+                  onClick={copySnippet}
+                >
+                  {copied
+                    ? "Copied JSX"
+                    : entry.tier === "free"
+                      ? "Copy JSX"
+                      : "Copy preview JSX"}
+                </Button>
+                <p className="pt-2 text-sm leading-relaxed text-muted-foreground">
+                  {entry.tier === "free"
+                    ? "Free — no account required. Source lands in your repo."
+                    : "Install unlocks after purchase. Preview JSX is for evaluation."}
+                </p>
+              </div>
+            </Panel>
+
+            <Panel title="JSX">
+              <pre className="overflow-x-auto bg-foreground p-5 font-mono text-[11px] leading-relaxed text-background">
+                {snippet}
+              </pre>
+            </Panel>
+          </div>
+        </div>
+      </MarketingSection>
+      <MarketingFooter />
+    </MarketingShell>
   );
 }

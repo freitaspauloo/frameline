@@ -6,10 +6,10 @@ import { MarketingFooter } from "@/components/marketing-footer";
 import { MarketingNavbar } from "@/components/marketing-navbar";
 import { MaterialPreview } from "@/components/material-preview";
 import {
+  MarketingPageHeader,
   MarketingRuledCell,
   MarketingRuledGrid,
   MarketingSection,
-  MarketingSectionHeader,
   MarketingShell,
 } from "@/components/marketing-shell";
 import {
@@ -22,18 +22,16 @@ export function CollectionsIndexPage() {
     <MarketingShell>
       <MarketingNavbar />
       <MarketingSection>
-        <MarketingSectionHeader>
-          <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-            Collections
-          </p>
-          <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight sm:text-5xl">
-            Curated sets
-          </h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Editorial drops off the main catalog — materials grouped by job, not
-            by trend.
-          </p>
-        </MarketingSectionHeader>
+        <MarketingPageHeader
+          action={
+            <p className="font-mono text-[11px] text-muted-foreground">
+              {MATERIALS_COLLECTIONS.length} collections
+            </p>
+          }
+          description="Editorial drops off the main catalog — materials grouped by job, not by trend."
+          eyebrow="Collections"
+          title="Curated sets"
+        />
 
         <MarketingRuledGrid cols={2}>
           {MATERIALS_COLLECTIONS.map((collection) => {
@@ -56,8 +54,8 @@ export function CollectionsIndexPage() {
                       <div className="absolute inset-0 bg-muted" />
                     )}
                   </div>
-                  <div className="flex items-center justify-between gap-4 border-t border-border p-6 sm:p-8">
-                    <div className="space-y-2">
+                  <div className="flex items-start justify-between gap-6 border-t border-border p-6 sm:p-8 lg:p-10">
+                    <div className="space-y-2.5">
                       <h2 className="font-heading text-base font-medium tracking-tight">
                         {collection.title}
                       </h2>

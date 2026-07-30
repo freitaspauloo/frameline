@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 /** Consistent inset from the vertical rails — use everywhere. */
-export const marketingPadX = "px-6 sm:px-8 lg:px-10";
-export const marketingPad = "p-6 sm:p-8 lg:p-10";
+export const marketingPadX = "px-6 sm:px-8 lg:px-12";
+export const marketingPad = "p-6 sm:p-8 lg:p-12";
 
 const CROSS_SIZE = "size-[5px]";
 
@@ -120,7 +120,79 @@ export function MarketingSectionHeader({
       )}
     >
       <MarketingRailCross edge="bottom" />
-      <div className={cn("py-12 lg:py-16", marketingPadX)}>{children}</div>
+      <div className={cn("py-14 lg:py-20", marketingPadX)}>{children}</div>
+    </div>
+  );
+}
+
+/**
+ * Page-level masthead — the inner-page counterpart to the home hero.
+ *
+ * One typographic voice for every route: mono eyebrow, Instrument display
+ * title, measured lede. `children` takes secondary controls (filters, tabs)
+ * below the rule-clearing block.
+ */
+export function MarketingPageHeader({
+  action,
+  align = "start",
+  children,
+  className,
+  description,
+  eyebrow,
+  title,
+}: {
+  action?: ReactNode;
+  align?: "start" | "center";
+  children?: ReactNode;
+  className?: string;
+  description?: ReactNode;
+  eyebrow: ReactNode;
+  title: ReactNode;
+}) {
+  const centered = align === "center";
+
+  return (
+    <div
+      className={cn(
+        "relative overflow-visible border-b border-border",
+        className,
+      )}
+    >
+      <MarketingRailCross edge="bottom" />
+      <div
+        className={cn(
+          "py-16 lg:py-24",
+          marketingPadX,
+          centered && "text-center",
+        )}
+      >
+        <div
+          className={cn(
+            "flex flex-col gap-8",
+            centered
+              ? "items-center"
+              : "lg:flex-row lg:items-end lg:justify-between lg:gap-12",
+          )}
+        >
+          <div
+            className={cn("space-y-5", centered ? "max-w-2xl" : "max-w-3xl")}
+          >
+            <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+              {eyebrow}
+            </p>
+            <h1 className="font-instrument text-[clamp(2.25rem,5vw,3.75rem)] leading-[1.05] font-normal tracking-[-0.02em] text-foreground">
+              {title}
+            </h1>
+            {description ? (
+              <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
+                {description}
+              </p>
+            ) : null}
+          </div>
+          {action ? <div className="shrink-0">{action}</div> : null}
+        </div>
+        {children ? <div className="mt-10 lg:mt-12">{children}</div> : null}
+      </div>
     </div>
   );
 }

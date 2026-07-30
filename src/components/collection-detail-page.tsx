@@ -7,10 +7,10 @@ import { MarketingFooter } from "@/components/marketing-footer";
 import { MarketingNavbar } from "@/components/marketing-navbar";
 import { MaterialPreview } from "@/components/material-preview";
 import {
+  MarketingPageHeader,
   MarketingRuledCell,
   MarketingRuledGrid,
   MarketingSection,
-  MarketingSectionHeader,
   MarketingShell,
 } from "@/components/marketing-shell";
 import { Button } from "@/components/ui/button";
@@ -30,17 +30,8 @@ export function CollectionDetailPage({ slug }: { slug: string }) {
     <MarketingShell>
       <MarketingNavbar />
       <MarketingSection>
-        <MarketingSectionHeader>
-          <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-            Collection
-          </p>
-          <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight sm:text-5xl">
-            {collection.title}
-          </h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {collection.description}
-          </p>
-          <div className="mt-6">
+        <MarketingPageHeader
+          action={
             <Button
               nativeButton={false}
               render={<Link href="/collections" />}
@@ -49,8 +40,11 @@ export function CollectionDetailPage({ slug }: { slug: string }) {
             >
               All collections
             </Button>
-          </div>
-        </MarketingSectionHeader>
+          }
+          description={collection.description}
+          eyebrow={`Collection · ${materials.length} materials`}
+          title={collection.title}
+        />
 
         <MarketingRuledGrid>
           {materials.map((entry) => (
@@ -62,8 +56,8 @@ export function CollectionDetailPage({ slug }: { slug: string }) {
                 <div className="relative aspect-[16/10] overflow-hidden bg-foreground">
                   <MaterialPreview entry={entry} />
                 </div>
-                <div className="space-y-2 border-t border-border p-6 sm:p-8">
-                  <div className="flex items-center justify-between gap-2">
+                <div className="space-y-2.5 border-t border-border p-6 sm:p-8 lg:p-10">
+                  <div className="flex items-center justify-between gap-3">
                     <h2 className="font-heading text-base font-medium tracking-tight">
                       {entry.title}
                     </h2>
