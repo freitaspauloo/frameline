@@ -11,7 +11,8 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-heading: var(--font-heading);
-  --font-display: var(--font-syne), var(--font-heading);
+  --font-instrument: var(--font-instrument);
+  --font-display: var(--font-instrument), var(--font-heading);
   --font-pixel-square: var(--font-geist-pixel-square);
   --font-pixel-circle: var(--font-geist-pixel-circle);
   --color-sidebar-ring: var(--sidebar-ring);

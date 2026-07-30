@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Inter, Syne } from "next/font/google";
+import { Geist, Instrument_Serif, Inter, Syne } from "next/font/google";
 import { GeistPixelCircle, GeistPixelSquare } from "geist/font/pixel";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,13 @@ const inter = Inter({
 const geistHeading = Geist({
   subsets: ["latin"],
   variable: "--font-heading",
+});
+
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-instrument",
+  display: "swap",
 });
 
 const syne = Syne({
@@ -39,6 +46,7 @@ export default function RootLayout({
         "h-full antialiased",
         inter.variable,
         geistHeading.variable,
+        instrumentSerif.variable,
         syne.variable,
         GeistPixelSquare.variable,
         GeistPixelCircle.variable,

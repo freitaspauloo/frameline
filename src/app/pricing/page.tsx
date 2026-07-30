@@ -1,7 +1,15 @@
 import Link from "next/link";
 
+import { MarketingFooter } from "@/components/marketing-footer";
 import { MarketingNavbar } from "@/components/marketing-navbar";
-import { RelayButton } from "@/components/relay-ui";
+import {
+  MarketingRuledCell,
+  MarketingRuledGrid,
+  MarketingSection,
+  MarketingSectionHeader,
+  MarketingShell,
+} from "@/components/marketing-shell";
+import { Button } from "@/components/ui/button";
 
 const TIERS = [
   {
@@ -45,17 +53,17 @@ export default async function PricingPage({
   const { material } = await searchParams;
 
   return (
-    <div className="min-h-dvh bg-relay-white text-relay-ink">
+    <MarketingShell>
       <MarketingNavbar />
-      <main className="mx-auto max-w-7xl px-6 pb-24 pt-12 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-relay-secondary">
+      <MarketingSection>
+        <MarketingSectionHeader className="text-center">
+          <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
             Pricing
           </p>
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
+          <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight sm:text-5xl">
             Choose a license
           </h1>
-          <p className="mt-4 text-base text-relay-secondary">
+          <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground">
             Free to evaluate. Paid when you need signature depth and clear
             commercial rights.
             {material ? (
@@ -63,7 +71,7 @@ export default async function PricingPage({
                 {" "}
                 Continuing from{" "}
                 <Link
-                  className="text-relay-blue hover:text-relay-blue-deep"
+                  className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
                   href={`/materials/${material}`}
                 >
                   {material}
@@ -72,33 +80,33 @@ export default async function PricingPage({
               </>
             ) : null}
           </p>
-        </div>
+        </MarketingSectionHeader>
 
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
+        <MarketingRuledGrid>
           {TIERS.map((tier) => (
-            <div
-              className="flex flex-col rounded-relay-lg border border-relay-border bg-relay-panel p-6"
+            <MarketingRuledCell
               key={tier.name}
+              className="flex flex-col"
             >
-              <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-relay-secondary">
+              <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
                 {tier.name}
               </p>
-              <p className="mt-3 text-3xl font-semibold tracking-tight">
+              <p className="mt-3 font-heading text-3xl font-semibold tracking-tight">
                 {tier.price}
               </p>
-              <p className="mt-2 text-sm leading-relaxed text-relay-secondary">
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 {tier.blurb}
               </p>
-              <ul className="mt-5 space-y-2 text-sm text-relay-ink">
+              <ul className="mt-5 space-y-2 text-sm text-foreground">
                 {tier.features.map((f) => (
-                  <li key={f} className="flex gap-2">
-                    <span className="text-relay-blue">✓</span>
+                  <li key={f} className="flex gap-2 border-t border-border pt-2 first:border-t-0 first:pt-0">
+                    <span className="text-primary">✓</span>
                     {f}
                   </li>
                 ))}
               </ul>
               <div className="mt-auto pt-8">
-                <RelayButton
+                <Button
                   className="w-full"
                   nativeButton={false}
                   render={
@@ -110,15 +118,16 @@ export default async function PricingPage({
                       }
                     />
                   }
-                  variant={tier.cta.primary ? "primary" : "secondary"}
+                  variant={tier.cta.primary ? "default" : "outline"}
                 >
                   {tier.cta.label}
-                </RelayButton>
+                </Button>
               </div>
-            </div>
+            </MarketingRuledCell>
           ))}
-        </div>
-      </main>
-    </div>
+        </MarketingRuledGrid>
+      </MarketingSection>
+      <MarketingFooter />
+    </MarketingShell>
   );
 }

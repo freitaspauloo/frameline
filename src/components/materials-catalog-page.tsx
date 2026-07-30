@@ -3,7 +3,15 @@
 import * as React from "react";
 import Link from "next/link";
 
+import { MarketingFooter } from "@/components/marketing-footer";
 import { MarketingNavbar } from "@/components/marketing-navbar";
+import {
+  MarketingRuledCell,
+  MarketingRuledGrid,
+  MarketingSection,
+  MarketingSectionHeader,
+  MarketingShell,
+} from "@/components/marketing-shell";
 import {
   AuroraMesh,
   GrainField,
@@ -37,60 +45,60 @@ function MaterialPreview({ entry }: { entry: MaterialCatalogEntry }) {
 
 export function MaterialsCatalogPage() {
   return (
-    <div className="min-h-dvh bg-relay-white text-relay-ink">
+    <MarketingShell>
       <MarketingNavbar />
-      <main className="mx-auto w-full max-w-7xl px-6 pb-24 pt-10 lg:px-8">
-        <header className="max-w-2xl">
-          <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-relay-secondary">
+      <MarketingSection>
+        <MarketingSectionHeader>
+          <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
             Materials · v0
           </p>
-          <h1 className="mt-3 font-display text-4xl tracking-tight sm:text-5xl">
+          <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight sm:text-5xl">
             Surface as code
           </h1>
-          <p className="mt-4 text-base leading-relaxed text-relay-secondary sm:text-lg">
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             Production-ready materials you can install. Live preview below —
             open any material to tune props and copy JSX.
           </p>
-        </header>
+        </MarketingSectionHeader>
 
-        <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <MarketingRuledGrid>
           {MATERIALS_CATALOG.map((entry) => (
-            <li key={entry.slug}>
+            <MarketingRuledCell key={entry.slug} className="p-0 sm:p-0 lg:p-0">
               <Link
                 className={cn(
-                  "group block overflow-hidden rounded-relay-lg border border-relay-border bg-relay-panel",
-                  "transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-relay-sm",
+                  "group block transition-colors hover:bg-muted/40",
                 )}
                 href={`/materials/${entry.slug}`}
               >
-                <div className="relative aspect-[16/10] overflow-hidden bg-relay-ink">
+                <div className="relative aspect-[16/10] overflow-hidden bg-foreground">
                   <MaterialPreview entry={entry} />
                 </div>
-                <div className="space-y-2 border-t border-relay-border px-4 py-4">
+                <div className="space-y-2 border-t border-border p-6 sm:p-8">
                   <div className="flex items-center justify-between gap-2">
-                    <h2 className="text-base font-medium tracking-tight">
+                    <h2 className="font-heading text-base font-medium tracking-tight">
                       {entry.title}
                     </h2>
                     <span
                       className={cn(
-                        "font-mono text-[11px] uppercase tracking-wide",
+                        "text-[0.625rem] font-semibold tracking-widest uppercase",
                         entry.tier === "free"
-                          ? "text-emerald-700"
-                          : "text-relay-blue-deep",
+                          ? "text-muted-foreground"
+                          : "text-foreground",
                       )}
                     >
                       {entry.tier === "free" ? "Free" : "Paid"}
                     </span>
                   </div>
-                  <p className="text-sm leading-relaxed text-relay-secondary">
+                  <p className="text-sm leading-relaxed text-muted-foreground">
                     {entry.description}
                   </p>
                 </div>
               </Link>
-            </li>
+            </MarketingRuledCell>
           ))}
-        </ul>
-      </main>
-    </div>
+        </MarketingRuledGrid>
+      </MarketingSection>
+      <MarketingFooter />
+    </MarketingShell>
   );
 }
