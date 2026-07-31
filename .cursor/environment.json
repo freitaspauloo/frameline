@@ -1,4 +1,0 @@
-{
-  "install": "if [ -f package.json ]; then npm install; else echo 'Relay is greenfield — no package.json yet'; fi",
-  "start": "if [ -f package.json ] && npm run | grep -q ' dev'; then npm run dev; else echo 'Dev server not configured yet'; fi"
-}
