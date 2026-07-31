@@ -70,6 +70,7 @@ const SECTIONS: readonly SectionIndexEntry[] = [
   { id: "clients", label: "Shipped with" },
   { id: "browse", label: "Catalog" },
   { id: "showcase", label: "Sequence" },
+  { id: "rotation", label: "In rotation" },
   { id: "collections", label: "Collections" },
   { id: "install", label: "Install" },
   { id: "configurator", label: "Configurator" },
@@ -321,21 +322,18 @@ export function FramelineHomePageV2() {
               </div>
             </IntroStagger>
 
-            {/* Dither band with the product strip cutting across its foot. */}
-            <div className="relative mt-auto flex min-h-[52dvh] w-full flex-1 flex-col border-t border-border">
+            <div
+              aria-hidden
+              className="frameline-material-in relative mt-auto min-h-[52dvh] w-full flex-1 border-t border-border"
+            >
               <div
-                aria-hidden
-                className="frameline-material-in absolute inset-0 z-0 mx-auto max-w-7xl overflow-visible"
+                className="absolute inset-x-0 top-0 bottom-0 z-0 mx-auto max-w-7xl overflow-visible"
                 style={{ backgroundColor: HERO_PAPER }}
               >
                 <InkRule />
                 <MarketingRailCross edge="top" />
                 <MarketingRailCross edge="bottom" />
                 <HeroDither colorBack={HERO_PAPER} colorFront={HERO_INK} />
-              </div>
-
-              <div className="relative z-10 mx-auto mt-auto w-full max-w-7xl">
-                <MaterialStrip entries={MATERIALS_CATALOG} />
               </div>
             </div>
           </section>
@@ -469,6 +467,14 @@ export function FramelineHomePageV2() {
             <InkRule />
             <SectionBand label="Sequence">
               <MaterialSequence stages={SEQUENCE_STAGES} />
+            </SectionBand>
+          </MarketingSection>
+
+          {/* —— In rotation (moved off hero) —— */}
+          <MarketingSection id="rotation">
+            <InkRule />
+            <SectionBand label="In rotation">
+              <MaterialStrip entries={MATERIALS_CATALOG} />
             </SectionBand>
           </MarketingSection>
 
