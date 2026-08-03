@@ -2,8 +2,6 @@ import { ImageResponse } from "next/og";
 
 import { getMaterial } from "@/materials/catalog";
 
-export const runtime = "edge";
-
 const SIZE = { width: 1200, height: 630 };
 
 export async function GET(request: Request) {
@@ -33,12 +31,12 @@ export async function GET(request: Request) {
           justifyContent: "space-between",
           background: "#F7F5F0",
           padding: 64,
-          fontFamily: "Georgia, serif",
         }}
       >
         <div
           style={{
             display: "flex",
+            width: "100%",
             alignItems: "center",
             justifyContent: "space-between",
           }}
@@ -48,11 +46,6 @@ export async function GET(request: Request) {
               display: "flex",
               alignItems: "center",
               gap: 16,
-              fontSize: 28,
-              fontWeight: 600,
-              letterSpacing: "-0.02em",
-              color: "#0A0A0A",
-              fontFamily: "ui-sans-serif, system-ui, sans-serif",
             }}
           >
             <div
@@ -63,10 +56,22 @@ export async function GET(request: Request) {
                 display: "flex",
               }}
             />
-            Frameline
+            <div
+              style={{
+                display: "flex",
+                fontSize: 28,
+                fontWeight: 600,
+                letterSpacing: "-0.02em",
+                color: "#0A0A0A",
+                fontFamily: "ui-sans-serif, system-ui, sans-serif",
+              }}
+            >
+              Frameline
+            </div>
           </div>
           <div
             style={{
+              display: "flex",
               fontSize: 22,
               letterSpacing: "0.14em",
               textTransform: "uppercase",
@@ -79,9 +84,16 @@ export async function GET(request: Request) {
           </div>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 20,
+          }}
+        >
           <div
             style={{
+              display: "flex",
               fontSize: 22,
               letterSpacing: "0.14em",
               textTransform: "uppercase",
@@ -90,14 +102,16 @@ export async function GET(request: Request) {
               fontWeight: 600,
             }}
           >
-            {type} material
+            {`${type} material`}
           </div>
           <div
             style={{
+              display: "flex",
               fontSize: 72,
               lineHeight: 1.05,
               letterSpacing: "-0.03em",
               color: "#0A0A0A",
+              fontFamily: "Georgia, serif",
               maxWidth: 980,
             }}
           >
