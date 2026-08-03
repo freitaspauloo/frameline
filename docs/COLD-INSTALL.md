@@ -51,4 +51,4 @@
 | Pass / fail | |
 | Notes | |
 
-Related: in-app [Installation](/docs/installation) · `docs/DISCOVERY.md` Gate 01 · free funnel `/free`.
+Related: in-app [Cold install](/docs/cold-install) · [Installation](/docs/installation) · `docs/DISCOVERY.md` Gate 01 · free funnel `/free`.

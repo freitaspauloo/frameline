@@ -24,6 +24,11 @@ export const DOCS_NAV = [
     description: "CLI, copy-paste, and registry tokens.",
   },
   {
+    href: "/docs/cold-install",
+    label: "Cold install",
+    description: "Timed checklist — free SKU into a fresh app.",
+  },
+  {
     href: "/docs/theming",
     label: "Theming",
     description: "Token binding, CSS variables, dark mode.",

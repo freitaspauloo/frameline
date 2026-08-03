@@ -18,6 +18,7 @@ import { getLicensePlan } from "@/lib/license-plans";
 import { cn } from "@/lib/utils";
 import {
   getMaterial,
+  getMaterialPropDefaults,
   getMaterialProps,
   type MaterialCatalogEntry,
   type MaterialPropDef,
@@ -123,17 +124,20 @@ function propsToSearchParams(
   props: Record<string, unknown>,
   fields: ControlField[],
   colorFields: ColorField[] | undefined,
+  defaults?: Record<string, unknown>,
 ): URLSearchParams {
   const params = new URLSearchParams();
   for (const field of fields) {
     const v = props[field.key];
     if (typeof v === "number" && Number.isFinite(v)) {
+      if (defaults && defaults[field.key] === v) continue;
       params.set(field.key, String(v));
     }
   }
   for (const c of colorFields ?? []) {
     const v = props[c.key];
     if (typeof v === "string" && v) {
+      if (defaults && defaults[c.key] === v) continue;
       params.set(c.key, v);
     }
   }
@@ -211,6 +215,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
   );
   const [copied, setCopied] = React.useState(false);
   const [copiedCli, setCopiedCli] = React.useState(false);
+  const [copiedShare, setCopiedShare] = React.useState(false);
   const [paused, setPaused] = React.useState(false);
   /** Explicit reduced-motion toggle → CSS shell fallback (separate from Pause). */
   const [reducedMotion, setReducedMotion] = React.useState(false);
@@ -235,6 +240,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
         props,
         controls.fields,
         controls.colors,
+        controls.defaults,
       );
       const qs = params.toString();
       const next = qs
@@ -254,6 +260,11 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
     [slug, props],
   );
 
+  function resetConfigurator() {
+    setProps({ ...getMaterialPropDefaults(slug) });
+    window.history.replaceState(null, "", window.location.pathname);
+  }
+
   async function copySnippet() {
     await navigator.clipboard.writeText(snippet);
     setCopied(true);
@@ -264,6 +275,12 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
     await navigator.clipboard.writeText(cliSnippet);
     setCopiedCli(true);
     window.setTimeout(() => setCopiedCli(false), 1600);
+  }
+
+  async function shareConfig() {
+    await navigator.clipboard.writeText(window.location.href);
+    setCopiedShare(true);
+    window.setTimeout(() => setCopiedShare(false), 1600);
   }
 
   return (
@@ -369,7 +386,25 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
           <div className="divide-y divide-border">
             <Panel
               action={
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center justify-end gap-2">
+                  <Button
+                    aria-label="Reset configurator to defaults"
+                    size="xs"
+                    type="button"
+                    variant="outline"
+                    onClick={resetConfigurator}
+                  >
+                    Reset
+                  </Button>
+                  <Button
+                    aria-label="Copy page URL with current config"
+                    size="xs"
+                    type="button"
+                    variant="outline"
+                    onClick={shareConfig}
+                  >
+                    {copiedShare ? "Copied link" : "Share config"}
+                  </Button>
                   <Button
                     aria-label={paused ? "Play preview" : "Pause preview"}
                     aria-pressed={paused}
@@ -396,7 +431,8 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
             >
               <p className="mb-6 text-sm leading-relaxed text-muted-foreground">
                 Pause freezes the live preview. Reduced motion uses the CSS
-                shell fallback.
+                shell fallback. Reset restores catalog defaults and clears
+                config URL params. Share config copies this page link.
               </p>
               <div className="space-y-6">
                 {controls.fields.map((field) => (

@@ -15,7 +15,7 @@ Steps, not dates. Supersedes the archived V1 “Relay” sketch.
 | WP7 Catalog production | **40 / 40** count met; quality bar still ongoing (descriptions, OG stills) |
 | WP8 Commerce | Demo checkout + Stripe-ready API stub; **blocked on live Stripe** for Phase C |
 | WP9 Entitlements | Domain types + demo account gating; **blocked on Postgres** for durable entitlements |
-| WP10 Docs | Hub + install / theming / a11y / perf / examples / troubleshooting / licensing |
+| WP10 Docs | Hub + install / cold-install / theming / a11y / perf / examples / troubleshooting / licensing |
 | WP11 Admin | Shell + catalog/orders views; demo auth gate — **real auth still blocked** |
 | WP12 Launch ops | Sitemap / robots / metadata; waitlist + WTP intent instrumentation live; legal pages |
 | CI / smoke | Live — `.github/workflows/ci.yml` runs `tsc`, `pnpm smoke`, `pnpm build`; catalog + renderer coverage in smoke |
