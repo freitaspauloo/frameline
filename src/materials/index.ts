@@ -93,6 +93,12 @@ export { GlowRim } from "./glow-rim";
 export type { GlowRimProps } from "./glow-rim";
 export { FogLayer } from "./fog-layer";
 export type { FogLayerProps } from "./fog-layer";
+export {
+  COMPONENT_NAMES,
+  getMaterialComponentName,
+  renderMaterial,
+} from "./renderers";
+export type { MaterialRenderProps } from "./renderers";
 export { MaterialShell } from "./material-shell";
 export {
   MATERIAL_PROPS,

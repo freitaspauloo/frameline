@@ -1,48 +1,7 @@
 "use client";
 
-import {
-  AuroraDusk,
-  AuroraMesh,
-  BlueSignal,
-  CellVoronoi,
-  CmykHalftone,
-  DuskVeil,
-  EmberWarp,
-  FogLayer,
-  GemHaze,
-  GlowRim,
-  GrainField,
-  GrainNight,
-  GridGhost,
-  HalftoneSignal,
-  HaloRays,
-  InkDither,
-  InkDitherSoft,
-  InkMetaballs,
-  InkSwirl,
-  LiquidChrome,
-  MeshStill,
-  NeuroVeil,
-  OrbitDots,
-  PanelGlass,
-  PaperTooth,
-  PerlinMoss,
-  PulseFrame,
-  RadialStill,
-  SeraWash,
-  SignalDots,
-  SimplexField,
-  SmokeRing,
-  SpiralInk,
-  StillMesh,
-  StoneBand,
-  StripeQuiet,
-  TideWave,
-  VoronoiSoft,
-  WaterSheet,
-  WaveRibbon,
-  getMaterial,
-} from "@/materials";
+import { getMaterial } from "@/materials";
+import { renderMaterial } from "@/materials/renderers";
 import { cn } from "@/lib/utils";
 
 export function WireframeMaterialPreview({
@@ -54,96 +13,19 @@ export function WireframeMaterialPreview({
 }) {
   const entry = getMaterial(slug);
   const common = cn("absolute inset-0 h-full w-full", className);
+  const node = renderMaterial(slug, {
+    className: common,
+    props: {},
+  });
 
-  switch (slug) {
-    case "aurora-mesh":
-      return <AuroraMesh className={common} />;
-    case "ink-dither":
-      return <InkDither className={common} />;
-    case "grain-field":
-      return <GrainField className={common} />;
-    case "neuro-veil":
-      return <NeuroVeil className={common} />;
-    case "tide-wave":
-      return <TideWave className={common} />;
-    case "cell-voronoi":
-      return <CellVoronoi className={common} />;
-    case "ink-swirl":
-      return <InkSwirl className={common} />;
-    case "signal-dots":
-      return <SignalDots className={common} />;
-    case "ember-warp":
-      return <EmberWarp className={common} />;
-    case "halo-rays":
-      return <HaloRays className={common} />;
-    case "ink-metaballs":
-      return <InkMetaballs className={common} />;
-    case "smoke-ring":
-      return <SmokeRing className={common} />;
-    case "simplex-field":
-      return <SimplexField className={common} />;
-    case "halftone-signal":
-      return <HalftoneSignal className={common} />;
-    case "liquid-chrome":
-      return <LiquidChrome className={common} />;
-    case "panel-glass":
-      return <PanelGlass className={common} />;
-    case "orbit-dots":
-      return <OrbitDots className={common} />;
-    case "spiral-ink":
-      return <SpiralInk className={common} />;
-    case "perlin-moss":
-      return <PerlinMoss className={common} />;
-    case "pulse-frame":
-      return <PulseFrame className={common} />;
-    case "water-sheet":
-      return <WaterSheet className={common} />;
-    case "still-mesh":
-      return <StillMesh className={common} />;
-    case "paper-tooth":
-      return <PaperTooth className={common} />;
-    case "gem-haze":
-      return <GemHaze className={common} />;
-    case "cmyk-halftone":
-      return <CmykHalftone className={common} />;
-    case "radial-still":
-      return <RadialStill className={common} />;
-    case "mesh-still":
-      return <MeshStill className={common} />;
-    case "aurora-dusk":
-      return <AuroraDusk className={common} />;
-    case "ink-dither-soft":
-      return <InkDitherSoft className={common} />;
-    case "grain-night":
-      return <GrainNight className={common} />;
-    case "wave-ribbon":
-      return <WaveRibbon className={common} />;
-    case "voronoi-soft":
-      return <VoronoiSoft className={common} />;
-    case "sera-wash":
-      return <SeraWash className={common} />;
-    case "stone-band":
-      return <StoneBand className={common} />;
-    case "blue-signal":
-      return <BlueSignal className={common} />;
-    case "dusk-veil":
-      return <DuskVeil className={common} />;
-    case "grid-ghost":
-      return <GridGhost className={common} />;
-    case "stripe-quiet":
-      return <StripeQuiet className={common} />;
-    case "glow-rim":
-      return <GlowRim className={common} />;
-    case "fog-layer":
-      return <FogLayer className={common} />;
-    default:
-      return (
-        <div
-          className={common}
-          style={{
-            backgroundImage: `linear-gradient(135deg, ${(entry?.fallbackColors ?? ["#E6E8EC", "#0B0D12"]).join(", ")})`,
-          }}
-        />
-      );
-  }
+  if (node) return node;
+
+  return (
+    <div
+      className={common}
+      style={{
+        backgroundImage: `linear-gradient(135deg, ${(entry?.fallbackColors ?? ["#E6E8EC", "#0B0D12"]).join(", ")})`,
+      }}
+    />
+  );
 }
