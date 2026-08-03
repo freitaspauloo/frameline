@@ -30,6 +30,30 @@ async function readContactCount(): Promise<number> {
   }
 }
 
+type WtpIntentEntry = {
+  plan?: string;
+};
+
+async function readWtpByPlan(): Promise<{
+  total: number;
+  byPlan: Record<string, number>;
+}> {
+  const wtpPath = path.join(process.cwd(), ".data", "wtp.json");
+  try {
+    const raw = await readFile(wtpPath, "utf8");
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return { total: 0, byPlan: {} };
+    const byPlan: Record<string, number> = {};
+    for (const entry of parsed as WtpIntentEntry[]) {
+      const plan = typeof entry.plan === "string" ? entry.plan : "unknown";
+      byPlan[plan] = (byPlan[plan] ?? 0) + 1;
+    }
+    return { total: parsed.length, byPlan };
+  } catch {
+    return { total: 0, byPlan: {} };
+  }
+}
+
 export default async function AdminDashboardPage() {
   const materialCount = MATERIALS_CATALOG.length;
   const collectionCount = MATERIALS_COLLECTIONS.length;
@@ -39,6 +63,7 @@ export default async function AdminDashboardPage() {
   const orders = await readDemoOrders();
   const waitlistCount = await readWaitlistCount();
   const inboxCount = await readContactCount();
+  const wtp = await readWtpByPlan();
 
   const stats = [
     { label: "Materials", value: materialCount, href: "/admin/materials" },
@@ -51,6 +76,8 @@ export default async function AdminDashboardPage() {
     { label: "Inbox", value: inboxCount, href: "/admin/inbox" },
     { label: "Waitlist", value: waitlistCount, href: null },
   ] as const;
+
+  const planOrder = ["static", "personal", "team"] as const;
 
   return (
     <div className="space-y-8">
@@ -90,6 +117,34 @@ export default async function AdminDashboardPage() {
           );
         })}
       </dl>
+
+      <section className="border border-border p-4 sm:p-6">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+            WTP intent
+          </h2>
+          <p className="font-mono text-sm tabular-nums text-foreground">
+            {wtp.total} total
+          </p>
+        </div>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Fake-door plan clicks from{" "}
+          <span className="font-mono">.data/wtp.json</span> (pricing Buy +
+          checkout submit). Counts are instance-local — not Gate 01 metrics.
+        </p>
+        <dl className="mt-6 grid grid-cols-3 gap-px border border-border bg-border">
+          {planOrder.map((plan) => (
+            <div className="bg-background p-4" key={plan}>
+              <dt className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                {plan}
+              </dt>
+              <dd className="mt-3 font-mono text-2xl tabular-nums text-foreground">
+                {wtp.byPlan[plan] ?? 0}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
 
       <div className="border-t border-border pt-6 text-sm text-muted-foreground">
         <p>

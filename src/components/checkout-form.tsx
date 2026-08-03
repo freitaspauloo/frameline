@@ -24,6 +24,7 @@ import {
   LICENSE_PLAN_VERSION,
 } from "@/lib/license-plans";
 import { cn } from "@/lib/utils";
+import { recordWtpIntent } from "@/lib/wtp-intent";
 
 const PLAN_OPTIONS: CartPlan[] = ["static", "personal", "team"];
 
@@ -74,6 +75,12 @@ export function CheckoutForm({
     setError(null);
     setStripeMessage(null);
     setEmail(emailValue);
+    recordWtpIntent({
+      plan: activePlan,
+      material: activeMaterial,
+      email: emailValue,
+      source: "checkout",
+    });
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",

@@ -18,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/free",
     "/collections",
     "/pricing",
+    "/waitlist",
     "/about",
     "/contact",
     "/license",
@@ -32,7 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority:
       path === ""
         ? 1
-        : path === "/materials" || path === "/pricing" || path === "/free"
+        : path === "/materials" || path === "/pricing" || path === "/free" || path === "/waitlist"
           ? 0.9
           : 0.7,
   }));
