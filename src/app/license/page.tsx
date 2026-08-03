@@ -11,7 +11,10 @@ import {
   MarketingSection,
   MarketingShell,
 } from "@/components/marketing-shell";
-import { LICENSE_PLANS } from "@/lib/license-plans";
+import {
+  LICENSE_PLANS,
+  LICENSE_PLAN_VERSION,
+} from "@/lib/license-plans";
 
 export const metadata: Metadata = {
   title: "License",
@@ -44,6 +47,27 @@ export default function LicensePage() {
           title="What you can do"
         />
 
+        <MarketingPad className="space-y-3 border-t border-border py-8">
+          <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+            License version
+          </p>
+          <p className="font-mono text-sm text-foreground">
+            {LICENSE_PLAN_VERSION}
+          </p>
+          <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            Checkout and fulfillment record this version with your order. If we
+            revise the plans later, your purchase keeps the rights you bought
+            under — see{" "}
+            <Link
+              className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+              href="/docs/licensing"
+            >
+              /docs/licensing
+            </Link>
+            .
+          </p>
+        </MarketingPad>
+
         <MarketingRuledGrid>
           {tiers.map((plan) => (
             <MarketingRuledCell key={plan.key} className="space-y-4">
@@ -62,7 +86,12 @@ export default function LicensePage() {
                 </p>
                 <ul className="space-y-2 text-foreground">
                   {plan.permitted.map((item) => (
-                    <li key={item}>{item}</li>
+                    <li className="flex gap-2" key={item}>
+                      <span aria-hidden className="text-muted-foreground">
+                        +
+                      </span>
+                      <span>{item}</span>
+                    </li>
                   ))}
                 </ul>
                 <p className="pt-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
@@ -70,7 +99,10 @@ export default function LicensePage() {
                 </p>
                 <ul className="space-y-2 text-muted-foreground">
                   {plan.notPermitted.map((item) => (
-                    <li key={item}>{item}</li>
+                    <li className="flex gap-2" key={item}>
+                      <span aria-hidden>—</span>
+                      <span>{item}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -78,7 +110,110 @@ export default function LicensePage() {
           ))}
         </MarketingRuledGrid>
 
-        <MarketingPad className="space-y-4 border-t border-border py-12">
+        <MarketingPad className="space-y-6 border-t border-border py-12">
+          <div className="space-y-3">
+            <h2 className="font-heading text-lg font-medium tracking-tight text-foreground">
+              Quick comparison
+            </h2>
+            <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              Free covers designated free SKUs. Personal unlocks paid registry
+              installs for your own commercial work. Team adds client
+              deliverables and multi-seat clarity. Every tier forbids
+              redistributing source packages.
+            </p>
+            <div className="overflow-x-auto border border-border">
+              <table className="w-full min-w-[36rem] border-collapse text-left text-sm">
+                <caption className="sr-only">
+                  License tier comparison for Free, Personal, and Team
+                </caption>
+                <thead>
+                  <tr className="border-b border-border bg-muted/40">
+                    <th className="px-4 py-3 font-semibold text-foreground" scope="col">
+                      Topic
+                    </th>
+                    {tiers.map((plan) => (
+                      <th
+                        className="px-4 py-3 font-semibold text-foreground"
+                        key={plan.key}
+                        scope="col"
+                      >
+                        {plan.name}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-border">
+                    <th
+                      className="px-4 py-3 font-medium text-muted-foreground"
+                      scope="row"
+                    >
+                      Price
+                    </th>
+                    {tiers.map((plan) => (
+                      <td className="px-4 py-3 text-foreground" key={plan.key}>
+                        {plan.priceLabel}
+                      </td>
+                    ))}
+                  </tr>
+                  <tr className="border-b border-border">
+                    <th
+                      className="px-4 py-3 font-medium text-muted-foreground"
+                      scope="row"
+                    >
+                      Who it fits
+                    </th>
+                    {tiers.map((plan) => (
+                      <td
+                        className="px-4 py-3 text-muted-foreground"
+                        key={plan.key}
+                      >
+                        {plan.summary}
+                      </td>
+                    ))}
+                  </tr>
+                  <tr className="border-b border-border align-top">
+                    <th
+                      className="px-4 py-3 font-medium text-muted-foreground"
+                      scope="row"
+                    >
+                      Permitted
+                    </th>
+                    {tiers.map((plan) => (
+                      <td className="px-4 py-3 text-foreground" key={plan.key}>
+                        <ul className="space-y-1.5">
+                          {plan.permitted.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      </td>
+                    ))}
+                  </tr>
+                  <tr className="align-top">
+                    <th
+                      className="px-4 py-3 font-medium text-muted-foreground"
+                      scope="row"
+                    >
+                      Not permitted
+                    </th>
+                    {tiers.map((plan) => (
+                      <td
+                        className="px-4 py-3 text-muted-foreground"
+                        key={plan.key}
+                      >
+                        <ul className="space-y-1.5">
+                          {plan.notPermitted.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      </td>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
             Static export (~$19) is a separate entry SKU for decks, social, and
             non-React use. See{" "}
@@ -100,7 +235,10 @@ export default function LicensePage() {
           <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
             Universal rule across every tier: do not redistribute or resell
             source packages, including inside templates, starter kits, or asset
-            bundles. This page is a plain-language guide — the license version
+            bundles. This page is a plain-language guide — license version{" "}
+            <span className="font-mono text-foreground">
+              {LICENSE_PLAN_VERSION}
+            </span>{" "}
             attached to your order is the binding record.
           </p>
         </MarketingPad>

@@ -65,13 +65,21 @@ export function MarketingShell({
         className,
       )}
     >
+      <a
+        className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:border focus:border-border focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:text-foreground focus:outline-none"
+        href="#main"
+      >
+        Skip to content
+      </a>
       <div
         aria-hidden
         className="pointer-events-none absolute inset-y-0 left-1/2 z-20 w-full max-w-7xl -translate-x-1/2"
       >
         <div className="h-full border-x border-border" />
       </div>
-      <div className="relative z-0 overflow-visible">{children}</div>
+      <main className="relative z-0 overflow-visible" id="main">
+        {children}
+      </main>
     </div>
   );
 }

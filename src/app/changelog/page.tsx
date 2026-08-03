@@ -17,6 +17,35 @@ export const metadata: Metadata = {
 const ENTRIES = [
   {
     date: "2026-08-03",
+    title: "Quality & discovery pass",
+    items: [
+      "Home catalog CTA links to full materials index with live catalog count",
+      "License page: tier comparison table, permitted/not from plans, version pin callout",
+      "Privacy: waitlist, contact, WTP aggregates, and `.data` demo storage notes",
+      "Marketing navbar: mobile disclosure for Collections / Materials / Docs / Pricing",
+      "Collections index: material counts for all six sets; catalog search labeled for a11y",
+    ],
+  },
+  {
+    date: "2026-08-03",
+    title: "CSS tier + demo publish",
+    items: [
+      "Eight CSS-only materials: Sera Wash, Stone Band, Blue Signal, Dusk Veil, Grid Ghost, Stripe Quiet, Glow Rim, Fog Layer",
+      "Catalog at 40 materials — CSS tier with honest negligible-GPU perf notes",
+      "Admin demo publish: `.data/catalog-overrides.json` for title/description/tier/status without mutating source catalog",
+    ],
+  },
+  {
+    date: "2026-08-03",
+    title: "Catalog depth drop",
+    items: [
+      "Twelve new materials: Water Sheet, Still Mesh, Paper Tooth, Gem Haze, CMYK Halftone, Radial Still, Mesh Still, Aurora Dusk, Ink Dither Soft, Grain Night, Wave Ribbon, Voronoi Soft",
+      "Collections: Still gradients, Nocturnal; Signal systems expanded with free static fields",
+      "Heatmap / FlutedGlass skipped (mandatory image) — Still Mesh and Gem Haze stand in",
+    ],
+  },
+  {
+    date: "2026-08-03",
     title: "Storefront foundation",
     items: [
       "Catalog filters: search, use context, free/paid, sort",

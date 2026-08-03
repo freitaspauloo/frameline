@@ -1,11 +1,21 @@
 import { NextResponse } from "next/server";
 
+import { fulfillDemoOrder } from "@/lib/fulfillment";
 import {
   getLicensePlan,
   isCheckoutPlan,
 } from "@/lib/license-plans";
+import { captureException } from "@/lib/monitoring";
+import {
+  clientIp,
+  rateLimit,
+  rateLimitResponse,
+} from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  const limited = rateLimit(`checkout:${clientIp(request)}`);
+  if (!limited.ok) return rateLimitResponse(limited);
+
   let body: { plan?: string; email?: string; material?: string } = {};
   try {
     body = (await request.json()) as {
@@ -41,19 +51,41 @@ export async function POST(request: Request) {
 
   const material = body.material?.trim() || undefined;
   const license = getLicensePlan(plan);
-  const qs = new URLSearchParams({ plan, email });
-  if (material) qs.set("material", material);
 
   if (!process.env.STRIPE_SECRET_KEY) {
-    return NextResponse.json({
-      ok: true,
-      mode: "demo" as const,
-      plan,
-      email,
-      material,
-      amountCents: license?.amountCents,
-      redirectTo: `/orders/demo?${qs.toString()}`,
-    });
+    try {
+      const fulfilled = await fulfillDemoOrder({
+        email,
+        plan,
+        material,
+        paymentProviderRef: null,
+      });
+
+      const qs = new URLSearchParams({
+        plan,
+        email,
+        orderId: fulfilled.orderId,
+      });
+      if (material) qs.set("material", material);
+
+      return NextResponse.json({
+        ok: true,
+        mode: "demo" as const,
+        plan,
+        email,
+        material,
+        amountCents: license?.amountCents,
+        orderId: fulfilled.orderId,
+        registryToken: fulfilled.registryToken,
+        redirectTo: `/orders/demo?${qs.toString()}`,
+      });
+    } catch (err) {
+      captureException(err, { route: "checkout", plan, email });
+      return NextResponse.json(
+        { ok: false, error: "Fulfillment failed" },
+        { status: 500 },
+      );
+    }
   }
 
   return NextResponse.json({

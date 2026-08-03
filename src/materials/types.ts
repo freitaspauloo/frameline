@@ -8,6 +8,55 @@ export type MaterialUseContext =
   | "loading"
   | "auth";
 
+export const MATERIAL_USE_CONTEXTS: {
+  value: MaterialUseContext;
+  label: string;
+  description: string;
+}[] = [
+  {
+    value: "hero",
+    label: "Hero",
+    description:
+      "Full-bleed first-viewport surfaces that hold brand and a clear CTA.",
+  },
+  {
+    value: "section",
+    label: "Section",
+    description:
+      "Band and strip materials for marketing sections and mid-page atmosphere.",
+  },
+  {
+    value: "card",
+    label: "Card",
+    description:
+      "Quiet fields for cards, panels, and compact product surfaces.",
+  },
+  {
+    value: "empty",
+    label: "Empty",
+    description:
+      "Empty-state textures that feel intentional without stealing focus.",
+  },
+  {
+    value: "loading",
+    label: "Loading",
+    description:
+      "Loading shells and progress-adjacent surfaces with calm motion.",
+  },
+  {
+    value: "auth",
+    label: "Auth",
+    description:
+      "Sign-in and account shells — atmosphere without competing with forms.",
+  },
+];
+
+export function isMaterialUseContext(
+  value: string,
+): value is MaterialUseContext {
+  return MATERIAL_USE_CONTEXTS.some((c) => c.value === value);
+}
+
 export type MaterialTier = "free" | "personal" | "team";
 
 /** Browse hubs on the marketing site — maps to Grainient-style category tiles. */

@@ -8,8 +8,15 @@ import {
   DocsShell,
   DocsUl,
 } from "@/components/docs-shell";
+import { MATERIALS_CATALOG, MATERIAL_USE_CONTEXTS } from "@/materials";
 
 export default function ExamplesDocsPage() {
+  const contextCounts = MATERIAL_USE_CONTEXTS.map((c) => ({
+    ...c,
+    count: MATERIALS_CATALOG.filter((m) => m.useContexts.includes(c.value))
+      .length,
+  }));
+
   return (
     <DocsShell
       currentPath="/docs/examples"
@@ -36,6 +43,30 @@ export default function ExamplesDocsPage() {
         <DocsInlineCode>grain-field</DocsInlineCode>. High-contrast moments:{" "}
         <DocsInlineCode>ink-dither</DocsInlineCode>.
       </DocsP>
+
+      <DocsH2 id="context-coverage">Context coverage</DocsH2>
+      <DocsP>
+        Catalog materials tagged for each use context (a material can count in
+        more than one). Filter live on{" "}
+        <Link
+          className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+          href="/materials"
+        >
+          Materials
+        </Link>
+        .
+      </DocsP>
+      <div className="mb-8 flex flex-wrap gap-2">
+        {contextCounts.map((c) => (
+          <Link
+            key={c.value}
+            className="border border-border px-3 py-1.5 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase transition-colors hover:border-foreground hover:text-foreground"
+            href={`/materials?context=${c.value}`}
+          >
+            {c.label} · {c.count}
+          </Link>
+        ))}
+      </div>
 
       <DocsH2 id="hero">Hero</DocsH2>
       <DocsP>

@@ -61,7 +61,7 @@ export const MATERIALS_CATALOG: MaterialCatalogEntry[] = [
     slug: "tide-wave",
     title: "Tide Wave",
     description:
-      "Flowing wave mesh for heroes and sectional bands.",
+      "Horizontal swell lines that read as tide, not generic wave noise — for heroes and sectional bands.",
     type: "mesh",
     useContexts: ["hero", "section"],
     tier: "personal",
@@ -103,7 +103,7 @@ export const MATERIALS_CATALOG: MaterialCatalogEntry[] = [
     slug: "signal-dots",
     title: "Signal Dots",
     description:
-      "Quiet dot grid for loading, empty states, and card surfaces.",
+      "Sparse telemetry grid — dots that feel like a live feed, not wallpaper, for loading and empty shells.",
     type: "dither",
     useContexts: ["loading", "empty", "card"],
     tier: "free",
@@ -131,7 +131,7 @@ export const MATERIALS_CATALOG: MaterialCatalogEntry[] = [
     slug: "halo-rays",
     title: "Halo Rays",
     description:
-      "Radiating god rays for heroes and sectional light fields.",
+      "Bloomed radial spokes from a single light well — cinematic rim light for heroes, not a lens-flare sticker.",
     type: "mesh",
     useContexts: ["hero", "section"],
     tier: "personal",
@@ -145,7 +145,7 @@ export const MATERIALS_CATALOG: MaterialCatalogEntry[] = [
     slug: "ink-metaballs",
     title: "Ink Metaballs",
     description:
-      "Gooey ink blobs for heroes, empty states, and loading shells.",
+      "Merging ink masses with soft meniscus edges — organic weight for empty and loading states.",
     type: "mesh",
     useContexts: ["hero", "empty", "loading"],
     tier: "personal",
@@ -187,7 +187,7 @@ export const MATERIALS_CATALOG: MaterialCatalogEntry[] = [
     slug: "halftone-signal",
     title: "Halftone Signal",
     description:
-      "Halftone dot dither for sections and empty states.",
+      "Print-press dot fields that pulse like a broadcast — sectional texture with ink-on-paper grit.",
     type: "dither",
     useContexts: ["section", "empty"],
     tier: "personal",
@@ -281,6 +281,278 @@ export const MATERIALS_CATALOG: MaterialCatalogEntry[] = [
     perfNotes:
       "PulsingBorder + smoke uses noise texture — heavier; one hero or card max.",
   },
+  {
+    slug: "water-sheet",
+    title: "Water Sheet",
+    description:
+      "Caustic water mesh for heroes and sectional bands — works as a standalone texture.",
+    type: "mesh",
+    useContexts: ["hero", "section"],
+    tier: "personal",
+    tags: ["mesh", "water", "caustic", "motion"],
+    fallbackColors: ["#1A4A6B", "#E8F4FF", "#2D6BFF"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "Water caustics are mid-weight — one full-bleed hero; pause when off-screen.",
+  },
+  {
+    slug: "still-mesh",
+    title: "Still Mesh",
+    description:
+      "Static multi-point mesh for heroes and empty states. Warm heat-adjacent palette.",
+    type: "mesh",
+    useContexts: ["hero", "empty"],
+    tier: "personal",
+    tags: ["mesh", "static", "gradient", "heat"],
+    fallbackColors: ["#FF6B35", "#1A1210", "#2D6BFF", "#F4E8D8"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "StaticMeshGradient has no animation loop — cheap for grids and empty shells.",
+  },
+  {
+    slug: "paper-tooth",
+    title: "Paper Tooth",
+    description:
+      "Fiber and fold paper grain for cards, auth shells, and quiet sections.",
+    type: "grain",
+    useContexts: ["card", "auth", "section"],
+    tier: "free",
+    tags: ["grain", "paper", "texture", "fiber"],
+    fallbackColors: ["#F7F5F0", "#C8BBA8"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "PaperTexture is static noise — light; fine for cards and auth backgrounds.",
+  },
+  {
+    slug: "gem-haze",
+    title: "Gem Haze",
+    description:
+      "Glassy smoke field for heroes and framed cards. Stand-in for image-bound fluted glass.",
+    type: "mesh",
+    useContexts: ["hero", "card"],
+    tier: "team",
+    tags: ["mesh", "smoke", "gem", "glass"],
+    fallbackColors: ["#0A0A0A", "#2D6BFF", "#AF52DE", "#E8F0FF"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "GemSmoke with shape is mid-heavy — one hero or card; prefer static in grids.",
+  },
+  {
+    slug: "cmyk-halftone",
+    title: "CMYK Halftone",
+    description:
+      "Print-style CMYK halftone dither for sections and empty states.",
+    type: "dither",
+    useContexts: ["section", "empty"],
+    tier: "personal",
+    tags: ["dither", "halftone", "cmyk", "print"],
+    fallbackColors: ["#FBFAF5", "#00B4FF", "#FC519F", "#FFD800"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "CMYK flood dots are mid-light; one sectional instance is fine.",
+  },
+  {
+    slug: "radial-still",
+    title: "Radial Still",
+    description:
+      "Still radial bloom from center — quiet focal gravity for auth shells without a motion loop.",
+    type: "mesh",
+    useContexts: ["hero", "section", "auth"],
+    tier: "free",
+    tags: ["mesh", "static", "radial", "gradient"],
+    fallbackColors: ["#0A0A0A", "#2D6BFF", "#5B8CFF", "#E8F0FF"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "Static radial — no animation cost; safe for auth and marketing shells.",
+  },
+  {
+    slug: "mesh-still",
+    title: "Mesh Still",
+    description:
+      "Quiet static mesh gradient for heroes and sectional bands — sea palette.",
+    type: "mesh",
+    useContexts: ["hero", "section"],
+    tier: "free",
+    tags: ["mesh", "static", "gradient", "sea"],
+    fallbackColors: ["#013B65", "#03738C", "#A3D3FF", "#F2FAEF"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "StaticMeshGradient — free for full-bleed heroes; no GPU loop cost.",
+  },
+  {
+    slug: "aurora-dusk",
+    title: "Aurora Dusk",
+    description:
+      "Warm dusk mesh — amber, charcoal, and deep blue for hero shells.",
+    type: "mesh",
+    useContexts: ["hero"],
+    tier: "personal",
+    tags: ["mesh", "gradient", "dusk", "hero"],
+    fallbackColors: ["#1A1210", "#C45C26", "#E8A05C", "#2D4A6B"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "Same cost as Aurora Mesh — one full-bleed hero; pause off-screen.",
+  },
+  {
+    slug: "ink-dither-soft",
+    title: "Ink Dither Soft",
+    description:
+      "Softer low-contrast dither for cards and quiet empty states.",
+    type: "dither",
+    useContexts: ["card", "empty"],
+    tier: "free",
+    tags: ["dither", "ink", "soft", "quiet"],
+    fallbackColors: ["#E8E4DC", "#6B7A99"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "Two-tone dither is cheap; larger size softens alias on retina.",
+  },
+  {
+    slug: "grain-night",
+    title: "Grain Night",
+    description:
+      "Dark night grain for auth shells and understated card surfaces.",
+    type: "grain",
+    useContexts: ["auth", "card"],
+    tier: "personal",
+    tags: ["grain", "night", "dark", "auth"],
+    fallbackColors: ["#0A0A0A", "#1A1A2E", "#2D4A6B", "#0D1520"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "Soft grain loop — good for auth; forceStatic in long card lists.",
+  },
+  {
+    slug: "wave-ribbon",
+    title: "Wave Ribbon",
+    description:
+      "Compressed ribbon bands sized for thin sectional strips — tide energy without a full-bleed swell.",
+    type: "mesh",
+    useContexts: ["section"],
+    tier: "personal",
+    tags: ["mesh", "waves", "ribbon", "pattern"],
+    fallbackColors: ["#0A1628", "#5B8CFF"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "Waves fragment is light — safe for sectional ribbons at modest scale.",
+  },
+  {
+    slug: "voronoi-soft",
+    title: "Voronoi Soft",
+    description:
+      "Soft pastel cell field for loading shells and empty states.",
+    type: "mesh",
+    useContexts: ["loading", "empty"],
+    tier: "personal",
+    tags: ["mesh", "voronoi", "pastel", "soft"],
+    fallbackColors: ["#F5E6F0", "#D4E8F0", "#E8F0D4", "#F7F5F0"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "Lower density than Cell Voronoi — fine for loading and empty shells.",
+  },
+  {
+    slug: "sera-wash",
+    title: "Sera Wash",
+    description:
+      "Soft multi-stop CSS gradient wash for heroes and sectional bands.",
+    type: "mesh",
+    useContexts: ["hero", "section"],
+    tier: "free",
+    tags: ["css", "gradient", "wash", "hero"],
+    fallbackColors: ["#F7F5F0", "#E8F0FF", "#D4C4A8", "#C5F0FF", "#F4F1EA"],
+    renderingTechnique: "css",
+    perfNotes: "CSS-only · negligible GPU",
+  },
+  {
+    slug: "stone-band",
+    title: "Stone Band",
+    description:
+      "Horizontal banded CSS gradient for sectional strips and quiet cards.",
+    type: "grain",
+    useContexts: ["section", "card"],
+    tier: "free",
+    tags: ["css", "bands", "stone", "section"],
+    fallbackColors: ["#E8E4DC", "#C8BBA8", "#A89880", "#D4C4A8", "#F4F1EA"],
+    renderingTechnique: "css",
+    perfNotes: "CSS-only · negligible GPU",
+  },
+  {
+    slug: "blue-signal",
+    title: "Blue Signal",
+    description:
+      "Diagonal brand-blue CSS wash for heroes and empty states.",
+    type: "mesh",
+    useContexts: ["hero", "empty"],
+    tier: "free",
+    tags: ["css", "gradient", "blue", "brand"],
+    fallbackColors: ["#E8F0FF", "#5B8CFF", "#2D6BFF"],
+    renderingTechnique: "css",
+    perfNotes: "CSS-only · negligible GPU",
+  },
+  {
+    slug: "dusk-veil",
+    title: "Dusk Veil",
+    description:
+      "Dark translucent CSS overlay for auth shells and framed cards.",
+    type: "grain",
+    useContexts: ["auth", "card"],
+    tier: "personal",
+    tags: ["css", "veil", "dark", "auth"],
+    fallbackColors: ["#0A0A0A", "#1A1210", "#2D4A6B", "#0A0A0ACC"],
+    renderingTechnique: "css",
+    perfNotes: "CSS-only · negligible GPU",
+  },
+  {
+    slug: "grid-ghost",
+    title: "Grid Ghost",
+    description:
+      "Hairline CSS lattice that suggests structure without stealing focus — loading and empty scaffolds.",
+    type: "dither",
+    useContexts: ["loading", "empty"],
+    tier: "free",
+    tags: ["css", "grid", "loading", "signal"],
+    fallbackColors: ["#F7F5F0", "#2D6BFF33"],
+    renderingTechnique: "css",
+    perfNotes: "CSS-only · negligible GPU",
+  },
+  {
+    slug: "stripe-quiet",
+    title: "Stripe Quiet",
+    description:
+      "Subtle CSS stripes for cards and understated sectional bands.",
+    type: "dither",
+    useContexts: ["card", "section"],
+    tier: "personal",
+    tags: ["css", "stripes", "quiet", "card"],
+    fallbackColors: ["#F4F1EA", "#E8E4DC"],
+    renderingTechnique: "css",
+    perfNotes: "CSS-only · negligible GPU",
+  },
+  {
+    slug: "glow-rim",
+    title: "Glow Rim",
+    description:
+      "Radial vignette / rim-light CSS for heroes and framed cards.",
+    type: "mesh",
+    useContexts: ["hero", "card"],
+    tier: "personal",
+    tags: ["css", "vignette", "rim", "glow"],
+    fallbackColors: ["#0A0A0A", "#2D6BFF"],
+    renderingTechnique: "css",
+    perfNotes: "CSS-only · negligible GPU",
+  },
+  {
+    slug: "fog-layer",
+    title: "Fog Layer",
+    description:
+      "Layered soft CSS gradients for foggy sections and auth shells.",
+    type: "grain",
+    useContexts: ["section", "auth"],
+    tier: "personal",
+    tags: ["css", "fog", "layers", "soft"],
+    fallbackColors: ["#E8E4DC", "#C8BBA8", "#F7F5F0", "#D4C4A8"],
+    renderingTechnique: "css",
+    perfNotes: "CSS-only · negligible GPU",
+  },
 ];
 
 export const MATERIAL_TYPES: {
@@ -305,8 +577,36 @@ export const MATERIAL_TYPES: {
   },
 ];
 
-export function getMaterial(slug: string) {
-  return MATERIALS_CATALOG.find((m) => m.slug === slug);
+/** Draft metadata override applied at read time (admin demo publish). */
+export type CatalogMaterialOverride = {
+  title?: string;
+  description?: string;
+  status?: "draft" | "published";
+  tier?: MaterialCatalogEntry["tier"];
+};
+
+export function applyCatalogOverride(
+  entry: MaterialCatalogEntry,
+  override?: CatalogMaterialOverride | null,
+): MaterialCatalogEntry {
+  if (!override) return entry;
+  return {
+    ...entry,
+    ...(override.title !== undefined ? { title: override.title } : {}),
+    ...(override.description !== undefined
+      ? { description: override.description }
+      : {}),
+    ...(override.tier !== undefined ? { tier: override.tier } : {}),
+  };
+}
+
+export function getMaterial(
+  slug: string,
+  overrides?: Record<string, CatalogMaterialOverride> | null,
+) {
+  const base = MATERIALS_CATALOG.find((m) => m.slug === slug);
+  if (!base) return undefined;
+  return applyCatalogOverride(base, overrides?.[slug]);
 }
 
 export function getMaterialsByType(type: MaterialType) {

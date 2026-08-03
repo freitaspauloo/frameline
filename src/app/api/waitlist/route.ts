@@ -2,6 +2,12 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
 
+import {
+  clientIp,
+  rateLimit,
+  rateLimitResponse,
+} from "@/lib/rate-limit";
+
 type WaitlistEntry = {
   email: string;
   source?: string;
@@ -34,6 +40,9 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const limited = rateLimit(`waitlist:${clientIp(request)}`);
+  if (!limited.ok) return rateLimitResponse(limited);
+
   let body: unknown;
   try {
     body = await request.json();

@@ -188,6 +188,14 @@ FRAMELINE_REGISTRY_TOKEN=fl_live_…
         >
           recipes
         </Link>
+        . Operators verifying a cold install into a fresh Next + Tailwind app
+        should follow the timed checklist on{" "}
+        <Link
+          className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+          href="/docs/cold-install"
+        >
+          Cold install
+        </Link>
         .
       </DocsP>
     </DocsShell>

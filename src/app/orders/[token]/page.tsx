@@ -2,16 +2,47 @@ import Link from "next/link";
 
 import { MarketingNavbar } from "@/components/marketing-navbar";
 import { RelayButton } from "@/components/relay-ui";
+import { findDemoOrder } from "@/lib/fulfillment";
+import { getLicensePlan } from "@/lib/license-plans";
 
 export default async function OrderConfirmationPage({
   params,
   searchParams,
 }: {
   params: Promise<{ token: string }>;
-  searchParams: Promise<{ plan?: string; material?: string }>;
+  searchParams: Promise<{
+    plan?: string;
+    material?: string;
+    email?: string;
+    orderId?: string;
+  }>;
 }) {
   const { token } = await params;
-  const { plan = "personal", material = "ink-dither" } = await searchParams;
+  const {
+    plan: planParam,
+    material: materialParam,
+    email: emailParam,
+    orderId: orderIdParam,
+  } = await searchParams;
+
+  const lookupId =
+    orderIdParam?.trim() ||
+    (token !== "demo" ? token : undefined) ||
+    undefined;
+
+  const stored = await findDemoOrder({
+    id: lookupId,
+    email: emailParam,
+    plan: planParam,
+  });
+
+  const plan = stored?.planKey ?? planParam ?? "personal";
+  const material = stored?.materialSlug ?? materialParam ?? "ink-dither";
+  const license = getLicensePlan(plan);
+  const planLabel = license?.name ?? (plan === "team" ? "Team" : "Personal");
+  const orderRef = stored?.id ?? token;
+  const registryToken = stored?.registryToken ?? null;
+  const email = stored?.email ?? emailParam ?? null;
 
   return (
     <div className="min-h-dvh bg-relay-white text-relay-ink">
@@ -26,14 +57,44 @@ export default async function OrderConfirmationPage({
               You&apos;re in
             </h1>
             <p className="text-sm leading-relaxed text-relay-secondary">
-              {plan === "team" ? "Team" : "Personal"} license confirmed. Install
-              below — Account keeps this for reinstalls.
+              {planLabel} license confirmed
+              {email ? (
+                <>
+                  {" "}
+                  for{" "}
+                  <span className="font-mono text-relay-ink">{email}</span>
+                </>
+              ) : null}
+              . Install below — Account keeps this for reinstalls.
             </p>
           </div>
 
           <pre className="overflow-x-auto rounded-relay-md bg-relay-ink p-4 font-mono text-[12px] leading-relaxed text-relay-white">
-            {`npx shadcn@latest add @frameline/${material}\n# order ${token}`}
+            {`npx shadcn@latest add @frameline/${material}\n# order ${orderRef}`}
           </pre>
+
+          {registryToken ? (
+            <div className="space-y-2">
+              <p className="text-[0.625rem] font-semibold tracking-widest text-relay-secondary uppercase">
+                Registry token
+              </p>
+              <pre className="overflow-x-auto rounded-relay-md border border-relay-border bg-relay-white p-4 font-mono text-[12px] leading-relaxed text-relay-ink">
+                {registryToken}
+              </pre>
+              <p className="text-xs text-relay-secondary">
+                Pass as{" "}
+                <span className="font-mono">Authorization: Bearer …</span> for
+                paid registry reads.
+              </p>
+            </div>
+          ) : (
+            <p className="text-xs text-relay-secondary">
+              Demo confirmation — run checkout again to mint a stored{" "}
+              <span className="font-mono">fl_demo_</span> token, or POST{" "}
+              <span className="font-mono">/api/webhooks/stripe</span> in demo
+              mode.
+            </p>
+          )}
 
           <div className="flex flex-wrap gap-3">
             <RelayButton

@@ -1,10 +1,12 @@
 export {
   MATERIALS_CATALOG,
   MATERIAL_TYPES,
+  applyCatalogOverride,
   getMaterial,
   getMaterialsByType,
   isMaterialType,
 } from "./catalog";
+export type { CatalogMaterialOverride } from "./catalog";
 export {
   MATERIALS_COLLECTIONS,
   getCollection,
@@ -51,7 +53,65 @@ export { PerlinMoss } from "./perlin-moss";
 export type { PerlinMossProps } from "./perlin-moss";
 export { PulseFrame } from "./pulse-frame";
 export type { PulseFrameProps } from "./pulse-frame";
+export { WaterSheet } from "./water-sheet";
+export type { WaterSheetProps } from "./water-sheet";
+export { StillMesh } from "./still-mesh";
+export type { StillMeshProps } from "./still-mesh";
+export { PaperTooth } from "./paper-tooth";
+export type { PaperToothProps } from "./paper-tooth";
+export { GemHaze } from "./gem-haze";
+export type { GemHazeProps } from "./gem-haze";
+export { CmykHalftone } from "./cmyk-halftone";
+export type { CmykHalftoneProps } from "./cmyk-halftone";
+export { RadialStill } from "./radial-still";
+export type { RadialStillProps } from "./radial-still";
+export { MeshStill } from "./mesh-still";
+export type { MeshStillProps } from "./mesh-still";
+export { AuroraDusk } from "./aurora-dusk";
+export type { AuroraDuskProps } from "./aurora-dusk";
+export { InkDitherSoft } from "./ink-dither-soft";
+export type { InkDitherSoftProps } from "./ink-dither-soft";
+export { GrainNight } from "./grain-night";
+export type { GrainNightProps } from "./grain-night";
+export { WaveRibbon } from "./wave-ribbon";
+export type { WaveRibbonProps } from "./wave-ribbon";
+export { VoronoiSoft } from "./voronoi-soft";
+export type { VoronoiSoftProps } from "./voronoi-soft";
+export { SeraWash } from "./sera-wash";
+export type { SeraWashProps } from "./sera-wash";
+export { StoneBand } from "./stone-band";
+export type { StoneBandProps } from "./stone-band";
+export { BlueSignal } from "./blue-signal";
+export type { BlueSignalProps } from "./blue-signal";
+export { DuskVeil } from "./dusk-veil";
+export type { DuskVeilProps } from "./dusk-veil";
+export { GridGhost } from "./grid-ghost";
+export type { GridGhostProps } from "./grid-ghost";
+export { StripeQuiet } from "./stripe-quiet";
+export type { StripeQuietProps } from "./stripe-quiet";
+export { GlowRim } from "./glow-rim";
+export type { GlowRimProps } from "./glow-rim";
+export { FogLayer } from "./fog-layer";
+export type { FogLayerProps } from "./fog-layer";
+export {
+  COMPONENT_NAMES,
+  FALLBACK_COMPONENT_NAME,
+  getMaterialComponentName,
+  slugToComponentName,
+} from "./component-names";
+export { renderMaterial } from "./renderers";
+export type { MaterialRenderProps } from "./renderers";
 export { MaterialShell } from "./material-shell";
+export {
+  MATERIAL_PROPS,
+  getMaterialPropDefaults,
+  getMaterialProps,
+} from "./props";
+export type { MaterialPropDef } from "./props";
+export {
+  MATERIAL_USE_CONTEXTS,
+  isMaterialUseContext,
+} from "./types";
 export type {
   MaterialCatalogEntry,
   MaterialCollection,

@@ -7,17 +7,20 @@ Steps, not dates. Supersedes the archived V1 “Relay” sketch.
 
 | Area | State |
 |---|---|
-| WP2 Material architecture | In progress — `MaterialShell`, reduced-motion fallbacks, typed catalog |
+| WP2 Material architecture | Done enough — `MaterialShell`, reduced-motion fallbacks, shared `renderMaterial` / `COMPONENT_NAMES` registry |
 | WP3 Authoring | Seed path works; publish pipeline still manual |
-| WP4 Catalog UX | Live — type / context / tier filters, search, sort |
+| WP4 Catalog UX | Live — type / context / tier filters, search, sort; intersection-activated previews |
 | WP5 Configurator | Live — controls, JSX copy, URL deep-link, play/pause |
 | WP6 Distribution | Messaging only — registry not gated yet |
-| WP7 Catalog production | **20 / 30–40** materials seeded |
-| WP8 Commerce | Demo checkout + Stripe-ready API stub; no live charges |
-| WP9 Entitlements | Domain types + demo account gating; Postgres schema drafted |
-| WP10 Docs | Hub + install / theming / a11y / perf / examples / troubleshooting / licensing |
-| WP11 Admin | Shell + catalog/orders views; demo auth gate |
-| WP12 Launch ops | Sitemap / robots / metadata; waitlist capture; legal pages |
+| WP7 Catalog production | **40 / 40** count met; quality bar still ongoing (descriptions, OG stills) |
+| WP8 Commerce | Demo checkout + Stripe-ready API stub; **blocked on live Stripe** for Phase C |
+| WP9 Entitlements | Domain types + demo account gating; **blocked on Postgres** for durable entitlements |
+| WP10 Docs | Hub + install / cold-install / theming / a11y / perf / examples / troubleshooting / licensing |
+| WP11 Admin | Shell + catalog/orders views; demo auth gate — **real auth still blocked** |
+| WP12 Launch ops | Sitemap / robots / metadata; waitlist + WTP intent instrumentation live; legal pages |
+| CI / smoke | Live — `.github/workflows/ci.yml` runs `tsc`, `pnpm smoke`, `pnpm build`; catalog + renderer coverage in smoke |
+
+**Phase C gate:** selling path remains scaffolded until Stripe Checkout, Postgres (Prisma), and a real auth provider land. Discovery instrumentation (`/waitlist`, `POST /api/waitlist`, `POST /api/intent`) is live ahead of that.
 
 ## Phase A — Browse & craft (mostly done)
 
@@ -39,7 +42,7 @@ Steps, not dates. Supersedes the archived V1 “Relay” sketch.
 | 9 | Grow to ≥15 materials across 6 contexts | Credible catalog |
 | 10 | Perf notes + props tables as data | Docs/configurator stay in sync |
 | 11 | OG stills / static exports pipeline | Shareable previews |
-| 12 | Reach 30–40 at production bar | SOW Definition of Done |
+| 12 | Reach 40 at production bar (count met; quality ongoing) | SOW Definition of Done |
 
 ## Phase C — Selling (scaffold → live)
 

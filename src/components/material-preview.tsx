@@ -1,87 +1,73 @@
 "use client";
 
-import {
-  AuroraMesh,
-  CellVoronoi,
-  EmberWarp,
-  GrainField,
-  HalftoneSignal,
-  HaloRays,
-  InkDither,
-  InkMetaballs,
-  InkSwirl,
-  LiquidChrome,
-  NeuroVeil,
-  OrbitDots,
-  PanelGlass,
-  PerlinMoss,
-  PulseFrame,
-  SignalDots,
-  SimplexField,
-  SmokeRing,
-  SpiralInk,
-  TideWave,
-  type MaterialCatalogEntry,
-} from "@/materials";
+import * as React from "react";
 
-export function MaterialPreview({
+import { type MaterialCatalogEntry } from "@/materials";
+import { usePrefersReducedMotion } from "@/materials/hooks";
+import { renderMaterial } from "@/materials/renderers";
+
+function PreviewSurface({
   entry,
-  forceStatic = true,
+  forceStatic,
 }: {
   entry: MaterialCatalogEntry;
-  forceStatic?: boolean;
+  forceStatic: boolean;
 }) {
   const common = "absolute inset-0 h-full w-full";
+  const node = renderMaterial(entry.slug, {
+    className: common,
+    forceStatic,
+    props: {},
+  });
 
-  switch (entry.slug) {
-    case "aurora-mesh":
-      return <AuroraMesh className={common} forceStatic={forceStatic} />;
-    case "ink-dither":
-      return <InkDither className={common} forceStatic={forceStatic} />;
-    case "grain-field":
-      return <GrainField className={common} forceStatic={forceStatic} />;
-    case "neuro-veil":
-      return <NeuroVeil className={common} forceStatic={forceStatic} />;
-    case "tide-wave":
-      return <TideWave className={common} forceStatic={forceStatic} />;
-    case "cell-voronoi":
-      return <CellVoronoi className={common} forceStatic={forceStatic} />;
-    case "ink-swirl":
-      return <InkSwirl className={common} forceStatic={forceStatic} />;
-    case "signal-dots":
-      return <SignalDots className={common} forceStatic={forceStatic} />;
-    case "ember-warp":
-      return <EmberWarp className={common} forceStatic={forceStatic} />;
-    case "halo-rays":
-      return <HaloRays className={common} forceStatic={forceStatic} />;
-    case "ink-metaballs":
-      return <InkMetaballs className={common} forceStatic={forceStatic} />;
-    case "smoke-ring":
-      return <SmokeRing className={common} forceStatic={forceStatic} />;
-    case "simplex-field":
-      return <SimplexField className={common} forceStatic={forceStatic} />;
-    case "halftone-signal":
-      return <HalftoneSignal className={common} forceStatic={forceStatic} />;
-    case "liquid-chrome":
-      return <LiquidChrome className={common} forceStatic={forceStatic} />;
-    case "panel-glass":
-      return <PanelGlass className={common} forceStatic={forceStatic} />;
-    case "orbit-dots":
-      return <OrbitDots className={common} forceStatic={forceStatic} />;
-    case "spiral-ink":
-      return <SpiralInk className={common} forceStatic={forceStatic} />;
-    case "perlin-moss":
-      return <PerlinMoss className={common} forceStatic={forceStatic} />;
-    case "pulse-frame":
-      return <PulseFrame className={common} forceStatic={forceStatic} />;
-    default:
-      return (
-        <div
-          className={common}
-          style={{
-            backgroundImage: `linear-gradient(135deg, ${entry.fallbackColors.join(", ")})`,
-          }}
-        />
-      );
-  }
+  if (node) return node;
+
+  return (
+    <div
+      className={common}
+      style={{
+        backgroundImage: `linear-gradient(135deg, ${entry.fallbackColors.join(", ")})`,
+      }}
+    />
+  );
+}
+
+/**
+ * Catalog / grid preview. Animates only while in the viewport;
+ * off-screen and prefers-reduced-motion always use the static shell.
+ */
+export function MaterialPreview({
+  entry,
+  forceStatic = false,
+}: {
+  entry: MaterialCatalogEntry;
+  /** When true, always show the static shell (ignores intersection). */
+  forceStatic?: boolean;
+}) {
+  const rootRef = React.useRef<HTMLDivElement>(null);
+  const [inView, setInView] = React.useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  React.useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([obs]) => {
+        setInView(obs?.isIntersecting ?? false);
+      },
+      { rootMargin: "80px 0px", threshold: 0.01 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const staticMode =
+    forceStatic || prefersReducedMotion || !inView;
+
+  return (
+    <div ref={rootRef} className="absolute inset-0 h-full w-full">
+      <PreviewSurface entry={entry} forceStatic={staticMode} />
+    </div>
+  );
 }

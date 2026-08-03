@@ -12,12 +12,13 @@ import {
   MarketingShell,
 } from "@/components/marketing-shell";
 import { Button } from "@/components/ui/button";
+import { PricingBuyLink } from "@/components/pricing-buy-link";
 import { WaitlistForm } from "@/components/waitlist-form";
 
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Free, Static, Personal, and Team licenses for Frameline materials — clear commercial rights, one-time purchase.",
+    "Free, Static ($19), Personal ($99), and Team ($299) licenses for Frameline materials — clear commercial rights, one-time purchase.",
 };
 
 const TIERS = [
@@ -26,7 +27,12 @@ const TIERS = [
     price: "$0",
     blurb: "Excellent free materials. Same craft bar as paid.",
     features: ["Free SKUs", "Copy / CLI install", "Commercial use"],
-    cta: { href: "/materials?tier=free", label: "Browse free", primary: false },
+    cta: {
+      kind: "link" as const,
+      href: "/free",
+      label: "Browse free",
+      primary: false,
+    },
   },
   {
     name: "Static",
@@ -37,7 +43,13 @@ const TIERS = [
       "Decks, social, video",
       "No registry required",
     ],
-    cta: { href: "/checkout?plan=static", label: "Buy Static", primary: true },
+    cta: {
+      kind: "buy" as const,
+      plan: "static" as const,
+      href: "/checkout?plan=static",
+      label: "Buy Static",
+      primary: true,
+    },
   },
   {
     name: "Personal",
@@ -49,7 +61,13 @@ const TIERS = [
       "Commercial projects",
       "Email receipt + account",
     ],
-    cta: { href: "/checkout?plan=personal", label: "Buy Personal", primary: true },
+    cta: {
+      kind: "buy" as const,
+      plan: "personal" as const,
+      href: "/checkout?plan=personal",
+      label: "Buy Personal",
+      primary: true,
+    },
   },
   {
     name: "Team",
@@ -61,7 +79,13 @@ const TIERS = [
       "Multi-seat clarity",
       "Priority support",
     ],
-    cta: { href: "/checkout?plan=team", label: "Buy Team", primary: true },
+    cta: {
+      kind: "buy" as const,
+      plan: "team" as const,
+      href: "/checkout?plan=team",
+      label: "Buy Team",
+      primary: true,
+    },
   },
 ] as const;
 
@@ -125,23 +149,29 @@ export default async function PricingPage({
                 ))}
               </ul>
               <div className="mt-auto pt-10">
-                <Button
-                  className="w-full"
-                  nativeButton={false}
-                  render={
-                    <Link
-                      href={
-                        material && tier.cta.primary
-                          ? `${tier.cta.href}&material=${material}`
-                          : tier.cta.href
-                      }
-                    />
-                  }
-                  size="lg"
-                  variant={tier.cta.primary ? "default" : "outline"}
-                >
-                  {tier.cta.label}
-                </Button>
+                {tier.cta.kind === "buy" ? (
+                  <PricingBuyLink
+                    href={
+                      material
+                        ? `${tier.cta.href}&material=${material}`
+                        : tier.cta.href
+                    }
+                    label={tier.cta.label}
+                    material={material}
+                    plan={tier.cta.plan}
+                    primary={tier.cta.primary}
+                  />
+                ) : (
+                  <Button
+                    className="w-full"
+                    nativeButton={false}
+                    render={<Link href={tier.cta.href} />}
+                    size="lg"
+                    variant={tier.cta.primary ? "default" : "outline"}
+                  >
+                    {tier.cta.label}
+                  </Button>
+                )}
               </div>
             </MarketingRuledCell>
           ))}
@@ -158,8 +188,14 @@ export default async function PricingPage({
           </h2>
           <p className="text-base leading-relaxed text-muted-foreground">
             New materials, pricing experiments, and registry access — no spam.
-            Static export ($19) ships at checkout when you need decks and
-            social.
+            Prefer a dedicated page?{" "}
+            <Link
+              className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+              href="/waitlist"
+            >
+              /waitlist
+            </Link>
+            .
           </p>
           <WaitlistForm className="mx-auto max-w-md text-left" source="pricing" />
         </MarketingPad>

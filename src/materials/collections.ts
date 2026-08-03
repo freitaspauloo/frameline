@@ -12,11 +12,9 @@ export const MATERIALS_COLLECTIONS: MaterialCollection[] = [
       "aurora-mesh",
       "tide-wave",
       "ember-warp",
-      "ink-swirl",
-      "cell-voronoi",
-      "halo-rays",
       "liquid-chrome",
-      "ink-metaballs",
+      "sera-wash",
+      "blue-signal",
     ],
   },
   {
@@ -28,11 +26,10 @@ export const MATERIALS_COLLECTIONS: MaterialCollection[] = [
     materialSlugs: [
       "grain-field",
       "neuro-veil",
-      "signal-dots",
-      "aurora-mesh",
       "smoke-ring",
-      "simplex-field",
-      "halftone-signal",
+      "paper-tooth",
+      "stone-band",
+      "stripe-quiet",
     ],
   },
   {
@@ -42,10 +39,55 @@ export const MATERIALS_COLLECTIONS: MaterialCollection[] = [
       "Free-tier materials for loading shells, cards, and signal-led surfaces.",
     featured: true,
     materialSlugs: [
-      "aurora-mesh",
-      "neuro-veil",
       "signal-dots",
       "simplex-field",
+      "radial-still",
+      "mesh-still",
+      "ink-dither-soft",
+      "grid-ghost",
+    ],
+  },
+  {
+    slug: "still-gradients",
+    title: "Still gradients",
+    description:
+      "Static mesh and radial fields — no animation loop, full atmosphere.",
+    featured: true,
+    materialSlugs: [
+      "still-mesh",
+      "mesh-still",
+      "radial-still",
+      "paper-tooth",
+    ],
+  },
+  {
+    slug: "nocturnal",
+    title: "Nocturnal",
+    description:
+      "Dark and dusk materials for night auth shells, heroes, and quiet cards.",
+    featured: true,
+    materialSlugs: [
+      "grain-night",
+      "aurora-dusk",
+      "water-sheet",
+      "gem-haze",
+      "dusk-veil",
+      "glow-rim",
+    ],
+  },
+  {
+    slug: "css-essentials",
+    title: "CSS essentials",
+    description:
+      "CSS-only surfaces with negligible GPU cost — washes, bands, grids, and soft layers.",
+    featured: true,
+    materialSlugs: [
+      "sera-wash",
+      "stone-band",
+      "blue-signal",
+      "grid-ghost",
+      "dusk-veil",
+      "fog-layer",
     ],
   },
 ];
