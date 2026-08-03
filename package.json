@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "smoke": "node --experimental-strip-types --import ./scripts/smoke-register.mjs scripts/smoke.mjs",
-    "ci": "pnpm exec tsc --noEmit && pnpm smoke && pnpm build",
+    "verify": "pnpm exec tsc --noEmit && pnpm smoke && pnpm build",
     "material:new": "node scripts/new-material.mjs",
     "demo:seed": "node scripts/seed-demo.mjs"
   },

@@ -17,10 +17,10 @@ Use **pnpm** (not npm) so `pnpm-workspace.yaml` settings stick. Expected warning
 pnpm exec tsc --noEmit
 pnpm smoke
 # or the local CI parity script:
-pnpm ci
+pnpm verify
 ```
 
-`pnpm ci` runs typecheck → smoke → build. Smoke covers catalog + renderer wiring; it does not need a browser.
+`pnpm verify` runs typecheck → smoke → build. Smoke covers catalog + renderer wiring; it does not need a browser.
 
 ## Common scripts
 
