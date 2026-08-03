@@ -26,7 +26,7 @@ const TIERS = [
     price: "$0",
     blurb: "Excellent free materials. Same craft bar as paid.",
     features: ["Free SKUs", "Copy / CLI install", "Commercial use"],
-    cta: { href: "/materials?tier=free", label: "Browse free", primary: false },
+    cta: { href: "/free", label: "Browse free", primary: false },
   },
   {
     name: "Static",

@@ -32,12 +32,20 @@ export async function generateMetadata({
   }
   const title = `${material.title} — ${material.type} material`;
   const description = materialMetaDescription(material);
+  const ogImage = `/og/material?slug=${encodeURIComponent(material.slug)}`;
   return {
     title,
     description,
     openGraph: {
       title: `${material.title} · Frameline`,
       description,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: material.title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${material.title} · Frameline`,
+      description,
+      images: [ogImage],
     },
   };
 }

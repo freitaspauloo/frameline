@@ -100,6 +100,10 @@ export {
   getMaterialProps,
 } from "./props";
 export type { MaterialPropDef } from "./props";
+export {
+  MATERIAL_USE_CONTEXTS,
+  isMaterialUseContext,
+} from "./types";
 export type {
   MaterialCatalogEntry,
   MaterialCollection,

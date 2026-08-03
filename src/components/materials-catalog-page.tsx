@@ -17,7 +17,9 @@ import {
 import {
   MATERIALS_CATALOG,
   MATERIAL_TYPES,
+  MATERIAL_USE_CONTEXTS,
   isMaterialType,
+  isMaterialUseContext,
   type MaterialCatalogEntry,
   type MaterialTier,
   type MaterialType,
@@ -28,15 +30,6 @@ import { cn } from "@/lib/utils";
 /** Hairline filter — outline, not a soft pill. */
 const CHIP =
   "border border-border px-4 py-2 text-[0.625rem] font-semibold tracking-widest uppercase transition-colors";
-
-const USE_CONTEXTS: { value: MaterialUseContext; label: string }[] = [
-  { value: "hero", label: "Hero" },
-  { value: "section", label: "Section" },
-  { value: "card", label: "Card" },
-  { value: "empty", label: "Empty" },
-  { value: "loading", label: "Loading" },
-  { value: "auth", label: "Auth" },
-];
 
 const TIER_FILTERS = [
   { value: "free" as const, label: "Free" },
@@ -51,10 +44,6 @@ const TIER_SORT_RANK: Record<MaterialTier, number> = {
   personal: 1,
   team: 2,
 };
-
-function isUseContext(value: string): value is MaterialUseContext {
-  return USE_CONTEXTS.some((c) => c.value === value);
-}
 
 function isTierFilter(value: string): value is CatalogTierFilter {
   return value === "free" || value === "paid";
@@ -103,7 +92,9 @@ export function MaterialsCatalogPage({
   const activeType: MaterialType | undefined =
     typeFilter && isMaterialType(typeFilter) ? typeFilter : undefined;
   const activeContext: MaterialUseContext | undefined =
-    contextFilter && isUseContext(contextFilter) ? contextFilter : undefined;
+    contextFilter && isMaterialUseContext(contextFilter)
+      ? contextFilter
+      : undefined;
   const activeTier: CatalogTierFilter | undefined =
     tierFilter && isTierFilter(tierFilter) ? tierFilter : undefined;
   const activeSort: CatalogSort =
@@ -151,6 +142,13 @@ export function MaterialsCatalogPage({
     return list;
   }, [catalog, activeType, activeContext, activeTier, activeQ, activeSort]);
 
+  const contextCoverage = useMemo(() => {
+    return MATERIAL_USE_CONTEXTS.map((c) => ({
+      ...c,
+      count: catalog.filter((m) => m.useContexts.includes(c.value)).length,
+    }));
+  }, [catalog]);
+
   const typeMeta = MATERIAL_TYPES.find((t) => t.type === activeType);
 
   function navigate(next: Partial<typeof baseParams>) {
@@ -186,6 +184,21 @@ export function MaterialsCatalogPage({
           title={typeMeta ? typeMeta.title : "Surface as code"}
         >
           <div className="space-y-6">
+            <p className="font-mono text-[11px] leading-relaxed text-muted-foreground">
+              Contexts:{" "}
+              {contextCoverage.map((c, i) => (
+                <span key={c.value}>
+                  {i > 0 ? " · " : null}
+                  <Link
+                    className="hover:text-foreground"
+                    href={`/materials/contexts/${c.value}`}
+                  >
+                    {c.value} ({c.count})
+                  </Link>
+                </span>
+              ))}
+            </p>
+
             <form
               className="flex flex-col gap-3 sm:flex-row sm:items-end"
               onSubmit={onSearchSubmit}
@@ -272,7 +285,7 @@ export function MaterialsCatalogPage({
               >
                 Any
               </Link>
-              {USE_CONTEXTS.map((c) => (
+              {MATERIAL_USE_CONTEXTS.map((c) => (
                 <Link
                   key={c.value}
                   className={cn(
@@ -352,15 +365,19 @@ export function MaterialsCatalogPage({
                       <h2 className="font-heading text-base font-medium tracking-tight">
                         {entry.title}
                       </h2>
-                      <span
-                        className={cn(
-                          "text-[0.625rem] font-semibold tracking-widest uppercase",
-                          entry.tier === "free"
-                            ? "text-muted-foreground"
-                            : "text-foreground",
-                        )}
-                      >
-                        {entry.tier === "free" ? "Free" : "Paid"}
+                      <span className="flex shrink-0 items-center gap-2 text-[0.625rem] font-semibold tracking-widest uppercase">
+                        <span className="text-muted-foreground">
+                          {(entry.renderingTechnique ?? "webgl").toUpperCase()}
+                        </span>
+                        <span
+                          className={
+                            entry.tier === "free"
+                              ? "text-muted-foreground"
+                              : "text-foreground"
+                          }
+                        >
+                          {entry.tier === "free" ? "Free" : "Paid"}
+                        </span>
                       </span>
                     </div>
                     <p className="text-sm leading-relaxed text-muted-foreground">
