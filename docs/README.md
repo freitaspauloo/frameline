@@ -10,3 +10,4 @@
 | **[PRD-v2.md](./PRD-v2.md)** | Shorter V2 draft — superseded by `PRD.md` |
 | **[BUILD-PLAN.md](./BUILD-PLAN.md)** | Archived with V1 — replace after Gate 01 |
 | **[COSTS.md](./COSTS.md)** | Cost notes |
+| **[AUTHORING.md](./AUTHORING.md)** | Checklist for shipping a material |

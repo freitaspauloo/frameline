@@ -1,26 +1,38 @@
 "use client";
 
 import {
+  AuroraDusk,
   AuroraMesh,
   CellVoronoi,
+  CmykHalftone,
   EmberWarp,
+  GemHaze,
   GrainField,
+  GrainNight,
   HalftoneSignal,
   HaloRays,
   InkDither,
+  InkDitherSoft,
   InkMetaballs,
   InkSwirl,
   LiquidChrome,
+  MeshStill,
   NeuroVeil,
   OrbitDots,
   PanelGlass,
+  PaperTooth,
   PerlinMoss,
   PulseFrame,
+  RadialStill,
   SignalDots,
   SimplexField,
   SmokeRing,
   SpiralInk,
+  StillMesh,
   TideWave,
+  VoronoiSoft,
+  WaterSheet,
+  WaveRibbon,
   type MaterialCatalogEntry,
 } from "@/materials";
 
@@ -74,6 +86,30 @@ export function MaterialPreview({
       return <PerlinMoss className={common} forceStatic={forceStatic} />;
     case "pulse-frame":
       return <PulseFrame className={common} forceStatic={forceStatic} />;
+    case "water-sheet":
+      return <WaterSheet className={common} forceStatic={forceStatic} />;
+    case "still-mesh":
+      return <StillMesh className={common} forceStatic={forceStatic} />;
+    case "paper-tooth":
+      return <PaperTooth className={common} forceStatic={forceStatic} />;
+    case "gem-haze":
+      return <GemHaze className={common} forceStatic={forceStatic} />;
+    case "cmyk-halftone":
+      return <CmykHalftone className={common} forceStatic={forceStatic} />;
+    case "radial-still":
+      return <RadialStill className={common} forceStatic={forceStatic} />;
+    case "mesh-still":
+      return <MeshStill className={common} forceStatic={forceStatic} />;
+    case "aurora-dusk":
+      return <AuroraDusk className={common} forceStatic={forceStatic} />;
+    case "ink-dither-soft":
+      return <InkDitherSoft className={common} forceStatic={forceStatic} />;
+    case "grain-night":
+      return <GrainNight className={common} forceStatic={forceStatic} />;
+    case "wave-ribbon":
+      return <WaveRibbon className={common} forceStatic={forceStatic} />;
+    case "voronoi-soft":
+      return <VoronoiSoft className={common} forceStatic={forceStatic} />;
     default:
       return (
         <div

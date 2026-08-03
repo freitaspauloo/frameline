@@ -17,6 +17,15 @@ export const metadata: Metadata = {
 const ENTRIES = [
   {
     date: "2026-08-03",
+    title: "Catalog depth drop",
+    items: [
+      "Twelve new materials: Water Sheet, Still Mesh, Paper Tooth, Gem Haze, CMYK Halftone, Radial Still, Mesh Still, Aurora Dusk, Ink Dither Soft, Grain Night, Wave Ribbon, Voronoi Soft",
+      "Collections: Still gradients, Nocturnal; Signal systems expanded with free static fields",
+      "Heatmap / FlutedGlass skipped (mandatory image) — Still Mesh and Gem Haze stand in",
+    ],
+  },
+  {
+    date: "2026-08-03",
     title: "Storefront foundation",
     items: [
       "Catalog filters: search, use context, free/paid, sort",

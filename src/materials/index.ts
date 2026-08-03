@@ -51,7 +51,37 @@ export { PerlinMoss } from "./perlin-moss";
 export type { PerlinMossProps } from "./perlin-moss";
 export { PulseFrame } from "./pulse-frame";
 export type { PulseFrameProps } from "./pulse-frame";
+export { WaterSheet } from "./water-sheet";
+export type { WaterSheetProps } from "./water-sheet";
+export { StillMesh } from "./still-mesh";
+export type { StillMeshProps } from "./still-mesh";
+export { PaperTooth } from "./paper-tooth";
+export type { PaperToothProps } from "./paper-tooth";
+export { GemHaze } from "./gem-haze";
+export type { GemHazeProps } from "./gem-haze";
+export { CmykHalftone } from "./cmyk-halftone";
+export type { CmykHalftoneProps } from "./cmyk-halftone";
+export { RadialStill } from "./radial-still";
+export type { RadialStillProps } from "./radial-still";
+export { MeshStill } from "./mesh-still";
+export type { MeshStillProps } from "./mesh-still";
+export { AuroraDusk } from "./aurora-dusk";
+export type { AuroraDuskProps } from "./aurora-dusk";
+export { InkDitherSoft } from "./ink-dither-soft";
+export type { InkDitherSoftProps } from "./ink-dither-soft";
+export { GrainNight } from "./grain-night";
+export type { GrainNightProps } from "./grain-night";
+export { WaveRibbon } from "./wave-ribbon";
+export type { WaveRibbonProps } from "./wave-ribbon";
+export { VoronoiSoft } from "./voronoi-soft";
+export type { VoronoiSoftProps } from "./voronoi-soft";
 export { MaterialShell } from "./material-shell";
+export {
+  MATERIAL_PROPS,
+  getMaterialPropDefaults,
+  getMaterialProps,
+} from "./props";
+export type { MaterialPropDef } from "./props";
 export type {
   MaterialCatalogEntry,
   MaterialCollection,

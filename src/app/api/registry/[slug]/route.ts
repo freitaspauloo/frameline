@@ -5,8 +5,8 @@ import { isFreeMaterial } from "@/lib/entitlements";
 
 /**
  * Registry read stub (WP6 / WP9).
- * Free materials are publicly readable. Paid materials return 403 until
- * entitlement-gated token verification is wired.
+ * Free materials return a minimal shadcn-like registry item.
+ * Paid materials return 403 until a Bearer fl_demo_ / fl_live_ token is present.
  */
 export async function GET(
   request: Request,
@@ -19,7 +19,9 @@ export async function GET(
     return NextResponse.json({ error: "Material not found" }, { status: 404 });
   }
 
-  if (!isFreeMaterial(material) && material.tier !== "free") {
+  const free = isFreeMaterial(material);
+
+  if (!free) {
     const auth = request.headers.get("authorization");
     const token = auth?.startsWith("Bearer ") ? auth.slice(7) : null;
     if (!token) {
@@ -32,21 +34,60 @@ export async function GET(
         { status: 403 },
       );
     }
-    // Token verification lands with Postgres entitlements — accept demo tokens for now.
     if (!token.startsWith("fl_demo_") && !token.startsWith("fl_live_")) {
       return NextResponse.json({ error: "Invalid token" }, { status: 403 });
     }
   }
 
+  const componentPath = `src/materials/${material.slug}.tsx`;
+  const targetPath = `components/${material.slug}.tsx`;
+  const placeholderContent = [
+    `/**`,
+    ` * Frameline registry stub — ${material.title}`,
+    ` *`,
+    ` * Copy the real source from the Frameline repo:`,
+    ` *   ${componentPath}`,
+    ` *`,
+    ` * Then wire imports for MaterialShell / shader deps as in that file.`,
+    ` * Install hint: npx shadcn@latest add @frameline/${material.slug}`,
+    ` */`,
+    ``,
+    `export function ${toPascalCase(material.slug)}() {`,
+    `  return null;`,
+    `}`,
+    ``,
+  ].join("\n");
+
   return NextResponse.json({
     name: material.slug,
+    type: "registry:ui",
     title: material.title,
-    tier: material.tier,
-    type: material.type,
     description: material.description,
-    registry: `@frameline/${material.slug}`,
-    install: `npx shadcn@latest add @frameline/${material.slug}`,
-    status: "stub",
-    note: "Package payload ships when the private registry is connected.",
+    dependencies: [],
+    registryDependencies: [],
+    files: [
+      {
+        path: targetPath,
+        type: "registry:component",
+        target: targetPath,
+        content: placeholderContent,
+      },
+    ],
+    meta: {
+      tier: material.tier,
+      framelineType: material.type,
+      registry: `@frameline/${material.slug}`,
+      install: `npx shadcn@latest add @frameline/${material.slug}`,
+      sourceHint: componentPath,
+      status: free ? "stub-free" : "stub-entitled",
+    },
   });
+}
+
+function toPascalCase(slug: string): string {
+  return slug
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join("");
 }

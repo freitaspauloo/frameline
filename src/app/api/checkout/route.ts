@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { fulfillDemoOrder } from "@/lib/fulfillment";
 import {
   getLicensePlan,
   isCheckoutPlan,
@@ -41,10 +42,22 @@ export async function POST(request: Request) {
 
   const material = body.material?.trim() || undefined;
   const license = getLicensePlan(plan);
-  const qs = new URLSearchParams({ plan, email });
-  if (material) qs.set("material", material);
 
   if (!process.env.STRIPE_SECRET_KEY) {
+    const fulfilled = await fulfillDemoOrder({
+      email,
+      plan,
+      material,
+      paymentProviderRef: null,
+    });
+
+    const qs = new URLSearchParams({
+      plan,
+      email,
+      orderId: fulfilled.orderId,
+    });
+    if (material) qs.set("material", material);
+
     return NextResponse.json({
       ok: true,
       mode: "demo" as const,
@@ -52,6 +65,8 @@ export async function POST(request: Request) {
       email,
       material,
       amountCents: license?.amountCents,
+      orderId: fulfilled.orderId,
+      registryToken: fulfilled.registryToken,
       redirectTo: `/orders/demo?${qs.toString()}`,
     });
   }

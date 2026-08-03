@@ -1,26 +1,38 @@
 "use client";
 
 import {
+  AuroraDusk,
   AuroraMesh,
   CellVoronoi,
+  CmykHalftone,
   EmberWarp,
+  GemHaze,
   GrainField,
+  GrainNight,
   HalftoneSignal,
   HaloRays,
   InkDither,
+  InkDitherSoft,
   InkMetaballs,
   InkSwirl,
   LiquidChrome,
+  MeshStill,
   NeuroVeil,
   OrbitDots,
   PanelGlass,
+  PaperTooth,
   PerlinMoss,
   PulseFrame,
+  RadialStill,
   SignalDots,
   SimplexField,
   SmokeRing,
   SpiralInk,
+  StillMesh,
   TideWave,
+  VoronoiSoft,
+  WaterSheet,
+  WaveRibbon,
   getMaterial,
 } from "@/materials";
 import { cn } from "@/lib/utils";
@@ -76,6 +88,30 @@ export function WireframeMaterialPreview({
       return <PerlinMoss className={common} />;
     case "pulse-frame":
       return <PulseFrame className={common} />;
+    case "water-sheet":
+      return <WaterSheet className={common} />;
+    case "still-mesh":
+      return <StillMesh className={common} />;
+    case "paper-tooth":
+      return <PaperTooth className={common} />;
+    case "gem-haze":
+      return <GemHaze className={common} />;
+    case "cmyk-halftone":
+      return <CmykHalftone className={common} />;
+    case "radial-still":
+      return <RadialStill className={common} />;
+    case "mesh-still":
+      return <MeshStill className={common} />;
+    case "aurora-dusk":
+      return <AuroraDusk className={common} />;
+    case "ink-dither-soft":
+      return <InkDitherSoft className={common} />;
+    case "grain-night":
+      return <GrainNight className={common} />;
+    case "wave-ribbon":
+      return <WaveRibbon className={common} />;
+    case "voronoi-soft":
+      return <VoronoiSoft className={common} />;
     default:
       return (
         <div

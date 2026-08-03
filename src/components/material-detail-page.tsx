@@ -15,28 +15,42 @@ import {
 } from "@/components/marketing-shell";
 import { Button } from "@/components/ui/button";
 import {
+  AuroraDusk,
   AuroraMesh,
   CellVoronoi,
+  CmykHalftone,
   EmberWarp,
+  GemHaze,
   GrainField,
+  GrainNight,
   HalftoneSignal,
   HaloRays,
   InkDither,
+  InkDitherSoft,
   InkMetaballs,
   InkSwirl,
   LiquidChrome,
+  MeshStill,
   NeuroVeil,
   OrbitDots,
   PanelGlass,
+  PaperTooth,
   PerlinMoss,
   PulseFrame,
+  RadialStill,
   SignalDots,
   SimplexField,
   SmokeRing,
   SpiralInk,
+  StillMesh,
   TideWave,
+  VoronoiSoft,
+  WaterSheet,
+  WaveRibbon,
   getMaterial,
+  getMaterialProps,
   type MaterialCatalogEntry,
+  type MaterialPropDef,
 } from "@/materials";
 import { cn } from "@/lib/utils";
 
@@ -68,6 +82,18 @@ const COMPONENT_NAMES: Record<string, string> = {
   "spiral-ink": "SpiralInk",
   "perlin-moss": "PerlinMoss",
   "pulse-frame": "PulseFrame",
+  "water-sheet": "WaterSheet",
+  "still-mesh": "StillMesh",
+  "paper-tooth": "PaperTooth",
+  "gem-haze": "GemHaze",
+  "cmyk-halftone": "CmykHalftone",
+  "radial-still": "RadialStill",
+  "mesh-still": "MeshStill",
+  "aurora-dusk": "AuroraDusk",
+  "ink-dither-soft": "InkDitherSoft",
+  "grain-night": "GrainNight",
+  "wave-ribbon": "WaveRibbon",
+  "voronoi-soft": "VoronoiSoft",
 };
 
 function buildJsxSnippet(slug: string, props: Record<string, unknown>) {
@@ -406,6 +432,211 @@ function LivePreview({
           thickness={props.thickness as number | undefined}
         />
       );
+    case "water-sheet":
+      return (
+        <WaterSheet
+          caustic={props.caustic as number | undefined}
+          className={common}
+          colorBack={props.colorBack as string | undefined}
+          colorHighlight={props.colorHighlight as string | undefined}
+          edges={props.edges as number | undefined}
+          forceStatic={forceStatic}
+          highlights={props.highlights as number | undefined}
+          layering={props.layering as number | undefined}
+          scale={props.scale as number | undefined}
+          size={props.size as number | undefined}
+          speed={props.speed as number | undefined}
+          waves={props.waves as number | undefined}
+        />
+      );
+    case "still-mesh":
+      return (
+        <StillMesh
+          className={common}
+          colors={props.colors as string[] | undefined}
+          forceStatic={forceStatic}
+          grainMixer={props.grainMixer as number | undefined}
+          grainOverlay={props.grainOverlay as number | undefined}
+          mixing={props.mixing as number | undefined}
+          positions={props.positions as number | undefined}
+          rotation={props.rotation as number | undefined}
+          waveX={props.waveX as number | undefined}
+          waveXShift={props.waveXShift as number | undefined}
+          waveY={props.waveY as number | undefined}
+          waveYShift={props.waveYShift as number | undefined}
+        />
+      );
+    case "paper-tooth":
+      return (
+        <PaperTooth
+          className={common}
+          colorBack={props.colorBack as string | undefined}
+          colorFront={props.colorFront as string | undefined}
+          contrast={props.contrast as number | undefined}
+          crumpleSize={props.crumpleSize as number | undefined}
+          crumples={props.crumples as number | undefined}
+          drops={props.drops as number | undefined}
+          fade={props.fade as number | undefined}
+          fiber={props.fiber as number | undefined}
+          fiberSize={props.fiberSize as number | undefined}
+          foldCount={props.foldCount as number | undefined}
+          folds={props.folds as number | undefined}
+          forceStatic={forceStatic}
+          roughness={props.roughness as number | undefined}
+          scale={props.scale as number | undefined}
+          seed={props.seed as number | undefined}
+        />
+      );
+    case "gem-haze":
+      return (
+        <GemHaze
+          angle={props.angle as number | undefined}
+          className={common}
+          colorBack={props.colorBack as string | undefined}
+          colorInner={props.colorInner as string | undefined}
+          colors={props.colors as string[] | undefined}
+          forceStatic={forceStatic}
+          innerDistortion={props.innerDistortion as number | undefined}
+          innerGlow={props.innerGlow as number | undefined}
+          offset={props.offset as number | undefined}
+          outerDistortion={props.outerDistortion as number | undefined}
+          outerGlow={props.outerGlow as number | undefined}
+          scale={props.scale as number | undefined}
+          size={props.size as number | undefined}
+          speed={props.speed as number | undefined}
+        />
+      );
+    case "cmyk-halftone":
+      return (
+        <CmykHalftone
+          className={common}
+          colorBack={props.colorBack as string | undefined}
+          colorC={props.colorC as string | undefined}
+          colorK={props.colorK as string | undefined}
+          colorM={props.colorM as string | undefined}
+          colorY={props.colorY as string | undefined}
+          contrast={props.contrast as number | undefined}
+          floodC={props.floodC as number | undefined}
+          floodK={props.floodK as number | undefined}
+          floodM={props.floodM as number | undefined}
+          floodY={props.floodY as number | undefined}
+          forceStatic={forceStatic}
+          gainC={props.gainC as number | undefined}
+          gainK={props.gainK as number | undefined}
+          gainM={props.gainM as number | undefined}
+          gainY={props.gainY as number | undefined}
+          grainMixer={props.grainMixer as number | undefined}
+          grainOverlay={props.grainOverlay as number | undefined}
+          grainSize={props.grainSize as number | undefined}
+          gridNoise={props.gridNoise as number | undefined}
+          scale={props.scale as number | undefined}
+          size={props.size as number | undefined}
+          softness={props.softness as number | undefined}
+        />
+      );
+    case "radial-still":
+      return (
+        <RadialStill
+          className={common}
+          colorBack={props.colorBack as string | undefined}
+          colors={props.colors as string[] | undefined}
+          distortion={props.distortion as number | undefined}
+          distortionFreq={props.distortionFreq as number | undefined}
+          distortionShift={props.distortionShift as number | undefined}
+          falloff={props.falloff as number | undefined}
+          focalAngle={props.focalAngle as number | undefined}
+          focalDistance={props.focalDistance as number | undefined}
+          forceStatic={forceStatic}
+          grainMixer={props.grainMixer as number | undefined}
+          grainOverlay={props.grainOverlay as number | undefined}
+          mixing={props.mixing as number | undefined}
+          radius={props.radius as number | undefined}
+          scale={props.scale as number | undefined}
+        />
+      );
+    case "mesh-still":
+      return (
+        <MeshStill
+          className={common}
+          colors={props.colors as string[] | undefined}
+          forceStatic={forceStatic}
+          grainMixer={props.grainMixer as number | undefined}
+          grainOverlay={props.grainOverlay as number | undefined}
+          mixing={props.mixing as number | undefined}
+          positions={props.positions as number | undefined}
+          rotation={props.rotation as number | undefined}
+          waveX={props.waveX as number | undefined}
+          waveXShift={props.waveXShift as number | undefined}
+          waveY={props.waveY as number | undefined}
+          waveYShift={props.waveYShift as number | undefined}
+        />
+      );
+    case "aurora-dusk":
+      return (
+        <AuroraDusk
+          className={common}
+          colors={props.colors as string[] | undefined}
+          distortion={props.distortion as number | undefined}
+          forceStatic={forceStatic}
+          scale={props.scale as number | undefined}
+          speed={props.speed as number | undefined}
+          swirl={props.swirl as number | undefined}
+        />
+      );
+    case "ink-dither-soft":
+      return (
+        <InkDitherSoft
+          className={common}
+          colorBack={props.colorBack as string | undefined}
+          colorFront={props.colorFront as string | undefined}
+          forceStatic={forceStatic}
+          size={props.size as number | undefined}
+          speed={props.speed as number | undefined}
+        />
+      );
+    case "grain-night":
+      return (
+        <GrainNight
+          className={common}
+          colors={props.colors as string[] | undefined}
+          forceStatic={forceStatic}
+          intensity={props.intensity as number | undefined}
+          noise={props.noise as number | undefined}
+          softness={props.softness as number | undefined}
+          speed={props.speed as number | undefined}
+        />
+      );
+    case "wave-ribbon":
+      return (
+        <WaveRibbon
+          amplitude={props.amplitude as number | undefined}
+          className={common}
+          colorBack={props.colorBack as string | undefined}
+          colorFront={props.colorFront as string | undefined}
+          forceStatic={forceStatic}
+          frequency={props.frequency as number | undefined}
+          proportion={props.proportion as number | undefined}
+          scale={props.scale as number | undefined}
+          shape={props.shape as number | undefined}
+          softness={props.softness as number | undefined}
+          spacing={props.spacing as number | undefined}
+        />
+      );
+    case "voronoi-soft":
+      return (
+        <VoronoiSoft
+          className={common}
+          colorGap={props.colorGap as string | undefined}
+          colorGlow={props.colorGlow as string | undefined}
+          colors={props.colors as string[] | undefined}
+          distortion={props.distortion as number | undefined}
+          forceStatic={forceStatic}
+          gap={props.gap as number | undefined}
+          glow={props.glow as number | undefined}
+          scale={props.scale as number | undefined}
+          speed={props.speed as number | undefined}
+        />
+      );
     default:
       return null;
   }
@@ -481,508 +712,36 @@ function propsToSearchParams(
 }
 
 function useMaterialControls(slug: string): MaterialControls {
-  if (slug === "aurora-mesh") {
-    return {
-      defaults: {
-        speed: 0.47,
-        distortion: 0.8,
-        swirl: 0.5,
-        scale: 0.69,
-        colors: ["#E3FFFE", "#C5F0FF", "#FF008D", "#B700FF"],
-      },
-      fields: [
-        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
-        { key: "distortion", label: "Distortion", min: 0, max: 1, step: 0.01 },
-        { key: "swirl", label: "Swirl", min: 0, max: 1, step: 0.01 },
-        { key: "scale", label: "Scale", min: 0.2, max: 2, step: 0.01 },
-      ],
-    };
+  const defs = getMaterialProps(slug);
+  const defaults: Record<string, unknown> = {};
+  const fields: ControlField[] = [];
+  const colorFields: ColorField[] = [];
+
+  for (const def of defs) {
+    defaults[def.key] = def.defaultValue;
+    if (def.kind === "number" && def.min != null && def.max != null) {
+      fields.push({
+        key: def.key,
+        label: def.label,
+        min: def.min,
+        max: def.max,
+        step: def.step ?? 0.01,
+      });
+    } else if (def.kind === "color") {
+      colorFields.push({ key: def.key, label: def.label });
+    }
   }
-  if (slug === "ink-dither") {
-    return {
-      defaults: {
-        speed: 0.35,
-        size: 3,
-        colorBack: "#0A0A0A",
-        colorFront: "#2D6BFF",
-      },
-      fields: [
-        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
-        { key: "size", label: "Size", min: 1, max: 12, step: 0.5 },
-      ],
-      colors: [
-        { key: "colorBack", label: "Back" },
-        { key: "colorFront", label: "Front" },
-      ],
-    };
-  }
-  if (slug === "grain-field") {
-    return {
-      defaults: {
-        speed: 0.4,
-        softness: 0.65,
-        intensity: 0.45,
-        noise: 0.35,
-        colors: ["#F4F1EA", "#D4C4A8", "#2D6BFF", "#0A0A0A"],
-      },
-      fields: [
-        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
-        { key: "softness", label: "Softness", min: 0, max: 1, step: 0.01 },
-        { key: "intensity", label: "Intensity", min: 0, max: 1, step: 0.01 },
-        { key: "noise", label: "Noise", min: 0, max: 1, step: 0.01 },
-      ],
-    };
-  }
-  if (slug === "neuro-veil") {
-    return {
-      defaults: {
-        speed: 0.6,
-        brightness: 0.08,
-        contrast: 0.35,
-        scale: 1,
-        colorFront: "#E8F0FF",
-        colorMid: "#2D6BFF",
-        colorBack: "#0A0A0A",
-      },
-      fields: [
-        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
-        { key: "brightness", label: "Brightness", min: 0, max: 1, step: 0.01 },
-        { key: "contrast", label: "Contrast", min: 0, max: 1, step: 0.01 },
-        { key: "scale", label: "Scale", min: 0.2, max: 2, step: 0.01 },
-      ],
-      colors: [
-        { key: "colorFront", label: "Front" },
-        { key: "colorMid", label: "Mid" },
-        { key: "colorBack", label: "Back" },
-      ],
-    };
-  }
-  if (slug === "tide-wave") {
-    return {
-      defaults: {
-        scale: 0.7,
-        shape: 1.2,
-        frequency: 0.45,
-        amplitude: 0.4,
-        spacing: 1.1,
-        proportion: 0.35,
-        softness: 0.15,
-        colorFront: "#2D6BFF",
-        colorBack: "#0B1C2D",
-      },
-      fields: [
-        { key: "scale", label: "Scale", min: 0.2, max: 2, step: 0.01 },
-        { key: "shape", label: "Shape", min: 0, max: 3, step: 0.01 },
-        { key: "frequency", label: "Frequency", min: 0, max: 2, step: 0.01 },
-        { key: "amplitude", label: "Amplitude", min: 0, max: 1, step: 0.01 },
-        { key: "spacing", label: "Spacing", min: 0, max: 2, step: 0.01 },
-        { key: "softness", label: "Softness", min: 0, max: 1, step: 0.01 },
-      ],
-      colors: [
-        { key: "colorFront", label: "Front" },
-        { key: "colorBack", label: "Back" },
-      ],
-    };
-  }
-  if (slug === "cell-voronoi") {
-    return {
-      defaults: {
-        speed: 0.4,
-        scale: 0.55,
-        distortion: 0.35,
-        gap: 0.03,
-        glow: 0.15,
-        colors: ["#F4F1EA", "#C8BBA8", "#2D6BFF"],
-        colorGap: "#0A0A0A",
-        colorGlow: "#FFFFFF",
-      },
-      fields: [
-        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
-        { key: "scale", label: "Scale", min: 0.2, max: 2, step: 0.01 },
-        { key: "distortion", label: "Distortion", min: 0, max: 0.5, step: 0.01 },
-        { key: "gap", label: "Gap", min: 0, max: 0.1, step: 0.005 },
-        { key: "glow", label: "Glow", min: 0, max: 1, step: 0.01 },
-      ],
-      colors: [
-        { key: "colorGap", label: "Gap" },
-        { key: "colorGlow", label: "Glow" },
-      ],
-    };
-  }
-  if (slug === "ink-swirl") {
-    return {
-      defaults: {
-        speed: 0.32,
-        bandCount: 4,
-        twist: 0.45,
-        center: 0.2,
-        softness: 0.2,
-        noise: 0.15,
-        colorBack: "#0A0A0A",
-        colors: ["#2D6BFF", "#5B8CFF", "#1A3A8F"],
-      },
-      fields: [
-        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
-        { key: "bandCount", label: "Bands", min: 0, max: 15, step: 1 },
-        { key: "twist", label: "Twist", min: 0, max: 1, step: 0.01 },
-        { key: "center", label: "Center", min: 0, max: 1, step: 0.01 },
-        { key: "softness", label: "Softness", min: 0, max: 1, step: 0.01 },
-        { key: "noise", label: "Noise", min: 0, max: 1, step: 0.01 },
-      ],
-      colors: [{ key: "colorBack", label: "Back" }],
-    };
-  }
-  if (slug === "signal-dots") {
-    return {
-      defaults: {
-        size: 2.5,
-        gapX: 28,
-        gapY: 28,
-        sizeRange: 0,
-        opacityRange: 0.15,
-        colorBack: "#F7F5F0",
-        colorFill: "#2D6BFF",
-        colorStroke: "#2D6BFF",
-      },
-      fields: [
-        { key: "size", label: "Size", min: 1, max: 20, step: 0.5 },
-        { key: "gapX", label: "Gap X", min: 8, max: 80, step: 1 },
-        { key: "gapY", label: "Gap Y", min: 8, max: 80, step: 1 },
-        { key: "opacityRange", label: "Opacity range", min: 0, max: 1, step: 0.01 },
-      ],
-      colors: [
-        { key: "colorBack", label: "Back" },
-        { key: "colorFill", label: "Fill" },
-        { key: "colorStroke", label: "Stroke" },
-      ],
-    };
-  }
-  if (slug === "ember-warp") {
-    return {
-      defaults: {
-        speed: 0.7,
-        proportion: 0.45,
-        softness: 0.85,
-        distortion: 0.3,
-        swirl: 0.65,
-        shapeScale: 0.12,
-        colors: ["#0A0A0A", "#C45C26", "#1A1210", "#E8A05C"],
-      },
-      fields: [
-        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
-        { key: "proportion", label: "Proportion", min: 0, max: 1, step: 0.01 },
-        { key: "softness", label: "Softness", min: 0, max: 1, step: 0.01 },
-        { key: "distortion", label: "Distortion", min: 0, max: 1, step: 0.01 },
-        { key: "swirl", label: "Swirl", min: 0, max: 1, step: 0.01 },
-        { key: "shapeScale", label: "Shape scale", min: 0, max: 1, step: 0.01 },
-      ],
-    };
-  }
-  if (slug === "halo-rays") {
-    return {
-      defaults: {
-        speed: 0.65,
-        density: 0.35,
-        spotty: 0.28,
-        midIntensity: 0.45,
-        midSize: 0.22,
-        intensity: 0.75,
-        bloom: 0.35,
-        scale: 1,
-        colorBack: "#0A0A0A",
-        colorBloom: "#2D6BFF",
-        colors: ["#2D6BFF", "#5B8CFF", "#E8F0FF", "#1A3A8F"],
-      },
-      fields: [
-        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
-        { key: "density", label: "Density", min: 0, max: 1, step: 0.01 },
-        { key: "spotty", label: "Spotty", min: 0, max: 1, step: 0.01 },
-        { key: "intensity", label: "Intensity", min: 0, max: 1, step: 0.01 },
-        { key: "bloom", label: "Bloom", min: 0, max: 1, step: 0.01 },
-        { key: "midSize", label: "Mid size", min: 0, max: 1, step: 0.01 },
-        { key: "scale", label: "Scale", min: 0.2, max: 2, step: 0.01 },
-      ],
-      colors: [
-        { key: "colorBack", label: "Back" },
-        { key: "colorBloom", label: "Bloom" },
-      ],
-    };
-  }
-  if (slug === "ink-metaballs") {
-    return {
-      defaults: {
-        speed: 0.55,
-        count: 12,
-        size: 0.72,
-        scale: 1.2,
-        colorBack: "#F4F1EA",
-        colors: ["#2D6BFF", "#C8BBA8", "#0A0A0A", "#5B8CFF"],
-      },
-      fields: [
-        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
-        { key: "count", label: "Count", min: 1, max: 20, step: 1 },
-        { key: "size", label: "Size", min: 0, max: 1, step: 0.01 },
-        { key: "scale", label: "Scale", min: 0.2, max: 4, step: 0.01 },
-      ],
-      colors: [{ key: "colorBack", label: "Back" }],
-    };
-  }
-  if (slug === "smoke-ring") {
-    return {
-      defaults: {
-        speed: 0.45,
-        noiseScale: 2.4,
-        noiseIterations: 6,
-        radius: 0.32,
-        thickness: 0.55,
-        innerShape: 0.75,
-        scale: 0.9,
-        colorBack: "#0A0A0A",
-        colors: ["#E8E4DC", "#2D6BFF", "#C8BBA8"],
-      },
-      fields: [
-        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
-        { key: "noiseScale", label: "Noise scale", min: 0.01, max: 5, step: 0.01 },
-        { key: "noiseIterations", label: "Iterations", min: 1, max: 8, step: 1 },
-        { key: "radius", label: "Radius", min: 0, max: 1, step: 0.01 },
-        { key: "thickness", label: "Thickness", min: 0.01, max: 1, step: 0.01 },
-        { key: "innerShape", label: "Inner shape", min: 0, max: 4, step: 0.01 },
-        { key: "scale", label: "Scale", min: 0.2, max: 2, step: 0.01 },
-      ],
-      colors: [{ key: "colorBack", label: "Back" }],
-    };
-  }
-  if (slug === "simplex-field") {
-    return {
-      defaults: {
-        speed: 0.4,
-        softness: 0.35,
-        stepsPerColor: 2,
-        scale: 0.7,
-        colors: ["#F4F1EA", "#2D6BFF", "#C8BBA8", "#0A0A0A", "#E8E4DC"],
-      },
-      fields: [
-        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
-        { key: "softness", label: "Softness", min: 0, max: 1, step: 0.01 },
-        { key: "stepsPerColor", label: "Steps", min: 1, max: 10, step: 1 },
-        { key: "scale", label: "Scale", min: 0.2, max: 2, step: 0.01 },
-      ],
-    };
-  }
-  if (slug === "halftone-signal") {
-    return {
-      defaults: {
-        speed: 0.2,
-        size: 0.55,
-        radius: 1.2,
-        contrast: 0.45,
-        grainMixer: 0.15,
-        grainOverlay: 0.18,
-        colorBack: "#F4F1EA",
-        colorFront: "#2D6BFF",
-      },
-      fields: [
-        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
-        { key: "size", label: "Size", min: 0, max: 1, step: 0.01 },
-        { key: "radius", label: "Radius", min: 0, max: 2, step: 0.01 },
-        { key: "contrast", label: "Contrast", min: 0, max: 1, step: 0.01 },
-        { key: "grainMixer", label: "Grain mixer", min: 0, max: 1, step: 0.01 },
-        { key: "grainOverlay", label: "Grain overlay", min: 0, max: 1, step: 0.01 },
-      ],
-      colors: [
-        { key: "colorBack", label: "Back" },
-        { key: "colorFront", label: "Front" },
-      ],
-    };
-  }
-  if (slug === "liquid-chrome") {
-    return {
-      defaults: {
-        speed: 0.8,
-        distortion: 0.12,
-        repetition: 2.2,
-        shiftRed: 0.25,
-        shiftBlue: 0.35,
-        contour: 0.35,
-        softness: 0.15,
-        angle: 70,
-        scale: 0.85,
-        colorBack: "#1A1A1C",
-        colorTint: "#2D6BFF",
-      },
-      fields: [
-        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
-        { key: "distortion", label: "Distortion", min: 0, max: 1, step: 0.01 },
-        { key: "repetition", label: "Repetition", min: 1, max: 10, step: 0.1 },
-        { key: "softness", label: "Softness", min: 0, max: 1, step: 0.01 },
-        { key: "contour", label: "Contour", min: 0, max: 1, step: 0.01 },
-        { key: "angle", label: "Angle", min: 0, max: 360, step: 1 },
-        { key: "scale", label: "Scale", min: 0.2, max: 2, step: 0.01 },
-      ],
-      colors: [
-        { key: "colorBack", label: "Back" },
-        { key: "colorTint", label: "Tint" },
-      ],
-    };
-  }
-  if (slug === "panel-glass") {
-    return {
-      defaults: {
-        speed: 1,
-        scale: 0.9,
-        angle1: 0.3,
-        angle2: 0.3,
-        length: 1,
-        blur: 0.25,
-        fadeIn: 0.85,
-        fadeOut: 0.3,
-        density: 1.6,
-        gradient: 0,
-        colorBack: "#FFFFFF",
-        colors: ["#00CFFF", "#FF2D55", "#34C759", "#AF52DE"],
-      },
-      fields: [
-        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
-        { key: "scale", label: "Scale", min: 0.2, max: 2, step: 0.01 },
-        { key: "angle1", label: "Angle 1", min: -1, max: 1, step: 0.01 },
-        { key: "angle2", label: "Angle 2", min: -1, max: 1, step: 0.01 },
-        { key: "length", label: "Length", min: 0, max: 3, step: 0.01 },
-        { key: "blur", label: "Blur", min: 0, max: 0.5, step: 0.01 },
-        { key: "density", label: "Density", min: 0.25, max: 7, step: 0.05 },
-        { key: "fadeIn", label: "Fade in", min: 0, max: 1, step: 0.01 },
-        { key: "fadeOut", label: "Fade out", min: 0, max: 1, step: 0.01 },
-      ],
-      colors: [{ key: "colorBack", label: "Back" }],
-    };
-  }
-  if (slug === "orbit-dots") {
-    return {
-      defaults: {
-        speed: 0.45,
-        scale: 0.7,
-        size: 0.55,
-        sizeRange: 0.25,
-        spreading: 0.85,
-        stepsPerColor: 3,
-        colorBack: "#F7F5F0",
-        colors: ["#2D6BFF", "#5B8CFF", "#E8F0FF"],
-      },
-      fields: [
-        { key: "speed", label: "Speed", min: 0, max: 3, step: 0.01 },
-        { key: "scale", label: "Scale", min: 0.2, max: 2, step: 0.01 },
-        { key: "size", label: "Size", min: 0, max: 1, step: 0.01 },
-        { key: "sizeRange", label: "Size range", min: 0, max: 1, step: 0.01 },
-        { key: "spreading", label: "Spreading", min: 0, max: 1, step: 0.01 },
-        { key: "stepsPerColor", label: "Steps", min: 1, max: 8, step: 1 },
-      ],
-      colors: [{ key: "colorBack", label: "Back" }],
-    };
-  }
-  if (slug === "spiral-ink") {
-    return {
-      defaults: {
-        speed: 0.55,
-        scale: 1,
-        density: 0.85,
-        distortion: 0.15,
-        strokeWidth: 0.55,
-        strokeTaper: 0.12,
-        strokeCap: 0.4,
-        noise: 0.2,
-        noiseFrequency: 0.28,
-        softness: 0.08,
-        colorBack: "#0A0A0A",
-        colorFront: "#2D6BFF",
-      },
-      fields: [
-        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
-        { key: "scale", label: "Scale", min: 0.2, max: 2, step: 0.01 },
-        { key: "density", label: "Density", min: 0, max: 2, step: 0.01 },
-        { key: "strokeWidth", label: "Stroke", min: 0, max: 1, step: 0.01 },
-        { key: "noise", label: "Noise", min: 0, max: 1, step: 0.01 },
-        { key: "softness", label: "Softness", min: 0, max: 1, step: 0.01 },
-      ],
-      colors: [
-        { key: "colorBack", label: "Back" },
-        { key: "colorFront", label: "Front" },
-      ],
-    };
-  }
-  if (slug === "perlin-moss") {
-    return {
-      defaults: {
-        speed: 0.15,
-        scale: 1.4,
-        proportion: 0.55,
-        softness: 0.35,
-        octaveCount: 4,
-        persistence: 0.7,
-        lacunarity: 2.2,
-        colorBack: "#1A2E1A",
-        colorFront: "#7CB87C",
-      },
-      fields: [
-        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
-        { key: "scale", label: "Scale", min: 0.2, max: 4, step: 0.01 },
-        { key: "proportion", label: "Proportion", min: 0, max: 1, step: 0.01 },
-        { key: "softness", label: "Softness", min: 0, max: 1, step: 0.01 },
-        { key: "octaveCount", label: "Octaves", min: 1, max: 8, step: 1 },
-        { key: "persistence", label: "Persistence", min: 0, max: 1, step: 0.01 },
-        { key: "lacunarity", label: "Lacunarity", min: 1, max: 4, step: 0.05 },
-      ],
-      colors: [
-        { key: "colorBack", label: "Back" },
-        { key: "colorFront", label: "Front" },
-      ],
-    };
-  }
-  if (slug === "pulse-frame") {
-    return {
-      defaults: {
-        speed: 0.7,
-        scale: 0.75,
-        roundness: 0.2,
-        thickness: 0.12,
-        softness: 0.7,
-        intensity: 0.25,
-        bloom: 0.3,
-        spots: 4,
-        spotSize: 0.45,
-        pulse: 0.3,
-        smoke: 0.25,
-        smokeSize: 0.55,
-        colorBack: "#0A0A0A",
-        colors: ["#2D6BFF", "#5B8CFF", "#AF52DE"],
-      },
-      fields: [
-        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
-        { key: "scale", label: "Scale", min: 0.2, max: 2, step: 0.01 },
-        { key: "roundness", label: "Roundness", min: 0, max: 1, step: 0.01 },
-        { key: "thickness", label: "Thickness", min: 0, max: 1, step: 0.01 },
-        { key: "softness", label: "Softness", min: 0, max: 1, step: 0.01 },
-        { key: "bloom", label: "Bloom", min: 0, max: 1, step: 0.01 },
-        { key: "pulse", label: "Pulse", min: 0, max: 1, step: 0.01 },
-        { key: "smoke", label: "Smoke", min: 0, max: 1, step: 0.01 },
-        { key: "spots", label: "Spots", min: 1, max: 10, step: 1 },
-      ],
-      colors: [{ key: "colorBack", label: "Back" }],
-    };
-  }
+
   return {
-    defaults: {
-      speed: 0.4,
-      softness: 0.65,
-      intensity: 0.45,
-      noise: 0.35,
-      colors: ["#F4F1EA", "#D4C4A8", "#2D6BFF", "#0A0A0A"],
-    },
-    fields: [
-      { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
-      { key: "softness", label: "Softness", min: 0, max: 1, step: 0.01 },
-      { key: "intensity", label: "Intensity", min: 0, max: 1, step: 0.01 },
-      { key: "noise", label: "Noise", min: 0, max: 1, step: 0.01 },
-    ],
+    defaults,
+    fields,
+    colors: colorFields.length ? colorFields : undefined,
   };
+}
+
+function formatPropDefault(value: MaterialPropDef["defaultValue"]): string {
+  if (Array.isArray(value)) return value.join(", ");
+  return String(value);
 }
 
 /** Small ruled panel used down the configurator column. */
@@ -1272,6 +1031,47 @@ export function MaterialDetailPage({ slug, initialParams }: Props) {
               <pre className="overflow-x-auto bg-foreground p-5 font-mono text-[11px] leading-relaxed text-background">
                 {snippet}
               </pre>
+            </Panel>
+
+            <Panel title="Props">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[28rem] border-collapse text-left">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="pb-3 pr-4 font-mono text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">
+                        Name
+                      </th>
+                      <th className="pb-3 pr-4 font-mono text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">
+                        Type
+                      </th>
+                      <th className="pb-3 pr-4 font-mono text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">
+                        Default
+                      </th>
+                      <th className="pb-3 font-mono text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">
+                        Description
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {getMaterialProps(slug).map((def) => (
+                      <tr className="border-b border-border last:border-b-0" key={def.key}>
+                        <td className="py-3 pr-4 align-top font-mono text-[11px] text-foreground">
+                          {def.key}
+                        </td>
+                        <td className="py-3 pr-4 align-top font-mono text-[11px] text-muted-foreground">
+                          {def.kind}
+                        </td>
+                        <td className="max-w-[10rem] truncate py-3 pr-4 align-top font-mono text-[11px] text-foreground">
+                          {formatPropDefault(def.defaultValue)}
+                        </td>
+                        <td className="py-3 align-top text-[11px] leading-relaxed text-muted-foreground">
+                          {def.description ?? "—"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </Panel>
           </div>
         </div>

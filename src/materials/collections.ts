@@ -46,6 +46,39 @@ export const MATERIALS_COLLECTIONS: MaterialCollection[] = [
       "neuro-veil",
       "signal-dots",
       "simplex-field",
+      "radial-still",
+      "mesh-still",
+      "paper-tooth",
+      "ink-dither-soft",
+    ],
+  },
+  {
+    slug: "still-gradients",
+    title: "Still gradients",
+    description:
+      "Static mesh and radial fields — no animation loop, full atmosphere.",
+    featured: true,
+    materialSlugs: [
+      "still-mesh",
+      "mesh-still",
+      "radial-still",
+      "paper-tooth",
+    ],
+  },
+  {
+    slug: "nocturnal",
+    title: "Nocturnal",
+    description:
+      "Dark and dusk materials for night auth shells, heroes, and quiet cards.",
+    featured: true,
+    materialSlugs: [
+      "grain-night",
+      "aurora-dusk",
+      "water-sheet",
+      "gem-haze",
+      "wave-ribbon",
+      "voronoi-soft",
+      "cmyk-halftone",
     ],
   },
 ];

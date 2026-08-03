@@ -281,6 +281,174 @@ export const MATERIALS_CATALOG: MaterialCatalogEntry[] = [
     perfNotes:
       "PulsingBorder + smoke uses noise texture — heavier; one hero or card max.",
   },
+  {
+    slug: "water-sheet",
+    title: "Water Sheet",
+    description:
+      "Caustic water mesh for heroes and sectional bands — works as a standalone texture.",
+    type: "mesh",
+    useContexts: ["hero", "section"],
+    tier: "personal",
+    tags: ["mesh", "water", "caustic", "motion"],
+    fallbackColors: ["#1A4A6B", "#E8F4FF", "#2D6BFF"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "Water caustics are mid-weight — one full-bleed hero; pause when off-screen.",
+  },
+  {
+    slug: "still-mesh",
+    title: "Still Mesh",
+    description:
+      "Static multi-point mesh for heroes and empty states. Warm heat-adjacent palette.",
+    type: "mesh",
+    useContexts: ["hero", "empty"],
+    tier: "personal",
+    tags: ["mesh", "static", "gradient", "heat"],
+    fallbackColors: ["#FF6B35", "#1A1210", "#2D6BFF", "#F4E8D8"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "StaticMeshGradient has no animation loop — cheap for grids and empty shells.",
+  },
+  {
+    slug: "paper-tooth",
+    title: "Paper Tooth",
+    description:
+      "Fiber and fold paper grain for cards, auth shells, and quiet sections.",
+    type: "grain",
+    useContexts: ["card", "auth", "section"],
+    tier: "free",
+    tags: ["grain", "paper", "texture", "fiber"],
+    fallbackColors: ["#F7F5F0", "#C8BBA8"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "PaperTexture is static noise — light; fine for cards and auth backgrounds.",
+  },
+  {
+    slug: "gem-haze",
+    title: "Gem Haze",
+    description:
+      "Glassy smoke field for heroes and framed cards. Stand-in for image-bound fluted glass.",
+    type: "mesh",
+    useContexts: ["hero", "card"],
+    tier: "team",
+    tags: ["mesh", "smoke", "gem", "glass"],
+    fallbackColors: ["#0A0A0A", "#2D6BFF", "#AF52DE", "#E8F0FF"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "GemSmoke with shape is mid-heavy — one hero or card; prefer static in grids.",
+  },
+  {
+    slug: "cmyk-halftone",
+    title: "CMYK Halftone",
+    description:
+      "Print-style CMYK halftone dither for sections and empty states.",
+    type: "dither",
+    useContexts: ["section", "empty"],
+    tier: "personal",
+    tags: ["dither", "halftone", "cmyk", "print"],
+    fallbackColors: ["#FBFAF5", "#00B4FF", "#FC519F", "#FFD800"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "CMYK flood dots are mid-light; one sectional instance is fine.",
+  },
+  {
+    slug: "radial-still",
+    title: "Radial Still",
+    description:
+      "Static radial gradient mesh for heroes, sections, and auth shells.",
+    type: "mesh",
+    useContexts: ["hero", "section", "auth"],
+    tier: "free",
+    tags: ["mesh", "static", "radial", "gradient"],
+    fallbackColors: ["#0A0A0A", "#2D6BFF", "#5B8CFF", "#E8F0FF"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "Static radial — no animation cost; safe for auth and marketing shells.",
+  },
+  {
+    slug: "mesh-still",
+    title: "Mesh Still",
+    description:
+      "Quiet static mesh gradient for heroes and sectional bands — sea palette.",
+    type: "mesh",
+    useContexts: ["hero", "section"],
+    tier: "free",
+    tags: ["mesh", "static", "gradient", "sea"],
+    fallbackColors: ["#013B65", "#03738C", "#A3D3FF", "#F2FAEF"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "StaticMeshGradient — free for full-bleed heroes; no GPU loop cost.",
+  },
+  {
+    slug: "aurora-dusk",
+    title: "Aurora Dusk",
+    description:
+      "Warm dusk mesh — amber, charcoal, and deep blue for hero shells.",
+    type: "mesh",
+    useContexts: ["hero"],
+    tier: "personal",
+    tags: ["mesh", "gradient", "dusk", "hero"],
+    fallbackColors: ["#1A1210", "#C45C26", "#E8A05C", "#2D4A6B"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "Same cost as Aurora Mesh — one full-bleed hero; pause off-screen.",
+  },
+  {
+    slug: "ink-dither-soft",
+    title: "Ink Dither Soft",
+    description:
+      "Softer low-contrast dither for cards and quiet empty states.",
+    type: "dither",
+    useContexts: ["card", "empty"],
+    tier: "free",
+    tags: ["dither", "ink", "soft", "quiet"],
+    fallbackColors: ["#E8E4DC", "#6B7A99"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "Two-tone dither is cheap; larger size softens alias on retina.",
+  },
+  {
+    slug: "grain-night",
+    title: "Grain Night",
+    description:
+      "Dark night grain for auth shells and understated card surfaces.",
+    type: "grain",
+    useContexts: ["auth", "card"],
+    tier: "personal",
+    tags: ["grain", "night", "dark", "auth"],
+    fallbackColors: ["#0A0A0A", "#1A1A2E", "#2D4A6B", "#0D1520"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "Soft grain loop — good for auth; forceStatic in long card lists.",
+  },
+  {
+    slug: "wave-ribbon",
+    title: "Wave Ribbon",
+    description:
+      "Tighter ribbon-like wave bands for sectional strips.",
+    type: "mesh",
+    useContexts: ["section"],
+    tier: "personal",
+    tags: ["mesh", "waves", "ribbon", "pattern"],
+    fallbackColors: ["#0A1628", "#5B8CFF"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "Waves fragment is light — safe for sectional ribbons at modest scale.",
+  },
+  {
+    slug: "voronoi-soft",
+    title: "Voronoi Soft",
+    description:
+      "Soft pastel cell field for loading shells and empty states.",
+    type: "mesh",
+    useContexts: ["loading", "empty"],
+    tier: "personal",
+    tags: ["mesh", "voronoi", "pastel", "soft"],
+    fallbackColors: ["#F5E6F0", "#D4E8F0", "#E8F0D4", "#F7F5F0"],
+    renderingTechnique: "webgl",
+    perfNotes:
+      "Lower density than Cell Voronoi — fine for loading and empty shells.",
+  },
 ];
 
 export const MATERIAL_TYPES: {
