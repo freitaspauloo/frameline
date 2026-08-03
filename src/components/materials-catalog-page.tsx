@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { useMemo, useTransition, type FormEvent } from "react";
 
 import { MarketingFooter } from "@/components/marketing-footer";
 import { MarketingNavbar } from "@/components/marketing-navbar";
@@ -17,7 +18,9 @@ import {
   MATERIALS_CATALOG,
   MATERIAL_TYPES,
   isMaterialType,
+  type MaterialTier,
   type MaterialType,
+  type MaterialUseContext,
 } from "@/materials";
 import { cn } from "@/lib/utils";
 
@@ -25,23 +28,140 @@ import { cn } from "@/lib/utils";
 const CHIP =
   "border border-border px-4 py-2 text-[0.625rem] font-semibold tracking-widest uppercase transition-colors";
 
+const USE_CONTEXTS: { value: MaterialUseContext; label: string }[] = [
+  { value: "hero", label: "Hero" },
+  { value: "section", label: "Section" },
+  { value: "card", label: "Card" },
+  { value: "empty", label: "Empty" },
+  { value: "loading", label: "Loading" },
+  { value: "auth", label: "Auth" },
+];
+
+const TIER_FILTERS = [
+  { value: "free" as const, label: "Free" },
+  { value: "paid" as const, label: "Paid" },
+];
+
+export type CatalogTierFilter = "free" | "paid";
+export type CatalogSort = "name" | "tier";
+
+const TIER_SORT_RANK: Record<MaterialTier, number> = {
+  free: 0,
+  personal: 1,
+  team: 2,
+};
+
+function isUseContext(value: string): value is MaterialUseContext {
+  return USE_CONTEXTS.some((c) => c.value === value);
+}
+
+function isTierFilter(value: string): value is CatalogTierFilter {
+  return value === "free" || value === "paid";
+}
+
+function isSort(value: string): value is CatalogSort {
+  return value === "name" || value === "tier";
+}
+
+function buildMaterialsHref(params: {
+  type?: string;
+  q?: string;
+  context?: string;
+  tier?: string;
+  sort?: string;
+}) {
+  const sp = new URLSearchParams();
+  if (params.type) sp.set("type", params.type);
+  if (params.q?.trim()) sp.set("q", params.q.trim());
+  if (params.context) sp.set("context", params.context);
+  if (params.tier) sp.set("tier", params.tier);
+  if (params.sort && params.sort !== "name") sp.set("sort", params.sort);
+  const qs = sp.toString();
+  return qs ? `/materials?${qs}` : "/materials";
+}
+
 export function MaterialsCatalogPage({
   typeFilter,
+  qFilter,
+  contextFilter,
+  tierFilter,
+  sortFilter,
 }: {
   typeFilter?: string;
+  qFilter?: string;
+  contextFilter?: string;
+  tierFilter?: string;
+  sortFilter?: string;
 }) {
+  const router = useRouter();
+  const [, startTransition] = useTransition();
+
   const activeType: MaterialType | undefined =
     typeFilter && isMaterialType(typeFilter) ? typeFilter : undefined;
+  const activeContext: MaterialUseContext | undefined =
+    contextFilter && isUseContext(contextFilter) ? contextFilter : undefined;
+  const activeTier: CatalogTierFilter | undefined =
+    tierFilter && isTierFilter(tierFilter) ? tierFilter : undefined;
+  const activeSort: CatalogSort =
+    sortFilter && isSort(sortFilter) ? sortFilter : "name";
+  const activeQ = qFilter?.trim() ?? "";
 
-  const entries = useMemo(
-    () =>
-      activeType
-        ? MATERIALS_CATALOG.filter((m) => m.type === activeType)
-        : MATERIALS_CATALOG,
-    [activeType],
-  );
+  const baseParams = {
+    type: activeType,
+    q: activeQ || undefined,
+    context: activeContext,
+    tier: activeTier,
+    sort: activeSort,
+  };
+
+  const entries = useMemo(() => {
+    let list = MATERIALS_CATALOG.slice();
+
+    if (activeType) {
+      list = list.filter((m) => m.type === activeType);
+    }
+    if (activeContext) {
+      list = list.filter((m) => m.useContexts.includes(activeContext));
+    }
+    if (activeTier === "free") {
+      list = list.filter((m) => m.tier === "free");
+    } else if (activeTier === "paid") {
+      list = list.filter((m) => m.tier === "personal" || m.tier === "team");
+    }
+    if (activeQ) {
+      const needle = activeQ.toLowerCase();
+      list = list.filter((m) => {
+        const hay = [m.title, m.description, ...m.tags].join(" ").toLowerCase();
+        return hay.includes(needle);
+      });
+    }
+
+    list.sort((a, b) => {
+      if (activeSort === "tier") {
+        const diff = TIER_SORT_RANK[a.tier] - TIER_SORT_RANK[b.tier];
+        if (diff !== 0) return diff;
+      }
+      return a.title.localeCompare(b.title);
+    });
+
+    return list;
+  }, [activeType, activeContext, activeTier, activeQ, activeSort]);
 
   const typeMeta = MATERIAL_TYPES.find((t) => t.type === activeType);
+
+  function navigate(next: Partial<typeof baseParams>) {
+    const href = buildMaterialsHref({ ...baseParams, ...next });
+    startTransition(() => {
+      router.push(href);
+    });
+  }
+
+  function onSearchSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const fd = new FormData(event.currentTarget);
+    const q = String(fd.get("q") ?? "");
+    navigate({ q: q || undefined });
+  }
 
   return (
     <MarketingShell>
@@ -61,69 +181,193 @@ export function MaterialsCatalogPage({
           eyebrow={`Materials${activeType ? ` · ${activeType}` : ""}`}
           title={typeMeta ? typeMeta.title : "Surface as code"}
         >
-          <div className="flex flex-wrap gap-2">
-            <Link
-              className={cn(
-                CHIP,
-                !activeType
-                  ? "border-foreground bg-foreground text-background"
-                  : "text-muted-foreground hover:border-foreground hover:text-foreground",
-              )}
-              href="/materials"
+          <div className="space-y-6">
+            <form
+              className="flex flex-col gap-3 sm:flex-row sm:items-end"
+              onSubmit={onSearchSubmit}
             >
-              All
-            </Link>
-            {MATERIAL_TYPES.map((t) => (
+              <label className="min-w-0 flex-1 space-y-2">
+                <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                  Search
+                </span>
+                <input
+                  className="h-10 w-full border border-border bg-transparent px-3 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-foreground"
+                  defaultValue={activeQ}
+                  key={activeQ}
+                  name="q"
+                  placeholder="Title, description, tags…"
+                  type="search"
+                />
+              </label>
+              <button className={cn(CHIP, "text-foreground")} type="submit">
+                Search
+              </button>
+              <label className="space-y-2">
+                <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                  Sort
+                </span>
+                <select
+                  className="flex h-10 border border-border bg-transparent px-3 text-[0.625rem] font-semibold tracking-widest text-foreground uppercase outline-none focus-visible:border-foreground"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    navigate({
+                      sort: isSort(value) ? value : "name",
+                    });
+                  }}
+                  value={activeSort}
+                >
+                  <option value="name">Name</option>
+                  <option value="tier">Tier</option>
+                </select>
+              </label>
+            </form>
+
+            <div className="flex flex-wrap gap-2">
               <Link
-                key={t.type}
                 className={cn(
                   CHIP,
-                  activeType === t.type
+                  !activeType
                     ? "border-foreground bg-foreground text-background"
                     : "text-muted-foreground hover:border-foreground hover:text-foreground",
                 )}
-                href={`/materials?type=${t.type}`}
+                href={buildMaterialsHref({ ...baseParams, type: undefined })}
               >
-                {t.title}
+                All
               </Link>
-            ))}
+              {MATERIAL_TYPES.map((t) => (
+                <Link
+                  key={t.type}
+                  className={cn(
+                    CHIP,
+                    activeType === t.type
+                      ? "border-foreground bg-foreground text-background"
+                      : "text-muted-foreground hover:border-foreground hover:text-foreground",
+                  )}
+                  href={buildMaterialsHref({ ...baseParams, type: t.type })}
+                >
+                  {t.title}
+                </Link>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <span className="self-center pr-1 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                Context
+              </span>
+              <Link
+                className={cn(
+                  CHIP,
+                  !activeContext
+                    ? "border-foreground bg-foreground text-background"
+                    : "text-muted-foreground hover:border-foreground hover:text-foreground",
+                )}
+                href={buildMaterialsHref({
+                  ...baseParams,
+                  context: undefined,
+                })}
+              >
+                Any
+              </Link>
+              {USE_CONTEXTS.map((c) => (
+                <Link
+                  key={c.value}
+                  className={cn(
+                    CHIP,
+                    activeContext === c.value
+                      ? "border-foreground bg-foreground text-background"
+                      : "text-muted-foreground hover:border-foreground hover:text-foreground",
+                  )}
+                  href={buildMaterialsHref({
+                    ...baseParams,
+                    context: c.value,
+                  })}
+                >
+                  {c.label}
+                </Link>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <span className="self-center pr-1 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                Tier
+              </span>
+              <Link
+                className={cn(
+                  CHIP,
+                  !activeTier
+                    ? "border-foreground bg-foreground text-background"
+                    : "text-muted-foreground hover:border-foreground hover:text-foreground",
+                )}
+                href={buildMaterialsHref({ ...baseParams, tier: undefined })}
+              >
+                Any
+              </Link>
+              {TIER_FILTERS.map((t) => (
+                <Link
+                  key={t.value}
+                  className={cn(
+                    CHIP,
+                    activeTier === t.value
+                      ? "border-foreground bg-foreground text-background"
+                      : "text-muted-foreground hover:border-foreground hover:text-foreground",
+                  )}
+                  href={buildMaterialsHref({ ...baseParams, tier: t.value })}
+                >
+                  {t.label}
+                </Link>
+              ))}
+            </div>
           </div>
         </MarketingPageHeader>
 
-        <MarketingRuledGrid>
-          {entries.map((entry) => (
-            <MarketingRuledCell key={entry.slug} className="p-0 sm:p-0 lg:p-0">
-              <Link
-                className="group block transition-colors hover:bg-muted/40"
-                href={`/materials/${entry.slug}`}
-              >
-                <div className="relative aspect-[16/10] overflow-hidden bg-foreground">
-                  <MaterialPreview entry={entry} />
-                </div>
-                <div className="space-y-2.5 border-t border-border p-6 sm:p-8 lg:p-10">
-                  <div className="flex items-center justify-between gap-3">
-                    <h2 className="font-heading text-base font-medium tracking-tight">
-                      {entry.title}
-                    </h2>
-                    <span
-                      className={cn(
-                        "text-[0.625rem] font-semibold tracking-widest uppercase",
-                        entry.tier === "free"
-                          ? "text-muted-foreground"
-                          : "text-foreground",
-                      )}
-                    >
-                      {entry.tier === "free" ? "Free" : "Paid"}
-                    </span>
+        {entries.length === 0 ? (
+          <div className="border-b border-border px-6 py-16 text-center sm:px-8 lg:px-12">
+            <p className="text-sm text-muted-foreground">
+              No materials match these filters.
+            </p>
+            <Link
+              className="mt-4 inline-block text-sm text-foreground underline underline-offset-4"
+              href="/materials"
+            >
+              Clear filters
+            </Link>
+          </div>
+        ) : (
+          <MarketingRuledGrid>
+            {entries.map((entry) => (
+              <MarketingRuledCell key={entry.slug} className="p-0 sm:p-0 lg:p-0">
+                <Link
+                  className="group block transition-colors hover:bg-muted/40"
+                  href={`/materials/${entry.slug}`}
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden bg-foreground">
+                    <MaterialPreview entry={entry} />
                   </div>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {entry.description}
-                  </p>
-                </div>
-              </Link>
-            </MarketingRuledCell>
-          ))}
-        </MarketingRuledGrid>
+                  <div className="space-y-2.5 border-t border-border p-6 sm:p-8 lg:p-10">
+                    <div className="flex items-center justify-between gap-3">
+                      <h2 className="font-heading text-base font-medium tracking-tight">
+                        {entry.title}
+                      </h2>
+                      <span
+                        className={cn(
+                          "text-[0.625rem] font-semibold tracking-widest uppercase",
+                          entry.tier === "free"
+                            ? "text-muted-foreground"
+                            : "text-foreground",
+                        )}
+                      >
+                        {entry.tier === "free" ? "Free" : "Paid"}
+                      </span>
+                    </div>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {entry.description}
+                    </p>
+                  </div>
+                </Link>
+              </MarketingRuledCell>
+            ))}
+          </MarketingRuledGrid>
+        )}
       </MarketingSection>
       <MarketingFooter />
     </MarketingShell>

@@ -1,80 +1,70 @@
-﻿# Relay — Build Plan (short)
+﻿# Frameline — Build Plan
 
-A basic step-
-by-step of how the build will progress. Steps
-, not dates.
+Active engineering plan aligned with [`SOW.md`](./SOW.md) / [`PRD.md`](./PRD.md).
+Steps, not dates. Supersedes the archived V1 “Relay” sketch.
 
-## Phase 0 — Setup
-| # | Step
- | Outcome |
-|---|---|---|
-| 1 | Scaffold Nex
-t.js + TypeScript + Tailwind | App runs local
-ly |
-| 2 | Add design system (colors, type, c
-omponents) | Consistent look |
-| 3 | Set up P
-ostgres + ORM + data model | Assets/orders sc
-hema ready |
+## Status snapshot
 
-## Phase 1 — Storefront (brow
-se)
+| Area | State |
+|---|---|
+| WP2 Material architecture | In progress — `MaterialShell`, reduced-motion fallbacks, typed catalog |
+| WP3 Authoring | Seed path works; publish pipeline still manual |
+| WP4 Catalog UX | Live — type / context / tier filters, search, sort |
+| WP5 Configurator | Live — controls, JSX copy, URL deep-link, play/pause |
+| WP6 Distribution | Messaging only — registry not gated yet |
+| WP7 Catalog production | **9 / 30–40** materials seeded |
+| WP8 Commerce | Demo checkout + Stripe-ready API stub; no live charges |
+| WP9 Entitlements | Domain types + demo account gating; Postgres schema drafted |
+| WP10 Docs | Hub + install / theming / a11y / perf / examples / troubleshooting / licensing |
+| WP11 Admin | Shell + catalog/orders views; demo auth gate |
+| WP12 Launch ops | Sitemap / robots / metadata; waitlist capture; legal pages |
+
+## Phase A — Browse & craft (mostly done)
+
 | # | Step | Outcome |
 |---|---|---|
-| 4 
-| Homepage with hero + featured | First impre
-ssion |
-| 5 | Browse grid + filters + search 
-| Discover backgrounds |
-| 6 | Asset detail p
-age (previews, specs, license) | See what you
-'re buying |
-| 7 | Collections | Curated grou
-pings |
+| 1 | Scaffold Next.js + TS + Tailwind | App runs |
+| 2 | Design system / marketing shell | Consistent storefront chrome |
+| 3 | Homepage + featured | First impression |
+| 4 | Catalog grid + filters + search | Discover materials |
+| 5 | Material detail + configurator | Evaluate before buy |
+| 6 | Collections | Curated groupings |
+| 7 | Docs suite | Install path documented |
+| 8 | Legal (about / license / privacy / terms) | Trust surfaces |
 
-## Phase 2 — Selling
-| # | Step | 
-Outcome |
-|---|---|---|
-| 8 | File storage + 
-signed download links | Secure delivery |
-| 9
- | Free downloads | Funnel + trust |
-| 10 | C
-art + Stripe checkout (guest) | Take payments
- |
-| 11 | Webhook fulfillment + email receipt
- | Auto-deliver after purchase |
+## Phase B — Catalog depth (active)
 
-## Phase 3 
-— Admin (your side)
 | # | Step | Outcome |
-
 |---|---|---|
-| 12 | Admin login | Only you c
-an manage |
-| 13 | Upload/publish assets + se
-t price/license | Publish in minutes |
-| 14 |
- Orders view + refunds + simple dashboard | R
-un the shop |
+| 9 | Grow to ≥15 materials across 6 contexts | Credible catalog |
+| 10 | Perf notes + props tables as data | Docs/configurator stay in sync |
+| 11 | OG stills / static exports pipeline | Shareable previews |
+| 12 | Reach 30–40 at production bar | SOW Definition of Done |
 
-## Phase 4 — Launch polish
-|
- # | Step | Outcome |
+## Phase C — Selling (scaffold → live)
+
+| # | Step | Outcome |
 |---|---|---|
-| 15 | SE
-O, sitemap, social previews | Get found + sha
-red |
-| 16 | Accessibility + performance pass
- | Fast, polished, portfolio-grade |
-| 17 | S
-eed first drop + go live | Relay is open |
+| 13 | Postgres + Prisma client from `prisma/schema.prisma` | Durable entitlements |
+| 14 | Stripe Checkout (guest) + tax | Take payments |
+| 15 | Webhook fulfillment + Resend receipt | Auto-deliver |
+| 16 | Entitlement-gated registry | Paid sources return 403 when unentitled |
+| 17 | Free downloads ungated | Funnel + trust |
 
-*
-*Order of value:** you'll be able to *see* th
-e site (Phase 1) → *sell* (Phase 2) → *ru
-n it yourself* (Phase 3) → *launch clean* (
-Phase 4).
+## Phase D — Auth & admin
 
+| # | Step | Outcome |
+|---|---|---|
+| 18 | Real auth provider (Clerk or Firebase) | Sessions replace demo cookie |
+| 19 | Admin harden + publish/edit flow | Solo publish in hours |
+| 20 | Orders / refund / revoke | Operate the shop |
 
+## Phase E — Launch polish
+
+| # | Step | Outcome |
+|---|---|---|
+| 21 | Funnel analytics + Sentry | See failures |
+| 22 | Core Web Vitals pass | Performance claim holds |
+| 23 | Domain `frameline.ai` + go live | Paid public launch |
+
+**Order of value:** see the site → deepen catalog → sell → operate → launch clean.

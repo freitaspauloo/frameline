@@ -1,15 +1,24 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { MarketingFooter } from "@/components/marketing-footer";
 import { MarketingNavbar } from "@/components/marketing-navbar";
 import {
   MarketingPageHeader,
+  MarketingPad,
   MarketingRuledCell,
   MarketingRuledGrid,
   MarketingSection,
   MarketingShell,
 } from "@/components/marketing-shell";
 import { Button } from "@/components/ui/button";
+import { WaitlistForm } from "@/components/waitlist-form";
+
+export const metadata: Metadata = {
+  title: "Pricing",
+  description:
+    "Free, Personal, and Team licenses for Frameline materials — clear commercial rights, one-time purchase.",
+};
 
 const TIERS = [
   {
@@ -127,6 +136,24 @@ export default async function PricingPage({
           ))}
         </MarketingRuledGrid>
       </MarketingSection>
+
+      <MarketingSection>
+        <MarketingPad className="mx-auto max-w-xl space-y-6 py-16 text-center lg:py-24">
+          <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+            Waitlist
+          </p>
+          <h2 className="font-instrument text-[clamp(1.75rem,4vw,2.5rem)] leading-[1.1] font-normal tracking-[-0.02em] text-foreground">
+            Get launch notes
+          </h2>
+          <p className="text-base leading-relaxed text-muted-foreground">
+            New materials, pricing experiments, and registry access — no spam.
+            Static export ($19) ships at checkout when you need decks and
+            social.
+          </p>
+          <WaitlistForm className="mx-auto max-w-md text-left" source="pricing" />
+        </MarketingPad>
+      </MarketingSection>
+
       <MarketingFooter />
     </MarketingShell>
   );

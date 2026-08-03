@@ -21,9 +21,21 @@ const FOOTER_COLUMNS = [
   {
     title: "Resources",
     links: [
-      { href: "/docs/installation", label: "Docs" },
+      { href: "/docs", label: "Docs" },
       { href: "/docs/installation", label: "Installation" },
+      { href: "/docs/licensing", label: "Licensing" },
+      { href: "/docs/examples", label: "Examples" },
       { href: "/shadcn", label: "Design system" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { href: "/about", label: "About" },
+      { href: "/changelog", label: "Changelog" },
+      { href: "/license", label: "License" },
+      { href: "/privacy", label: "Privacy" },
+      { href: "/terms", label: "Terms" },
     ],
   },
   {
@@ -54,7 +66,7 @@ export function MarketingFooter() {
         </MarketingRuledCell>
 
         <MarketingRuledCell>
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
             {FOOTER_COLUMNS.map((column) => (
               <div key={column.title} className="space-y-3">
                 <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">

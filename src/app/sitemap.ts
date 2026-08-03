@@ -1,0 +1,44 @@
+import type { MetadataRoute } from "next";
+
+import { DOCS_NAV } from "@/components/docs-shell";
+import { MATERIALS_CATALOG, MATERIALS_COLLECTIONS } from "@/materials";
+
+const BASE = "https://frameline.ai";
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const now = new Date();
+
+  const staticRoutes: MetadataRoute.Sitemap = [
+    "",
+    "/materials",
+    "/collections",
+    "/pricing",
+    "/about",
+    "/license",
+    "/privacy",
+    "/terms",
+    "/changelog",
+    ...DOCS_NAV.map((item) => item.href),
+  ].map((path) => ({
+    url: `${BASE}${path}`,
+    lastModified: now,
+    changeFrequency: path === "" || path === "/materials" ? "weekly" : "monthly",
+    priority: path === "" ? 1 : path === "/materials" || path === "/pricing" ? 0.9 : 0.7,
+  }));
+
+  const materials: MetadataRoute.Sitemap = MATERIALS_CATALOG.map((m) => ({
+    url: `${BASE}/materials/${m.slug}`,
+    lastModified: now,
+    changeFrequency: "weekly",
+    priority: 0.8,
+  }));
+
+  const collections: MetadataRoute.Sitemap = MATERIALS_COLLECTIONS.map((c) => ({
+    url: `${BASE}/collections/${c.slug}`,
+    lastModified: now,
+    changeFrequency: "weekly",
+    priority: 0.75,
+  }));
+
+  return [...staticRoutes, ...materials, ...collections];
+}
