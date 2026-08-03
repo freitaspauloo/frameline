@@ -17,7 +17,7 @@ import { WaitlistForm } from "@/components/waitlist-form";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Free, Personal, and Team licenses for Frameline materials — clear commercial rights, one-time purchase.",
+    "Free, Static, Personal, and Team licenses for Frameline materials — clear commercial rights, one-time purchase.",
 };
 
 const TIERS = [
@@ -26,7 +26,18 @@ const TIERS = [
     price: "$0",
     blurb: "Excellent free materials. Same craft bar as paid.",
     features: ["Free SKUs", "Copy / CLI install", "Commercial use"],
-    cta: { href: "/materials", label: "Browse free", primary: false },
+    cta: { href: "/materials?tier=free", label: "Browse free", primary: false },
+  },
+  {
+    name: "Static",
+    price: "$19",
+    blurb: "Still exports for decks, social, and non-React surfaces.",
+    features: [
+      "Static frames / loops",
+      "Decks, social, video",
+      "No registry required",
+    ],
+    cta: { href: "/checkout?plan=static", label: "Buy Static", primary: true },
   },
   {
     name: "Personal",
@@ -90,7 +101,7 @@ export default async function PricingPage({
           title="Choose a license"
         />
 
-        <MarketingRuledGrid>
+        <MarketingRuledGrid className="lg:grid-cols-2 xl:grid-cols-4">
           {TIERS.map((tier) => (
             <MarketingRuledCell key={tier.name} className="flex flex-col">
               <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">

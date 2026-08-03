@@ -23,6 +23,10 @@ export type MaterialCatalogEntry = {
   tags: string[];
   /** CSS colors used for static / reduced-motion fallback */
   fallbackColors: string[];
+  /** How the live surface is drawn */
+  renderingTechnique?: "webgl" | "css";
+  /** Short note on GPU cost / when to prefer static */
+  perfNotes?: string;
 };
 
 export type MaterialCollection = {

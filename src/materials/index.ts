@@ -41,6 +41,16 @@ export { HalftoneSignal } from "./halftone-signal";
 export type { HalftoneSignalProps } from "./halftone-signal";
 export { LiquidChrome } from "./liquid-chrome";
 export type { LiquidChromeProps } from "./liquid-chrome";
+export { PanelGlass } from "./panel-glass";
+export type { PanelGlassProps } from "./panel-glass";
+export { OrbitDots } from "./orbit-dots";
+export type { OrbitDotsProps } from "./orbit-dots";
+export { SpiralInk } from "./spiral-ink";
+export type { SpiralInkProps } from "./spiral-ink";
+export { PerlinMoss } from "./perlin-moss";
+export type { PerlinMossProps } from "./perlin-moss";
+export { PulseFrame } from "./pulse-frame";
+export type { PulseFrameProps } from "./pulse-frame";
 export { MaterialShell } from "./material-shell";
 export type {
   MaterialCatalogEntry,

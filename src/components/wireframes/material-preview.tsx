@@ -12,9 +12,14 @@ import {
   InkSwirl,
   LiquidChrome,
   NeuroVeil,
+  OrbitDots,
+  PanelGlass,
+  PerlinMoss,
+  PulseFrame,
   SignalDots,
   SimplexField,
   SmokeRing,
+  SpiralInk,
   TideWave,
   getMaterial,
 } from "@/materials";
@@ -61,6 +66,16 @@ export function WireframeMaterialPreview({
       return <HalftoneSignal className={common} />;
     case "liquid-chrome":
       return <LiquidChrome className={common} />;
+    case "panel-glass":
+      return <PanelGlass className={common} />;
+    case "orbit-dots":
+      return <OrbitDots className={common} />;
+    case "spiral-ink":
+      return <SpiralInk className={common} />;
+    case "perlin-moss":
+      return <PerlinMoss className={common} />;
+    case "pulse-frame":
+      return <PulseFrame className={common} />;
     default:
       return (
         <div

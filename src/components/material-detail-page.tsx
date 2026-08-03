@@ -26,9 +26,14 @@ import {
   InkSwirl,
   LiquidChrome,
   NeuroVeil,
+  OrbitDots,
+  PanelGlass,
+  PerlinMoss,
+  PulseFrame,
   SignalDots,
   SimplexField,
   SmokeRing,
+  SpiralInk,
   TideWave,
   getMaterial,
   type MaterialCatalogEntry,
@@ -58,6 +63,11 @@ const COMPONENT_NAMES: Record<string, string> = {
   "simplex-field": "SimplexField",
   "halftone-signal": "HalftoneSignal",
   "liquid-chrome": "LiquidChrome",
+  "panel-glass": "PanelGlass",
+  "orbit-dots": "OrbitDots",
+  "spiral-ink": "SpiralInk",
+  "perlin-moss": "PerlinMoss",
+  "pulse-frame": "PulseFrame",
 };
 
 function buildJsxSnippet(slug: string, props: Record<string, unknown>) {
@@ -304,6 +314,96 @@ function LivePreview({
           shiftRed={props.shiftRed as number | undefined}
           softness={props.softness as number | undefined}
           speed={props.speed as number | undefined}
+        />
+      );
+    case "panel-glass":
+      return (
+        <PanelGlass
+          angle1={props.angle1 as number | undefined}
+          angle2={props.angle2 as number | undefined}
+          blur={props.blur as number | undefined}
+          className={common}
+          colorBack={props.colorBack as string | undefined}
+          colors={props.colors as string[] | undefined}
+          density={props.density as number | undefined}
+          fadeIn={props.fadeIn as number | undefined}
+          fadeOut={props.fadeOut as number | undefined}
+          forceStatic={forceStatic}
+          gradient={props.gradient as number | undefined}
+          length={props.length as number | undefined}
+          scale={props.scale as number | undefined}
+          speed={props.speed as number | undefined}
+        />
+      );
+    case "orbit-dots":
+      return (
+        <OrbitDots
+          className={common}
+          colorBack={props.colorBack as string | undefined}
+          colors={props.colors as string[] | undefined}
+          forceStatic={forceStatic}
+          scale={props.scale as number | undefined}
+          size={props.size as number | undefined}
+          sizeRange={props.sizeRange as number | undefined}
+          speed={props.speed as number | undefined}
+          spreading={props.spreading as number | undefined}
+          stepsPerColor={props.stepsPerColor as number | undefined}
+        />
+      );
+    case "spiral-ink":
+      return (
+        <SpiralInk
+          className={common}
+          colorBack={props.colorBack as string | undefined}
+          colorFront={props.colorFront as string | undefined}
+          density={props.density as number | undefined}
+          distortion={props.distortion as number | undefined}
+          forceStatic={forceStatic}
+          noise={props.noise as number | undefined}
+          noiseFrequency={props.noiseFrequency as number | undefined}
+          scale={props.scale as number | undefined}
+          softness={props.softness as number | undefined}
+          speed={props.speed as number | undefined}
+          strokeCap={props.strokeCap as number | undefined}
+          strokeTaper={props.strokeTaper as number | undefined}
+          strokeWidth={props.strokeWidth as number | undefined}
+        />
+      );
+    case "perlin-moss":
+      return (
+        <PerlinMoss
+          className={common}
+          colorBack={props.colorBack as string | undefined}
+          colorFront={props.colorFront as string | undefined}
+          forceStatic={forceStatic}
+          lacunarity={props.lacunarity as number | undefined}
+          octaveCount={props.octaveCount as number | undefined}
+          persistence={props.persistence as number | undefined}
+          proportion={props.proportion as number | undefined}
+          scale={props.scale as number | undefined}
+          softness={props.softness as number | undefined}
+          speed={props.speed as number | undefined}
+        />
+      );
+    case "pulse-frame":
+      return (
+        <PulseFrame
+          bloom={props.bloom as number | undefined}
+          className={common}
+          colorBack={props.colorBack as string | undefined}
+          colors={props.colors as string[] | undefined}
+          forceStatic={forceStatic}
+          intensity={props.intensity as number | undefined}
+          pulse={props.pulse as number | undefined}
+          roundness={props.roundness as number | undefined}
+          scale={props.scale as number | undefined}
+          smoke={props.smoke as number | undefined}
+          smokeSize={props.smokeSize as number | undefined}
+          softness={props.softness as number | undefined}
+          speed={props.speed as number | undefined}
+          spotSize={props.spotSize as number | undefined}
+          spots={props.spots as number | undefined}
+          thickness={props.thickness as number | undefined}
         />
       );
     default:
@@ -725,6 +825,149 @@ function useMaterialControls(slug: string): MaterialControls {
       ],
     };
   }
+  if (slug === "panel-glass") {
+    return {
+      defaults: {
+        speed: 1,
+        scale: 0.9,
+        angle1: 0.3,
+        angle2: 0.3,
+        length: 1,
+        blur: 0.25,
+        fadeIn: 0.85,
+        fadeOut: 0.3,
+        density: 1.6,
+        gradient: 0,
+        colorBack: "#FFFFFF",
+        colors: ["#00CFFF", "#FF2D55", "#34C759", "#AF52DE"],
+      },
+      fields: [
+        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
+        { key: "scale", label: "Scale", min: 0.2, max: 2, step: 0.01 },
+        { key: "angle1", label: "Angle 1", min: -1, max: 1, step: 0.01 },
+        { key: "angle2", label: "Angle 2", min: -1, max: 1, step: 0.01 },
+        { key: "length", label: "Length", min: 0, max: 3, step: 0.01 },
+        { key: "blur", label: "Blur", min: 0, max: 0.5, step: 0.01 },
+        { key: "density", label: "Density", min: 0.25, max: 7, step: 0.05 },
+        { key: "fadeIn", label: "Fade in", min: 0, max: 1, step: 0.01 },
+        { key: "fadeOut", label: "Fade out", min: 0, max: 1, step: 0.01 },
+      ],
+      colors: [{ key: "colorBack", label: "Back" }],
+    };
+  }
+  if (slug === "orbit-dots") {
+    return {
+      defaults: {
+        speed: 0.45,
+        scale: 0.7,
+        size: 0.55,
+        sizeRange: 0.25,
+        spreading: 0.85,
+        stepsPerColor: 3,
+        colorBack: "#F7F5F0",
+        colors: ["#2D6BFF", "#5B8CFF", "#E8F0FF"],
+      },
+      fields: [
+        { key: "speed", label: "Speed", min: 0, max: 3, step: 0.01 },
+        { key: "scale", label: "Scale", min: 0.2, max: 2, step: 0.01 },
+        { key: "size", label: "Size", min: 0, max: 1, step: 0.01 },
+        { key: "sizeRange", label: "Size range", min: 0, max: 1, step: 0.01 },
+        { key: "spreading", label: "Spreading", min: 0, max: 1, step: 0.01 },
+        { key: "stepsPerColor", label: "Steps", min: 1, max: 8, step: 1 },
+      ],
+      colors: [{ key: "colorBack", label: "Back" }],
+    };
+  }
+  if (slug === "spiral-ink") {
+    return {
+      defaults: {
+        speed: 0.55,
+        scale: 1,
+        density: 0.85,
+        distortion: 0.15,
+        strokeWidth: 0.55,
+        strokeTaper: 0.12,
+        strokeCap: 0.4,
+        noise: 0.2,
+        noiseFrequency: 0.28,
+        softness: 0.08,
+        colorBack: "#0A0A0A",
+        colorFront: "#2D6BFF",
+      },
+      fields: [
+        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
+        { key: "scale", label: "Scale", min: 0.2, max: 2, step: 0.01 },
+        { key: "density", label: "Density", min: 0, max: 2, step: 0.01 },
+        { key: "strokeWidth", label: "Stroke", min: 0, max: 1, step: 0.01 },
+        { key: "noise", label: "Noise", min: 0, max: 1, step: 0.01 },
+        { key: "softness", label: "Softness", min: 0, max: 1, step: 0.01 },
+      ],
+      colors: [
+        { key: "colorBack", label: "Back" },
+        { key: "colorFront", label: "Front" },
+      ],
+    };
+  }
+  if (slug === "perlin-moss") {
+    return {
+      defaults: {
+        speed: 0.15,
+        scale: 1.4,
+        proportion: 0.55,
+        softness: 0.35,
+        octaveCount: 4,
+        persistence: 0.7,
+        lacunarity: 2.2,
+        colorBack: "#1A2E1A",
+        colorFront: "#7CB87C",
+      },
+      fields: [
+        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
+        { key: "scale", label: "Scale", min: 0.2, max: 4, step: 0.01 },
+        { key: "proportion", label: "Proportion", min: 0, max: 1, step: 0.01 },
+        { key: "softness", label: "Softness", min: 0, max: 1, step: 0.01 },
+        { key: "octaveCount", label: "Octaves", min: 1, max: 8, step: 1 },
+        { key: "persistence", label: "Persistence", min: 0, max: 1, step: 0.01 },
+        { key: "lacunarity", label: "Lacunarity", min: 1, max: 4, step: 0.05 },
+      ],
+      colors: [
+        { key: "colorBack", label: "Back" },
+        { key: "colorFront", label: "Front" },
+      ],
+    };
+  }
+  if (slug === "pulse-frame") {
+    return {
+      defaults: {
+        speed: 0.7,
+        scale: 0.75,
+        roundness: 0.2,
+        thickness: 0.12,
+        softness: 0.7,
+        intensity: 0.25,
+        bloom: 0.3,
+        spots: 4,
+        spotSize: 0.45,
+        pulse: 0.3,
+        smoke: 0.25,
+        smokeSize: 0.55,
+        colorBack: "#0A0A0A",
+        colors: ["#2D6BFF", "#5B8CFF", "#AF52DE"],
+      },
+      fields: [
+        { key: "speed", label: "Speed", min: 0, max: 2, step: 0.01 },
+        { key: "scale", label: "Scale", min: 0.2, max: 2, step: 0.01 },
+        { key: "roundness", label: "Roundness", min: 0, max: 1, step: 0.01 },
+        { key: "thickness", label: "Thickness", min: 0, max: 1, step: 0.01 },
+        { key: "softness", label: "Softness", min: 0, max: 1, step: 0.01 },
+        { key: "bloom", label: "Bloom", min: 0, max: 1, step: 0.01 },
+        { key: "pulse", label: "Pulse", min: 0, max: 1, step: 0.01 },
+        { key: "smoke", label: "Smoke", min: 0, max: 1, step: 0.01 },
+        { key: "spots", label: "Spots", min: 1, max: 10, step: 1 },
+      ],
+      colors: [{ key: "colorBack", label: "Back" }],
+    };
+  }
   return {
     defaults: {
       speed: 0.4,
@@ -896,6 +1139,18 @@ export function MaterialDetailPage({ slug, initialParams }: Props) {
                   {entry.tags.join(" · ")}
                 </dd>
               </div>
+              {entry.perfNotes ? (
+                <div className="col-span-2 space-y-1.5 sm:col-span-3">
+                  <dt className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                    Perf
+                  </dt>
+                  <dd className="font-mono text-[11px] leading-relaxed text-foreground">
+                    {entry.renderingTechnique
+                      ? `${entry.renderingTechnique} · ${entry.perfNotes}`
+                      : entry.perfNotes}
+                  </dd>
+                </div>
+              ) : null}
             </dl>
           </div>
 
