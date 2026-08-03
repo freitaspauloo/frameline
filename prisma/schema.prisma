@@ -1,0 +1,222 @@
+// Frameline data model — PRD §10
+// Schema-first lock. Wire DATABASE_URL + `pnpm prisma generate` when Postgres is available.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MaterialStatus {
+  draft
+  published
+  unpublished
+}
+
+enum OrderStatus {
+  pending
+  paid
+  refunded
+}
+
+enum EntitlementStatus {
+  active
+  revoked
+}
+
+enum UserRole {
+  buyer
+  admin
+}
+
+enum EmailCaptureSource {
+  free_install
+  waitlist
+  newsletter
+}
+
+enum PreviewKind {
+  grid
+  detail
+  og
+  export
+}
+
+model Material {
+  id                  String           @id @default(cuid())
+  slug                String           @unique
+  title               String
+  description         String
+  surfaceType         String           @default("material")
+  status              MaterialStatus   @default(draft)
+  tags                String[]
+  useContexts         String[]
+  renderingTechnique  String?
+  tierAvailability    String[]
+  docsMd              String?
+  perfNotes           String?
+  browserSupport      String?
+  dependencies        String[]
+  altText             String?
+  publishedAt         DateTime?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  versions            MaterialVersion[]
+  previews            MaterialPreview[]
+  props               MaterialProp[]
+  collections         CollectionMaterial[]
+}
+
+model MaterialVersion {
+  id         String   @id @default(cuid())
+  materialId String
+  material   Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  version    String
+  changelog  String?
+  packageRef String
+  checksum   String?
+  releasedAt DateTime @default(now())
+
+  @@unique([materialId, version])
+  @@index([materialId])
+}
+
+model MaterialPreview {
+  id         String      @id @default(cuid())
+  materialId String
+  material   Material    @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  kind       PreviewKind
+  mediaKey   String
+  sortOrder  Int         @default(0)
+
+  @@index([materialId, kind])
+}
+
+model MaterialProp {
+  id           String   @id @default(cuid())
+  materialId   String
+  material     Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  name         String
+  type         String
+  defaultValue String?
+  description  String?
+  configurable Boolean  @default(true)
+
+  @@unique([materialId, name])
+}
+
+model Collection {
+  id          String              @id @default(cuid())
+  slug        String              @unique
+  name        String
+  description String
+  featured    Boolean             @default(false)
+  sortOrder   Int                 @default(0)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  materials   CollectionMaterial[]
+}
+
+model CollectionMaterial {
+  collectionId String
+  materialId   String
+  position     Int        @default(0)
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  material     Material   @relation(fields: [materialId], references: [id], onDelete: Cascade)
+
+  @@id([collectionId, materialId])
+}
+
+model LicensePlan {
+  id       String  @id @default(cuid())
+  key      String
+  name     String
+  version  String
+  summary  String
+  fullText String
+  price    Int
+  active   Boolean @default(true)
+
+  @@unique([key, version])
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  role      UserRole @default(buyer)
+  createdAt DateTime @default(now())
+  orders    Order[]
+}
+
+model Order {
+  id                 String        @id @default(cuid())
+  email              String
+  userId             String?
+  user               User?         @relation(fields: [userId], references: [id])
+  paymentProviderRef String?
+  status             OrderStatus   @default(pending)
+  planKey            String
+  licenseVersion     String
+  subtotal           Int
+  tax                Int           @default(0)
+  total              Int
+  createdAt          DateTime      @default(now())
+  entitlements       Entitlement[]
+
+  @@index([email])
+  @@index([paymentProviderRef])
+}
+
+model Entitlement {
+  id             String            @id @default(cuid())
+  orderId        String?
+  order          Order?            @relation(fields: [orderId], references: [id])
+  userEmail      String
+  planKey        String
+  licenseVersion String
+  materialScope  Json
+  status         EntitlementStatus @default(active)
+  grantedAt      DateTime          @default(now())
+  revokedAt      DateTime?
+  tokens         RegistryToken[]
+
+  @@index([userEmail, status])
+}
+
+model RegistryToken {
+  id            String       @id @default(cuid())
+  userEmail     String
+  tokenHash     String       @unique
+  entitlementId String
+  entitlement   Entitlement  @relation(fields: [entitlementId], references: [id], onDelete: Cascade)
+  createdAt     DateTime     @default(now())
+  lastUsedAt    DateTime?
+  revokedAt     DateTime?
+
+  @@index([userEmail])
+}
+
+model AccessEvent {
+  id        String   @id @default(cuid())
+  subject   String
+  actor     String?
+  kind      String
+  createdAt DateTime @default(now())
+
+  @@index([subject, kind])
+  @@index([createdAt])
+}
+
+model EmailCapture {
+  id        String             @id @default(cuid())
+  email     String
+  source    EmailCaptureSource
+  consent   Boolean            @default(true)
+  createdAt DateTime           @default(now())
+
+  @@unique([email, source])
+  @@index([createdAt])
+}

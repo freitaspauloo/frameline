@@ -40,7 +40,7 @@ import { cn } from "@/lib/utils";
 
 const HERO_INK = "#3A58F0";
 const HERO_PAPER = "#FFFFFF";
-const CATALOG_PREVIEW_SLOTS = 9;
+const CATALOG_PREVIEW_SLOTS = Math.min(6, MATERIALS_CATALOG.length);
 
 const INSTALL_SNIPPET = `npx shadcn@latest add @frameline/aurora-mesh`;
 

@@ -30,9 +30,28 @@ const syne = Syne({
 });
 
 export const metadata: Metadata = {
-  title: "Frameline",
+  metadataBase: new URL("https://frameline.ai"),
+  title: {
+    default: "Frameline",
+    template: "%s · Frameline",
+  },
   description:
     "Design assets for the AI era — shippable surface so builders don’t ship the default AI look.",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://frameline.ai",
+    siteName: "Frameline",
+    title: "Frameline",
+    description:
+      "Design assets for the AI era — shippable surface so builders don’t ship the default AI look.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Frameline",
+    description:
+      "Design assets for the AI era — shippable surface so builders don’t ship the default AI look.",
+  },
 };
 
 export default function RootLayout({

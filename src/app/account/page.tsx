@@ -1,65 +1,143 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
+import { AccountRegistryPanel } from "@/components/account-registry-panel";
+import { MarketingFooter } from "@/components/marketing-footer";
 import { MarketingNavbar } from "@/components/marketing-navbar";
-import { RelayButton } from "@/components/relay-ui";
+import {
+  MarketingPageHeader,
+  MarketingPad,
+  MarketingSection,
+  MarketingShell,
+} from "@/components/marketing-shell";
+import { Button } from "@/components/ui/button";
+import { getDemoEmail } from "@/lib/auth";
+import {
+  getDemoEntitlements,
+  partitionCatalogByAccess,
+} from "@/lib/entitlements";
 import { MATERIALS_CATALOG } from "@/materials";
 
-export default function AccountPage() {
+export const metadata: Metadata = {
+  title: "Account",
+  description: "Your Frameline licenses and registry access.",
+};
+
+export default async function AccountPage() {
+  const email = await getDemoEmail();
+  const entitlements = getDemoEntitlements(email ?? "you@studio.dev");
+  const { entitled, locked } = partitionCatalogByAccess(
+    MATERIALS_CATALOG,
+    entitlements,
+  );
+
   return (
-    <div className="min-h-dvh bg-relay-white text-relay-ink">
+    <MarketingShell>
       <MarketingNavbar />
-      <main className="mx-auto max-w-7xl px-6 pb-24 pt-12 lg:px-8">
-        <div className="max-w-xl space-y-2">
-          <h1 className="text-4xl font-semibold tracking-tight">
-            Your licenses
-          </h1>
-          <p className="text-base text-relay-secondary">
-            Reinstall anytime. No separate return flow — this is the place.
-          </p>
-        </div>
+      <MarketingSection>
+        <MarketingPageHeader
+          action={
+            email ? undefined : (
+              <Button
+                nativeButton={false}
+                render={<Link href="/account/sign-in" />}
+                size="sm"
+              >
+                Sign in
+              </Button>
+            )
+          }
+          description="Demo account — free materials are entitled. Paid SKUs stay locked until checkout grants access."
+          eyebrow="Account"
+          title="Your licenses"
+        />
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-          <ul className="space-y-3">
-            {MATERIALS_CATALOG.map((item) => (
-              <li key={item.slug}>
-                <div className="flex flex-wrap items-center justify-between gap-3 rounded-relay-lg border border-relay-border bg-relay-panel px-4 py-4">
-                  <div>
-                    <p className="text-sm font-medium">{item.title}</p>
-                    <p className="font-mono text-[11px] text-relay-secondary">
-                      {item.tier} · v0.1.0
-                    </p>
-                  </div>
-                  <RelayButton
-                    className="shrink-0"
-                    nativeButton={false}
-                    render={
-                      <Link
-                        href={`/docs/installation?material=${item.slug}`}
-                      />
-                    }
-                    variant="secondary"
-                  >
-                    Install
-                  </RelayButton>
-                </div>
-              </li>
-            ))}
-          </ul>
-
-          <div className="space-y-4 rounded-relay-lg border border-relay-border bg-relay-panel p-5">
-            <h2 className="text-sm font-medium">Registry token</h2>
-            <pre className="rounded-relay-md bg-relay-ink p-3 font-mono text-[11px] text-relay-white">
-              fl_live_••••••••••••••••
-            </pre>
-            <RelayButton className="w-full" variant="secondary">
-              Regenerate token
-            </RelayButton>
-            <p className="text-sm text-relay-secondary">
-              Use with the Frameline registry CLI after purchase.
+        <MarketingPad className="space-y-3 border-b border-border py-6">
+          {email ? (
+            <p className="font-mono text-[11px] text-muted-foreground">
+              Signed in as{" "}
+              <span className="text-foreground">{email}</span>
+              {" · "}
+              demo auth (Clerk/Firebase later)
             </p>
+          ) : (
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Not signed in.{" "}
+              <Link
+                className="underline underline-offset-4 hover:text-foreground"
+                href="/account/sign-in"
+              >
+                Sign in with a demo magic link
+              </Link>
+              . Demo — paid entitlements after checkout. Free materials below are
+              installable now.
+            </p>
+          )}
+        </MarketingPad>
+
+        <div className="grid lg:grid-cols-[1.2fr_0.8fr] lg:divide-x lg:divide-border">
+          <div className="divide-y divide-border">
+            {entitled.map((item) => (
+              <div
+                key={item.slug}
+                className="flex flex-wrap items-center justify-between gap-3 px-6 py-5 sm:px-8 lg:px-12"
+              >
+                <div>
+                  <p className="font-heading text-sm font-medium tracking-tight">
+                    {item.title}
+                  </p>
+                  <p className="mt-1 font-mono text-[11px] text-muted-foreground">
+                    {item.tier} · v0.1.0 · entitled
+                  </p>
+                </div>
+                <Button
+                  className="shrink-0"
+                  nativeButton={false}
+                  render={
+                    <Link href={`/docs/installation?material=${item.slug}`} />
+                  }
+                  size="sm"
+                  variant="outline"
+                >
+                  Install
+                </Button>
+              </div>
+            ))}
+
+            {locked.map((item) => (
+              <div
+                key={item.slug}
+                className="flex flex-wrap items-center justify-between gap-3 px-6 py-5 sm:px-8 lg:px-12"
+              >
+                <div>
+                  <p className="font-heading text-sm font-medium tracking-tight text-muted-foreground">
+                    {item.title}
+                  </p>
+                  <p className="mt-1 font-mono text-[11px] text-muted-foreground">
+                    {item.tier} · locked until purchase
+                  </p>
+                </div>
+                <Button
+                  className="shrink-0"
+                  nativeButton={false}
+                  render={
+                    <Link
+                      href={`/checkout?plan=${item.tier === "team" ? "team" : "personal"}&material=${item.slug}`}
+                    />
+                  }
+                  size="sm"
+                  variant="outline"
+                >
+                  Unlock
+                </Button>
+              </div>
+            ))}
           </div>
+
+          <AccountRegistryPanel email={email} />
         </div>
-      </main>
-    </div>
+      </MarketingSection>
+      <MarketingFooter />
+    </MarketingShell>
   );
 }
