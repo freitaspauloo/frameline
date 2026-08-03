@@ -1,14 +1,21 @@
 "use client";
 
+import * as React from "react";
+
 import {
   AuroraDusk,
   AuroraMesh,
+  BlueSignal,
   CellVoronoi,
   CmykHalftone,
+  DuskVeil,
   EmberWarp,
+  FogLayer,
   GemHaze,
+  GlowRim,
   GrainField,
   GrainNight,
+  GridGhost,
   HalftoneSignal,
   HaloRays,
   InkDither,
@@ -24,24 +31,28 @@ import {
   PerlinMoss,
   PulseFrame,
   RadialStill,
+  SeraWash,
   SignalDots,
   SimplexField,
   SmokeRing,
   SpiralInk,
   StillMesh,
+  StoneBand,
+  StripeQuiet,
   TideWave,
   VoronoiSoft,
   WaterSheet,
   WaveRibbon,
   type MaterialCatalogEntry,
 } from "@/materials";
+import { usePrefersReducedMotion } from "@/materials/hooks";
 
-export function MaterialPreview({
+function PreviewSurface({
   entry,
-  forceStatic = true,
+  forceStatic,
 }: {
   entry: MaterialCatalogEntry;
-  forceStatic?: boolean;
+  forceStatic: boolean;
 }) {
   const common = "absolute inset-0 h-full w-full";
 
@@ -110,6 +121,22 @@ export function MaterialPreview({
       return <WaveRibbon className={common} forceStatic={forceStatic} />;
     case "voronoi-soft":
       return <VoronoiSoft className={common} forceStatic={forceStatic} />;
+    case "sera-wash":
+      return <SeraWash className={common} forceStatic={forceStatic} />;
+    case "stone-band":
+      return <StoneBand className={common} forceStatic={forceStatic} />;
+    case "blue-signal":
+      return <BlueSignal className={common} forceStatic={forceStatic} />;
+    case "dusk-veil":
+      return <DuskVeil className={common} forceStatic={forceStatic} />;
+    case "grid-ghost":
+      return <GridGhost className={common} forceStatic={forceStatic} />;
+    case "stripe-quiet":
+      return <StripeQuiet className={common} forceStatic={forceStatic} />;
+    case "glow-rim":
+      return <GlowRim className={common} forceStatic={forceStatic} />;
+    case "fog-layer":
+      return <FogLayer className={common} forceStatic={forceStatic} />;
     default:
       return (
         <div
@@ -120,4 +147,44 @@ export function MaterialPreview({
         />
       );
   }
+}
+
+/**
+ * Catalog / grid preview. Animates only while in the viewport;
+ * off-screen and prefers-reduced-motion always use the static shell.
+ */
+export function MaterialPreview({
+  entry,
+  forceStatic = false,
+}: {
+  entry: MaterialCatalogEntry;
+  /** When true, always show the static shell (ignores intersection). */
+  forceStatic?: boolean;
+}) {
+  const rootRef = React.useRef<HTMLDivElement>(null);
+  const [inView, setInView] = React.useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  React.useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([obs]) => {
+        setInView(obs?.isIntersecting ?? false);
+      },
+      { rootMargin: "80px 0px", threshold: 0.01 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const staticMode =
+    forceStatic || prefersReducedMotion || !inView;
+
+  return (
+    <div ref={rootRef} className="absolute inset-0 h-full w-full">
+      <PreviewSurface entry={entry} forceStatic={staticMode} />
+    </div>
+  );
 }

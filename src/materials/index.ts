@@ -1,10 +1,12 @@
 export {
   MATERIALS_CATALOG,
   MATERIAL_TYPES,
+  applyCatalogOverride,
   getMaterial,
   getMaterialsByType,
   isMaterialType,
 } from "./catalog";
+export type { CatalogMaterialOverride } from "./catalog";
 export {
   MATERIALS_COLLECTIONS,
   getCollection,
@@ -75,6 +77,22 @@ export { WaveRibbon } from "./wave-ribbon";
 export type { WaveRibbonProps } from "./wave-ribbon";
 export { VoronoiSoft } from "./voronoi-soft";
 export type { VoronoiSoftProps } from "./voronoi-soft";
+export { SeraWash } from "./sera-wash";
+export type { SeraWashProps } from "./sera-wash";
+export { StoneBand } from "./stone-band";
+export type { StoneBandProps } from "./stone-band";
+export { BlueSignal } from "./blue-signal";
+export type { BlueSignalProps } from "./blue-signal";
+export { DuskVeil } from "./dusk-veil";
+export type { DuskVeilProps } from "./dusk-veil";
+export { GridGhost } from "./grid-ghost";
+export type { GridGhostProps } from "./grid-ghost";
+export { StripeQuiet } from "./stripe-quiet";
+export type { StripeQuietProps } from "./stripe-quiet";
+export { GlowRim } from "./glow-rim";
+export type { GlowRimProps } from "./glow-rim";
+export { FogLayer } from "./fog-layer";
+export type { FogLayerProps } from "./fog-layer";
 export { MaterialShell } from "./material-shell";
 export {
   MATERIAL_PROPS,

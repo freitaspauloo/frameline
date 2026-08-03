@@ -14,15 +14,22 @@ import {
   marketingPad,
 } from "@/components/marketing-shell";
 import { Button } from "@/components/ui/button";
+import { getLicensePlan } from "@/lib/license-plans";
+import { cn } from "@/lib/utils";
 import {
   AuroraDusk,
   AuroraMesh,
+  BlueSignal,
   CellVoronoi,
   CmykHalftone,
+  DuskVeil,
   EmberWarp,
+  FogLayer,
   GemHaze,
+  GlowRim,
   GrainField,
   GrainNight,
+  GridGhost,
   HalftoneSignal,
   HaloRays,
   InkDither,
@@ -38,11 +45,14 @@ import {
   PerlinMoss,
   PulseFrame,
   RadialStill,
+  SeraWash,
   SignalDots,
   SimplexField,
   SmokeRing,
   SpiralInk,
   StillMesh,
+  StoneBand,
+  StripeQuiet,
   TideWave,
   VoronoiSoft,
   WaterSheet,
@@ -52,11 +62,12 @@ import {
   type MaterialCatalogEntry,
   type MaterialPropDef,
 } from "@/materials";
-import { cn } from "@/lib/utils";
 
 type Props = {
   slug: string;
   initialParams?: Record<string, string | string[] | undefined>;
+  /** Resolved catalog entry (with demo overrides). Falls back to source catalog. */
+  entry?: MaterialCatalogEntry;
 };
 
 const ACCENT = "#3A58F0";
@@ -94,6 +105,14 @@ const COMPONENT_NAMES: Record<string, string> = {
   "grain-night": "GrainNight",
   "wave-ribbon": "WaveRibbon",
   "voronoi-soft": "VoronoiSoft",
+  "sera-wash": "SeraWash",
+  "stone-band": "StoneBand",
+  "blue-signal": "BlueSignal",
+  "dusk-veil": "DuskVeil",
+  "grid-ghost": "GridGhost",
+  "stripe-quiet": "StripeQuiet",
+  "glow-rim": "GlowRim",
+  "fog-layer": "FogLayer",
 };
 
 function buildJsxSnippet(slug: string, props: Record<string, unknown>) {
@@ -637,6 +656,99 @@ function LivePreview({
           speed={props.speed as number | undefined}
         />
       );
+    case "sera-wash":
+      return (
+        <SeraWash
+          angle={props.angle as number | undefined}
+          className={common}
+          colors={props.colors as string[] | undefined}
+          forceStatic={forceStatic}
+          opacity={props.opacity as number | undefined}
+          speed={props.speed as number | undefined}
+        />
+      );
+    case "stone-band":
+      return (
+        <StoneBand
+          bandCount={props.bandCount as number | undefined}
+          className={common}
+          colors={props.colors as string[] | undefined}
+          forceStatic={forceStatic}
+          opacity={props.opacity as number | undefined}
+          speed={props.speed as number | undefined}
+        />
+      );
+    case "blue-signal":
+      return (
+        <BlueSignal
+          angle={props.angle as number | undefined}
+          className={common}
+          colorBack={props.colorBack as string | undefined}
+          colorFront={props.colorFront as string | undefined}
+          colorMid={props.colorMid as string | undefined}
+          forceStatic={forceStatic}
+          opacity={props.opacity as number | undefined}
+          speed={props.speed as number | undefined}
+        />
+      );
+    case "dusk-veil":
+      return (
+        <DuskVeil
+          angle={props.angle as number | undefined}
+          className={common}
+          colors={props.colors as string[] | undefined}
+          forceStatic={forceStatic}
+          opacity={props.opacity as number | undefined}
+          speed={props.speed as number | undefined}
+        />
+      );
+    case "grid-ghost":
+      return (
+        <GridGhost
+          cellSize={props.cellSize as number | undefined}
+          className={common}
+          colorBack={props.colorBack as string | undefined}
+          colorLine={props.colorLine as string | undefined}
+          forceStatic={forceStatic}
+          opacity={props.opacity as number | undefined}
+          speed={props.speed as number | undefined}
+        />
+      );
+    case "stripe-quiet":
+      return (
+        <StripeQuiet
+          angle={props.angle as number | undefined}
+          className={common}
+          colorA={props.colorA as string | undefined}
+          colorB={props.colorB as string | undefined}
+          forceStatic={forceStatic}
+          opacity={props.opacity as number | undefined}
+          speed={props.speed as number | undefined}
+          stripeWidth={props.stripeWidth as number | undefined}
+        />
+      );
+    case "glow-rim":
+      return (
+        <GlowRim
+          className={common}
+          colorCore={props.colorCore as string | undefined}
+          colorRim={props.colorRim as string | undefined}
+          forceStatic={forceStatic}
+          intensity={props.intensity as number | undefined}
+          opacity={props.opacity as number | undefined}
+          speed={props.speed as number | undefined}
+        />
+      );
+    case "fog-layer":
+      return (
+        <FogLayer
+          className={common}
+          colors={props.colors as string[] | undefined}
+          forceStatic={forceStatic}
+          opacity={props.opacity as number | undefined}
+          speed={props.speed as number | undefined}
+        />
+      );
     default:
       return null;
   }
@@ -767,8 +879,8 @@ function Panel({
   );
 }
 
-export function MaterialDetailPage({ slug, initialParams }: Props) {
-  const entry = getMaterial(slug);
+export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Props) {
+  const entry = entryProp ?? getMaterial(slug);
   if (!entry) notFound();
 
   const controls = useMaterialControls(slug);
@@ -781,8 +893,15 @@ export function MaterialDetailPage({ slug, initialParams }: Props) {
     ),
   );
   const [copied, setCopied] = React.useState(false);
+  const [copiedCli, setCopiedCli] = React.useState(false);
   const [paused, setPaused] = React.useState(false);
+  /** Explicit reduced-motion toggle → CSS shell fallback (separate from Pause). */
+  const [reducedMotion, setReducedMotion] = React.useState(false);
   const urlSyncReady = React.useRef(false);
+  const license = getLicensePlan(entry.tier);
+  const cliSnippet = `npx shadcn@latest add @frameline/${entry.slug}`;
+  const pastePath = `components/ui/${entry.slug}.tsx`;
+  const forceStaticPreview = paused || reducedMotion;
 
   React.useEffect(() => {
     // Allow one frame so initial URL write doesn't fight hydration.
@@ -824,6 +943,12 @@ export function MaterialDetailPage({ slug, initialParams }: Props) {
     window.setTimeout(() => setCopied(false), 1600);
   }
 
+  async function copyCli() {
+    await navigator.clipboard.writeText(cliSnippet);
+    setCopiedCli(true);
+    window.setTimeout(() => setCopiedCli(false), 1600);
+  }
+
   return (
     <MarketingShell>
       <MarketingNavbar />
@@ -855,10 +980,10 @@ export function MaterialDetailPage({ slug, initialParams }: Props) {
             <div className="relative aspect-[16/10] overflow-hidden border border-border bg-foreground">
               <LivePreview
                 entry={entry}
-                forceStatic={paused}
+                forceStatic={forceStaticPreview}
                 props={props}
               />
-              <div className="absolute right-3 bottom-3 z-10">
+              <div className="absolute right-3 bottom-3 z-10 flex flex-wrap justify-end gap-2">
                 <Button
                   aria-label={paused ? "Play preview" : "Pause preview"}
                   aria-pressed={paused}
@@ -869,6 +994,17 @@ export function MaterialDetailPage({ slug, initialParams }: Props) {
                   onClick={() => setPaused((p) => !p)}
                 >
                   {paused ? "Play" : "Pause"}
+                </Button>
+                <Button
+                  aria-label="Toggle reduced motion shell fallback"
+                  aria-pressed={reducedMotion}
+                  size="sm"
+                  type="button"
+                  variant="outline"
+                  className="border-border bg-background/90 text-foreground backdrop-blur-sm hover:bg-background"
+                  onClick={() => setReducedMotion((v) => !v)}
+                >
+                  {reducedMotion ? "Motion on" : "Reduced motion"}
                 </Button>
               </div>
             </div>
@@ -916,19 +1052,35 @@ export function MaterialDetailPage({ slug, initialParams }: Props) {
           <div className="divide-y divide-border">
             <Panel
               action={
-                <Button
-                  aria-label={paused ? "Play preview" : "Pause preview"}
-                  aria-pressed={paused}
-                  size="xs"
-                  type="button"
-                  variant="outline"
-                  onClick={() => setPaused((p) => !p)}
-                >
-                  {paused ? "Play" : "Pause"}
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    aria-label={paused ? "Play preview" : "Pause preview"}
+                    aria-pressed={paused}
+                    size="xs"
+                    type="button"
+                    variant="outline"
+                    onClick={() => setPaused((p) => !p)}
+                  >
+                    {paused ? "Play" : "Pause"}
+                  </Button>
+                  <Button
+                    aria-label="Toggle reduced motion shell fallback"
+                    aria-pressed={reducedMotion}
+                    size="xs"
+                    type="button"
+                    variant="outline"
+                    onClick={() => setReducedMotion((v) => !v)}
+                  >
+                    {reducedMotion ? "Motion on" : "Reduced motion"}
+                  </Button>
+                </div>
               }
               title="Configurator"
             >
+              <p className="mb-6 text-sm leading-relaxed text-muted-foreground">
+                Pause freezes the live preview. Reduced motion uses the CSS
+                shell fallback.
+              </p>
               <div className="space-y-6">
                 {controls.fields.map((field) => (
                   <label className="block" key={field.key}>
@@ -941,7 +1093,13 @@ export function MaterialDetailPage({ slug, initialParams }: Props) {
                       </span>
                     </span>
                     <input
-                      className="mt-3 w-full"
+                      aria-label={field.label}
+                      aria-valuemax={field.max}
+                      aria-valuemin={field.min}
+                      aria-valuenow={Number(
+                        props[field.key as keyof typeof props],
+                      )}
+                      className="mt-3 w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                       max={field.max}
                       min={field.min}
                       step={field.step}
@@ -967,7 +1125,8 @@ export function MaterialDetailPage({ slug, initialParams }: Props) {
                         {c.label}
                       </span>
                       <input
-                        className="size-7 cursor-pointer border border-border bg-transparent"
+                        aria-label={c.label}
+                        className="size-7 cursor-pointer border border-border bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                         type="color"
                         value={String(props[c.key as keyof typeof props])}
                         onChange={(e) =>
@@ -990,7 +1149,49 @@ export function MaterialDetailPage({ slug, initialParams }: Props) {
               }
               title={entry.tier === "free" ? "Install" : "Get access"}
             >
-              <div className="space-y-3">
+              <div className="space-y-4">
+                {entry.tier === "free" ? (
+                  <p
+                    className="border border-border bg-muted/30 px-3 py-2 font-mono text-[11px] leading-relaxed text-foreground"
+                    data-install-speed="under-60s"
+                  >
+                    Install under 60s — CLI or copy-paste, no account required.
+                  </p>
+                ) : null}
+
+                <div className="space-y-2">
+                  <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                    CLI
+                  </p>
+                  <div className="flex items-start gap-2">
+                    <pre className="min-w-0 flex-1 overflow-x-auto bg-foreground p-3 font-mono text-[11px] leading-relaxed text-background">
+                      {cliSnippet}
+                    </pre>
+                    <Button
+                      aria-label="Copy CLI install command"
+                      size="sm"
+                      type="button"
+                      variant="outline"
+                      onClick={copyCli}
+                    >
+                      {copiedCli ? "Copied" : "Copy"}
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                    Copy-paste path
+                  </p>
+                  <p className="font-mono text-[11px] text-foreground">
+                    {pastePath}
+                  </p>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    Drop source beside your UI kit, or paste JSX from the panel
+                    below after install.
+                  </p>
+                </div>
+
                 <Button
                   className="w-full"
                   nativeButton={false}
@@ -1005,7 +1206,9 @@ export function MaterialDetailPage({ slug, initialParams }: Props) {
                   }
                   size="lg"
                 >
-                  {entry.tier === "free" ? "Install material" : "Buy license"}
+                  {entry.tier === "free"
+                    ? "Installation docs"
+                    : "Buy license"}
                 </Button>
                 <Button
                   className="w-full"
@@ -1019,13 +1222,74 @@ export function MaterialDetailPage({ slug, initialParams }: Props) {
                       ? "Copy JSX"
                       : "Copy preview JSX"}
                 </Button>
-                <p className="pt-2 text-sm leading-relaxed text-muted-foreground">
+                <p className="pt-1 text-sm leading-relaxed text-muted-foreground">
                   {entry.tier === "free"
                     ? "Free — no account required. Source lands in your repo."
-                    : "Install unlocks after purchase. Preview JSX is for evaluation."}
+                    : "Install unlocks after purchase. Preview JSX is for evaluation."}{" "}
+                  <Link
+                    className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+                    href={`/docs/installation?material=${entry.slug}`}
+                  >
+                    Full install guide
+                  </Link>
+                  .
                 </p>
               </div>
             </Panel>
+
+            {license ? (
+              <Panel
+                action={
+                  <span className="font-mono text-[11px] text-muted-foreground">
+                    {license.priceLabel}
+                  </span>
+                }
+                title="License"
+              >
+                <div className="space-y-4">
+                  <div>
+                    <p className="font-heading text-base font-medium tracking-tight">
+                      {license.name}
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                      {license.summary}
+                    </p>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                        Permitted
+                      </p>
+                      <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-foreground">
+                        {license.permitted.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                        Not permitted
+                      </p>
+                      <ul className="mt-2 space-y-1.5 text-sm leading-relaxed text-muted-foreground">
+                        {license.notPermitted.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Compare Free, Personal, and Team on{" "}
+                    <Link
+                      className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+                      href="/pricing"
+                    >
+                      Pricing
+                    </Link>
+                    .
+                  </p>
+                </div>
+              </Panel>
+            ) : null}
 
             <Panel title="JSX">
               <pre className="overflow-x-auto bg-foreground p-5 font-mono text-[11px] leading-relaxed text-background">

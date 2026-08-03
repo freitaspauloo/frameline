@@ -17,6 +17,15 @@ export const metadata: Metadata = {
 const ENTRIES = [
   {
     date: "2026-08-03",
+    title: "CSS tier + demo publish",
+    items: [
+      "Eight CSS-only materials: Sera Wash, Stone Band, Blue Signal, Dusk Veil, Grid Ghost, Stripe Quiet, Glow Rim, Fog Layer",
+      "Catalog at 40 materials — CSS tier with honest negligible-GPU perf notes",
+      "Admin demo publish: `.data/catalog-overrides.json` for title/description/tier/status without mutating source catalog",
+    ],
+  },
+  {
+    date: "2026-08-03",
     title: "Catalog depth drop",
     items: [
       "Twelve new materials: Water Sheet, Still Mesh, Paper Tooth, Gem Haze, CMYK Halftone, Radial Still, Mesh Still, Aurora Dusk, Ink Dither Soft, Grain Night, Wave Ribbon, Voronoi Soft",

@@ -30,7 +30,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${BASE}/materials/${m.slug}`,
     lastModified: now,
     changeFrequency: "weekly",
-    priority: 0.8,
+    // Free installables surface higher; paid detail pages stay discoverable.
+    priority: m.tier === "free" ? 0.85 : 0.8,
   }));
 
   const collections: MetadataRoute.Sitemap = MATERIALS_COLLECTIONS.map((c) => ({

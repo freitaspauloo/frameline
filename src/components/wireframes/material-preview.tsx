@@ -3,12 +3,17 @@
 import {
   AuroraDusk,
   AuroraMesh,
+  BlueSignal,
   CellVoronoi,
   CmykHalftone,
+  DuskVeil,
   EmberWarp,
+  FogLayer,
   GemHaze,
+  GlowRim,
   GrainField,
   GrainNight,
+  GridGhost,
   HalftoneSignal,
   HaloRays,
   InkDither,
@@ -24,11 +29,14 @@ import {
   PerlinMoss,
   PulseFrame,
   RadialStill,
+  SeraWash,
   SignalDots,
   SimplexField,
   SmokeRing,
   SpiralInk,
   StillMesh,
+  StoneBand,
+  StripeQuiet,
   TideWave,
   VoronoiSoft,
   WaterSheet,
@@ -112,6 +120,22 @@ export function WireframeMaterialPreview({
       return <WaveRibbon className={common} />;
     case "voronoi-soft":
       return <VoronoiSoft className={common} />;
+    case "sera-wash":
+      return <SeraWash className={common} />;
+    case "stone-band":
+      return <StoneBand className={common} />;
+    case "blue-signal":
+      return <BlueSignal className={common} />;
+    case "dusk-veil":
+      return <DuskVeil className={common} />;
+    case "grid-ghost":
+      return <GridGhost className={common} />;
+    case "stripe-quiet":
+      return <StripeQuiet className={common} />;
+    case "glow-rim":
+      return <GlowRim className={common} />;
+    case "fog-layer":
+      return <FogLayer className={common} />;
     default:
       return (
         <div

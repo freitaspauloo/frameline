@@ -1,8 +1,17 @@
 import Link from "next/link";
 
-import { MATERIALS_CATALOG } from "@/materials";
+import { AdminMaterialEditForm } from "@/components/admin-material-edit-form";
+import {
+  getResolvedCatalog,
+  readCatalogOverrides,
+} from "@/lib/demo-catalog";
 
-export default function AdminMaterialsPage() {
+export default async function AdminMaterialsPage() {
+  const [catalog, overrides] = await Promise.all([
+    getResolvedCatalog(),
+    readCatalogOverrides(),
+  ]);
+
   return (
     <div className="space-y-8">
       <div>
@@ -11,13 +20,14 @@ export default function AdminMaterialsPage() {
         </p>
         <h1 className="mt-2 text-2xl font-medium tracking-tight">Catalog</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          All published storefront materials. Status is demo-published until CMS
-          lands.
+          Edit title, description, and tier via demo overrides in{" "}
+          <span className="font-mono">.data/catalog-overrides.json</span> —
+          source catalog stays untouched.
         </p>
       </div>
 
       <div className="overflow-x-auto border border-border">
-        <table className="w-full min-w-[36rem] text-left text-sm">
+        <table className="w-full min-w-[42rem] text-left text-sm">
           <thead className="border-b border-border bg-muted/40">
             <tr>
               <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
@@ -38,30 +48,46 @@ export default function AdminMaterialsPage() {
               <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
                 Storefront
               </th>
+              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                Edit
+              </th>
             </tr>
           </thead>
           <tbody>
-            {MATERIALS_CATALOG.map((item) => (
-              <tr className="border-b border-border last:border-b-0" key={item.slug}>
-                <td className="px-3 py-2.5 font-medium">{item.title}</td>
-                <td className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground">
-                  {item.slug}
-                </td>
-                <td className="px-3 py-2.5 font-mono text-[11px]">{item.type}</td>
-                <td className="px-3 py-2.5 font-mono text-[11px]">{item.tier}</td>
-                <td className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground">
-                  published
-                </td>
-                <td className="px-3 py-2.5">
-                  <Link
-                    className="underline underline-offset-4 hover:text-muted-foreground"
-                    href={`/materials/${item.slug}`}
-                  >
-                    View
-                  </Link>
-                </td>
-              </tr>
-            ))}
+            {catalog.map((item) => {
+              const status = overrides[item.slug]?.status ?? "published";
+              return (
+                <tr
+                  className="border-b border-border align-top last:border-b-0"
+                  key={item.slug}
+                >
+                  <td className="px-3 py-2.5 font-medium">{item.title}</td>
+                  <td className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground">
+                    {item.slug}
+                  </td>
+                  <td className="px-3 py-2.5 font-mono text-[11px]">
+                    {item.type}
+                  </td>
+                  <td className="px-3 py-2.5 font-mono text-[11px]">
+                    {item.tier}
+                  </td>
+                  <td className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground">
+                    {status}
+                  </td>
+                  <td className="px-3 py-2.5">
+                    <Link
+                      className="underline underline-offset-4 hover:text-muted-foreground"
+                      href={`/materials/${item.slug}`}
+                    >
+                      View
+                    </Link>
+                  </td>
+                  <td className="px-3 py-2.5">
+                    <AdminMaterialEditForm entry={item} status={status} />
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

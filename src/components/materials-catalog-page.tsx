@@ -18,6 +18,7 @@ import {
   MATERIALS_CATALOG,
   MATERIAL_TYPES,
   isMaterialType,
+  type MaterialCatalogEntry,
   type MaterialTier,
   type MaterialType,
   type MaterialUseContext,
@@ -86,12 +87,15 @@ export function MaterialsCatalogPage({
   contextFilter,
   tierFilter,
   sortFilter,
+  catalog = MATERIALS_CATALOG,
 }: {
   typeFilter?: string;
   qFilter?: string;
   contextFilter?: string;
   tierFilter?: string;
   sortFilter?: string;
+  /** Resolved catalog (demo overrides merged). Defaults to source catalog. */
+  catalog?: MaterialCatalogEntry[];
 }) {
   const router = useRouter();
   const [, startTransition] = useTransition();
@@ -115,7 +119,7 @@ export function MaterialsCatalogPage({
   };
 
   const entries = useMemo(() => {
-    let list = MATERIALS_CATALOG.slice();
+    let list = catalog.slice();
 
     if (activeType) {
       list = list.filter((m) => m.type === activeType);
@@ -145,7 +149,7 @@ export function MaterialsCatalogPage({
     });
 
     return list;
-  }, [activeType, activeContext, activeTier, activeQ, activeSort]);
+  }, [catalog, activeType, activeContext, activeTier, activeQ, activeSort]);
 
   const typeMeta = MATERIAL_TYPES.find((t) => t.type === activeType);
 

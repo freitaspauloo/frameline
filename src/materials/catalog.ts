@@ -449,6 +449,110 @@ export const MATERIALS_CATALOG: MaterialCatalogEntry[] = [
     perfNotes:
       "Lower density than Cell Voronoi — fine for loading and empty shells.",
   },
+  {
+    slug: "sera-wash",
+    title: "Sera Wash",
+    description:
+      "Soft multi-stop CSS gradient wash for heroes and sectional bands.",
+    type: "mesh",
+    useContexts: ["hero", "section"],
+    tier: "free",
+    tags: ["css", "gradient", "wash", "hero"],
+    fallbackColors: ["#F7F5F0", "#E8F0FF", "#D4C4A8", "#C5F0FF", "#F4F1EA"],
+    renderingTechnique: "css",
+    perfNotes: "CSS-only · negligible GPU",
+  },
+  {
+    slug: "stone-band",
+    title: "Stone Band",
+    description:
+      "Horizontal banded CSS gradient for sectional strips and quiet cards.",
+    type: "grain",
+    useContexts: ["section", "card"],
+    tier: "free",
+    tags: ["css", "bands", "stone", "section"],
+    fallbackColors: ["#E8E4DC", "#C8BBA8", "#A89880", "#D4C4A8", "#F4F1EA"],
+    renderingTechnique: "css",
+    perfNotes: "CSS-only · negligible GPU",
+  },
+  {
+    slug: "blue-signal",
+    title: "Blue Signal",
+    description:
+      "Diagonal brand-blue CSS wash for heroes and empty states.",
+    type: "mesh",
+    useContexts: ["hero", "empty"],
+    tier: "free",
+    tags: ["css", "gradient", "blue", "brand"],
+    fallbackColors: ["#E8F0FF", "#5B8CFF", "#2D6BFF"],
+    renderingTechnique: "css",
+    perfNotes: "CSS-only · negligible GPU",
+  },
+  {
+    slug: "dusk-veil",
+    title: "Dusk Veil",
+    description:
+      "Dark translucent CSS overlay for auth shells and framed cards.",
+    type: "grain",
+    useContexts: ["auth", "card"],
+    tier: "personal",
+    tags: ["css", "veil", "dark", "auth"],
+    fallbackColors: ["#0A0A0A", "#1A1210", "#2D4A6B", "#0A0A0ACC"],
+    renderingTechnique: "css",
+    perfNotes: "CSS-only · negligible GPU",
+  },
+  {
+    slug: "grid-ghost",
+    title: "Grid Ghost",
+    description:
+      "CSS repeating-linear-gradient grid for loading shells and empty states.",
+    type: "dither",
+    useContexts: ["loading", "empty"],
+    tier: "free",
+    tags: ["css", "grid", "loading", "signal"],
+    fallbackColors: ["#F7F5F0", "#2D6BFF33"],
+    renderingTechnique: "css",
+    perfNotes: "CSS-only · negligible GPU",
+  },
+  {
+    slug: "stripe-quiet",
+    title: "Stripe Quiet",
+    description:
+      "Subtle CSS stripes for cards and understated sectional bands.",
+    type: "dither",
+    useContexts: ["card", "section"],
+    tier: "personal",
+    tags: ["css", "stripes", "quiet", "card"],
+    fallbackColors: ["#F4F1EA", "#E8E4DC"],
+    renderingTechnique: "css",
+    perfNotes: "CSS-only · negligible GPU",
+  },
+  {
+    slug: "glow-rim",
+    title: "Glow Rim",
+    description:
+      "Radial vignette / rim-light CSS for heroes and framed cards.",
+    type: "mesh",
+    useContexts: ["hero", "card"],
+    tier: "personal",
+    tags: ["css", "vignette", "rim", "glow"],
+    fallbackColors: ["#0A0A0A", "#2D6BFF"],
+    renderingTechnique: "css",
+    perfNotes: "CSS-only · negligible GPU",
+  },
+  {
+    slug: "fog-layer",
+    title: "Fog Layer",
+    description:
+      "Layered soft CSS gradients for foggy sections and auth shells.",
+    type: "grain",
+    useContexts: ["section", "auth"],
+    tier: "personal",
+    tags: ["css", "fog", "layers", "soft"],
+    fallbackColors: ["#E8E4DC", "#C8BBA8", "#F7F5F0", "#D4C4A8"],
+    renderingTechnique: "css",
+    perfNotes: "CSS-only · negligible GPU",
+  },
 ];
 
 export const MATERIAL_TYPES: {
@@ -473,8 +577,36 @@ export const MATERIAL_TYPES: {
   },
 ];
 
-export function getMaterial(slug: string) {
-  return MATERIALS_CATALOG.find((m) => m.slug === slug);
+/** Draft metadata override applied at read time (admin demo publish). */
+export type CatalogMaterialOverride = {
+  title?: string;
+  description?: string;
+  status?: "draft" | "published";
+  tier?: MaterialCatalogEntry["tier"];
+};
+
+export function applyCatalogOverride(
+  entry: MaterialCatalogEntry,
+  override?: CatalogMaterialOverride | null,
+): MaterialCatalogEntry {
+  if (!override) return entry;
+  return {
+    ...entry,
+    ...(override.title !== undefined ? { title: override.title } : {}),
+    ...(override.description !== undefined
+      ? { description: override.description }
+      : {}),
+    ...(override.tier !== undefined ? { tier: override.tier } : {}),
+  };
+}
+
+export function getMaterial(
+  slug: string,
+  overrides?: Record<string, CatalogMaterialOverride> | null,
+) {
+  const base = MATERIALS_CATALOG.find((m) => m.slug === slug);
+  if (!base) return undefined;
+  return applyCatalogOverride(base, overrides?.[slug]);
 }
 
 export function getMaterialsByType(type: MaterialType) {

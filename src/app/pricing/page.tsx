@@ -17,7 +17,7 @@ import { WaitlistForm } from "@/components/waitlist-form";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Free, Static, Personal, and Team licenses for Frameline materials — clear commercial rights, one-time purchase.",
+    "Free, Static ($19), Personal ($99), and Team ($299) licenses for Frameline materials — clear commercial rights, one-time purchase.",
 };
 
 const TIERS = [

@@ -413,6 +413,59 @@ export const MATERIAL_PROPS: Record<string, MaterialPropDef[]> = {
     color("colorGap", "Gap", "#F7F5F0", "Gap color"),
     color("colorGlow", "Glow", "#FFFFFF", "Glow color"),
   ],
+  "sera-wash": [
+    field("angle", "Angle", 125, 0, 360, 1, "Gradient angle"),
+    field("opacity", "Opacity", 1, 0, 1, 0.01, "Layer opacity"),
+    field("speed", "Speed", 1, 0, 2, 0.01, "Wash drift speed"),
+    colors("colors", "Colors", ["#F7F5F0", "#E8F0FF", "#D4C4A8", "#C5F0FF", "#F4F1EA"], "Wash color stops"),
+  ],
+  "stone-band": [
+    field("bandCount", "Bands", 5, 2, 8, 1, "Number of horizontal bands"),
+    field("opacity", "Opacity", 1, 0, 1, 0.01, "Layer opacity"),
+    field("speed", "Speed", 0.4, 0, 2, 0.01, "Band drift speed"),
+    colors("colors", "Colors", ["#E8E4DC", "#C8BBA8", "#A89880", "#D4C4A8", "#F4F1EA"], "Band colors"),
+  ],
+  "blue-signal": [
+    field("angle", "Angle", 135, 0, 360, 1, "Wash angle"),
+    field("opacity", "Opacity", 1, 0, 1, 0.01, "Layer opacity"),
+    field("speed", "Speed", 0.6, 0, 2, 0.01, "Wash drift speed"),
+    color("colorBack", "Back", "#E8F0FF", "Background stop"),
+    color("colorMid", "Mid", "#5B8CFF", "Midtone stop"),
+    color("colorFront", "Front", "#2D6BFF", "Brand blue stop"),
+  ],
+  "dusk-veil": [
+    field("angle", "Angle", 160, 0, 360, 1, "Veil angle"),
+    field("opacity", "Opacity", 0.92, 0, 1, 0.01, "Overlay opacity"),
+    field("speed", "Speed", 0.35, 0, 2, 0.01, "Breathing speed"),
+    colors("colors", "Colors", ["#0A0A0A", "#1A1210", "#2D4A6B", "#0A0A0ACC"], "Veil color stops"),
+  ],
+  "grid-ghost": [
+    field("cellSize", "Cell size", 24, 8, 64, 1, "Grid cell size in px"),
+    field("opacity", "Opacity", 1, 0, 1, 0.01, "Layer opacity"),
+    field("speed", "Speed", 0.5, 0, 2, 0.01, "Pulse speed"),
+    color("colorBack", "Back", "#F7F5F0", "Background color"),
+    color("colorLine", "Line", "#2D6BFF33", "Grid line color"),
+  ],
+  "stripe-quiet": [
+    field("angle", "Angle", 45, 0, 360, 1, "Stripe angle"),
+    field("stripeWidth", "Stripe width", 12, 2, 48, 1, "Stripe width in px"),
+    field("opacity", "Opacity", 1, 0, 1, 0.01, "Layer opacity"),
+    field("speed", "Speed", 0.25, 0, 2, 0.01, "Drift speed"),
+    color("colorA", "Color A", "#F4F1EA", "Primary stripe"),
+    color("colorB", "Color B", "#E8E4DC", "Alternate stripe"),
+  ],
+  "glow-rim": [
+    field("intensity", "Intensity", 0.65, 0, 1, 0.01, "Rim falloff"),
+    field("opacity", "Opacity", 1, 0, 1, 0.01, "Layer opacity"),
+    field("speed", "Speed", 0.45, 0, 2, 0.01, "Pulse speed"),
+    color("colorCore", "Core", "#0A0A0A", "Center color"),
+    color("colorRim", "Rim", "#2D6BFF", "Rim light color"),
+  ],
+  "fog-layer": [
+    field("opacity", "Opacity", 0.95, 0, 1, 0.01, "Layer opacity"),
+    field("speed", "Speed", 0.4, 0, 2, 0.01, "Fog drift speed"),
+    colors("colors", "Colors", ["#E8E4DC", "#C8BBA8", "#F7F5F0", "#D4C4A8"], "Fog layer colors"),
+  ],
 };
 
 const FALLBACK_PROPS: MaterialPropDef[] = MATERIAL_PROPS["grain-field"]!;

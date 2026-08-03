@@ -12,7 +12,7 @@ Steps, not dates. Supersedes the archived V1 “Relay” sketch.
 | WP4 Catalog UX | Live — type / context / tier filters, search, sort |
 | WP5 Configurator | Live — controls, JSX copy, URL deep-link, play/pause |
 | WP6 Distribution | Messaging only — registry not gated yet |
-| WP7 Catalog production | **32 / 30–40** materials seeded |
+| WP7 Catalog production | **40 / 30–40** materials seeded |
 | WP8 Commerce | Demo checkout + Stripe-ready API stub; no live charges |
 | WP9 Entitlements | Domain types + demo account gating; Postgres schema drafted |
 | WP10 Docs | Hub + install / theming / a11y / perf / examples / troubleshooting / licensing |

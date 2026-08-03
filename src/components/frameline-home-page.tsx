@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { WaitlistForm } from "@/components/waitlist-form";
 import {
   MATERIALS_CATALOG,
   getFeaturedCollections,
@@ -612,6 +613,29 @@ export function FramelineHomePage() {
             </Button>
           </div>
         </div>
+      </MarketingSection>
+
+      {/* —— Waitlist —— */}
+      <MarketingSection>
+        <MarketingSplit
+          left={
+            <div className="space-y-3">
+              <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                Waitlist
+              </p>
+              <h2 className="font-heading text-3xl font-light tracking-tight sm:text-4xl">
+                New materials, quietly
+              </h2>
+              <p className="max-w-[36ch] text-base leading-relaxed text-muted-foreground">
+                Occasional drops when we ship surfaces worth installing — no
+                noise.
+              </p>
+            </div>
+          }
+          right={
+            <WaitlistForm className="max-w-md" source="home" />
+          }
+        />
       </MarketingSection>
 
       <MarketingFooter />
