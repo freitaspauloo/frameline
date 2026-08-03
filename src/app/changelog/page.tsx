@@ -17,6 +17,17 @@ export const metadata: Metadata = {
 const ENTRIES = [
   {
     date: "2026-08-03",
+    title: "Quality & discovery pass",
+    items: [
+      "Home catalog CTA links to full materials index with live catalog count",
+      "License page: tier comparison table, permitted/not from plans, version pin callout",
+      "Privacy: waitlist, contact, WTP aggregates, and `.data` demo storage notes",
+      "Marketing navbar: mobile disclosure for Collections / Materials / Docs / Pricing",
+      "Collections index: material counts for all six sets; catalog search labeled for a11y",
+    ],
+  },
+  {
+    date: "2026-08-03",
     title: "CSS tier + demo publish",
     items: [
       "Eight CSS-only materials: Sera Wash, Stone Band, Blue Signal, Dusk Veil, Grid Ghost, Stripe Quiet, Glow Rim, Fog Layer",

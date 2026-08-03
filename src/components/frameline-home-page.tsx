@@ -255,62 +255,34 @@ export function FramelineHomePage() {
         </MarketingSectionHeader>
 
         <MarketingRuledGrid>
-          {Array.from({ length: CATALOG_PREVIEW_SLOTS }, (_, index) => {
-            const entry = MATERIALS_CATALOG[index];
-
-            if (!entry) {
-              return (
-                <MarketingRuledCell
-                  key={`soon-${index}`}
-                  className="p-0 sm:p-0 lg:p-0"
-                >
-                  <div className="flex h-full min-h-[16rem] flex-col">
-                    <div className="relative aspect-[16/10] bg-muted/50" />
-                    <div className="space-y-2 border-t border-border p-6 sm:p-8">
-                      <p className="font-mono text-[11px] text-muted-foreground">
-                        Soon
-                      </p>
-                      <h3 className="font-heading text-base font-medium tracking-tight text-muted-foreground">
-                        Coming soon
-                      </h3>
-                      <p className="text-sm leading-relaxed text-muted-foreground">
-                        More surfaces in the next drop.
-                      </p>
-                    </div>
-                  </div>
-                </MarketingRuledCell>
-              );
-            }
-
-            return (
-              <MarketingRuledCell
-                key={entry.slug}
-                className="p-0 sm:p-0 lg:p-0"
+          {MATERIALS_CATALOG.slice(0, CATALOG_PREVIEW_SLOTS).map((entry) => (
+            <MarketingRuledCell
+              key={entry.slug}
+              className="p-0 sm:p-0 lg:p-0"
+            >
+              <Link
+                className="group block transition-colors hover:bg-muted/40"
+                href={`/materials/${entry.slug}`}
               >
-                <Link
-                  className="group block transition-colors hover:bg-muted/40"
-                  href={`/materials/${entry.slug}`}
-                >
-                  <div className="relative aspect-[16/10] overflow-hidden bg-foreground">
-                    <MaterialPreview entry={entry} />
+                <div className="relative aspect-[16/10] overflow-hidden bg-foreground">
+                  <MaterialPreview entry={entry} />
+                </div>
+                <div className="space-y-2 border-t border-border p-6 sm:p-8">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="font-heading text-base font-medium tracking-tight">
+                      {entry.title}
+                    </h3>
+                    <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                      {entry.tier === "free" ? "Free" : "Paid"}
+                    </span>
                   </div>
-                  <div className="space-y-2 border-t border-border p-6 sm:p-8">
-                    <div className="flex items-center justify-between gap-2">
-                      <h3 className="font-heading text-base font-medium tracking-tight">
-                        {entry.title}
-                      </h3>
-                      <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                        {entry.tier === "free" ? "Free" : "Paid"}
-                      </span>
-                    </div>
-                    <p className="text-sm leading-relaxed text-muted-foreground">
-                      {entry.description}
-                    </p>
-                  </div>
-                </Link>
-              </MarketingRuledCell>
-            );
-          })}
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {entry.description}
+                  </p>
+                </div>
+              </Link>
+            </MarketingRuledCell>
+          ))}
         </MarketingRuledGrid>
 
         <div
@@ -325,7 +297,7 @@ export function FramelineHomePage() {
             size="lg"
             variant="outline"
           >
-            See full catalog
+            {`Browse all ${MATERIALS_CATALOG.length} materials`}
             <RiArrowRightLine data-icon="inline-end" />
           </Button>
         </div>

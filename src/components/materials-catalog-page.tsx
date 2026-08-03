@@ -203,13 +203,18 @@ export function MaterialsCatalogPage({
               className="flex flex-col gap-3 sm:flex-row sm:items-end"
               onSubmit={onSearchSubmit}
             >
-              <label className="min-w-0 flex-1 space-y-2">
+              <label
+                className="min-w-0 flex-1 space-y-2"
+                htmlFor="materials-catalog-search"
+              >
                 <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
                   Search
                 </span>
                 <input
+                  aria-label="Search materials"
                   className="h-10 w-full border border-border bg-transparent px-3 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-foreground"
                   defaultValue={activeQ}
+                  id="materials-catalog-search"
                   key={activeQ}
                   name="q"
                   placeholder="Title, description, tags…"

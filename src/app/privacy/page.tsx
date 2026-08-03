@@ -29,12 +29,13 @@ export default function PrivacyPage() {
         <MarketingPad className="max-w-2xl space-y-10 py-14 lg:py-20">
           <div className="space-y-4">
             <h2 className="font-heading text-xl font-medium tracking-tight text-foreground">
-              Email
+              Email & waitlist
             </h2>
             <p className="text-base leading-relaxed text-muted-foreground">
               We store the email you provide at checkout, waitlist signup, or
               account sign-in — to deliver receipts, registry access, and
-              product updates you opted into.
+              product updates you opted into. Waitlist entries are used only for
+              drop notices and related product mail; you can ask to be removed.
             </p>
           </div>
 
@@ -52,23 +53,66 @@ export default function PrivacyPage() {
 
           <div className="space-y-4 border-t border-border pt-10">
             <h2 className="font-heading text-xl font-medium tracking-tight text-foreground">
-              Analytics
+              Contact
             </h2>
             <p className="text-base leading-relaxed text-muted-foreground">
-              We use lightweight analytics to understand catalog usage, install
-              success, and funnel health. Aggregates help us improve materials;
-              we do not sell personal data or build advertising profiles from
-              Frameline activity.
+              Messages sent through{" "}
+              <Link
+                className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+                href="/contact"
+              >
+                Contact
+              </Link>{" "}
+              include the email and note you submit so we can reply. On the
+              hosted product those go to our support inbox; on a self-hosted
+              demo they append to local demo storage (see below).
             </p>
           </div>
 
           <div className="space-y-4 border-t border-border pt-10">
             <h2 className="font-heading text-xl font-medium tracking-tight text-foreground">
-              Contact
+              Analytics & WTP signals
             </h2>
             <p className="text-base leading-relaxed text-muted-foreground">
-              Questions about this policy or your data: reach out via the
-              channels listed on{" "}
+              We use lightweight analytics (for example Plausible when
+              configured) to understand catalog usage, install success, and
+              funnel health. Willingness-to-pay and pricing experiments are
+              stored as aggregates — counts and conversion rates, not profiles
+              of individual visitors. We do not sell personal data or build
+              advertising profiles from Frameline activity.
+            </p>
+          </div>
+
+          <div className="space-y-4 border-t border-border pt-10">
+            <h2 className="font-heading text-xl font-medium tracking-tight text-foreground">
+              Self-hosted demo storage
+            </h2>
+            <p className="text-base leading-relaxed text-muted-foreground">
+              In the open demo / self-hosted setup, waitlist signups, contact
+              notes, orders, entitlements, and catalog overrides may be written
+              under a local <span className="font-mono text-foreground">.data/</span>{" "}
+              directory on that instance (for example{" "}
+              <span className="font-mono text-foreground">waitlist.json</span>,{" "}
+              <span className="font-mono text-foreground">contact.json</span>,{" "}
+              <span className="font-mono text-foreground">orders.json</span>).
+              That data stays on the machine running the demo — it is not a
+              shared Frameline cloud database unless you wire one up.
+            </p>
+          </div>
+
+          <div className="space-y-4 border-t border-border pt-10">
+            <h2 className="font-heading text-xl font-medium tracking-tight text-foreground">
+              Questions
+            </h2>
+            <p className="text-base leading-relaxed text-muted-foreground">
+              Questions about this policy or your data: reach out via{" "}
+              <Link
+                className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+                href="/contact"
+              >
+                Contact
+              </Link>{" "}
+              or the channels listed on{" "}
               <Link
                 className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
                 href="/about"

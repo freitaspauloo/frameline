@@ -47,6 +47,35 @@ export function MarketingNavbar({
             ))}
           </nav>
 
+          <details className="relative md:hidden">
+            <summary
+              aria-label="Open menu"
+              className="cursor-pointer list-none rounded-none px-2.5 py-1.5 text-[0.6875rem] font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:bg-muted hover:text-foreground [&::-webkit-details-marker]:hidden"
+            >
+              Menu
+            </summary>
+            <nav
+              aria-label="Primary"
+              className="absolute top-full left-0 z-50 mt-2 min-w-[12rem] border border-border bg-white py-2 shadow-sm"
+            >
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  className="block px-4 py-2.5 text-[0.6875rem] font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:bg-muted hover:text-foreground"
+                  href={link.href}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <Link
+                className="block border-t border-border px-4 py-2.5 text-[0.6875rem] font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:bg-muted hover:text-foreground sm:hidden"
+                href="/account/sign-in"
+              >
+                Log in
+              </Link>
+            </nav>
+          </details>
+
           <Link
             aria-label="Frameline home"
             className="justify-self-center"
