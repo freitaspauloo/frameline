@@ -5,8 +5,16 @@ import {
   getLicensePlan,
   isCheckoutPlan,
 } from "@/lib/license-plans";
+import {
+  clientIp,
+  rateLimit,
+  rateLimitResponse,
+} from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  const limited = rateLimit(`checkout:${clientIp(request)}`);
+  if (!limited.ok) return rateLimitResponse(limited);
+
   let body: { plan?: string; email?: string; material?: string } = {};
   try {
     body = (await request.json()) as {

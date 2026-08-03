@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "material:new": "node scripts/new-material.mjs",
+    "demo:seed": "node scripts/seed-demo.mjs"
   },
   "dependencies": {
     "@assistant-ui/react": "^0.14.26",

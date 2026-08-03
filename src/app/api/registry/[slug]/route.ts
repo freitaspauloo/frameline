@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { NextResponse } from "next/server";
 
 import { getMaterial } from "@/materials";
@@ -5,7 +7,7 @@ import { isFreeMaterial } from "@/lib/entitlements";
 
 /**
  * Registry read stub (WP6 / WP9).
- * Free materials return a minimal shadcn-like registry item.
+ * Free materials return the real component source from disk when available.
  * Paid materials return 403 until a Bearer fl_demo_ / fl_live_ token is present.
  */
 export async function GET(
@@ -41,22 +43,23 @@ export async function GET(
 
   const componentPath = `src/materials/${material.slug}.tsx`;
   const targetPath = `components/${material.slug}.tsx`;
-  const placeholderContent = [
-    `/**`,
-    ` * Frameline registry stub — ${material.title}`,
-    ` *`,
-    ` * Copy the real source from the Frameline repo:`,
-    ` *   ${componentPath}`,
-    ` *`,
-    ` * Then wire imports for MaterialShell / shader deps as in that file.`,
-    ` * Install hint: npx shadcn@latest add @frameline/${material.slug}`,
-    ` */`,
-    ``,
-    `export function ${toPascalCase(material.slug)}() {`,
-    `  return null;`,
-    `}`,
-    ``,
-  ].join("\n");
+
+  let content: string;
+  let status: string;
+
+  if (free) {
+    const diskPath = path.join(process.cwd(), "src/materials", `${material.slug}.tsx`);
+    try {
+      content = await readFile(diskPath, "utf8");
+      status = "source-free";
+    } catch {
+      content = placeholderContent(material.title, material.slug, componentPath);
+      status = "stub-free";
+    }
+  } else {
+    content = placeholderContent(material.title, material.slug, componentPath);
+    status = "stub-entitled";
+  }
 
   return NextResponse.json({
     name: material.slug,
@@ -70,7 +73,7 @@ export async function GET(
         path: targetPath,
         type: "registry:component",
         target: targetPath,
-        content: placeholderContent,
+        content,
       },
     ],
     meta: {
@@ -79,9 +82,32 @@ export async function GET(
       registry: `@frameline/${material.slug}`,
       install: `npx shadcn@latest add @frameline/${material.slug}`,
       sourceHint: componentPath,
-      status: free ? "stub-free" : "stub-entitled",
+      status,
     },
   });
+}
+
+function placeholderContent(
+  title: string,
+  slug: string,
+  componentPath: string,
+): string {
+  return [
+    `/**`,
+    ` * Frameline registry stub — ${title}`,
+    ` *`,
+    ` * Copy the real source from the Frameline repo:`,
+    ` *   ${componentPath}`,
+    ` *`,
+    ` * Then wire imports for MaterialShell / shader deps as in that file.`,
+    ` * Install hint: npx shadcn@latest add @frameline/${slug}`,
+    ` */`,
+    ``,
+    `export function ${toPascalCase(slug)}() {`,
+    `  return null;`,
+    `}`,
+    ``,
+  ].join("\n");
 }
 
 function toPascalCase(slug: string): string {

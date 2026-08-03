@@ -33,6 +33,7 @@ const FOOTER_COLUMNS = [
     title: "Company",
     links: [
       { href: "/about", label: "About" },
+      { href: "/contact", label: "Contact" },
       { href: "/changelog", label: "Changelog" },
       { href: "/license", label: "License" },
       { href: "/privacy", label: "Privacy" },

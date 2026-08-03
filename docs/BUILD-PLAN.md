@@ -12,7 +12,7 @@ Steps, not dates. Supersedes the archived V1 “Relay” sketch.
 | WP4 Catalog UX | Live — type / context / tier filters, search, sort |
 | WP5 Configurator | Live — controls, JSX copy, URL deep-link, play/pause |
 | WP6 Distribution | Messaging only — registry not gated yet |
-| WP7 Catalog production | **40 / 30–40** materials seeded |
+| WP7 Catalog production | **40 / 40** target met (count); quality bar still ongoing |
 | WP8 Commerce | Demo checkout + Stripe-ready API stub; no live charges |
 | WP9 Entitlements | Domain types + demo account gating; Postgres schema drafted |
 | WP10 Docs | Hub + install / theming / a11y / perf / examples / troubleshooting / licensing |
@@ -39,7 +39,7 @@ Steps, not dates. Supersedes the archived V1 “Relay” sketch.
 | 9 | Grow to ≥15 materials across 6 contexts | Credible catalog |
 | 10 | Perf notes + props tables as data | Docs/configurator stay in sync |
 | 11 | OG stills / static exports pipeline | Shareable previews |
-| 12 | Reach 30–40 at production bar | SOW Definition of Done |
+| 12 | Reach 40 at production bar (count met; quality ongoing) | SOW Definition of Done |
 
 ## Phase C — Selling (scaffold → live)
 

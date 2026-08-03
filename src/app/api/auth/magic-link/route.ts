@@ -6,8 +6,16 @@ import {
   SESSION_COOKIE,
   sessionUserFromEmail,
 } from "@/lib/auth";
+import {
+  clientIp,
+  rateLimit,
+  rateLimitResponse,
+} from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  const limited = rateLimit(`magic-link:${clientIp(request)}`);
+  if (!limited.ok) return rateLimitResponse(limited);
+
   let body: { email?: string } = {};
   try {
     body = (await request.json()) as { email?: string };

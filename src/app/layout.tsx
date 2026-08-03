@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Instrument_Serif, Inter, Syne } from "next/font/google";
 import { GeistPixelCircle, GeistPixelSquare } from "geist/font/pixel";
+import { Analytics } from "@/components/analytics";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import "./globals.css";
@@ -75,6 +76,7 @@ export default function RootLayout({
     >
       <body className="min-h-full font-sans antialiased">
         <TooltipProvider>{children}</TooltipProvider>
+        <Analytics />
       </body>
     </html>
   );
