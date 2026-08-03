@@ -48,15 +48,13 @@ export { FooBar } from "./foo-bar";
 export type { FooBarProps } from "./foo-bar";
 ```
 
-## 5. Detail wiring (~20 min)
+## 5. Renderer registry (~20 min)
 
-In `src/components/material-detail-page.tsx`:
+1. Export the component from `src/materials/index.ts`.
+2. Add `COMPONENT_NAMES["foo-bar"] = "FooBar"` in `src/materials/component-names.ts`.
+3. Add a `renderMaterial` case in `src/materials/renderers.tsx` that passes props from the registry keys.
 
-1. Import the component.
-2. Add `COMPONENT_NAMES["foo-bar"] = "FooBar"`.
-3. Add a `LivePreview` case that passes props from the registry keys.
-
-Configurator + Props table read `getMaterialProps(slug)` automatically once the registry entry exists.
+Configurator + Props table read `getMaterialProps(slug)` automatically once the props registry entry exists. Detail + catalog previews use `renderMaterial`.
 
 ## 6. Preview smoke (~15 min)
 
@@ -85,7 +83,7 @@ If it belongs in a browse hub, add the slug to `src/materials/collections.ts`. S
 - [ ] Catalog entry
 - [ ] `MATERIAL_PROPS` entry
 - [ ] `index.ts` export
-- [ ] Detail `LivePreview` + `COMPONENT_NAMES`
+- [ ] `COMPONENT_NAMES` + `renderMaterial` case
 - [ ] Smoke-checked detail page
 - [ ] Perf note filled
 - [ ] Draft stub removed from `_drafts` (or left for later cleanup)

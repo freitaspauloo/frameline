@@ -22,7 +22,7 @@ async function runUnit() {
   try {
     const summary = runCatalogSmoke();
     ok(
-      `catalog=${summary.catalog} free=${summary.free} collections=${summary.collections} plans=${summary.plans.join(",")}`,
+      `catalog=${summary.catalog} free=${summary.free} collections=${summary.collections} renderers=${summary.renderers} plans=${summary.plans.join(",")}`,
     );
   } catch (err) {
     fail(err instanceof Error ? err.message : String(err));

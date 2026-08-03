@@ -95,9 +95,11 @@ export { FogLayer } from "./fog-layer";
 export type { FogLayerProps } from "./fog-layer";
 export {
   COMPONENT_NAMES,
+  FALLBACK_COMPONENT_NAME,
   getMaterialComponentName,
-  renderMaterial,
-} from "./renderers";
+  slugToComponentName,
+} from "./component-names";
+export { renderMaterial } from "./renderers";
 export type { MaterialRenderProps } from "./renderers";
 export { MaterialShell } from "./material-shell";
 export {

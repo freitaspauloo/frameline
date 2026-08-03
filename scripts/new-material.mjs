@@ -253,8 +253,8 @@ export {};
 Next (see docs/AUTHORING.md):
   1. Tune shader props in src/materials/${slug}.tsx
   2. Export from src/materials/index.ts
-  3. Paste catalog + props stubs; add LivePreview + COMPONENT_NAMES in material-detail-page.tsx
-  4. Smoke-check /materials/${slug}
+  3. Paste catalog + props stubs; add COMPONENT_NAMES + renderMaterial case
+  4. Smoke-check /materials/${slug} and pnpm smoke
 `);
 }
 

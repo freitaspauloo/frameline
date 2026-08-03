@@ -59,10 +59,17 @@ export default function PerformanceDocsPage() {
         </li>
       </DocsUl>
 
-      <DocsH2 id="intersection-pause">Intersection pause</DocsH2>
+      <DocsH2 id="intersection-previews">Intersection-activated previews</DocsH2>
       <DocsP>
-        Pause animation when the material leaves the viewport or the document is
-        hidden. Pattern:
+        Catalog and collection grids use intersection-activated previews:
+        WebGL / canvas only mounts while a card is near the viewport. Off-screen
+        tiles stay on the static CSS shell, so scrolling a dense grid does not
+        mean forty live shaders. Prefer the same pattern in your own lists —
+        activate on enter, freeze on leave.
+      </DocsP>
+      <DocsP>
+        On detail pages and single heroes, also pause when the material leaves
+        the viewport or the document is hidden:
       </DocsP>
       <DocsCode>{`useEffect(() => {
   const el = ref.current
@@ -88,9 +95,73 @@ export default function PerformanceDocsPage() {
         footer is a common regression.
       </DocsP>
 
-      <DocsH2 id="css-only">CSS-only tier</DocsH2>
+      <DocsH2 id="css-only">CSS-only tier (8 materials)</DocsH2>
       <DocsP>
-        Use CSS-only materials (or forced static mode) when:
+        Eight catalog materials are CSS-only — no WebGL, negligible JS — and
+        publish honest “negligible GPU” perf notes:
+      </DocsP>
+      <DocsUl>
+        <li>
+          <Link
+            className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+            href="/materials/sera-wash"
+          >
+            Sera Wash
+          </Link>
+          ,{" "}
+          <Link
+            className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+            href="/materials/stone-band"
+          >
+            Stone Band
+          </Link>
+          ,{" "}
+          <Link
+            className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+            href="/materials/blue-signal"
+          >
+            Blue Signal
+          </Link>
+          ,{" "}
+          <Link
+            className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+            href="/materials/dusk-veil"
+          >
+            Dusk Veil
+          </Link>
+        </li>
+        <li>
+          <Link
+            className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+            href="/materials/grid-ghost"
+          >
+            Grid Ghost
+          </Link>
+          ,{" "}
+          <Link
+            className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+            href="/materials/stripe-quiet"
+          >
+            Stripe Quiet
+          </Link>
+          ,{" "}
+          <Link
+            className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+            href="/materials/glow-rim"
+          >
+            Glow Rim
+          </Link>
+          ,{" "}
+          <Link
+            className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+            href="/materials/fog-layer"
+          >
+            Fog Layer
+          </Link>
+        </li>
+      </DocsUl>
+      <DocsP>
+        Use CSS-only materials (or forced static mode on WebGL materials) when:
       </DocsP>
       <DocsUl>
         <li>Email, PDF, or static export contexts.</li>

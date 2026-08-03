@@ -7,6 +7,10 @@ import { AuroraMesh } from "./aurora-mesh";
 import { BlueSignal } from "./blue-signal";
 import { CellVoronoi } from "./cell-voronoi";
 import { CmykHalftone } from "./cmyk-halftone";
+import {
+  COMPONENT_NAMES,
+  getMaterialComponentName,
+} from "./component-names";
 import { DuskVeil } from "./dusk-veil";
 import { EmberWarp } from "./ember-warp";
 import { FogLayer } from "./fog-layer";
@@ -49,52 +53,7 @@ export type MaterialRenderProps = {
   props: Record<string, unknown>;
 };
 
-export const COMPONENT_NAMES: Record<string, string> = {
-  "aurora-mesh": "AuroraMesh",
-  "ink-dither": "InkDither",
-  "grain-field": "GrainField",
-  "neuro-veil": "NeuroVeil",
-  "tide-wave": "TideWave",
-  "cell-voronoi": "CellVoronoi",
-  "ink-swirl": "InkSwirl",
-  "signal-dots": "SignalDots",
-  "ember-warp": "EmberWarp",
-  "halo-rays": "HaloRays",
-  "ink-metaballs": "InkMetaballs",
-  "smoke-ring": "SmokeRing",
-  "simplex-field": "SimplexField",
-  "halftone-signal": "HalftoneSignal",
-  "liquid-chrome": "LiquidChrome",
-  "panel-glass": "PanelGlass",
-  "orbit-dots": "OrbitDots",
-  "spiral-ink": "SpiralInk",
-  "perlin-moss": "PerlinMoss",
-  "pulse-frame": "PulseFrame",
-  "water-sheet": "WaterSheet",
-  "still-mesh": "StillMesh",
-  "paper-tooth": "PaperTooth",
-  "gem-haze": "GemHaze",
-  "cmyk-halftone": "CmykHalftone",
-  "radial-still": "RadialStill",
-  "mesh-still": "MeshStill",
-  "aurora-dusk": "AuroraDusk",
-  "ink-dither-soft": "InkDitherSoft",
-  "grain-night": "GrainNight",
-  "wave-ribbon": "WaveRibbon",
-  "voronoi-soft": "VoronoiSoft",
-  "sera-wash": "SeraWash",
-  "stone-band": "StoneBand",
-  "blue-signal": "BlueSignal",
-  "dusk-veil": "DuskVeil",
-  "grid-ghost": "GridGhost",
-  "stripe-quiet": "StripeQuiet",
-  "glow-rim": "GlowRim",
-  "fog-layer": "FogLayer",
-};
-
-export function getMaterialComponentName(slug: string): string {
-  return COMPONENT_NAMES[slug] ?? "GrainField";
-}
+export { COMPONENT_NAMES, getMaterialComponentName };
 
 export function renderMaterial(
   slug: string,

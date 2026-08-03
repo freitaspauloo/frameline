@@ -5,6 +5,12 @@
 
 import { MATERIALS_CATALOG } from "../src/materials/catalog.ts";
 import { MATERIALS_COLLECTIONS } from "../src/materials/collections.ts";
+import {
+  COMPONENT_NAMES,
+  FALLBACK_COMPONENT_NAME,
+  getMaterialComponentName,
+  slugToComponentName,
+} from "../src/materials/component-names.ts";
 import { MATERIAL_PROPS } from "../src/materials/props.ts";
 import { LICENSE_PLANS } from "../src/lib/license-plans.ts";
 
@@ -53,6 +59,31 @@ export function runCatalogSmoke() {
     assert(slugs.has(slug), `Orphan props entry (not in catalog): ${slug}`);
   }
 
+  const rendererKeys = new Set(Object.keys(COMPONENT_NAMES));
+  assert(
+    rendererKeys.size === slugs.size,
+    `COMPONENT_NAMES keys (${rendererKeys.size}) !== catalog slugs (${slugs.size})`,
+  );
+  for (const slug of slugs) {
+    assert(
+      Object.hasOwn(COMPONENT_NAMES, slug),
+      `Catalog slug missing from COMPONENT_NAMES (would fall back to ${FALLBACK_COMPONENT_NAME}): ${slug}`,
+    );
+    const name = getMaterialComponentName(slug);
+    const expected = slugToComponentName(slug);
+    assert(
+      name === COMPONENT_NAMES[slug],
+      `getMaterialComponentName(${slug}) returned ${name}, expected ${COMPONENT_NAMES[slug]}`,
+    );
+    assert(
+      name === expected,
+      `Wrong component name for ${slug}: got ${name}, expected ${expected}`,
+    );
+  }
+  for (const key of rendererKeys) {
+    assert(slugs.has(key), `Orphan COMPONENT_NAMES key (not in catalog): ${key}`);
+  }
+
   const contextsSeen = new Set(
     MATERIALS_CATALOG.flatMap((m) => m.useContexts ?? []),
   );
@@ -91,6 +122,7 @@ export function runCatalogSmoke() {
     catalog: MATERIALS_CATALOG.length,
     free: freeCount,
     collections: MATERIALS_COLLECTIONS.length,
+    renderers: rendererKeys.size,
     plans: planKeys,
   };
 }

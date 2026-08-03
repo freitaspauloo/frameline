@@ -61,7 +61,7 @@ export const MATERIALS_CATALOG: MaterialCatalogEntry[] = [
     slug: "tide-wave",
     title: "Tide Wave",
     description:
-      "Flowing wave mesh for heroes and sectional bands.",
+      "Horizontal swell lines that read as tide, not generic wave noise — for heroes and sectional bands.",
     type: "mesh",
     useContexts: ["hero", "section"],
     tier: "personal",
@@ -103,7 +103,7 @@ export const MATERIALS_CATALOG: MaterialCatalogEntry[] = [
     slug: "signal-dots",
     title: "Signal Dots",
     description:
-      "Quiet dot grid for loading, empty states, and card surfaces.",
+      "Sparse telemetry grid — dots that feel like a live feed, not wallpaper, for loading and empty shells.",
     type: "dither",
     useContexts: ["loading", "empty", "card"],
     tier: "free",
@@ -131,7 +131,7 @@ export const MATERIALS_CATALOG: MaterialCatalogEntry[] = [
     slug: "halo-rays",
     title: "Halo Rays",
     description:
-      "Radiating god rays for heroes and sectional light fields.",
+      "Bloomed radial spokes from a single light well — cinematic rim light for heroes, not a lens-flare sticker.",
     type: "mesh",
     useContexts: ["hero", "section"],
     tier: "personal",
@@ -145,7 +145,7 @@ export const MATERIALS_CATALOG: MaterialCatalogEntry[] = [
     slug: "ink-metaballs",
     title: "Ink Metaballs",
     description:
-      "Gooey ink blobs for heroes, empty states, and loading shells.",
+      "Merging ink masses with soft meniscus edges — organic weight for empty and loading states.",
     type: "mesh",
     useContexts: ["hero", "empty", "loading"],
     tier: "personal",
@@ -187,7 +187,7 @@ export const MATERIALS_CATALOG: MaterialCatalogEntry[] = [
     slug: "halftone-signal",
     title: "Halftone Signal",
     description:
-      "Halftone dot dither for sections and empty states.",
+      "Print-press dot fields that pulse like a broadcast — sectional texture with ink-on-paper grit.",
     type: "dither",
     useContexts: ["section", "empty"],
     tier: "personal",
@@ -355,7 +355,7 @@ export const MATERIALS_CATALOG: MaterialCatalogEntry[] = [
     slug: "radial-still",
     title: "Radial Still",
     description:
-      "Static radial gradient mesh for heroes, sections, and auth shells.",
+      "Still radial bloom from center — quiet focal gravity for auth shells without a motion loop.",
     type: "mesh",
     useContexts: ["hero", "section", "auth"],
     tier: "free",
@@ -425,7 +425,7 @@ export const MATERIALS_CATALOG: MaterialCatalogEntry[] = [
     slug: "wave-ribbon",
     title: "Wave Ribbon",
     description:
-      "Tighter ribbon-like wave bands for sectional strips.",
+      "Compressed ribbon bands sized for thin sectional strips — tide energy without a full-bleed swell.",
     type: "mesh",
     useContexts: ["section"],
     tier: "personal",
@@ -505,7 +505,7 @@ export const MATERIALS_CATALOG: MaterialCatalogEntry[] = [
     slug: "grid-ghost",
     title: "Grid Ghost",
     description:
-      "CSS repeating-linear-gradient grid for loading shells and empty states.",
+      "Hairline CSS lattice that suggests structure without stealing focus — loading and empty scaffolds.",
     type: "dither",
     useContexts: ["loading", "empty"],
     tier: "free",
