@@ -107,3 +107,17 @@ Purchase domain + trademark knockout still open.
 
 - Active PRD: `docs/PRD.md`
 - Archived V1 storefront PRD: `docs/PRD-v1.md`
+
+---
+
+## Instrumentation surfaces (shipped in storefront)
+
+These exist so Gate 01 signals can be collected without inventing metrics. Counts are **instance-local** (`.data/` on the running host) until a production store is wired.
+
+| Surface | Path | What it records |
+|---|---|---|
+| Waitlist landing | `/waitlist` + `POST /api/waitlist` | Email signups → `.data/waitlist.json` |
+| WTP intent beacon | `POST /api/intent` | Plan interest (`static` / `personal` / `team`) from pricing Buy clicks and checkout submit → `.data/wtp.json` (rate-limited; non-blocking) |
+| Admin snapshot | `/admin` | Waitlist count + WTP intent counts by plan (reads the files above) |
+
+Do not treat empty or demo `.data/` files as Gate 01 pass evidence. Thresholds remain in §F4 above.
