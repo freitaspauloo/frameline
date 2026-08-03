@@ -5,6 +5,7 @@ import {
   getLicensePlan,
   isCheckoutPlan,
 } from "@/lib/license-plans";
+import { captureException } from "@/lib/monitoring";
 import {
   clientIp,
   rateLimit,
@@ -52,31 +53,39 @@ export async function POST(request: Request) {
   const license = getLicensePlan(plan);
 
   if (!process.env.STRIPE_SECRET_KEY) {
-    const fulfilled = await fulfillDemoOrder({
-      email,
-      plan,
-      material,
-      paymentProviderRef: null,
-    });
+    try {
+      const fulfilled = await fulfillDemoOrder({
+        email,
+        plan,
+        material,
+        paymentProviderRef: null,
+      });
 
-    const qs = new URLSearchParams({
-      plan,
-      email,
-      orderId: fulfilled.orderId,
-    });
-    if (material) qs.set("material", material);
+      const qs = new URLSearchParams({
+        plan,
+        email,
+        orderId: fulfilled.orderId,
+      });
+      if (material) qs.set("material", material);
 
-    return NextResponse.json({
-      ok: true,
-      mode: "demo" as const,
-      plan,
-      email,
-      material,
-      amountCents: license?.amountCents,
-      orderId: fulfilled.orderId,
-      registryToken: fulfilled.registryToken,
-      redirectTo: `/orders/demo?${qs.toString()}`,
-    });
+      return NextResponse.json({
+        ok: true,
+        mode: "demo" as const,
+        plan,
+        email,
+        material,
+        amountCents: license?.amountCents,
+        orderId: fulfilled.orderId,
+        registryToken: fulfilled.registryToken,
+        redirectTo: `/orders/demo?${qs.toString()}`,
+      });
+    } catch (err) {
+      captureException(err, { route: "checkout", plan, email });
+      return NextResponse.json(
+        { ok: false, error: "Fulfillment failed" },
+        { status: 500 },
+      );
+    }
   }
 
   return NextResponse.json({

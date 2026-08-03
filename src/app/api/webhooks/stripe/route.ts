@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { fulfillDemoOrder } from "@/lib/fulfillment";
 import { isCheckoutPlan } from "@/lib/license-plans";
+import { captureException } from "@/lib/monitoring";
 
 /**
  * Stripe webhook stub.
@@ -70,19 +71,27 @@ export async function POST(request: Request) {
   const paymentProviderRef =
     body.paymentProviderRef?.trim() || body.id?.trim() || null;
 
-  const result = await fulfillDemoOrder({
-    email,
-    plan,
-    material,
-    paymentProviderRef,
-  });
+  try {
+    const result = await fulfillDemoOrder({
+      email,
+      plan,
+      material,
+      paymentProviderRef,
+    });
 
-  return NextResponse.json({
-    ok: true,
-    mode: "demo" as const,
-    created: result.created,
-    orderId: result.orderId,
-    registryToken: result.registryToken,
-    entitlementId: result.entitlementId,
-  });
+    return NextResponse.json({
+      ok: true,
+      mode: "demo" as const,
+      created: result.created,
+      orderId: result.orderId,
+      registryToken: result.registryToken,
+      entitlementId: result.entitlementId,
+    });
+  } catch (err) {
+    captureException(err, { route: "webhooks/stripe", plan, email });
+    return NextResponse.json(
+      { ok: false, error: "Fulfillment failed" },
+      { status: 500 },
+    );
+  }
 }

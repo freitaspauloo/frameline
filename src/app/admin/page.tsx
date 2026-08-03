@@ -19,6 +19,17 @@ async function readWaitlistCount(): Promise<number> {
   }
 }
 
+async function readContactCount(): Promise<number> {
+  const contactPath = path.join(process.cwd(), ".data", "contact.json");
+  try {
+    const raw = await readFile(contactPath, "utf8");
+    const parsed = JSON.parse(raw) as unknown;
+    return Array.isArray(parsed) ? parsed.length : 0;
+  } catch {
+    return 0;
+  }
+}
+
 export default async function AdminDashboardPage() {
   const materialCount = MATERIALS_CATALOG.length;
   const collectionCount = MATERIALS_COLLECTIONS.length;
@@ -27,6 +38,7 @@ export default async function AdminDashboardPage() {
 
   const orders = await readDemoOrders();
   const waitlistCount = await readWaitlistCount();
+  const inboxCount = await readContactCount();
 
   const stats = [
     { label: "Materials", value: materialCount, href: "/admin/materials" },
@@ -36,6 +48,7 @@ export default async function AdminDashboardPage() {
       href: "/admin/collections",
     },
     { label: "Orders", value: orders.length, href: "/admin/orders" },
+    { label: "Inbox", value: inboxCount, href: "/admin/inbox" },
     { label: "Waitlist", value: waitlistCount, href: null },
   ] as const;
 
@@ -52,7 +65,7 @@ export default async function AdminDashboardPage() {
         </p>
       </div>
 
-      <dl className="grid grid-cols-2 gap-px border border-border bg-border sm:grid-cols-4">
+      <dl className="grid grid-cols-2 gap-px border border-border bg-border sm:grid-cols-3 lg:grid-cols-5">
         {stats.map((stat) => {
           const inner = (
             <>

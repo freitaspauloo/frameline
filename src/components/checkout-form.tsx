@@ -19,7 +19,10 @@ import {
   useCartStore,
   type CartPlan,
 } from "@/lib/cart";
-import { getLicensePlan } from "@/lib/license-plans";
+import {
+  getLicensePlan,
+  LICENSE_PLAN_VERSION,
+} from "@/lib/license-plans";
 import { cn } from "@/lib/utils";
 
 const PLAN_OPTIONS: CartPlan[] = ["static", "personal", "team"];
@@ -208,7 +211,11 @@ export function CheckoutForm({
           </form>
 
           <p className="text-center text-xs text-muted-foreground">
-            License version pins at purchase. See{" "}
+            License plan version{" "}
+            <span className="font-mono text-foreground">
+              {LICENSE_PLAN_VERSION}
+            </span>{" "}
+            pins at purchase. See{" "}
             <Link
               className="underline underline-offset-4 hover:text-foreground"
               href="/license"
