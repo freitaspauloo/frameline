@@ -4,6 +4,24 @@ import { getMaterial } from "@/materials/catalog";
 
 const SIZE = { width: 1200, height: 630 };
 
+function surfaceGradient(colors: string[] | undefined): string {
+  const stops = colors?.filter(Boolean) ?? [];
+  if (stops.length === 0) {
+    return "linear-gradient(135deg, #2D6BFF 0%, #0A0A0A 55%, #F7F5F0 100%)";
+  }
+  if (stops.length === 1) {
+    return `linear-gradient(135deg, ${stops[0]} 0%, #0A0A0A 70%)`;
+  }
+  if (stops.length === 2) {
+    return `linear-gradient(135deg, ${stops[0]} 0%, ${stops[1]} 55%, #0A0A0A 100%)`;
+  }
+  const a = stops[0];
+  const b = stops[1];
+  const c = stops[2];
+  const d = stops[3] ?? stops[0];
+  return `linear-gradient(135deg, ${a} 0%, ${b} 35%, ${c} 70%, ${d} 100%)`;
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const slug = searchParams.get("slug")?.trim() ?? "";
@@ -18,7 +36,9 @@ export async function GET(request: Request) {
         : "Personal"
     : "Materials";
   const type = material?.type ?? "surface";
-  const accent = material?.fallbackColors?.[0] ?? "#2D6BFF";
+  const colors = material?.fallbackColors ?? ["#2D6BFF", "#0A0A0A", "#F7F5F0"];
+  const accent = colors[0] ?? "#2D6BFF";
+  const surface = surfaceGradient(colors);
 
   return new ImageResponse(
     (
@@ -28,105 +48,126 @@ export async function GET(request: Request) {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between",
-          background: "#F7F5F0",
-          padding: 64,
+          background: "#0A0A0A",
+          position: "relative",
         }}
       >
         <div
           style={{
+            position: "absolute",
+            inset: 0,
             display: "flex",
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 16,
-            }}
-          >
-            <div
-              style={{
-                width: 36,
-                height: 36,
-                background: accent,
-                display: "flex",
-              }}
-            />
-            <div
-              style={{
-                display: "flex",
-                fontSize: 28,
-                fontWeight: 600,
-                letterSpacing: "-0.02em",
-                color: "#0A0A0A",
-                fontFamily: "ui-sans-serif, system-ui, sans-serif",
-              }}
-            >
-              Frameline
-            </div>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              fontSize: 22,
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              color: "#6B6B6B",
-              fontFamily: "ui-sans-serif, system-ui, sans-serif",
-              fontWeight: 600,
-            }}
-          >
-            {tier}
-          </div>
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 20,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              fontSize: 22,
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              color: "#6B6B6B",
-              fontFamily: "ui-sans-serif, system-ui, sans-serif",
-              fontWeight: 600,
-            }}
-          >
-            {`${type} material`}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              fontSize: 72,
-              lineHeight: 1.05,
-              letterSpacing: "-0.03em",
-              color: "#0A0A0A",
-              fontFamily: "Georgia, serif",
-              maxWidth: 980,
-            }}
-          >
-            {title}
-          </div>
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            height: 12,
-            width: "100%",
-            background: `linear-gradient(90deg, ${accent} 0%, #0A0A0A 55%, #F7F5F0 100%)`,
+            backgroundImage: surface,
+            opacity: 0.92,
           }}
         />
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            backgroundImage:
+              "linear-gradient(180deg, rgba(10,10,10,0.15) 0%, rgba(10,10,10,0.55) 55%, rgba(10,10,10,0.88) 100%)",
+          }}
+        />
+
+        <div
+          style={{
+            position: "relative",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            width: "100%",
+            height: "100%",
+            padding: 64,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              width: "100%",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 16,
+              }}
+            >
+              <div
+                style={{
+                  width: 36,
+                  height: 36,
+                  background: accent,
+                  display: "flex",
+                }}
+              />
+              <div
+                style={{
+                  display: "flex",
+                  fontSize: 28,
+                  fontWeight: 600,
+                  letterSpacing: "-0.02em",
+                  color: "#FFFFFF",
+                  fontFamily: "ui-sans-serif, system-ui, sans-serif",
+                }}
+              >
+                Frameline
+              </div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                fontSize: 22,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "rgba(255,255,255,0.72)",
+                fontFamily: "ui-sans-serif, system-ui, sans-serif",
+                fontWeight: 600,
+              }}
+            >
+              {tier}
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 20,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                fontSize: 22,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "rgba(255,255,255,0.72)",
+                fontFamily: "ui-sans-serif, system-ui, sans-serif",
+                fontWeight: 600,
+              }}
+            >
+              {`${type} material`}
+            </div>
+            <div
+              style={{
+                display: "flex",
+                fontSize: 72,
+                lineHeight: 1.05,
+                letterSpacing: "-0.03em",
+                color: "#FFFFFF",
+                fontFamily: "Georgia, serif",
+                maxWidth: 980,
+              }}
+            >
+              {title}
+            </div>
+          </div>
+        </div>
       </div>
     ),
     SIZE,

@@ -93,6 +93,47 @@ async function runLive(baseUrl) {
       throw new Error(`intent not ok: ${JSON.stringify(data)}`);
     }
   });
+
+  await check("POST /api/install → 200", async () => {
+    const res = await fetch(`${root}/api/install`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        slug: "aurora-mesh",
+        source: "smoke",
+        path: "cli",
+      }),
+    });
+    if (res.status !== 200) {
+      throw new Error(`expected 200, got ${res.status}`);
+    }
+    const data = await res.json();
+    if (!data.ok) {
+      throw new Error(`install not ok: ${JSON.stringify(data)}`);
+    }
+  });
+
+  await check("GET /api/install → count", async () => {
+    const res = await fetch(`${root}/api/install`);
+    if (res.status !== 200) {
+      throw new Error(`expected 200, got ${res.status}`);
+    }
+    const data = await res.json();
+    if (typeof data.count !== "number" || data.count < 1) {
+      throw new Error(`expected count >= 1, got ${JSON.stringify(data)}`);
+    }
+  });
+
+  await check("GET /og/material?slug=aurora-mesh → image", async () => {
+    const res = await fetch(`${root}/og/material?slug=aurora-mesh`);
+    if (res.status !== 200) {
+      throw new Error(`expected 200, got ${res.status}`);
+    }
+    const type = res.headers.get("content-type") ?? "";
+    if (!type.includes("image")) {
+      throw new Error(`expected image content-type, got ${type}`);
+    }
+  });
 }
 
 const baseUrl = process.env.SMOKE_BASE_URL?.trim();

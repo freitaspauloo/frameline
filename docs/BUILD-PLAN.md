@@ -17,10 +17,10 @@ Steps, not dates. Supersedes the archived V1 “Relay” sketch.
 | WP9 Entitlements | Domain types + demo account gating; **blocked on Postgres** for durable entitlements |
 | WP10 Docs | Hub + install / cold-install / theming / a11y / perf / examples / troubleshooting / licensing |
 | WP11 Admin | Shell + catalog/orders views; demo auth gate — **real auth still blocked** |
-| WP12 Launch ops | Sitemap / robots / metadata; waitlist + WTP intent instrumentation live; legal pages |
+| WP12 Launch ops | Sitemap / robots / metadata; waitlist + WTP + install-intent instrumentation live; legal pages |
 | CI / smoke | Live — `.github/workflows/ci.yml` runs `tsc`, `pnpm smoke`, `pnpm build`; catalog + renderer coverage in smoke |
 
-**Phase C gate:** selling path remains scaffolded until Stripe Checkout, Postgres (Prisma), and a real auth provider land. Discovery instrumentation (`/waitlist`, `POST /api/waitlist`, `POST /api/intent`) is live ahead of that.
+**Phase C gate:** selling path remains scaffolded until Stripe Checkout, Postgres (Prisma), and a real auth provider land. Discovery instrumentation (`/waitlist`, `POST /api/waitlist`, `POST /api/intent`, `POST /api/install`) is live ahead of that.
 
 ## Phase A — Browse & craft (mostly done)
 

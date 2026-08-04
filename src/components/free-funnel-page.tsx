@@ -14,6 +14,7 @@ import {
   MarketingShell,
 } from "@/components/marketing-shell";
 import { Button } from "@/components/ui/button";
+import { recordInstallIntent } from "@/lib/install-intent";
 import type { MaterialCatalogEntry } from "@/materials";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +25,11 @@ function FreeMaterialInstall({ entry }: { entry: MaterialCatalogEntry }) {
   async function copyCli() {
     try {
       await navigator.clipboard.writeText(cli);
+      recordInstallIntent({
+        slug: entry.slug,
+        source: "free",
+        path: "cli",
+      });
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1600);
     } catch {
