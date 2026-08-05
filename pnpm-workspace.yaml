@@ -1,5 +1,8 @@
 allowBuilds:
-  sharp: set this to true or false
-  unrs-resolver: set this to true or false
+  sharp: false
+  unrs-resolver: false
+  prisma: true
+  "@prisma/engines": true
+  "@prisma/client": true
 minimumReleaseAgeExclude:
   - ai@7.0.16

@@ -22,10 +22,9 @@ export default async function AdminOrdersPage() {
         </p>
         <h1 className="mt-2 text-2xl font-medium tracking-tight">Fulfillment</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Demo orders from{" "}
-          <span className="font-mono">.data/orders.json</span>
-          {" — "}
-          checkout or webhook without Stripe secrets.
+          Paid orders from Postgres when{" "}
+          <span className="font-mono">DATABASE_URL</span> is set; otherwise{" "}
+          <span className="font-mono">.data/orders.json</span>.
         </p>
       </div>
 

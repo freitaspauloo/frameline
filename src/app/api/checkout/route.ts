@@ -11,6 +11,7 @@ import {
   rateLimit,
   rateLimitResponse,
 } from "@/lib/rate-limit";
+import { createCheckoutSession, getStripe } from "@/lib/stripe";
 
 export async function POST(request: Request) {
   const limited = rateLimit(`checkout:${clientIp(request)}`);
@@ -52,7 +53,7 @@ export async function POST(request: Request) {
   const material = body.material?.trim() || undefined;
   const license = getLicensePlan(plan);
 
-  if (!process.env.STRIPE_SECRET_KEY) {
+  if (!getStripe()) {
     try {
       const fulfilled = await fulfillDemoOrder({
         email,
@@ -65,6 +66,7 @@ export async function POST(request: Request) {
         plan,
         email,
         orderId: fulfilled.orderId,
+        token: fulfilled.registryToken,
       });
       if (material) qs.set("material", material);
 
@@ -77,7 +79,7 @@ export async function POST(request: Request) {
         amountCents: license?.amountCents,
         orderId: fulfilled.orderId,
         registryToken: fulfilled.registryToken,
-        redirectTo: `/orders/demo?${qs.toString()}`,
+        redirectTo: `/orders/${fulfilled.orderId}?${qs.toString()}`,
       });
     } catch (err) {
       captureException(err, { route: "checkout", plan, email });
@@ -88,12 +90,30 @@ export async function POST(request: Request) {
     }
   }
 
-  return NextResponse.json({
-    ok: true,
-    mode: "stripe" as const,
-    plan,
-    email,
-    material,
-    message: "Stripe session creation stub — wire stripe SDK next",
-  });
+  try {
+    const session = await createCheckoutSession({ email, plan, material });
+    if (!session.url) {
+      return NextResponse.json(
+        { ok: false, error: "Stripe did not return a checkout URL" },
+        { status: 502 },
+      );
+    }
+
+    return NextResponse.json({
+      ok: true,
+      mode: "stripe" as const,
+      plan,
+      email,
+      material,
+      amountCents: license?.amountCents,
+      sessionId: session.id,
+      redirectTo: session.url,
+    });
+  } catch (err) {
+    captureException(err, { route: "checkout", plan, email, mode: "stripe" });
+    return NextResponse.json(
+      { ok: false, error: "Could not start Stripe Checkout" },
+      { status: 500 },
+    );
+  }
 }

@@ -1,5 +1,5 @@
 // Frameline data model — PRD §10
-// Schema-first lock. Wire DATABASE_URL + `pnpm prisma generate` when Postgres is available.
+// Runtime: set DATABASE_URL, then `pnpm db:push` / `pnpm db:generate`.
 
 generator client {
   provider = "prisma-client-js"

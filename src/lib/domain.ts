@@ -1,4 +1,4 @@
-/** Domain types aligned with PRD §10 — TypeScript models only (no Prisma yet). */
+/** Domain types aligned with PRD §10 — mirrored by prisma/schema.prisma. */
 
 export type MaterialStatus = "draft" | "published" | "unpublished";
 
