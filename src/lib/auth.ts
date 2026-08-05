@@ -32,8 +32,8 @@ export function isAdminEmail(email: string): boolean {
 }
 
 /**
- * Provider-agnostic session helper.
- * Server-side always returns null for now; client demos may read `fl_session`.
+ * Provider-agnostic session helper (client).
+ * Reads `fl_session` cookie set by demo magic-link or Firebase `/api/auth/session`.
  */
 export function getDemoSession(): SessionUser | null {
   if (typeof window === "undefined") return null;
