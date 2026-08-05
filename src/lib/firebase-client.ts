@@ -13,15 +13,30 @@ import {
   type User,
 } from "firebase/auth";
 
+import { FIREBASE_PUBLIC_CONFIG } from "@/lib/firebase-public-config";
+
 function clientConfig() {
+  // Env overrides win; committed public config is the default so every env works.
   return {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-    measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+    apiKey:
+      process.env.NEXT_PUBLIC_FIREBASE_API_KEY || FIREBASE_PUBLIC_CONFIG.apiKey,
+    authDomain:
+      process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ||
+      FIREBASE_PUBLIC_CONFIG.authDomain,
+    projectId:
+      process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ||
+      FIREBASE_PUBLIC_CONFIG.projectId,
+    appId:
+      process.env.NEXT_PUBLIC_FIREBASE_APP_ID || FIREBASE_PUBLIC_CONFIG.appId,
+    messagingSenderId:
+      process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ||
+      FIREBASE_PUBLIC_CONFIG.messagingSenderId,
+    storageBucket:
+      process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ||
+      FIREBASE_PUBLIC_CONFIG.storageBucket,
+    measurementId:
+      process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID ||
+      FIREBASE_PUBLIC_CONFIG.measurementId,
   };
 }
 

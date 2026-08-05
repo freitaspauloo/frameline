@@ -6,10 +6,13 @@ Solo-founder pace: small PRs, green smoke, no ceremony.
 
 ```bash
 pnpm install
+pnpm firebase:sync-secrets   # if FIREBASE_* admin secrets are in env
 pnpm dev          # http://localhost:3000
 ```
 
 Use **pnpm** (not npm) so `pnpm-workspace.yaml` settings stick. Expected warning about ignored `sharp` / `unrs-resolver` build scripts is fine.
+
+Firebase: see [`docs/FIREBASE.md`](./docs/FIREBASE.md). Client config ships in git; admin secrets must live in Cursor/Vercel env.
 
 ## Verify before you push
 

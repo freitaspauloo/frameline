@@ -12,3 +12,4 @@
 | **[BUILD-PLAN.md](./BUILD-PLAN.md)** | Archived with V1 — replace after Gate 01 |
 | **[COSTS.md](./COSTS.md)** | Cost notes |
 | **[AUTHORING.md](./AUTHORING.md)** | Checklist for shipping a material |
+| **[FIREBASE.md](./FIREBASE.md)** | Auth secrets for Cursor Cloud / Vercel |

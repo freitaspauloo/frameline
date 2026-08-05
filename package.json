@@ -10,7 +10,10 @@
     "smoke": "node --experimental-strip-types --import ./scripts/smoke-register.mjs scripts/smoke.mjs",
     "verify": "pnpm exec tsc --noEmit && pnpm smoke && pnpm build",
     "material:new": "node scripts/new-material.mjs",
-    "demo:seed": "node scripts/seed-demo.mjs"
+    "demo:seed": "node scripts/seed-demo.mjs",
+    "firebase:sync-secrets": "node scripts/sync-firebase-secrets.mjs",
+    "predev": "node scripts/sync-firebase-secrets.mjs",
+    "prebuild": "node scripts/sync-firebase-secrets.mjs"
   },
   "dependencies": {
     "@assistant-ui/react": "^0.14.26",
