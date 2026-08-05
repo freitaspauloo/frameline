@@ -2,13 +2,17 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
 
+import {
+  canAccessMaterial,
+  isFreeMaterial,
+} from "@/lib/entitlements";
+import { resolveRegistryToken } from "@/lib/fulfillment";
 import { getMaterial } from "@/materials";
-import { isFreeMaterial } from "@/lib/entitlements";
 
 /**
- * Registry read stub (WP6 / WP9).
- * Free materials return the real component source from disk when available.
- * Paid materials return 403 until a Bearer fl_demo_ / fl_live_ token is present.
+ * Registry read (WP6 / WP9).
+ * Free materials return component source when available.
+ * Paid materials require a valid Bearer fl_demo_ / fl_live_ token with entitlement.
  */
 export async function GET(
   request: Request,
@@ -25,7 +29,7 @@ export async function GET(
 
   if (!free) {
     const auth = request.headers.get("authorization");
-    const token = auth?.startsWith("Bearer ") ? auth.slice(7) : null;
+    const token = auth?.startsWith("Bearer ") ? auth.slice(7).trim() : null;
     if (!token) {
       return NextResponse.json(
         {
@@ -36,8 +40,27 @@ export async function GET(
         { status: 403 },
       );
     }
-    if (!token.startsWith("fl_demo_") && !token.startsWith("fl_live_")) {
+
+    const resolved = await resolveRegistryToken(token);
+    if (!resolved) {
       return NextResponse.json({ error: "Invalid token" }, { status: 403 });
+    }
+
+    const allowed =
+      canAccessMaterial(resolved.entitlement.planKey, material.tier) &&
+      (resolved.entitlement.materialScope.kind === "all" ||
+        resolved.entitlement.materialScope.materialSlugs.includes(
+          material.slug,
+        ));
+
+    if (!allowed) {
+      return NextResponse.json(
+        {
+          error: "Not entitled",
+          message: "This token does not unlock this material.",
+        },
+        { status: 403 },
+      );
     }
   }
 
@@ -48,7 +71,11 @@ export async function GET(
   let status: string;
 
   if (free) {
-    const diskPath = path.join(process.cwd(), "src/materials", `${material.slug}.tsx`);
+    const diskPath = path.join(
+      process.cwd(),
+      "src/materials",
+      `${material.slug}.tsx`,
+    );
     try {
       content = await readFile(diskPath, "utf8");
       status = "source-free";
@@ -57,8 +84,18 @@ export async function GET(
       status = "stub-free";
     }
   } else {
-    content = placeholderContent(material.title, material.slug, componentPath);
-    status = "stub-entitled";
+    const diskPath = path.join(
+      process.cwd(),
+      "src/materials",
+      `${material.slug}.tsx`,
+    );
+    try {
+      content = await readFile(diskPath, "utf8");
+      status = "source-entitled";
+    } catch {
+      content = placeholderContent(material.title, material.slug, componentPath);
+      status = "stub-entitled";
+    }
   }
 
   return NextResponse.json({

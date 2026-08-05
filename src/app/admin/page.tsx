@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import Link from "next/link";
 
+import { getPrisma, hasDatabaseUrl } from "@/lib/db";
 import { readDemoOrders } from "@/lib/fulfillment";
 import {
   MATERIALS_CATALOG,
@@ -9,6 +10,15 @@ import {
 } from "@/materials";
 
 async function readWaitlistCount(): Promise<number> {
+  if (hasDatabaseUrl()) {
+    try {
+      return await getPrisma().emailCapture.count({
+        where: { source: "waitlist" },
+      });
+    } catch {
+      return 0;
+    }
+  }
   const waitlistPath = path.join(process.cwd(), ".data", "waitlist.json");
   try {
     const raw = await readFile(waitlistPath, "utf8");
@@ -110,8 +120,8 @@ export default async function AdminDashboardPage() {
         </p>
         <h1 className="mt-2 text-2xl font-medium tracking-tight">Overview</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Catalog snapshot plus demo store counts from{" "}
-          <span className="font-mono">.data/</span>.
+          Catalog snapshot plus orders/waitlist from Postgres when configured
+          (else local <span className="font-mono">.data/</span>).
         </p>
       </div>
 

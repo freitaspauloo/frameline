@@ -103,14 +103,16 @@ export function CheckoutForm({
         setError(data.error ?? "Checkout failed");
         return;
       }
-      if (data.mode === "demo" && data.redirectTo) {
+      if (data.redirectTo) {
+        if (data.mode === "stripe") {
+          window.location.href = data.redirectTo;
+          return;
+        }
         router.push(data.redirectTo);
         return;
       }
       setStatus("idle");
-      setStripeMessage(
-        data.message ?? "Stripe session creation stub — wire stripe SDK next",
-      );
+      setStripeMessage(data.message ?? "Checkout did not return a redirect.");
     } catch {
       setStatus("error");
       setError("Network error — try again");
@@ -123,7 +125,7 @@ export function CheckoutForm({
       <MarketingSection>
         <MarketingPageHeader
           align="center"
-          description="Demo checkout — posts to /api/checkout. Without STRIPE_SECRET_KEY, redirects to a demo order confirmation."
+          description="Guest checkout. With Stripe keys, pays via Stripe Checkout; otherwise fulfills instantly into Postgres (or local demo store)."
           eyebrow="Checkout"
           title={`${license?.name ?? "Personal"} license`}
         />

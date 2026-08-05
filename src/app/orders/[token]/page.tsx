@@ -4,6 +4,7 @@ import { MarketingNavbar } from "@/components/marketing-navbar";
 import { RelayButton } from "@/components/relay-ui";
 import { findDemoOrder } from "@/lib/fulfillment";
 import { getLicensePlan } from "@/lib/license-plans";
+import { fulfillStripeSessionId } from "@/lib/stripe-fulfillment";
 
 export default async function OrderConfirmationPage({
   params,
@@ -15,6 +16,8 @@ export default async function OrderConfirmationPage({
     material?: string;
     email?: string;
     orderId?: string;
+    session_id?: string;
+    token?: string;
   }>;
 }) {
   const { token } = await params;
@@ -23,25 +26,49 @@ export default async function OrderConfirmationPage({
     material: materialParam,
     email: emailParam,
     orderId: orderIdParam,
+    session_id: sessionIdParam,
+    token: tokenParam,
   } = await searchParams;
+
+  const sessionId =
+    sessionIdParam?.trim() ||
+    (token.startsWith("cs_") ? token : undefined) ||
+    undefined;
 
   const lookupId =
     orderIdParam?.trim() ||
-    (token !== "demo" ? token : undefined) ||
+    (token !== "demo" && !token.startsWith("cs_") ? token : undefined) ||
     undefined;
 
-  const stored = await findDemoOrder({
+  let stored = await findDemoOrder({
     id: lookupId,
     email: emailParam,
     plan: planParam,
+    paymentProviderRef: sessionId,
   });
+
+  let freshRegistryToken: string | null = tokenParam?.trim() || null;
+
+  if (sessionId && (!stored || !freshRegistryToken)) {
+    try {
+      const fulfilled = await fulfillStripeSessionId(sessionId);
+      if (fulfilled) {
+        stored = fulfilled.order;
+        if (fulfilled.created || fulfilled.registryToken) {
+          freshRegistryToken = fulfilled.registryToken || freshRegistryToken;
+        }
+      }
+    } catch {
+      // Webhook may still be in flight; page still renders with whatever we have.
+    }
+  }
 
   const plan = stored?.planKey ?? planParam ?? "personal";
   const material = stored?.materialSlug ?? materialParam ?? "ink-dither";
   const license = getLicensePlan(plan);
   const planLabel = license?.name ?? (plan === "team" ? "Team" : "Personal");
   const orderRef = stored?.id ?? token;
-  const registryToken = stored?.registryToken ?? null;
+  const registryToken = freshRegistryToken || stored?.registryToken || null;
   const email = stored?.email ?? emailParam ?? null;
 
   return (
@@ -65,7 +92,7 @@ export default async function OrderConfirmationPage({
                   <span className="font-mono text-relay-ink">{email}</span>
                 </>
               ) : null}
-              . Install below — Account keeps this for reinstalls.
+              . Install below — save your registry token; it is shown once.
             </p>
           </div>
 
@@ -84,15 +111,14 @@ export default async function OrderConfirmationPage({
               <p className="text-xs text-relay-secondary">
                 Pass as{" "}
                 <span className="font-mono">Authorization: Bearer …</span> for
-                paid registry reads.
+                paid registry reads. Copy it now — we only store a hash.
               </p>
             </div>
           ) : (
             <p className="text-xs text-relay-secondary">
-              Demo confirmation — run checkout again to mint a stored{" "}
-              <span className="font-mono">fl_demo_</span> token, or POST{" "}
-              <span className="font-mono">/api/webhooks/stripe</span> in demo
-              mode.
+              {sessionId
+                ? "Payment received — if your token is not here yet, refresh in a moment (webhook may still be landing)."
+                : "No registry token on this confirmation. Run checkout again or open the link from your receipt."}
             </p>
           )}
 

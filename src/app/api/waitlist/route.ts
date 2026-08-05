@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
 
+import { getPrisma, hasDatabaseUrl } from "@/lib/db";
 import {
   clientIp,
   rateLimit,
@@ -71,6 +72,22 @@ export async function POST(request: Request) {
       ? sourceRaw.trim().slice(0, 64)
       : undefined;
 
+  if (hasDatabaseUrl()) {
+    const prisma = getPrisma();
+    await prisma.emailCapture.upsert({
+      where: {
+        email_source: { email, source: "waitlist" },
+      },
+      create: {
+        email,
+        source: "waitlist",
+        consent: true,
+      },
+      update: {},
+    });
+    return NextResponse.json({ ok: true, mode: "db" as const });
+  }
+
   const entries = await readWaitlist();
   if (!entries.some((e) => e.email === email)) {
     entries.push({
@@ -81,5 +98,5 @@ export async function POST(request: Request) {
     await writeWaitlist(entries);
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, mode: "demo" as const });
 }
