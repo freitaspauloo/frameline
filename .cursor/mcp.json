@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "firebase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "firebase-tools@latest",
+        "mcp",
+        "--dir",
+        "${workspaceFolder}"
+      ],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "${workspaceFolder}/.secrets/firebase-adminsdk.json",
+        "GCLOUD_PROJECT": "frameline-b89ac",
+        "FIREBASE_PROJECT": "frameline-b89ac"
+      }
+    }
+  }
+}
