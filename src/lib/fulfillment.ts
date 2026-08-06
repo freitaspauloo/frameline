@@ -5,6 +5,7 @@ import { nanoid } from "nanoid";
 
 import type { Entitlement, Order, RegistryToken } from "@/lib/domain";
 import { getPrisma, hasDatabaseUrl } from "@/lib/db";
+import { sendOrderReceipt } from "@/lib/email";
 import {
   getLicensePlan,
   LICENSE_PLAN_VERSION,
@@ -178,14 +179,19 @@ export async function findDemoOrder(opts: {
 /**
  * Idempotent fulfillment — Postgres when DATABASE_URL is set, else `.data/` files.
  * Grants entitlement and mints a registry bearer token (returned once in plaintext).
+ * Sends a Resend receipt when RESEND_API_KEY is set and the order is newly created.
  */
 export async function fulfillDemoOrder(
   input: FulfillInput,
 ): Promise<FulfillResult> {
-  if (hasDatabaseUrl()) {
-    return fulfillOrderInDb(input);
-  }
-  return fulfillOrderInFiles(input);
+  const result = hasDatabaseUrl()
+    ? await fulfillOrderInDb(input)
+    : await fulfillOrderInFiles(input);
+
+  // Receipt failures must not roll back entitlement — log via monitoring.
+  await sendOrderReceipt(result);
+
+  return result;
 }
 
 /** Resolve a registry bearer token to an active entitlement (DB or file store). */
