@@ -5,10 +5,7 @@ import {
   SESSION_COOKIE,
   sessionUserFromEmail,
 } from "@/lib/auth";
-import {
-  isFirebaseAdminConfigured,
-  verifyFirebaseIdToken,
-} from "@/lib/firebase-admin";
+import { firebaseAdminEnvSnapshot } from "@/lib/firebase-admin-env";
 import { captureException } from "@/lib/monitoring";
 import {
   clientIp,
@@ -26,12 +23,45 @@ export async function POST(request: Request) {
   const limited = rateLimit(`auth-session:${clientIp(request)}`);
   if (!limited.ok) return rateLimitResponse(limited);
 
-  if (!isFirebaseAdminConfigured()) {
+  const adminEnv = firebaseAdminEnvSnapshot();
+  if (!adminEnv.configured) {
     return NextResponse.json(
       {
         ok: false,
         error:
           "Firebase Admin is not configured. Set FIREBASE_PROJECT_ID / CLIENT_EMAIL / PRIVATE_KEY (or GOOGLE_APPLICATION_CREDENTIALS).",
+      },
+      { status: 503 },
+    );
+  }
+
+  let verifyFirebaseIdToken: (idToken: string) => Promise<{
+    email?: string;
+    uid: string;
+  }>;
+  try {
+    const mod = await import("@/lib/firebase-admin");
+    if (!mod.getFirebaseAdminApp()) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error:
+            mod.getFirebaseAdminLoadError() ||
+            "Firebase Admin failed to initialize",
+        },
+        { status: 503 },
+      );
+    }
+    verifyFirebaseIdToken = mod.verifyFirebaseIdToken;
+  } catch (err) {
+    captureException(err, { route: "auth/session", phase: "import" });
+    return NextResponse.json(
+      {
+        ok: false,
+        error:
+          err instanceof Error
+            ? `Firebase Admin unavailable: ${err.message}`
+            : "Firebase Admin unavailable",
       },
       { status: 503 },
     );
@@ -107,10 +137,35 @@ export async function POST(request: Request) {
 }
 
 export async function GET() {
+  const adminEnv = firebaseAdminEnvSnapshot();
+  let adminSdkLoaded = false;
+  let adminSdkError: string | null = null;
+
+  if (adminEnv.configured) {
+    try {
+      const mod = await import("@/lib/firebase-admin");
+      adminSdkLoaded = Boolean(mod.getFirebaseAdminApp());
+      adminSdkError = adminSdkLoaded
+        ? null
+        : mod.getFirebaseAdminLoadError();
+    } catch (err) {
+      adminSdkError =
+        err instanceof Error ? err.message : "firebase-admin import failed";
+    }
+  }
+
   return NextResponse.json({
     ok: true,
-    firebaseAdmin: isFirebaseAdminConfigured(),
-    projectId: process.env.FIREBASE_PROJECT_ID ?? null,
+    firebaseAdmin: adminEnv.configured && adminSdkLoaded,
+    projectId: adminEnv.projectId,
     adminEmailsConfigured: Boolean(process.env.FRAMELINE_ADMIN_EMAILS),
+    adminEnv: {
+      configured: adminEnv.configured,
+      hasProjectId: adminEnv.hasProjectId,
+      hasClientEmail: adminEnv.hasClientEmail,
+      hasPrivateKey: adminEnv.hasPrivateKey,
+      privateKeyLooksPem: adminEnv.privateKeyLooksPem,
+    },
+    adminSdkError,
   });
 }

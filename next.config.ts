@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: projectRoot,
   },
+  // Keep Admin SDK out of the Turbopack server graph (also in Next defaults).
+  serverExternalPackages: ["firebase-admin"],
 };
 
 export default nextConfig;
