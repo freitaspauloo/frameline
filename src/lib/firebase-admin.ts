@@ -1,23 +1,27 @@
 import { cert, getApps, initializeApp, type App } from "firebase-admin/app";
 import { getAuth, type Auth } from "firebase-admin/auth";
 
-let app: App | undefined;
+import {
+  hasFirebaseAdminEnv,
+  readFirebasePrivateKey,
+} from "@/lib/firebase-admin-env";
 
-function readPrivateKey(): string | undefined {
-  const raw = process.env.FIREBASE_PRIVATE_KEY;
-  if (!raw) return undefined;
-  // .env.local stores newlines as `\n`
-  return raw.includes("\\n") ? raw.replace(/\\n/g, "\n") : raw;
-}
+export {
+  firebaseAdminEnvSnapshot,
+  hasFirebaseAdminEnv,
+  readFirebasePrivateKey,
+} from "@/lib/firebase-admin-env";
+
+let app: App | undefined;
+let loadError: string | null = null;
 
 /** True when Admin SDK credentials are configured. */
 export function isFirebaseAdminConfigured(): boolean {
-  if (process.env.GOOGLE_APPLICATION_CREDENTIALS) return true;
-  return Boolean(
-    process.env.FIREBASE_PROJECT_ID &&
-      process.env.FIREBASE_CLIENT_EMAIL &&
-      process.env.FIREBASE_PRIVATE_KEY,
-  );
+  return hasFirebaseAdminEnv();
+}
+
+export function getFirebaseAdminLoadError(): string | null {
+  return loadError;
 }
 
 export function getFirebaseAdminApp(): App | null {
@@ -28,21 +32,29 @@ export function getFirebaseAdminApp(): App | null {
     return app;
   }
 
-  const projectId = process.env.FIREBASE_PROJECT_ID;
-  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-  const privateKey = readPrivateKey();
+  try {
+    const projectId = process.env.FIREBASE_PROJECT_ID?.trim();
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL?.trim();
+    const privateKey = readFirebasePrivateKey();
 
-  if (projectId && clientEmail && privateKey) {
-    app = initializeApp({
-      credential: cert({ projectId, clientEmail, privateKey }),
-      projectId,
-    });
+    if (projectId && clientEmail && privateKey) {
+      app = initializeApp({
+        credential: cert({ projectId, clientEmail, privateKey }),
+        projectId,
+      });
+      loadError = null;
+      return app;
+    }
+
+    // ADC / GOOGLE_APPLICATION_CREDENTIALS path
+    app = initializeApp({ projectId: projectId || undefined });
+    loadError = null;
     return app;
+  } catch (err) {
+    loadError =
+      err instanceof Error ? err.message : "Firebase Admin failed to initialize";
+    return null;
   }
-
-  // ADC / GOOGLE_APPLICATION_CREDENTIALS path
-  app = initializeApp({ projectId: projectId || undefined });
-  return app;
 }
 
 export function getFirebaseAdminAuth(): Auth | null {
@@ -54,7 +66,9 @@ export function getFirebaseAdminAuth(): Auth | null {
 export async function verifyFirebaseIdToken(idToken: string) {
   const auth = getFirebaseAdminAuth();
   if (!auth) {
-    throw new Error("Firebase Admin is not configured");
+    throw new Error(
+      loadError || "Firebase Admin is not configured",
+    );
   }
   return auth.verifyIdToken(idToken);
 }
