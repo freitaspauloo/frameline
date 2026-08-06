@@ -23,7 +23,9 @@ export const metadata: Metadata = {
 };
 
 export default function LicensePage() {
-  const tiers = LICENSE_PLANS.filter((p) => p.key !== "static");
+  const tiers = LICENSE_PLANS.filter(
+    (p) => p.key !== "static" && p.key !== "test",
+  );
 
   return (
     <MarketingShell>

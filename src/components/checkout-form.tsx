@@ -26,7 +26,7 @@ import {
 import { cn } from "@/lib/utils";
 import { recordWtpIntent } from "@/lib/wtp-intent";
 
-const PLAN_OPTIONS: CartPlan[] = ["static", "personal", "team"];
+const PLAN_OPTIONS: CartPlan[] = ["test", "static", "personal", "team"];
 
 const CHIP =
   "border border-border px-4 py-2 text-[0.625rem] font-semibold tracking-widest uppercase transition-colors";

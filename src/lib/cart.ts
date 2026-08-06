@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type CartPlan = "personal" | "team" | "static";
+export type CartPlan = "test" | "personal" | "team" | "static";
 
 type CartState = {
   plan: CartPlan;
@@ -22,7 +22,12 @@ const defaults = {
 };
 
 export function isCartPlan(value: string | undefined): value is CartPlan {
-  return value === "personal" || value === "team" || value === "static";
+  return (
+    value === "test" ||
+    value === "personal" ||
+    value === "team" ||
+    value === "static"
+  );
 }
 
 export const useCartStore = create<CartState>()(

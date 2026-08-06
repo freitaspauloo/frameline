@@ -10,6 +10,7 @@ const TIER_RANK: Record<MaterialTier, number> = {
 
 const PLAN_RANK: Record<LicensePlanKey, number> = {
   free: 0,
+  test: 0,
   static: 0,
   personal: 1,
   team: 2,
@@ -28,7 +29,7 @@ export function canAccessMaterial(
   materialTier: MaterialTier,
 ): boolean {
   if (materialTier === "free") return true;
-  if (planKey === "static") return false;
+  if (planKey === "static" || planKey === "test") return false;
   return PLAN_RANK[planKey] >= TIER_RANK[materialTier];
 }
 
