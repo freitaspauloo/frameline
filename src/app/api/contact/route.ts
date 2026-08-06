@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
 
+import { sendContactNotification } from "@/lib/email";
 import {
   clientIp,
   rateLimit,
@@ -89,8 +90,13 @@ export async function POST(request: Request) {
   });
   await writeContact(entries);
 
+  const mailed = await sendContactNotification({ name, email, message });
+
   return NextResponse.json({
     ok: true,
-    message: "Saved to the demo inbox (.data/contact.json).",
+    message: mailed.ok && !("skipped" in mailed && mailed.skipped)
+      ? "Message saved and emailed to the team."
+      : "Saved to the demo inbox (.data/contact.json).",
+    emailed: mailed.ok && !("skipped" in mailed && mailed.skipped),
   });
 }
