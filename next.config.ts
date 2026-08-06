@@ -8,8 +8,8 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: projectRoot,
   },
-  // Keep Admin SDK out of the Turbopack server graph (also in Next defaults).
-  serverExternalPackages: ["firebase-admin"],
+  // Keep Admin SDK / Prisma out of the Turbopack server graph.
+  serverExternalPackages: ["firebase-admin", "@prisma/client", "prisma"],
 };
 
 export default nextConfig;

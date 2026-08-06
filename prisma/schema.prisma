@@ -2,7 +2,9 @@
 // Runtime: set DATABASE_URL, then `pnpm db:push` / `pnpm db:generate`.
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // Vercel / AWS Lambda = Amazon Linux → rhel-openssl-3.0.x
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {

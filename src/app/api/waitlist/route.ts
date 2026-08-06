@@ -3,6 +3,7 @@ import path from "node:path";
 import { NextResponse } from "next/server";
 
 import { getPrisma, hasDatabaseUrl } from "@/lib/db";
+import { captureException } from "@/lib/monitoring";
 import {
   clientIp,
   rateLimit,
@@ -73,19 +74,24 @@ export async function POST(request: Request) {
       : undefined;
 
   if (hasDatabaseUrl()) {
-    const prisma = getPrisma();
-    await prisma.emailCapture.upsert({
-      where: {
-        email_source: { email, source: "waitlist" },
-      },
-      create: {
-        email,
-        source: "waitlist",
-        consent: true,
-      },
-      update: {},
-    });
-    return NextResponse.json({ ok: true, mode: "db" as const });
+    try {
+      const prisma = getPrisma();
+      await prisma.emailCapture.upsert({
+        where: {
+          email_source: { email, source: "waitlist" },
+        },
+        create: {
+          email,
+          source: "waitlist",
+          consent: true,
+        },
+        update: {},
+      });
+      return NextResponse.json({ ok: true, mode: "db" as const });
+    } catch (err) {
+      captureException(err, { route: "waitlist", phase: "db" });
+      // Fall through to file-backed store so signup still works.
+    }
   }
 
   const entries = await readWaitlist();
