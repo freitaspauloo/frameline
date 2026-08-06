@@ -13,7 +13,12 @@ export type LicensePlanDefinition = {
 };
 
 /** Plans sold at checkout (excludes free catalog tier). */
-export const CHECKOUT_PLAN_KEYS = ["static", "personal", "team"] as const;
+export const CHECKOUT_PLAN_KEYS = [
+  "test",
+  "static",
+  "personal",
+  "team",
+] as const;
 export type CheckoutPlanKey = (typeof CHECKOUT_PLAN_KEYS)[number];
 
 export const LICENSE_PLANS: LicensePlanDefinition[] = [
@@ -31,6 +36,22 @@ export const LICENSE_PLANS: LicensePlanDefinition[] = [
     notPermitted: [
       "Redistribute source packages",
       "Resell materials in templates or asset kits",
+    ],
+  },
+  {
+    key: "test",
+    name: "Test",
+    // Stripe's USD charge floor is $0.50 — use that for live smoke payments.
+    priceLabel: "$0.50",
+    amountCents: 50,
+    summary: "Live Stripe smoke charge. Confirms checkout, webhook, and receipt.",
+    permitted: [
+      "End-to-end payment path verification",
+      "Order + Resend receipt when configured",
+    ],
+    notPermitted: [
+      "Registry / React component install",
+      "Commercial license rights",
     ],
   },
   {

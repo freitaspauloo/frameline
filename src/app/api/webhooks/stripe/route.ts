@@ -87,7 +87,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
-        error: "Invalid plan. Expected static, personal, or team.",
+        error: "Invalid plan. Expected test, static, personal, or team.",
       },
       { status: 400 },
     );

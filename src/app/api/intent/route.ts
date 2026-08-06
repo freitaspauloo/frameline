@@ -76,7 +76,10 @@ export async function POST(request: Request) {
 
   if (typeof planRaw !== "string" || !isCheckoutPlan(planRaw.trim().toLowerCase())) {
     return NextResponse.json(
-      { ok: false, error: "Invalid plan. Expected static, personal, or team." },
+      {
+        ok: false,
+        error: "Invalid plan. Expected test, static, personal, or team.",
+      },
       { status: 400 },
     );
   }

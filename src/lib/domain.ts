@@ -4,7 +4,12 @@ export type MaterialStatus = "draft" | "published" | "unpublished";
 
 export type OrderStatus = "pending" | "paid" | "refunded";
 
-export type LicensePlanKey = "free" | "static" | "personal" | "team";
+export type LicensePlanKey =
+  | "free"
+  | "test"
+  | "static"
+  | "personal"
+  | "team";
 
 export type EntitlementStatus = "active" | "revoked";
 
