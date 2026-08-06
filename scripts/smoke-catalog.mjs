@@ -23,7 +23,7 @@ const REQUIRED_CONTEXTS = [
   "auth",
 ];
 
-const REQUIRED_PLAN_KEYS = ["free", "static", "personal", "team"];
+const REQUIRED_PLAN_KEYS = ["free", "test", "static", "personal", "team"];
 
 function assert(condition, message) {
   if (!condition) {
