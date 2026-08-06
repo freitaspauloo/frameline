@@ -1,6 +1,6 @@
-﻿import { FramelineHomePageV2 } from "@/components/frameline-home-page-v2";
+﻿import { redirect } from "next/navigation";
 
-/** Phase-03 design lab — motion / scroll / shell polish. */
+/** Legacy path — v2 is now the site root. */
 export default function HomeV2() {
-  return <FramelineHomePageV2 />;
+  redirect("/");
 }
