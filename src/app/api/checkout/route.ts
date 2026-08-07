@@ -4,6 +4,7 @@ import { fulfillDemoOrder } from "@/lib/fulfillment";
 import {
   getLicensePlan,
   isCheckoutPlan,
+  isTestCheckoutAllowed,
 } from "@/lib/license-plans";
 import { captureException } from "@/lib/monitoring";
 import {
@@ -36,7 +37,17 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
-        error: "Invalid plan. Expected test, static, personal, or team.",
+        error: "Invalid plan. Expected static, personal, or team.",
+      },
+      { status: 400 },
+    );
+  }
+  if (plan === "test" && !isTestCheckoutAllowed()) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error:
+          "Test plan is disabled. Use static, personal, or team — or set FRAMELINE_ALLOW_TEST_PLAN=true.",
       },
       { status: 400 },
     );

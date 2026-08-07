@@ -4,10 +4,13 @@ import { notFound } from "next/navigation";
 import { MaterialDetailPage } from "@/components/material-detail-page";
 import { getResolvedMaterial } from "@/lib/demo-catalog";
 import { getLicensePlan } from "@/lib/license-plans";
-import { MATERIALS_CATALOG, type MaterialCatalogEntry } from "@/materials";
+import {
+  getV1LaunchCatalog,
+  type MaterialCatalogEntry,
+} from "@/materials";
 
 export function generateStaticParams() {
-  return MATERIALS_CATALOG.map((m) => ({ slug: m.slug }));
+  return getV1LaunchCatalog().map((m) => ({ slug: m.slug }));
 }
 
 function materialMetaDescription(material: MaterialCatalogEntry) {

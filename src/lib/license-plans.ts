@@ -114,6 +114,18 @@ export function isCheckoutPlan(value: string): value is CheckoutPlanKey {
   return (CHECKOUT_PLAN_KEYS as readonly string[]).includes(value);
 }
 
+/** Plans shown on public checkout (excludes internal $0.50 smoke SKU). */
+export function isPublicCheckoutPlan(
+  value: string,
+): value is Exclude<CheckoutPlanKey, "test"> {
+  return value === "static" || value === "personal" || value === "team";
+}
+
+/** Re-enable `plan=test` with FRAMELINE_ALLOW_TEST_PLAN=true in env. */
+export function isTestCheckoutAllowed(): boolean {
+  return process.env.FRAMELINE_ALLOW_TEST_PLAN?.trim() === "true";
+}
+
 /** @deprecated Prefer isCheckoutPlan — kept for API stub callers. */
 export function isLicensePlan(value: string): value is CheckoutPlanKey {
   return isCheckoutPlan(value);

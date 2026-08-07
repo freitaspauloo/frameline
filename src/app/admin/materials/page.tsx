@@ -8,7 +8,7 @@ import {
 
 export default async function AdminMaterialsPage() {
   const [catalog, overrides] = await Promise.all([
-    getResolvedCatalog(),
+    getResolvedCatalog({ all: true }),
     readCatalogOverrides(),
   ]);
 
