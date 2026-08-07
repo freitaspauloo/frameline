@@ -15,7 +15,7 @@ import {
   MarketingShell,
 } from "@/components/marketing-shell";
 import {
-  MATERIALS_CATALOG,
+  getV1LaunchCatalog,
   MATERIAL_TYPES,
   MATERIAL_USE_CONTEXTS,
   isMaterialType,
@@ -76,7 +76,7 @@ export function MaterialsCatalogPage({
   contextFilter,
   tierFilter,
   sortFilter,
-  catalog = MATERIALS_CATALOG,
+  catalog = getV1LaunchCatalog(),
 }: {
   typeFilter?: string;
   qFilter?: string;

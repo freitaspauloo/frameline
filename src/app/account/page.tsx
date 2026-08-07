@@ -16,7 +16,7 @@ import {
   getDemoEntitlements,
   partitionCatalogByAccess,
 } from "@/lib/entitlements";
-import { MATERIALS_CATALOG } from "@/materials";
+import { getV1LaunchCatalog } from "@/materials";
 
 export const metadata: Metadata = {
   title: "Account",
@@ -27,7 +27,7 @@ export default async function AccountPage() {
   const email = await getDemoEmail();
   const entitlements = getDemoEntitlements(email ?? "you@studio.dev");
   const { entitled, locked } = partitionCatalogByAccess(
-    MATERIALS_CATALOG,
+    getV1LaunchCatalog(),
     entitlements,
   );
 

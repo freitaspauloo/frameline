@@ -1,5 +1,6 @@
 import { getMaterial } from "./catalog";
 import type { MaterialCatalogEntry, MaterialCollection } from "./types";
+import { isV1LaunchMaterial } from "./v1-launch";
 
 export const MATERIALS_COLLECTIONS: MaterialCollection[] = [
   {
@@ -100,10 +101,14 @@ export function getCollectionMaterials(
   collection: MaterialCollection,
 ): MaterialCatalogEntry[] {
   return collection.materialSlugs
+    .filter((slug) => isV1LaunchMaterial(slug))
     .map((slug) => getMaterial(slug))
     .filter((m): m is MaterialCatalogEntry => Boolean(m));
 }
 
 export function getFeaturedCollections() {
-  return MATERIALS_COLLECTIONS.filter((c) => c.featured);
+  // Lean V1: only feature collections that still have a public material.
+  return MATERIALS_COLLECTIONS.filter(
+    (c) => c.featured && getCollectionMaterials(c).length > 0,
+  );
 }

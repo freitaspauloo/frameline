@@ -26,7 +26,8 @@ import {
 import { cn } from "@/lib/utils";
 import { recordWtpIntent } from "@/lib/wtp-intent";
 
-const PLAN_OPTIONS: CartPlan[] = ["test", "static", "personal", "team"];
+/** Public checkout only — $0.50 smoke SKU gated via FRAMELINE_ALLOW_TEST_PLAN. */
+const PLAN_OPTIONS: CartPlan[] = ["static", "personal", "team"];
 
 const CHIP =
   "border border-border px-4 py-2 text-[0.625rem] font-semibold tracking-widest uppercase transition-colors";
@@ -52,8 +53,13 @@ export function CheckoutForm({
   const [emailValue, setEmailValue] = useState(email ?? "you@studio.dev");
 
   useEffect(() => {
-    if (isCartPlan(initialPlan)) {
+    if (isCartPlan(initialPlan) && initialPlan !== "test") {
       setPlan(initialPlan);
+    } else if (initialPlan === "test") {
+      setPlan("personal");
+    } else if (useCartStore.getState().plan === "test") {
+      // Persisted cart may still hold the old smoke SKU.
+      setPlan("personal");
     }
     if (initialMaterial) {
       setMaterial(initialMaterial);
@@ -61,8 +67,13 @@ export function CheckoutForm({
     setHydrated(true);
   }, [initialPlan, initialMaterial, setPlan, setMaterial]);
 
-  const activePlan =
-    hydrated || !isCartPlan(initialPlan) ? plan : initialPlan;
+  const activePlan = (() => {
+    const raw =
+      hydrated || !isCartPlan(initialPlan) || initialPlan === "test"
+        ? plan
+        : initialPlan;
+    return raw === "test" ? "personal" : raw;
+  })();
   const activeMaterial = hydrated
     ? materialSlug
     : (initialMaterial ?? materialSlug);

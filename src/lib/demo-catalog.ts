@@ -4,9 +4,16 @@ import path from "node:path";
 import {
   MATERIALS_CATALOG,
   applyCatalogOverride,
+  filterV1LaunchCatalog,
+  isV1LaunchMaterial,
   type CatalogMaterialOverride,
   type MaterialCatalogEntry,
 } from "@/materials";
+
+export type ResolvedCatalogOptions = {
+  /** Include full catalog (admin). Default: lean V1 public set only. */
+  all?: boolean;
+};
 
 const DATA_DIR = path.join(process.cwd(), ".data");
 const OVERRIDES_PATH = path.join(DATA_DIR, "catalog-overrides.json");
@@ -73,21 +80,34 @@ export async function writeCatalogOverride(
   return next;
 }
 
-/** Source catalog with demo overrides applied. */
-export async function getResolvedCatalog(): Promise<MaterialCatalogEntry[]> {
+/** Source catalog with demo overrides applied. Public routes get V1 set only. */
+export async function getResolvedCatalog(
+  options: ResolvedCatalogOptions = {},
+): Promise<MaterialCatalogEntry[]> {
   const overrides = await readCatalogOverrides();
-  return MATERIALS_CATALOG.map((entry) =>
+  const resolved = MATERIALS_CATALOG.map((entry) =>
     applyCatalogOverride(entry, overrides[entry.slug]),
   );
+  if (options.all) return resolved;
+
+  return filterV1LaunchCatalog(resolved).filter((entry) => {
+    const status = overrides[entry.slug]?.status ?? "published";
+    return status !== "draft";
+  });
 }
 
-/** Single material with demo overrides applied. */
+/** Single material with demo overrides applied. Hidden outside V1 unless `all`. */
 export async function getResolvedMaterial(
   slug: string,
+  options: ResolvedCatalogOptions = {},
 ): Promise<MaterialCatalogEntry | undefined> {
   const overrides = await readCatalogOverrides();
   const base = MATERIALS_CATALOG.find((m) => m.slug === slug);
   if (!base) return undefined;
+  if (!options.all && !isV1LaunchMaterial(slug)) return undefined;
+  if (!options.all && (overrides[slug]?.status ?? "published") === "draft") {
+    return undefined;
+  }
   return applyCatalogOverride(base, overrides[slug]);
 }
 

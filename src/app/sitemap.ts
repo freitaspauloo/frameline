@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { DOCS_NAV } from "@/components/docs-shell";
 import {
-  MATERIALS_CATALOG,
+  getV1LaunchCatalog,
   MATERIALS_COLLECTIONS,
   MATERIAL_USE_CONTEXTS,
 } from "@/materials";
@@ -38,7 +38,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
           : 0.7,
   }));
 
-  const materials: MetadataRoute.Sitemap = MATERIALS_CATALOG.map((m) => ({
+  const materials: MetadataRoute.Sitemap = getV1LaunchCatalog().map((m) => ({
     url: `${BASE}/materials/${m.slug}`,
     lastModified: now,
     changeFrequency: "weekly",

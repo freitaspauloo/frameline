@@ -8,6 +8,13 @@ export {
 } from "./catalog";
 export type { CatalogMaterialOverride } from "./catalog";
 export {
+  V1_LAUNCH_MATERIAL_SLUGS,
+  filterV1LaunchCatalog,
+  getV1LaunchCatalog,
+  isV1LaunchMaterial,
+} from "./v1-launch";
+export type { V1LaunchMaterialSlug } from "./v1-launch";
+export {
   MATERIALS_COLLECTIONS,
   getCollection,
   getCollectionMaterials,

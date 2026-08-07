@@ -52,7 +52,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
-  MATERIALS_CATALOG,
+  getV1LaunchCatalog,
   getFeaturedCollections,
   getCollectionMaterials,
 } from "@/materials";
@@ -96,21 +96,23 @@ const CREDITS = [
 ] as const;
 
 /** Captions for the pinned mesh → dither → grain beat. */
+const PUBLIC_CATALOG = getV1LaunchCatalog();
+
 const SEQUENCE_COPY: Record<string, { caption: string; label: string }> = {
+  "fog-layer": {
+    caption:
+      "Atmosphere first — soft fog for heroes that reads like air, not a WebGL flex.",
+    label: "Fog",
+  },
   "aurora-mesh": {
     caption:
-      "Mesh first — a soft multi-color field for the top of the page, wired to your tokens instead of a stock gradient.",
+      "Then mesh — a soft multi-color field for the top of the page, wired to your tokens instead of a stock gradient.",
     label: "Mesh",
   },
   "ink-dither": {
     caption:
       "Then dither — two tones, one halftone grid. The loud brand moment that still prints as paper.",
     label: "Dither",
-  },
-  "grain-field": {
-    caption:
-      "Then grain — the quiet one. Texture under cards and auth shells where a gradient would shout.",
-    label: "Grain",
   },
 };
 
@@ -256,7 +258,7 @@ function InstallTerminal() {
   );
 }
 
-const SEQUENCE_STAGES: MaterialSequenceStage[] = MATERIALS_CATALOG.filter(
+const SEQUENCE_STAGES: MaterialSequenceStage[] = PUBLIC_CATALOG.filter(
   (entry) => entry.slug in SEQUENCE_COPY,
 ).map((entry) => ({ entry, ...SEQUENCE_COPY[entry.slug] }));
 
@@ -381,7 +383,7 @@ export function FramelineHomePageV2() {
 
               <MarketingRuledGrid>
                 {Array.from({ length: CATALOG_PREVIEW_SLOTS }, (_, index) => {
-                  const entry = MATERIALS_CATALOG[index];
+                  const entry = PUBLIC_CATALOG[index];
 
                   if (!entry) {
                     return (
@@ -474,7 +476,7 @@ export function FramelineHomePageV2() {
           <MarketingSection id="rotation">
             <InkRule />
             <SectionBand label="In rotation">
-              <MaterialStrip entries={MATERIALS_CATALOG} />
+              <MaterialStrip entries={PUBLIC_CATALOG} />
             </SectionBand>
           </MarketingSection>
 
@@ -636,8 +638,8 @@ export function FramelineHomePageV2() {
                     className="relative aspect-[16/10] overflow-hidden bg-foreground lg:aspect-auto lg:min-h-[20rem]"
                     data-reveal
                   >
-                    {MATERIALS_CATALOG[0] ? (
-                      <MaterialPreview entry={MATERIALS_CATALOG[0]} />
+                    {PUBLIC_CATALOG[0] ? (
+                      <MaterialPreview entry={PUBLIC_CATALOG[0]} />
                     ) : null}
                   </div>
                 }
