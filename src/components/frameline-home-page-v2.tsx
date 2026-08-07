@@ -37,10 +37,6 @@ import {
   InkRule,
   IntroStagger,
 } from "@/components/motion/reveal";
-import {
-  SectionIndex,
-  type SectionIndexEntry,
-} from "@/components/motion/section-index";
 import { TypeOnView } from "@/components/motion/type-on-view";
 import { WordMask } from "@/components/motion/word-mask";
 import {
@@ -63,22 +59,6 @@ const HERO_PAPER = "#FFFFFF";
 const CATALOG_PREVIEW_SLOTS = 9;
 
 const INSTALL_SNIPPET = `npx shadcn@latest add @frameline/aurora-mesh`;
-
-/** Drives the ledger index — order must match the DOM. */
-const SECTIONS: readonly SectionIndexEntry[] = [
-  { id: "top", label: "Index" },
-  { id: "clients", label: "Shipped with" },
-  { id: "browse", label: "Catalog" },
-  { id: "showcase", label: "Sequence" },
-  { id: "rotation", label: "In rotation" },
-  { id: "collections", label: "Collections" },
-  { id: "install", label: "Install" },
-  { id: "configurator", label: "Configurator" },
-  { id: "why", label: "Why Frameline" },
-  { id: "pricing", label: "Pricing" },
-  { id: "faq", label: "FAQ" },
-  { id: "start", label: "Start" },
-];
 
 /**
  * Credits row. Deliberately fictional studio marks — placeholders set as type,
@@ -270,7 +250,6 @@ export function FramelineHomePageV2() {
       <FramelineReveal>
         <MarketingShell>
           <RailProgress />
-          <SectionIndex sections={SECTIONS} />
 
           {/* —— Hero —— */}
           <section
