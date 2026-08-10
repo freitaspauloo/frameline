@@ -301,7 +301,7 @@ export function FramelineHomePageV2() {
               </div>
             </IntroStagger>
 
-            <div className="frameline-material-in relative mt-auto min-h-[min(62dvh,720px)] w-full flex-1 overflow-visible pb-8 sm:pb-10">
+            <div className="frameline-material-in relative mt-auto min-h-[min(62dvh,720px)] w-full flex-1 overflow-visible">
               <HeroMacFrame />
             </div>
           </section>
