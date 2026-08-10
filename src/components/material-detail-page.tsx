@@ -303,10 +303,10 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
           title={entry.title}
         />
 
-        <div className="relative grid overflow-visible lg:grid-cols-[1.15fr_0.85fr] lg:divide-x lg:divide-border">
+        <div className="relative grid overflow-visible lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
           <div
             className={cn(
-              "border-b border-border lg:border-b-0",
+              "border-b border-border lg:sticky lg:top-16 lg:self-start lg:border-b-0",
               marketingPad,
             )}
           >
@@ -382,7 +382,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
             </dl>
           </div>
 
-          <div className="divide-y divide-border">
+          <div className="divide-y divide-border lg:border-l lg:border-border">
             <Panel
               action={
                 <div className="flex flex-wrap items-center justify-end gap-2">
