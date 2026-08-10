@@ -89,7 +89,11 @@ export default async function PricingPage({
         />
 
         <MarketingRuledGrid className="lg:grid-cols-2 xl:grid-cols-4">
-          {LICENSE_PLANS.filter((tier) => tier.key !== "test").map((tier) => {
+          {LICENSE_PLANS.filter(
+            (tier): tier is (typeof LICENSE_PLANS)[number] & {
+              key: keyof typeof TIER_CTAS;
+            } => tier.key in TIER_CTAS,
+          ).map((tier) => {
             const cta = TIER_CTAS[tier.key];
             return (
               <MarketingRuledCell key={tier.key} className="flex flex-col">
