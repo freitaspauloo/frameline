@@ -22,6 +22,7 @@ import {
   MarketingSplit,
   marketingPadX,
 } from "@/components/marketing-shell";
+import { HeroMacOSDock } from "@/components/hero-macos-dock";
 import { FramelineLenis } from "@/components/motion/frameline-lenis";
 import { HeroDither } from "@/components/motion/hero-dither";
 import { LogoWall } from "@/components/motion/logo-wall";
@@ -303,11 +304,9 @@ export function FramelineHomePageV2() {
               </div>
             </IntroStagger>
 
-            <div
-              aria-hidden
-              className="frameline-material-in relative mt-auto min-h-[52dvh] w-full flex-1 border-t border-border"
-            >
+            <div className="frameline-material-in relative mt-auto min-h-[52dvh] w-full flex-1 border-t border-border">
               <div
+                aria-hidden
                 className="absolute inset-x-0 top-0 bottom-0 z-0 mx-auto max-w-7xl overflow-visible"
                 style={{ backgroundColor: HERO_PAPER }}
               >
@@ -316,6 +315,7 @@ export function FramelineHomePageV2() {
                 <MarketingRailCross edge="bottom" />
                 <HeroDither colorBack={HERO_PAPER} colorFront={HERO_INK} />
               </div>
+              <HeroMacOSDock />
             </div>
           </section>
 
