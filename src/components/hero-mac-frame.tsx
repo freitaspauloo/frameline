@@ -330,11 +330,17 @@ function HeroInkDitherPlayground() {
             <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
               CLI
             </p>
-            <div className="flex items-start gap-2">
-              <code className="min-w-0 flex-1 overflow-x-auto border border-[#3A58F0] bg-[#EEF2FF] px-3 py-2 font-mono text-[11px] text-[#1A2A6B]">
+            <div className="flex items-stretch gap-2">
+              <code className="flex min-w-0 flex-1 items-center overflow-x-auto border border-[#3A58F0] bg-[#EEF2FF] px-3 py-2 font-mono text-[11px] leading-none text-[#1A2A6B]">
                 {cliSnippet}
               </code>
-              <Button size="xs" type="button" variant="outline" onClick={copyCli}>
+              <Button
+                className="h-auto self-stretch px-3"
+                size="xs"
+                type="button"
+                variant="outline"
+                onClick={copyCli}
+              >
                 {copiedCli ? "Copied" : "Copy"}
               </Button>
             </div>
