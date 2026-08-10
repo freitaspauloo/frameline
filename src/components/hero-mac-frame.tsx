@@ -335,8 +335,8 @@ function HeroInkDitherPlayground() {
 }
 
 /**
- * Homepage hero visual: full-bleed ink swirl behind a floating macOS window
- * that hosts the interactive Ink Dither material playground + dock.
+ * Homepage hero visual: ink swirl (rail-bounded) behind a floating macOS
+ * window that hosts the interactive Ink Dither material playground + dock.
  */
 export function HeroMacFrame({ className }: { className?: string }) {
   return (
@@ -346,8 +346,11 @@ export function HeroMacFrame({ className }: { className?: string }) {
         className,
       )}
     >
-      {/* Full-bleed dither atmosphere */}
-      <div aria-hidden className="absolute inset-0 z-0 overflow-hidden bg-white">
+      {/* Dither atmosphere — clipped to the marketing shell rails (max-w-7xl) */}
+      <div
+        aria-hidden
+        className="absolute inset-y-0 left-1/2 z-0 w-full max-w-7xl -translate-x-1/2 overflow-hidden bg-white"
+      >
         <HeroDither colorBack={HERO_PAPER} colorFront={HERO_INK} />
       </div>
 
