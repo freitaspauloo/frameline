@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import Link from "next/link";
 import {
   RiCheckLine,
@@ -14,6 +16,7 @@ import {
 
 import { HeroMacOSDock } from "@/components/hero-macos-dock";
 import { HeroDither } from "@/components/motion/hero-dither";
+import { useReducedMotion } from "@/components/motion/use-reduced-motion";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
@@ -364,8 +367,59 @@ function HeroInkDitherPlayground() {
  * window that hosts the interactive Ink Dither material playground + dock.
  */
 export function HeroMacFrame({ className }: { className?: string }) {
+  const reduced = useReducedMotion();
+  const scope = React.useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      const root = scope.current;
+      if (!root) return;
+
+      const bg = root.querySelector<HTMLElement>('[data-hero-stage="bg"]');
+      const windowEl = root.querySelector<HTMLElement>(
+        '[data-hero-stage="window"]',
+      );
+      const toolbar = root.querySelector<HTMLElement>(
+        '[data-hero-stage="toolbar"]',
+      );
+      const dock = root.querySelector<HTMLElement>('[data-hero-stage="dock"]');
+
+      if (!bg || !windowEl || !toolbar) return;
+
+      if (reduced) {
+        gsap.set([bg, windowEl, toolbar, dock], {
+          opacity: 1,
+          scale: 1,
+          clearProps: "transform",
+        });
+        return;
+      }
+
+      gsap.set(bg, { opacity: 0 });
+      gsap.set(windowEl, {
+        opacity: 0,
+        scale: 1.04,
+        transformOrigin: "center bottom",
+      });
+      gsap.set([toolbar, dock], { opacity: 0 });
+
+      gsap
+        .timeline({ defaults: { ease: "power3.out" } })
+        .to(bg, { opacity: 1, duration: 0.55 })
+        .to(
+          windowEl,
+          { opacity: 1, scale: 1, duration: 0.5 },
+          "+=0.1",
+        )
+        .to(toolbar, { opacity: 1, duration: 0.28 }, "+=0.08")
+        .to(dock, { opacity: 1, duration: 0.24 }, "-=0.08");
+    },
+    { dependencies: [reduced], scope },
+  );
+
   return (
     <div
+      ref={scope}
       className={cn(
         "relative isolate flex h-full min-h-[min(62dvh,720px)] w-full flex-col",
         className,
@@ -375,6 +429,7 @@ export function HeroMacFrame({ className }: { className?: string }) {
       <div
         aria-hidden
         className="absolute inset-y-0 left-1/2 z-0 w-full max-w-7xl -translate-x-1/2 overflow-hidden bg-white"
+        data-hero-stage="bg"
       >
         <HeroDither colorBack={HERO_PAPER} colorFront={HERO_INK} />
       </div>
@@ -382,15 +437,24 @@ export function HeroMacFrame({ className }: { className?: string }) {
       {/* Floating mac window */}
       <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-end justify-center px-4 pt-4 pb-6 sm:px-6 sm:pb-7 lg:px-8">
         <div className="relative w-full max-w-5xl pb-8 sm:pb-10">
-          <div className="flex max-h-[min(70dvh,640px)] flex-col overflow-hidden rounded-[16px] border border-border bg-background shadow-[0_28px_90px_rgba(0,0,0,0.22)]">
-            <div className="relative z-20 flex h-11 shrink-0 items-center border-b border-border bg-muted/60 px-4">
+          <div
+            className="flex max-h-[min(70dvh,640px)] flex-col overflow-hidden rounded-[16px] border border-border bg-background shadow-[0_28px_90px_rgba(0,0,0,0.22)]"
+            data-hero-stage="window"
+          >
+            <div
+              className="relative z-20 flex h-11 shrink-0 items-center border-b border-border bg-muted/60 px-4"
+              data-hero-stage="toolbar"
+            >
               <TrafficLights />
             </div>
             <HeroInkDitherPlayground />
           </div>
 
           {/* Dock sits on the window bottom, over the dither (no empty white strip below) */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex justify-center px-3">
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex justify-center px-3"
+            data-hero-stage="dock"
+          >
             <div className="pointer-events-auto">
               <HeroMacOSDock variant="inline" />
             </div>

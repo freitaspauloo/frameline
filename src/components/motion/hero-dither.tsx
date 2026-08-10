@@ -113,7 +113,7 @@ export function HeroDither({
 
       gsap.to(live, {
         develop: 0,
-        delay: 0.15,
+        delay: 0.05,
         duration: 1.9,
         ease: "power2.out",
       });
