@@ -26,7 +26,6 @@ import { HeroMacOSDock } from "@/components/hero-macos-dock";
 import { FramelineLenis } from "@/components/motion/frameline-lenis";
 import { HeroDither } from "@/components/motion/hero-dither";
 import { LogoWall } from "@/components/motion/logo-wall";
-import { Magnetic } from "@/components/motion/magnetic";
 import {
   MaterialSequence,
   type MaterialSequenceStage,
@@ -288,16 +287,14 @@ export function FramelineHomePageV2() {
                       className="flex items-center justify-center pt-3"
                       data-intro-step
                     >
-                      <Magnetic>
-                        <Button
-                          nativeButton={false}
-                          render={<a href="#browse" />}
-                          size="lg"
-                        >
-                          Browse materials
-                          <RiArrowDownLine data-icon="inline-end" />
-                        </Button>
-                      </Magnetic>
+                      <Button
+                        nativeButton={false}
+                        render={<a href="#browse" />}
+                        size="lg"
+                      >
+                        Browse materials
+                        <RiArrowDownLine data-icon="inline-end" />
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -427,17 +424,15 @@ export function FramelineHomePageV2() {
                 )}
               >
                 <div data-reveal>
-                  <Magnetic reach={72} strength={0.22}>
-                    <Button
-                      nativeButton={false}
-                      render={<Link href="/materials" />}
-                      size="lg"
-                      variant="outline"
-                    >
-                      See full catalog
-                      <RiArrowRightLine data-icon="inline-end" />
-                    </Button>
-                  </Magnetic>
+                  <Button
+                    nativeButton={false}
+                    render={<Link href="/materials" />}
+                    size="lg"
+                    variant="outline"
+                  >
+                    See full catalog
+                    <RiArrowRightLine data-icon="inline-end" />
+                  </Button>
                 </div>
               </div>
             </SectionBand>
@@ -771,15 +766,13 @@ export function FramelineHomePageV2() {
                   surface under your next build.
                 </p>
                 <div className="flex flex-wrap gap-3" data-reveal>
-                  <Magnetic>
-                    <Button
-                      nativeButton={false}
-                      render={<Link href="/materials" />}
-                      size="lg"
-                    >
-                      Browse materials
-                    </Button>
-                  </Magnetic>
+                  <Button
+                    nativeButton={false}
+                    render={<Link href="/materials" />}
+                    size="lg"
+                  >
+                    Browse materials
+                  </Button>
                   <Button
                     nativeButton={false}
                     render={<Link href="/collections" />}
