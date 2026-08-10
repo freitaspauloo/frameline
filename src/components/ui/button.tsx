@@ -1,10 +1,16 @@
+"use client"
+
+import * as React from "react"
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
+import { animate, useReducedMotion } from "motion/react"
 
+import { useHoverCapable } from "@/hooks/use-hover-capable"
+import { SPRING_PRESS } from "@/lib/ease"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-none border border-transparent bg-clip-padding text-xs font-semibold tracking-widest whitespace-nowrap uppercase transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-none border border-transparent bg-clip-padding text-xs font-semibold tracking-widest whitespace-nowrap uppercase transition-colors outline-none select-none will-change-transform focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
   {
     variants: {
       variant: {
@@ -38,17 +44,79 @@ const buttonVariants = cva(
   }
 )
 
+function mergeRefs<T>(...refs: Array<React.Ref<T> | undefined>) {
+  return (value: T) => {
+    for (const ref of refs) {
+      if (typeof ref === "function") ref(value)
+      else if (ref) (ref as React.MutableRefObject<T | null>).current = value
+    }
+  }
+}
+
 function Button({
   className,
   variant = "default",
   size = "default",
+  pressScale = 0.97,
+  ref: refProp,
+  onPointerDown,
+  onPointerUp,
+  onPointerCancel,
+  onPointerLeave,
+  onMouseEnter,
+  onMouseLeave,
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+}: ButtonPrimitive.Props &
+  VariantProps<typeof buttonVariants> & {
+    pressScale?: number
+  }) {
+  const reduce = useReducedMotion()
+  const canHover = useHoverCapable()
+  const isLink = variant === "link"
+  const enablePress = !reduce && !isLink
+  const nodeRef = React.useRef<HTMLElement | null>(null)
+  const pressed = React.useRef(false)
+
+  const setScale = React.useEffectEvent((scale: number) => {
+    const node = nodeRef.current
+    if (!node || !enablePress) return
+    void animate(node, { scale }, SPRING_PRESS)
+  })
+
   return (
     <ButtonPrimitive
+      {...props}
+      ref={mergeRefs(nodeRef, refProp as React.Ref<HTMLElement> | undefined)}
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
+      onPointerDown={(event) => {
+        pressed.current = true
+        setScale(pressScale)
+        onPointerDown?.(event)
+      }}
+      onPointerUp={(event) => {
+        pressed.current = false
+        setScale(canHover ? 1.02 : 1)
+        onPointerUp?.(event)
+      }}
+      onPointerCancel={(event) => {
+        pressed.current = false
+        setScale(1)
+        onPointerCancel?.(event)
+      }}
+      onPointerLeave={(event) => {
+        pressed.current = false
+        setScale(1)
+        onPointerLeave?.(event)
+      }}
+      onMouseEnter={(event) => {
+        if (canHover && !pressed.current) setScale(1.02)
+        onMouseEnter?.(event)
+      }}
+      onMouseLeave={(event) => {
+        if (!pressed.current) setScale(1)
+        onMouseLeave?.(event)
+      }}
     />
   )
 }

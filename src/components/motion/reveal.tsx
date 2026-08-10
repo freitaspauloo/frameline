@@ -50,7 +50,7 @@ export function FramelineReveal({ children }: { children: React.ReactNode }) {
 
       const items = gsap.utils.toArray<HTMLElement>("[data-reveal]", root);
       if (items.length > 0) {
-        gsap.set(items, { opacity: 0, y: 18 });
+        gsap.set(items, { opacity: 0, y: 8, filter: "blur(4px)" });
         ScrollTrigger.batch(items, {
           start: "top 88%",
           once: true,
@@ -58,9 +58,10 @@ export function FramelineReveal({ children }: { children: React.ReactNode }) {
             gsap.to(batch, {
               opacity: 1,
               y: 0,
-              duration: 0.85,
+              filter: "blur(0px)",
+              duration: 0.22,
               ease: "power3.out",
-              stagger: 0.055,
+              stagger: 0.04,
               overwrite: true,
             });
           },
@@ -127,14 +128,15 @@ export function IntroStagger({
 
       gsap.fromTo(
         steps,
-        { opacity: 0, y: 14 },
+        { opacity: 0, y: 8, filter: "blur(4px)" },
         {
           opacity: 1,
           y: 0,
+          filter: "blur(0px)",
           delay,
-          duration: 0.9,
+          duration: 0.22,
           ease: "power3.out",
-          stagger: 0.11,
+          stagger: 0.05,
         },
       );
     },
