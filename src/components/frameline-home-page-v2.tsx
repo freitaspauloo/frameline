@@ -54,7 +54,7 @@ import {
 } from "@/materials";
 import { cn } from "@/lib/utils";
 
-const CATALOG_PREVIEW_SLOTS = 9;
+const CATALOG_PREVIEW_SLOTS = 6;
 
 const INSTALL_SNIPPET = `npx shadcn@latest add @frameline/aurora-mesh`;
 
@@ -347,65 +347,66 @@ export function FramelineHomePageV2() {
                 />
               </MarketingSectionHeader>
 
-              <MarketingRuledGrid>
+              <div
+                className={cn(
+                  "grid grid-cols-1 gap-y-8 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 lg:gap-x-12 lg:gap-y-12",
+                  marketingPadX,
+                  "pb-2",
+                )}
+              >
                 {Array.from({ length: CATALOG_PREVIEW_SLOTS }, (_, index) => {
                   const entry = PUBLIC_CATALOG[index];
 
                   if (!entry) {
                     return (
-                      <MarketingRuledCell
+                      <div
                         key={`soon-${index}`}
-                        className="p-0 sm:p-0 lg:p-0"
+                        className="flex h-full min-h-[22rem] flex-col border border-border"
+                        data-reveal
                       >
-                        <div className="flex h-full min-h-[16rem] flex-col" data-reveal>
-                          <div className="relative aspect-[16/10] bg-muted/50" />
-                          <div className="space-y-2 border-t border-border p-6 sm:p-8">
-                            <p className="font-mono text-[11px] text-muted-foreground">
-                              Soon
-                            </p>
-                            <h3 className="font-heading text-base font-medium tracking-tight text-muted-foreground">
-                              Coming soon
-                            </h3>
-                            <p className="text-sm leading-relaxed text-muted-foreground">
-                              More surfaces in the next drop.
-                            </p>
-                          </div>
+                        <div className="relative aspect-[16/9] bg-muted/50 sm:aspect-[3/2]" />
+                        <div className="space-y-3 border-t border-border p-7 sm:p-9">
+                          <p className="font-mono text-[11px] text-muted-foreground">
+                            Soon
+                          </p>
+                          <h3 className="font-heading text-lg font-medium tracking-tight text-muted-foreground sm:text-xl">
+                            Coming soon
+                          </h3>
+                          <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+                            More surfaces in the next drop.
+                          </p>
                         </div>
-                      </MarketingRuledCell>
+                      </div>
                     );
                   }
 
                   return (
-                    <MarketingRuledCell
+                    <Link
                       key={entry.slug}
-                      className="p-0 sm:p-0 lg:p-0"
+                      className="group flex h-full min-h-[22rem] flex-col border border-border transition-colors hover:bg-muted/40"
+                      data-reveal
+                      href={`/materials/${entry.slug}`}
                     >
-                      <Link
-                        className="group block transition-colors hover:bg-muted/40"
-                        data-reveal
-                        href={`/materials/${entry.slug}`}
-                      >
-                        <div className="relative aspect-[16/10] overflow-hidden bg-foreground">
-                          <MaterialPreview entry={entry} />
+                      <div className="relative aspect-[16/9] overflow-hidden bg-foreground sm:aspect-[3/2]">
+                        <MaterialPreview entry={entry} />
+                      </div>
+                      <div className="space-y-3 border-t border-border p-7 sm:p-9">
+                        <div className="flex items-center justify-between gap-3">
+                          <h3 className="font-heading text-lg font-medium tracking-tight sm:text-xl">
+                            {entry.title}
+                          </h3>
+                          <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                            {entry.tier === "free" ? "Free" : "Paid"}
+                          </span>
                         </div>
-                        <div className="space-y-2 border-t border-border p-6 sm:p-8">
-                          <div className="flex items-center justify-between gap-2">
-                            <h3 className="font-heading text-base font-medium tracking-tight">
-                              {entry.title}
-                            </h3>
-                            <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                              {entry.tier === "free" ? "Free" : "Paid"}
-                            </span>
-                          </div>
-                          <p className="text-sm leading-relaxed text-muted-foreground">
-                            {entry.description}
-                          </p>
-                        </div>
-                      </Link>
-                    </MarketingRuledCell>
+                        <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+                          {entry.description}
+                        </p>
+                      </div>
+                    </Link>
                   );
                 })}
-              </MarketingRuledGrid>
+              </div>
 
               <div
                 className={cn(
