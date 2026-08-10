@@ -1,0 +1,11 @@
+---
+description: Git workflow for Frameline — no PRs by default, work on dev
+alwaysApply: true
+---
+
+# Git workflow
+
+- **Do not create pull requests** unless the user explicitly asks for one.
+- Work on the **`dev`** branch by default. Commit and push directly: `git push origin dev`.
+- Treat **`main`** as stable. Merge `dev` → `main` only when the user asks to ship or merge.
+- Avoid `cursor/...` feature branches and PR templates unless the user wants a formal review.
