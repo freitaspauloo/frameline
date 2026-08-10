@@ -7,65 +7,55 @@ import { MacOSDock, type DockApp } from "@/components/ui/macos-dock";
 
 const HERO_DOCK_APPS: DockApp[] = [
   {
-    id: "materials",
-    name: "Materials",
+    id: "finder",
+    name: "Finder",
     icon: "https://cdn.jim-nielsen.com/macos/1024/finder-2021-09-10.png?rf=1024",
   },
   {
-    id: "collections",
-    name: "Collections",
-    icon: "https://cdn.jim-nielsen.com/macos/1024/photos-2021-05-28.png?rf=1024",
+    id: "cursor",
+    name: "Cursor",
+    icon: "/dock/cursor.png",
   },
   {
-    id: "free",
-    name: "Free",
-    icon: "https://cdn.jim-nielsen.com/macos/1024/notes-2021-05-25.png?rf=1024",
+    id: "notion",
+    name: "Notion",
+    icon: "/dock/notion.png",
   },
   {
-    id: "pricing",
-    name: "Pricing",
-    icon: "https://cdn.jim-nielsen.com/macos/1024/calculator-2021-04-29.png?rf=1024",
+    id: "paper",
+    name: "Paper",
+    icon: "/dock/paper.png",
   },
   {
-    id: "docs",
-    name: "Docs",
+    id: "yc",
+    name: "Y Combinator",
+    icon: "/dock/ycombinator.svg",
+  },
+  {
+    id: "terminal",
+    name: "Terminal",
     icon: "https://cdn.jim-nielsen.com/macos/1024/terminal-2021-06-03.png?rf=1024",
   },
   {
-    id: "browse",
-    name: "Browse",
+    id: "safari",
+    name: "Safari",
     icon: "https://cdn.jim-nielsen.com/macos/1024/safari-2021-06-02.png?rf=1024",
   },
 ];
 
 const APP_HREF: Record<string, string> = {
-  materials: "/materials",
-  collections: "/collections",
-  free: "/free",
-  pricing: "/pricing",
-  docs: "/docs",
-  browse: "#browse",
+  finder: "/materials",
+  cursor: "https://cursor.com",
+  notion: "https://www.notion.so",
+  paper: "https://paper.design",
+  yc: "https://www.ycombinator.com",
+  terminal: "/docs",
+  safari: "#browse",
 };
 
-export function HeroMacOSDock({
-  variant = "overlay",
-}: {
-  /** `overlay` = absolute bottom of parent; `inline` = flow (parent positions it). */
-  variant?: "overlay" | "inline";
-}) {
+export function HeroMacOSDock() {
   const router = useRouter();
-  const [openApps, setOpenApps] = React.useState<string[]>([
-    "materials",
-    "browse",
-  ]);
-
-  // Warm icon cache so the dock never paints with missing icons.
-  React.useEffect(() => {
-    for (const app of HERO_DOCK_APPS) {
-      const img = new window.Image();
-      img.src = app.icon;
-    }
-  }, []);
+  const [openApps, setOpenApps] = React.useState<string[]>(["finder", "safari"]);
 
   const handleAppClick = (appId: string) => {
     setOpenApps((prev) =>
@@ -76,28 +66,29 @@ export function HeroMacOSDock({
 
     const href = APP_HREF[appId];
     if (!href) return;
+
     if (href.startsWith("#")) {
       document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
       return;
     }
+
+    if (href.startsWith("http")) {
+      window.open(href, "_blank", "noopener,noreferrer");
+      return;
+    }
+
     router.push(href);
   };
 
-  const dock = (
-    <MacOSDock
-      apps={HERO_DOCK_APPS}
-      onAppClick={handleAppClick}
-      openApps={openApps}
-    />
-  );
-
-  if (variant === "inline") {
-    return dock;
-  }
-
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-3 z-20 flex justify-center px-3 sm:bottom-4 sm:px-4">
-      <div className="pointer-events-auto">{dock}</div>
+    <div className="pointer-events-none absolute inset-x-0 bottom-4 z-20 flex justify-center px-4 sm:bottom-6">
+      <div className="pointer-events-auto">
+        <MacOSDock
+          apps={HERO_DOCK_APPS}
+          onAppClick={handleAppClick}
+          openApps={openApps}
+        />
+      </div>
     </div>
   );
 }
