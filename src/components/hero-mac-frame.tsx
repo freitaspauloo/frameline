@@ -352,8 +352,8 @@ export function HeroMacFrame({ className }: { className?: string }) {
       </div>
 
       {/* Floating mac window */}
-      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-end justify-center px-4 pb-10 pt-4 sm:px-6 sm:pb-12 lg:px-8">
-        <div className="relative w-full max-w-5xl">
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-end justify-center px-4 pt-4 pb-6 sm:px-6 sm:pb-7 lg:px-8">
+        <div className="relative w-full max-w-5xl pb-8 sm:pb-10">
           <div className="flex max-h-[min(70dvh,640px)] flex-col overflow-hidden rounded-[16px] border border-border bg-background shadow-[0_28px_90px_rgba(0,0,0,0.22)]">
             <div className="relative z-20 flex h-11 shrink-0 items-center border-b border-border bg-muted/60 px-4">
               <TrafficLights />
@@ -364,8 +364,8 @@ export function HeroMacFrame({ className }: { className?: string }) {
             <HeroInkDitherPlayground />
           </div>
 
-          {/* Dock straddles the window’s bottom edge */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex translate-y-1/2 justify-center px-3">
+          {/* Dock sits on the window bottom, over the dither (no empty white strip below) */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex justify-center px-3">
             <div className="pointer-events-auto">
               <HeroMacOSDock variant="inline" />
             </div>
