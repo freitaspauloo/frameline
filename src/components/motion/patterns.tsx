@@ -66,12 +66,12 @@ export function ContentReveal({
     <motion.div
       initial={{
         opacity: 0,
-        transform: reduce ? "none" : "translateY(8px)",
+        y: reduce ? 0 : 8,
         filter: reduce ? "none" : "blur(4px)",
       }}
       animate={{
         opacity: 1,
-        transform: "translateY(0px)",
+        y: 0,
         filter: "blur(0px)",
       }}
       transition={{ ...REVEAL_TRANSITION, delay }}
@@ -104,15 +104,15 @@ export function ContentSwap({
         className={className}
         initial={{
           opacity: 0,
-          transform: reduce ? "none" : "translateY(4px)",
+          y: reduce ? 0 : 4,
         }}
         animate={{
           opacity: 1,
-          transform: "translateY(0px)",
+          y: 0,
         }}
         exit={{
           opacity: 0,
-          transform: reduce ? "none" : "translateY(-4px)",
+          y: reduce ? 0 : -4,
           transition: SWAP_EXIT_TRANSITION,
         }}
         transition={SWAP_TRANSITION}

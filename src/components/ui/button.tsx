@@ -44,15 +44,25 @@ const buttonVariants = cva(
   }
 )
 
+function mergeRefs<T>(...refs: Array<React.Ref<T> | undefined>) {
+  return (value: T) => {
+    for (const ref of refs) {
+      if (typeof ref === "function") ref(value)
+      else if (ref) (ref as React.MutableRefObject<T | null>).current = value
+    }
+  }
+}
+
 function Button({
   className,
   variant = "default",
   size = "default",
   pressScale = 0.97,
+  ref: refProp,
   onPointerDown,
   onPointerUp,
-  onPointerLeave,
   onPointerCancel,
+  onPointerLeave,
   onMouseEnter,
   onMouseLeave,
   ...props
@@ -63,19 +73,20 @@ function Button({
   const reduce = useReducedMotion()
   const canHover = useHoverCapable()
   const isLink = variant === "link"
-  const ref = React.useRef<HTMLButtonElement | null>(null)
+  const enablePress = !reduce && !isLink
+  const nodeRef = React.useRef<HTMLElement | null>(null)
   const pressed = React.useRef(false)
 
   const setScale = React.useEffectEvent((scale: number) => {
-    const node = ref.current
-    if (!node || reduce || isLink) return
+    const node = nodeRef.current
+    if (!node || !enablePress) return
     void animate(node, { scale }, SPRING_PRESS)
   })
 
   return (
     <ButtonPrimitive
       {...props}
-      ref={ref}
+      ref={mergeRefs(nodeRef, refProp as React.Ref<HTMLElement> | undefined)}
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       onPointerDown={(event) => {
@@ -88,15 +99,15 @@ function Button({
         setScale(canHover ? 1.02 : 1)
         onPointerUp?.(event)
       }}
-      onPointerLeave={(event) => {
-        pressed.current = false
-        setScale(1)
-        onPointerLeave?.(event)
-      }}
       onPointerCancel={(event) => {
         pressed.current = false
         setScale(1)
         onPointerCancel?.(event)
+      }}
+      onPointerLeave={(event) => {
+        pressed.current = false
+        setScale(1)
+        onPointerLeave?.(event)
       }}
       onMouseEnter={(event) => {
         if (canHover && !pressed.current) setScale(1.02)
