@@ -79,7 +79,7 @@ export function HeroMacOSDock() {
   };
 
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-4 z-20 flex justify-center px-4 sm:bottom-6">
+    <div className="pointer-events-none absolute inset-x-0 bottom-3 z-20 flex justify-center px-3 sm:bottom-4 sm:px-4">
       <div className="pointer-events-auto">
         <MacOSDock
           apps={HERO_DOCK_APPS}

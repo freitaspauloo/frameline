@@ -22,9 +22,8 @@ import {
   MarketingSplit,
   marketingPadX,
 } from "@/components/marketing-shell";
-import { HeroMacOSDock } from "@/components/hero-macos-dock";
+import { HeroMacFrame } from "@/components/hero-mac-frame";
 import { FramelineLenis } from "@/components/motion/frameline-lenis";
-import { HeroDither } from "@/components/motion/hero-dither";
 import { LogoWall } from "@/components/motion/logo-wall";
 import { Magnetic } from "@/components/motion/magnetic";
 import {
@@ -55,8 +54,6 @@ import {
 } from "@/materials";
 import { cn } from "@/lib/utils";
 
-const HERO_INK = "#3A58F0";
-const HERO_PAPER = "#FFFFFF";
 const CATALOG_PREVIEW_SLOTS = 9;
 
 const INSTALL_SNIPPET = `npx shadcn@latest add @frameline/aurora-mesh`;
@@ -304,18 +301,13 @@ export function FramelineHomePageV2() {
               </div>
             </IntroStagger>
 
-            <div className="frameline-material-in relative mt-auto min-h-[52dvh] w-full flex-1 border-t border-border">
-              <div
-                aria-hidden
-                className="absolute inset-x-0 top-0 bottom-0 z-0 mx-auto max-w-7xl overflow-visible"
-                style={{ backgroundColor: HERO_PAPER }}
-              >
-                <InkRule />
-                <MarketingRailCross edge="top" />
-                <MarketingRailCross edge="bottom" />
-                <HeroDither colorBack={HERO_PAPER} colorFront={HERO_INK} />
-              </div>
-              <HeroMacOSDock />
+            <div
+              className={cn(
+                "frameline-material-in relative mt-auto flex min-h-[min(56dvh,640px)] w-full flex-1 items-stretch pb-6 sm:pb-8 lg:pb-10",
+                marketingPadX,
+              )}
+            >
+              <HeroMacFrame />
             </div>
           </section>
 
