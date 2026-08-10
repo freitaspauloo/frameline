@@ -2,6 +2,15 @@
 
 import * as React from "react";
 import Link from "next/link";
+import {
+  RiCheckLine,
+  RiPauseLine,
+  RiPlayLine,
+  RiResetLeftLine,
+  RiShareLine,
+  RiSlowDownLine,
+  RiSpeedLine,
+} from "@remixicon/react";
 
 import { HeroMacOSDock } from "@/components/hero-macos-dock";
 import { HeroDither } from "@/components/motion/hero-dither";
@@ -134,24 +143,30 @@ function HeroInkDitherPlayground() {
           })}
           <div className="absolute right-2.5 bottom-2.5 z-10 flex flex-wrap justify-end gap-1.5">
             <Button
+              aria-label={paused ? "Play preview" : "Pause preview"}
               aria-pressed={paused}
               className="border-border bg-background/90 text-foreground backdrop-blur-sm hover:bg-background"
-              size="sm"
+              size="icon-xs"
               type="button"
               variant="outline"
               onClick={() => setPaused((p) => !p)}
             >
-              {paused ? "Play" : "Pause"}
+              {paused ? <RiPlayLine /> : <RiPauseLine />}
             </Button>
             <Button
+              aria-label={
+                reducedMotion
+                  ? "Enable motion"
+                  : "Use reduced motion shell fallback"
+              }
               aria-pressed={reducedMotion}
               className="border-border bg-background/90 text-foreground backdrop-blur-sm hover:bg-background"
-              size="sm"
+              size="icon-xs"
               type="button"
               variant="outline"
               onClick={() => setReducedMotion((v) => !v)}
             >
-              {reducedMotion ? "Motion on" : "Reduced motion"}
+              {reducedMotion ? <RiSpeedLine /> : <RiSlowDownLine />}
             </Button>
           </div>
         </div>
@@ -203,20 +218,24 @@ function HeroInkDitherPlayground() {
             </h2>
             <div className="flex flex-wrap items-center justify-end gap-1.5">
               <Button
-                size="xs"
+                aria-label="Reset configurator to defaults"
+                size="icon-xs"
                 type="button"
                 variant="outline"
                 onClick={resetConfigurator}
               >
-                Reset
+                <RiResetLeftLine />
               </Button>
               <Button
-                size="xs"
+                aria-label={
+                  copiedShare ? "Config link copied" : "Share config link"
+                }
+                size="icon-xs"
                 type="button"
                 variant="outline"
                 onClick={shareConfig}
               >
-                {copiedShare ? "Copied link" : "Share config"}
+                {copiedShare ? <RiCheckLine /> : <RiShareLine />}
               </Button>
             </div>
           </div>
