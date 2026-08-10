@@ -47,7 +47,12 @@ const APP_HREF: Record<string, string> = {
   browse: "#browse",
 };
 
-export function HeroMacOSDock() {
+export function HeroMacOSDock({
+  variant = "overlay",
+}: {
+  /** `overlay` = absolute bottom of parent; `inline` = flow (parent positions it). */
+  variant?: "overlay" | "inline";
+}) {
   const router = useRouter();
   const [openApps, setOpenApps] = React.useState<string[]>([
     "materials",
@@ -78,15 +83,21 @@ export function HeroMacOSDock() {
     router.push(href);
   };
 
+  const dock = (
+    <MacOSDock
+      apps={HERO_DOCK_APPS}
+      onAppClick={handleAppClick}
+      openApps={openApps}
+    />
+  );
+
+  if (variant === "inline") {
+    return dock;
+  }
+
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-3 z-20 flex justify-center px-3 sm:bottom-4 sm:px-4">
-      <div className="pointer-events-auto">
-        <MacOSDock
-          apps={HERO_DOCK_APPS}
-          onAppClick={handleAppClick}
-          openApps={openApps}
-        />
-      </div>
+      <div className="pointer-events-auto">{dock}</div>
     </div>
   );
 }
