@@ -209,13 +209,16 @@ function InstallTerminal() {
   }
 
   return (
-    <div className="space-y-3 bg-foreground p-5 text-background sm:p-6" data-reveal>
+    <div
+      className="space-y-3 border border-[#3A58F0] bg-[#EEF2FF] p-5 text-[#1A2A6B] sm:p-6"
+      data-reveal
+    >
       <div className="flex items-center justify-between gap-3">
-        <p className="text-[0.625rem] font-semibold tracking-widest text-background/55 uppercase">
+        <p className="text-[0.625rem] font-semibold tracking-widest text-[#3A58F0]/70 uppercase">
           Terminal
         </p>
         <Button
-          className="text-background hover:bg-background/10 hover:text-background"
+          className="text-[#3A58F0] hover:bg-[#3A58F0]/10 hover:text-[#1A2A6B]"
           size="xs"
           type="button"
           variant="ghost"
@@ -225,11 +228,11 @@ function InstallTerminal() {
           {copied ? "Copied" : "Copy"}
         </Button>
       </div>
-      <pre className="overflow-x-auto font-mono text-[13px] leading-relaxed text-background">
+      <pre className="overflow-x-auto font-mono text-[13px] leading-relaxed text-[#1A2A6B]">
         <TypeOnView text={INSTALL_SNIPPET} />
       </pre>
-      <Separator className="bg-background/15" />
-      <pre className="overflow-x-auto font-mono text-[12px] leading-relaxed text-background/70">
+      <Separator className="bg-[#3A58F0]/20" />
+      <pre className="overflow-x-auto font-mono text-[12px] leading-relaxed text-[#3A58F0]/75">
         {`import { AuroraMesh } from "@/materials"`}
       </pre>
     </div>
