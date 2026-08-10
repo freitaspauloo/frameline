@@ -65,7 +65,7 @@ export const MATERIAL_PROPS: Record<string, MaterialPropDef[]> = {
   "ink-dither": [
     field("speed", "Speed", 0.35, 0, 2, 0.01, "Animation speed"),
     field("size", "Size", 3, 1, 12, 0.5, "Dither cell size"),
-    color("colorBack", "Back", "#0A0A0A", "Background color"),
+    color("colorBack", "Back", "#FFFFFF", "Background color"),
     color("colorFront", "Front", "#2D6BFF", "Foreground color"),
   ],
   "grain-field": [

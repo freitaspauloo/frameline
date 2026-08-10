@@ -24,7 +24,7 @@ export const MATERIALS_CATALOG: MaterialCatalogEntry[] = [
     useContexts: ["section", "empty", "loading"],
     tier: "personal",
     tags: ["dither", "ink", "contrast", "motion"],
-    fallbackColors: ["#0A0A0A", "#2D6BFF"],
+    fallbackColors: ["#FFFFFF", "#2D6BFF"],
     renderingTechnique: "webgl",
     perfNotes:
       "Two-tone dither is cheap; keep size moderate on retina to avoid alias noise.",

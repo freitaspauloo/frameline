@@ -21,7 +21,7 @@ export type InkDitherProps = MaterialSurfaceProps & {
 export function InkDither({
   className,
   style,
-  colorBack = "#0A0A0A",
+  colorBack = "#FFFFFF",
   colorFront = "#2D6BFF",
   speed = 0.35,
   size = 3,

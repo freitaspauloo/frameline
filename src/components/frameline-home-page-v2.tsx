@@ -22,9 +22,8 @@ import {
   MarketingSplit,
   marketingPadX,
 } from "@/components/marketing-shell";
-import { HeroMacOSDock } from "@/components/hero-macos-dock";
+import { HeroMacFrame } from "@/components/hero-mac-frame";
 import { FramelineLenis } from "@/components/motion/frameline-lenis";
-import { HeroDither } from "@/components/motion/hero-dither";
 import { LogoWall } from "@/components/motion/logo-wall";
 import {
   MaterialSequence,
@@ -54,9 +53,7 @@ import {
 } from "@/materials";
 import { cn } from "@/lib/utils";
 
-const HERO_INK = "#3A58F0";
-const HERO_PAPER = "#FFFFFF";
-const CATALOG_PREVIEW_SLOTS = 9;
+const CATALOG_PREVIEW_SLOTS = 6;
 
 const INSTALL_SNIPPET = `npx shadcn@latest add @frameline/aurora-mesh`;
 
@@ -211,13 +208,16 @@ function InstallTerminal() {
   }
 
   return (
-    <div className="space-y-3 bg-foreground p-5 text-background sm:p-6" data-reveal>
+    <div
+      className="space-y-3 border border-[#3A58F0] bg-[#EEF2FF] p-5 text-[#1A2A6B] sm:p-6"
+      data-reveal
+    >
       <div className="flex items-center justify-between gap-3">
-        <p className="text-[0.625rem] font-semibold tracking-widest text-background/55 uppercase">
+        <p className="text-[0.625rem] font-semibold tracking-widest text-[#3A58F0]/70 uppercase">
           Terminal
         </p>
         <Button
-          className="text-background hover:bg-background/10 hover:text-background"
+          className="text-[#3A58F0] hover:bg-[#3A58F0]/10 hover:text-[#1A2A6B]"
           size="xs"
           type="button"
           variant="ghost"
@@ -227,11 +227,11 @@ function InstallTerminal() {
           {copied ? "Copied" : "Copy"}
         </Button>
       </div>
-      <pre className="overflow-x-auto font-mono text-[13px] leading-relaxed text-background">
+      <pre className="overflow-x-auto font-mono text-[13px] leading-relaxed text-[#1A2A6B]">
         <TypeOnView text={INSTALL_SNIPPET} />
       </pre>
-      <Separator className="bg-background/15" />
-      <pre className="overflow-x-auto font-mono text-[12px] leading-relaxed text-background/70">
+      <Separator className="bg-[#3A58F0]/20" />
+      <pre className="overflow-x-auto font-mono text-[12px] leading-relaxed text-[#3A58F0]/75">
         {`import { AuroraMesh } from "@/materials"`}
       </pre>
     </div>
@@ -301,18 +301,8 @@ export function FramelineHomePageV2() {
               </div>
             </IntroStagger>
 
-            <div className="frameline-material-in relative mt-auto min-h-[52dvh] w-full flex-1 border-t border-border">
-              <div
-                aria-hidden
-                className="absolute inset-x-0 top-0 bottom-0 z-0 mx-auto max-w-7xl overflow-visible"
-                style={{ backgroundColor: HERO_PAPER }}
-              >
-                <InkRule />
-                <MarketingRailCross edge="top" />
-                <MarketingRailCross edge="bottom" />
-                <HeroDither colorBack={HERO_PAPER} colorFront={HERO_INK} />
-              </div>
-              <HeroMacOSDock />
+            <div className="frameline-material-in relative mt-auto min-h-[min(62dvh,720px)] w-full flex-1 overflow-visible pb-8 sm:pb-10">
+              <HeroMacFrame />
             </div>
           </section>
 
@@ -357,65 +347,66 @@ export function FramelineHomePageV2() {
                 />
               </MarketingSectionHeader>
 
-              <MarketingRuledGrid>
+              <div
+                className={cn(
+                  "grid grid-cols-1 gap-y-8 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 lg:gap-x-12 lg:gap-y-12",
+                  marketingPadX,
+                  "pb-2",
+                )}
+              >
                 {Array.from({ length: CATALOG_PREVIEW_SLOTS }, (_, index) => {
                   const entry = PUBLIC_CATALOG[index];
 
                   if (!entry) {
                     return (
-                      <MarketingRuledCell
+                      <div
                         key={`soon-${index}`}
-                        className="p-0 sm:p-0 lg:p-0"
+                        className="flex h-full min-h-[22rem] flex-col border border-border"
+                        data-reveal
                       >
-                        <div className="flex h-full min-h-[16rem] flex-col" data-reveal>
-                          <div className="relative aspect-[16/10] bg-muted/50" />
-                          <div className="space-y-2 border-t border-border p-6 sm:p-8">
-                            <p className="font-mono text-[11px] text-muted-foreground">
-                              Soon
-                            </p>
-                            <h3 className="font-heading text-base font-medium tracking-tight text-muted-foreground">
-                              Coming soon
-                            </h3>
-                            <p className="text-sm leading-relaxed text-muted-foreground">
-                              More surfaces in the next drop.
-                            </p>
-                          </div>
+                        <div className="relative aspect-[16/9] bg-muted/50 sm:aspect-[3/2]" />
+                        <div className="space-y-3 border-t border-border p-7 sm:p-9">
+                          <p className="font-mono text-[11px] text-muted-foreground">
+                            Soon
+                          </p>
+                          <h3 className="font-heading text-lg font-medium tracking-tight text-muted-foreground sm:text-xl">
+                            Coming soon
+                          </h3>
+                          <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+                            More surfaces in the next drop.
+                          </p>
                         </div>
-                      </MarketingRuledCell>
+                      </div>
                     );
                   }
 
                   return (
-                    <MarketingRuledCell
+                    <Link
                       key={entry.slug}
-                      className="p-0 sm:p-0 lg:p-0"
+                      className="group flex h-full min-h-[22rem] flex-col border border-border transition-colors hover:bg-muted/40"
+                      data-reveal
+                      href={`/materials/${entry.slug}`}
                     >
-                      <Link
-                        className="group block transition-colors hover:bg-muted/40"
-                        data-reveal
-                        href={`/materials/${entry.slug}`}
-                      >
-                        <div className="relative aspect-[16/10] overflow-hidden bg-foreground">
-                          <MaterialPreview entry={entry} />
+                      <div className="relative aspect-[16/9] overflow-hidden bg-foreground sm:aspect-[3/2]">
+                        <MaterialPreview entry={entry} />
+                      </div>
+                      <div className="space-y-3 border-t border-border p-7 sm:p-9">
+                        <div className="flex items-center justify-between gap-3">
+                          <h3 className="font-heading text-lg font-medium tracking-tight sm:text-xl">
+                            {entry.title}
+                          </h3>
+                          <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                            {entry.tier === "free" ? "Free" : "Paid"}
+                          </span>
                         </div>
-                        <div className="space-y-2 border-t border-border p-6 sm:p-8">
-                          <div className="flex items-center justify-between gap-2">
-                            <h3 className="font-heading text-base font-medium tracking-tight">
-                              {entry.title}
-                            </h3>
-                            <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                              {entry.tier === "free" ? "Free" : "Paid"}
-                            </span>
-                          </div>
-                          <p className="text-sm leading-relaxed text-muted-foreground">
-                            {entry.description}
-                          </p>
-                        </div>
-                      </Link>
-                    </MarketingRuledCell>
+                        <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+                          {entry.description}
+                        </p>
+                      </div>
+                    </Link>
                   );
                 })}
-              </MarketingRuledGrid>
+              </div>
 
               <div
                 className={cn(
