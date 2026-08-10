@@ -389,30 +389,59 @@ export function HeroMacFrame({ className }: { className?: string }) {
       if (reduced) {
         gsap.set([bg, windowEl, toolbar, dock], {
           opacity: 1,
+          visibility: "visible",
           scale: 1,
           clearProps: "transform",
         });
         return;
       }
 
-      gsap.set(bg, { opacity: 0 });
+      // BG is visible from first paint — only window chrome waits.
+      gsap.set(bg, { opacity: 1, visibility: "visible" });
       gsap.set(windowEl, {
         opacity: 0,
+        visibility: "hidden",
         scale: 1.04,
         transformOrigin: "center bottom",
+        pointerEvents: "none",
       });
-      gsap.set([toolbar, dock], { opacity: 0 });
+      gsap.set([toolbar, dock], {
+        opacity: 0,
+        visibility: "hidden",
+        pointerEvents: "none",
+      });
 
       gsap
         .timeline({ defaults: { ease: "power3.out" } })
-        .to(bg, { opacity: 1, duration: 0.55 })
+        // Let the dither atmosphere establish before any chrome appears.
+        .to({}, { duration: 0.65 })
+        .to(windowEl, {
+          opacity: 1,
+          visibility: "visible",
+          scale: 1,
+          duration: 0.5,
+          pointerEvents: "auto",
+        })
         .to(
-          windowEl,
-          { opacity: 1, scale: 1, duration: 0.5 },
+          toolbar,
+          {
+            opacity: 1,
+            visibility: "visible",
+            duration: 0.28,
+            pointerEvents: "auto",
+          },
           "+=0.1",
         )
-        .to(toolbar, { opacity: 1, duration: 0.28 }, "+=0.08")
-        .to(dock, { opacity: 1, duration: 0.24 }, "-=0.08");
+        .to(
+          dock,
+          {
+            opacity: 1,
+            visibility: "visible",
+            duration: 0.24,
+            pointerEvents: "auto",
+          },
+          "-=0.06",
+        );
     },
     { dependencies: [reduced], scope },
   );
@@ -421,7 +450,7 @@ export function HeroMacFrame({ className }: { className?: string }) {
     <div
       ref={scope}
       className={cn(
-        "relative isolate flex h-full min-h-[min(62dvh,720px)] w-full flex-col",
+        "hero-mac-intro relative isolate flex h-full min-h-[min(62dvh,720px)] w-full flex-col",
         className,
       )}
     >
