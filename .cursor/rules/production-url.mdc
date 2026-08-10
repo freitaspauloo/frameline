@@ -1,0 +1,10 @@
+---
+description: Frameline production URL — always frameline.ai, never frameline.vercel.app
+alwaysApply: true
+---
+
+# Production URL
+
+- **Use:** https://frameline.ai
+- **Never use:** `frameline.vercel.app` (not our project; subdomain is taken)
+- For production links, deploy checks, and user-facing URLs, always reference **frameline.ai**.

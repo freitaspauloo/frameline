@@ -23,3 +23,9 @@ This repo favors speed over PR ceremony. **Do not open pull requests** unless th
 - **`main`** — stable line. Only merge into `main` when the user asks (e.g. “merge it”, “ship to main”), or when promoting tested work from `dev`.
 - Skip feature-branch + PR flows (`cursor/...` branches, draft PRs, etc.) unless the user requests a PR for review.
 - Still commit with clear messages and push after each logical chunk of work.
+
+## Production URL
+
+- **Canonical site:** https://frameline.ai
+- **Never use** `frameline.vercel.app` — that Vercel subdomain is not ours (already taken by someone else).
+- When linking, testing production, or telling the user where to preview: use **frameline.ai** (or `NEXT_PUBLIC_APP_URL` from env, which should point there).
