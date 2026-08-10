@@ -14,6 +14,9 @@
         "GCLOUD_PROJECT": "frameline-b89ac",
         "FIREBASE_PROJECT": "frameline-b89ac"
       }
+    },
+    "stripe": {
+      "url": "https://mcp.stripe.com"
     }
   }
 }
