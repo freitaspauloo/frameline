@@ -360,9 +360,6 @@ export function HeroMacFrame({ className }: { className?: string }) {
           <div className="flex max-h-[min(70dvh,640px)] flex-col overflow-hidden rounded-[16px] border border-border bg-background shadow-[0_28px_90px_rgba(0,0,0,0.22)]">
             <div className="relative z-20 flex h-11 shrink-0 items-center border-b border-border bg-muted/60 px-4">
               <TrafficLights />
-              <span className="pointer-events-none absolute inset-x-0 text-center text-[13px] font-medium tracking-[-0.01em] text-muted-foreground">
-                Ink Dither
-              </span>
             </div>
             <HeroInkDitherPlayground />
           </div>
