@@ -14,6 +14,7 @@ import {
   marketingPad,
 } from "@/components/marketing-shell";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import { getLicensePlan } from "@/lib/license-plans";
 import { cn } from "@/lib/utils";
 import {
@@ -34,8 +35,6 @@ type Props = {
   /** Resolved catalog entry (with demo overrides). Falls back to source catalog. */
   entry?: MaterialCatalogEntry;
 };
-
-const ACCENT = "#3A58F0";
 
 function buildJsxSnippet(slug: string, props: Record<string, unknown>) {
   const entries = Object.entries(props).filter(
@@ -304,10 +303,10 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
           title={entry.title}
         />
 
-        <div className="relative grid overflow-visible lg:grid-cols-[1.15fr_0.85fr] lg:divide-x lg:divide-border">
+        <div className="relative grid overflow-visible lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
           <div
             className={cn(
-              "border-b border-border lg:border-b-0",
+              "border-b border-border lg:sticky lg:top-16 lg:self-start lg:border-b-0",
               marketingPad,
             )}
           >
@@ -383,7 +382,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
             </dl>
           </div>
 
-          <div className="divide-y divide-border">
+          <div className="divide-y divide-border lg:border-l lg:border-border">
             <Panel
               action={
                 <div className="flex flex-wrap items-center justify-end gap-2">
@@ -405,92 +404,78 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
                   >
                     {copiedShare ? "Copied link" : "Share config"}
                   </Button>
-                  <Button
-                    aria-label={paused ? "Play preview" : "Pause preview"}
-                    aria-pressed={paused}
-                    size="xs"
-                    type="button"
-                    variant="outline"
-                    onClick={() => setPaused((p) => !p)}
-                  >
-                    {paused ? "Play" : "Pause"}
-                  </Button>
-                  <Button
-                    aria-label="Toggle reduced motion shell fallback"
-                    aria-pressed={reducedMotion}
-                    size="xs"
-                    type="button"
-                    variant="outline"
-                    onClick={() => setReducedMotion((v) => !v)}
-                  >
-                    {reducedMotion ? "Motion on" : "Reduced motion"}
-                  </Button>
                 </div>
               }
               title="Configurator"
             >
               <p className="mb-6 text-sm leading-relaxed text-muted-foreground">
-                Pause freezes the live preview. Reduced motion uses the CSS
-                shell fallback. Reset restores catalog defaults and clears
-                config URL params. Share config copies this page link.
+                Tune the live preview — values sync to the page URL as you
+                edit. Reset restores catalog defaults; Share config copies a
+                link to this exact setup.
               </p>
               <div className="space-y-6">
-                {controls.fields.map((field) => (
-                  <label className="block" key={field.key}>
-                    <span className="flex justify-between font-mono text-[11px] text-muted-foreground">
-                      <span>{field.label}</span>
-                      <span className="text-foreground tabular-nums">
-                        {Number(
-                          props[field.key as keyof typeof props],
-                        ).toFixed(2)}
-                      </span>
-                    </span>
-                    <input
-                      aria-label={field.label}
-                      aria-valuemax={field.max}
-                      aria-valuemin={field.min}
-                      aria-valuenow={Number(
-                        props[field.key as keyof typeof props],
-                      )}
-                      className="mt-3 w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                      max={field.max}
-                      min={field.min}
-                      step={field.step}
-                      style={{ accentColor: ACCENT }}
-                      type="range"
-                      value={Number(props[field.key as keyof typeof props])}
-                      onChange={(e) =>
-                        setProps((prev) => ({
-                          ...prev,
-                          [field.key]: Number(e.target.value),
-                        }))
-                      }
-                    />
-                  </label>
-                ))}
-                {"colors" in controls &&
-                  controls.colors?.map((c) => (
-                    <label
-                      className="flex items-center justify-between gap-3 border-t border-border pt-5"
-                      key={c.key}
-                    >
-                      <span className="font-mono text-[11px] text-muted-foreground">
-                        {c.label}
-                      </span>
-                      <input
-                        aria-label={c.label}
-                        className="size-7 cursor-pointer border border-border bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                        type="color"
-                        value={String(props[c.key as keyof typeof props])}
-                        onChange={(e) =>
-                          setProps((prev) => ({
-                            ...prev,
-                            [c.key]: e.target.value,
-                          }))
-                        }
+                {controls.fields.map((field) => {
+                  const value = Number(props[field.key as keyof typeof props]);
+                  const labelId = `config-${slug}-${field.key}`;
+                  return (
+                    <div key={field.key}>
+                      <div className="flex items-baseline justify-between font-mono text-[11px]">
+                        <span className="text-muted-foreground" id={labelId}>
+                          {field.label}
+                        </span>
+                        <span className="text-foreground tabular-nums">
+                          {value.toFixed(2)}
+                        </span>
+                      </div>
+                      <Slider
+                        aria-labelledby={labelId}
+                        className="mt-3 py-1"
+                        max={field.max}
+                        min={field.min}
+                        step={field.step}
+                        value={[value]}
+                        onValueChange={(next) => {
+                          const v = Array.isArray(next) ? next[0] : next;
+                          if (typeof v !== "number" || !Number.isFinite(v)) {
+                            return;
+                          }
+                          setProps((prev) => ({ ...prev, [field.key]: v }));
+                        }}
                       />
-                    </label>
-                  ))}
+                    </div>
+                  );
+                })}
+                {"colors" in controls &&
+                  controls.colors?.map((c) => {
+                    const hex = String(props[c.key as keyof typeof props]);
+                    return (
+                      <div
+                        className="flex items-center justify-between gap-3 border-t border-border pt-5"
+                        key={c.key}
+                      >
+                        <span className="font-mono text-[11px] text-muted-foreground">
+                          {c.label}
+                        </span>
+                        <span className="flex items-center gap-3">
+                          <span className="font-mono text-[11px] text-foreground uppercase tabular-nums">
+                            {hex}
+                          </span>
+                          <input
+                            aria-label={c.label}
+                            className="size-8 cursor-pointer border border-border bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-moz-color-swatch]:rounded-none [&::-moz-color-swatch]:border-0 [&::-webkit-color-swatch]:rounded-none [&::-webkit-color-swatch]:border-0 [&::-webkit-color-swatch-wrapper]:p-0"
+                            type="color"
+                            value={hex}
+                            onChange={(e) =>
+                              setProps((prev) => ({
+                                ...prev,
+                                [c.key]: e.target.value,
+                              }))
+                            }
+                          />
+                        </span>
+                      </div>
+                    );
+                  })}
               </div>
             </Panel>
 
