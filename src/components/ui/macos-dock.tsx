@@ -17,185 +17,269 @@ interface MacOSDockProps {
   className?: string;
 }
 
+type DockConfig = {
+  baseIconSize: number;
+  maxScale: number;
+  effectWidth: number;
+};
+
+const DEFAULT_CONFIG: DockConfig = {
+  baseIconSize: 64,
+  maxScale: 1.6,
+  effectWidth: 240,
+};
+
+const MIN_SCALE = 1;
+
+function getSpacing(baseIconSize: number) {
+  return Math.max(4, baseIconSize * 0.08);
+}
+
+function getPadding(baseIconSize: number) {
+  return Math.max(8, baseIconSize * 0.12);
+}
+
+function calculatePositions(
+  scales: number[],
+  baseIconSize: number,
+  baseSpacing: number,
+) {
+  let currentX = 0;
+  return scales.map((scale) => {
+    const scaledWidth = baseIconSize * scale;
+    const centerX = currentX + scaledWidth / 2;
+    currentX += scaledWidth + baseSpacing;
+    return centerX;
+  });
+}
+
+function contentWidthFor(
+  scales: number[],
+  positions: number[],
+  baseIconSize: number,
+) {
+  if (positions.length === 0) return 0;
+  return Math.max(
+    ...positions.map((pos, index) => pos + (baseIconSize * scales[index]) / 2),
+  );
+}
+
+function getResponsiveConfig(): DockConfig {
+  if (typeof window === "undefined") return DEFAULT_CONFIG;
+
+  const smallerDimension = Math.min(window.innerWidth, window.innerHeight);
+
+  if (smallerDimension < 480) {
+    return {
+      baseIconSize: Math.max(40, smallerDimension * 0.08),
+      maxScale: 1.4,
+      effectWidth: smallerDimension * 0.4,
+    };
+  }
+  if (smallerDimension < 768) {
+    return {
+      baseIconSize: Math.max(48, smallerDimension * 0.07),
+      maxScale: 1.5,
+      effectWidth: smallerDimension * 0.35,
+    };
+  }
+  if (smallerDimension < 1024) {
+    return {
+      baseIconSize: Math.max(56, smallerDimension * 0.06),
+      maxScale: 1.6,
+      effectWidth: smallerDimension * 0.3,
+    };
+  }
+  return {
+    baseIconSize: Math.max(64, Math.min(80, smallerDimension * 0.05)),
+    maxScale: 1.8,
+    effectWidth: 300,
+  };
+}
+
+function restingLayout(appCount: number, config: DockConfig) {
+  const scales = Array.from({ length: appCount }, () => MIN_SCALE);
+  const spacing = getSpacing(config.baseIconSize);
+  const positions = calculatePositions(scales, config.baseIconSize, spacing);
+  return { scales, positions };
+}
+
 const MacOSDock: React.FC<MacOSDockProps> = ({
   apps,
   onAppClick,
   openApps = [],
   className = "",
 }) => {
+  // Always start from DEFAULT_CONFIG so SSR + first client paint match.
+  // Real viewport sizing is applied after mount (no empty-position flash).
+  const [config, setConfig] = useState<DockConfig>(DEFAULT_CONFIG);
+  const [{ scales: currentScales, positions: currentPositions }, setLayout] =
+    useState(() => restingLayout(apps.length, DEFAULT_CONFIG));
   const [mouseX, setMouseX] = useState<number | null>(null);
-  const [currentScales, setCurrentScales] = useState<number[]>(
-    apps.map(() => 1),
-  );
-  const [currentPositions, setCurrentPositions] = useState<number[]>([]);
+  const [ready, setReady] = useState(false);
+
   const dockRef = useRef<HTMLDivElement>(null);
   const iconRefs = useRef<(HTMLDivElement | null)[]>([]);
   const animationFrameRef = useRef<number | undefined>(undefined);
-  const lastMouseMoveTime = useRef<number>(0);
+  const lastMouseMoveTime = useRef(0);
+  const scalesRef = useRef(currentScales);
+  const positionsRef = useRef(currentPositions);
+  const mouseXRef = useRef<number | null>(null);
+  const configRef = useRef(config);
+  const appsRef = useRef(apps);
 
-  const getResponsiveConfig = useCallback(() => {
-    if (typeof window === "undefined") {
-      return { baseIconSize: 64, maxScale: 1.6, effectWidth: 240 };
-    }
-
-    const smallerDimension = Math.min(window.innerWidth, window.innerHeight);
-
-    if (smallerDimension < 480) {
-      return {
-        baseIconSize: Math.max(40, smallerDimension * 0.08),
-        maxScale: 1.4,
-        effectWidth: smallerDimension * 0.4,
-      };
-    }
-    if (smallerDimension < 768) {
-      return {
-        baseIconSize: Math.max(48, smallerDimension * 0.07),
-        maxScale: 1.5,
-        effectWidth: smallerDimension * 0.35,
-      };
-    }
-    if (smallerDimension < 1024) {
-      return {
-        baseIconSize: Math.max(56, smallerDimension * 0.06),
-        maxScale: 1.6,
-        effectWidth: smallerDimension * 0.3,
-      };
-    }
-    return {
-      baseIconSize: Math.max(64, Math.min(80, smallerDimension * 0.05)),
-      maxScale: 1.8,
-      effectWidth: 300,
-    };
-  }, []);
-
-  const [config, setConfig] = useState(getResponsiveConfig);
-  const { baseIconSize, maxScale, effectWidth } = config;
-  const minScale = 1.0;
-  const baseSpacing = Math.max(4, baseIconSize * 0.08);
+  const { baseIconSize } = config;
+  const padding = getPadding(baseIconSize);
 
   useEffect(() => {
+    scalesRef.current = currentScales;
+  }, [currentScales]);
+
+  useEffect(() => {
+    positionsRef.current = currentPositions;
+  }, [currentPositions]);
+
+  useEffect(() => {
+    mouseXRef.current = mouseX;
+  }, [mouseX]);
+
+  useEffect(() => {
+    configRef.current = config;
+  }, [config]);
+
+  useEffect(() => {
+    appsRef.current = apps;
+  }, [apps]);
+
+  // Mount: measure viewport, snap to resting layout, then reveal.
+  useEffect(() => {
+    const next = getResponsiveConfig();
+    setConfig(next);
+    const layout = restingLayout(appsRef.current.length, next);
+    scalesRef.current = layout.scales;
+    positionsRef.current = layout.positions;
+    setLayout(layout);
+    setReady(true);
+
     const handleResize = () => {
-      setConfig(getResponsiveConfig());
+      const resized = getResponsiveConfig();
+      setConfig(resized);
+      const layout = restingLayout(appsRef.current.length, resized);
+      scalesRef.current = layout.scales;
+      positionsRef.current = layout.positions;
+      setLayout(layout);
     };
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [getResponsiveConfig]);
+  }, []);
+
+  useEffect(() => {
+    const layout = restingLayout(apps.length, configRef.current);
+    scalesRef.current = layout.scales;
+    positionsRef.current = layout.positions;
+    setLayout(layout);
+  }, [apps]);
 
   const calculateTargetMagnification = useCallback(
-    (mousePosition: number | null) => {
+    (mousePosition: number | null, cfg: DockConfig, count: number) => {
       if (mousePosition === null) {
-        return apps.map(() => minScale);
+        return Array.from({ length: count }, () => MIN_SCALE);
       }
 
-      return apps.map((_, index) => {
+      const spacing = getSpacing(cfg.baseIconSize);
+
+      return Array.from({ length: count }, (_, index) => {
         const normalIconCenter =
-          index * (baseIconSize + baseSpacing) + baseIconSize / 2;
-        const minX = mousePosition - effectWidth / 2;
-        const maxX = mousePosition + effectWidth / 2;
+          index * (cfg.baseIconSize + spacing) + cfg.baseIconSize / 2;
+        const minX = mousePosition - cfg.effectWidth / 2;
+        const maxX = mousePosition + cfg.effectWidth / 2;
 
         if (normalIconCenter < minX || normalIconCenter > maxX) {
-          return minScale;
+          return MIN_SCALE;
         }
 
-        const theta = ((normalIconCenter - minX) / effectWidth) * 2 * Math.PI;
+        const theta =
+          ((normalIconCenter - minX) / cfg.effectWidth) * 2 * Math.PI;
         const cappedTheta = Math.min(Math.max(theta, 0), 2 * Math.PI);
         const scaleFactor = (1 - Math.cos(cappedTheta)) / 2;
 
-        return minScale + scaleFactor * (maxScale - minScale);
+        return MIN_SCALE + scaleFactor * (cfg.maxScale - MIN_SCALE);
       });
     },
-    [apps, baseIconSize, baseSpacing, effectWidth, maxScale, minScale],
-  );
-
-  const calculatePositions = useCallback(
-    (scales: number[]) => {
-      let currentX = 0;
-
-      return scales.map((scale) => {
-        const scaledWidth = baseIconSize * scale;
-        const centerX = currentX + scaledWidth / 2;
-        currentX += scaledWidth + baseSpacing;
-        return centerX;
-      });
-    },
-    [baseIconSize, baseSpacing],
+    [],
   );
 
   useEffect(() => {
-    const initialScales = apps.map(() => minScale);
-    const initialPositions = calculatePositions(initialScales);
-    setCurrentScales(initialScales);
-    setCurrentPositions(initialPositions);
-  }, [apps, calculatePositions, minScale, config]);
+    if (!ready) return;
 
-  const animateToTarget = useCallback(() => {
-    const targetScales = calculateTargetMagnification(mouseX);
-    const targetPositions = calculatePositions(targetScales);
-    const lerpFactor = mouseX !== null ? 0.2 : 0.12;
+    const tick = () => {
+      const cfg = configRef.current;
+      const spacing = getSpacing(cfg.baseIconSize);
+      const mx = mouseXRef.current;
+      const targetScales = calculateTargetMagnification(
+        mx,
+        cfg,
+        appsRef.current.length,
+      );
+      const targetPositions = calculatePositions(
+        targetScales,
+        cfg.baseIconSize,
+        spacing,
+      );
+      const lerpFactor = mx !== null ? 0.2 : 0.12;
 
-    setCurrentScales((prevScales) => {
-      return prevScales.map((currentScale, index) => {
+      const nextScales = scalesRef.current.map((currentScale, index) => {
         const diff = targetScales[index] - currentScale;
         return currentScale + diff * lerpFactor;
       });
-    });
-
-    setCurrentPositions((prevPositions) => {
-      return prevPositions.map((currentPos, index) => {
+      const nextPositions = positionsRef.current.map((currentPos, index) => {
         const diff = targetPositions[index] - currentPos;
         return currentPos + diff * lerpFactor;
       });
-    });
 
-    const scalesNeedUpdate = currentScales.some(
-      (scale, index) => Math.abs(scale - targetScales[index]) > 0.002,
-    );
-    const positionsNeedUpdate = currentPositions.some(
-      (pos, index) => Math.abs(pos - targetPositions[index]) > 0.1,
-    );
+      scalesRef.current = nextScales;
+      positionsRef.current = nextPositions;
+      setLayout({ scales: nextScales, positions: nextPositions });
 
-    if (scalesNeedUpdate || positionsNeedUpdate || mouseX !== null) {
-      animationFrameRef.current = requestAnimationFrame(animateToTarget);
-    }
-  }, [
-    mouseX,
-    calculateTargetMagnification,
-    calculatePositions,
-    currentScales,
-    currentPositions,
-  ]);
+      const scalesNeedUpdate = nextScales.some(
+        (scale, index) => Math.abs(scale - targetScales[index]) > 0.002,
+      );
+      const positionsNeedUpdate = nextPositions.some(
+        (pos, index) => Math.abs(pos - targetPositions[index]) > 0.1,
+      );
 
-  useEffect(() => {
+      if (scalesNeedUpdate || positionsNeedUpdate || mx !== null) {
+        animationFrameRef.current = requestAnimationFrame(tick);
+      } else {
+        animationFrameRef.current = undefined;
+      }
+    };
+
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
     }
-    animationFrameRef.current = requestAnimationFrame(animateToTarget);
+    animationFrameRef.current = requestAnimationFrame(tick);
 
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [animateToTarget]);
+  }, [mouseX, ready, calculateTargetMagnification, config, apps.length]);
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
       const now = performance.now();
-
-      if (now - lastMouseMoveTime.current < 16) {
-        return;
-      }
-
+      if (now - lastMouseMoveTime.current < 16) return;
       lastMouseMoveTime.current = now;
 
       if (dockRef.current) {
         const rect = dockRef.current.getBoundingClientRect();
-        const padding = Math.max(8, baseIconSize * 0.12);
         setMouseX(e.clientX - rect.left - padding);
       }
     },
-    [baseIconSize],
+    [padding],
   );
 
   const handleMouseLeave = useCallback(() => {
@@ -216,24 +300,22 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
     if (iconRefs.current[index]) {
       createBounceAnimation(iconRefs.current[index]!);
     }
-
     onAppClick(appId);
   };
 
-  const contentWidth =
-    currentPositions.length > 0
-      ? Math.max(
-          ...currentPositions.map(
-            (pos, index) => pos + (baseIconSize * currentScales[index]) / 2,
-          ),
-        )
-      : apps.length * (baseIconSize + baseSpacing) - baseSpacing;
-
-  const padding = Math.max(8, baseIconSize * 0.12);
+  const contentWidth = contentWidthFor(
+    currentScales,
+    currentPositions,
+    baseIconSize,
+  );
 
   return (
     <div
-      className={cn("backdrop-blur-md", className)}
+      className={cn(
+        "backdrop-blur-md transition-opacity duration-200",
+        ready ? "opacity-100" : "opacity-0",
+        className,
+      )}
       onMouseLeave={handleMouseLeave}
       onMouseMove={handleMouseMove}
       ref={dockRef}
@@ -259,8 +341,8 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
         }}
       >
         {apps.map((app, index) => {
-          const scale = currentScales[index];
-          const position = currentPositions[index] || 0;
+          const scale = currentScales[index] ?? MIN_SCALE;
+          const position = currentPositions[index] ?? 0;
           const scaledSize = baseIconSize * scale;
 
           return (
@@ -295,6 +377,7 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
                 className="object-contain"
                 height={scaledSize}
                 src={app.icon}
+                draggable={false}
                 style={{
                   filter: `drop-shadow(0 ${scale > 1.2 ? Math.max(2, baseIconSize * 0.05) : Math.max(1, baseIconSize * 0.03)}px ${scale > 1.2 ? Math.max(4, baseIconSize * 0.1) : Math.max(2, baseIconSize * 0.06)}px rgba(0,0,0,${0.2 + (scale - 1) * 0.15}))`,
                 }}

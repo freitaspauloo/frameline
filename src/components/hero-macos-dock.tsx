@@ -54,6 +54,14 @@ export function HeroMacOSDock() {
     "browse",
   ]);
 
+  // Warm icon cache so the dock never paints with missing icons.
+  React.useEffect(() => {
+    for (const app of HERO_DOCK_APPS) {
+      const img = new window.Image();
+      img.src = app.icon;
+    }
+  }, []);
+
   const handleAppClick = (appId: string) => {
     setOpenApps((prev) =>
       prev.includes(appId)
