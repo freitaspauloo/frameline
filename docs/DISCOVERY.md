@@ -63,9 +63,9 @@ Purchase domain + trademark knockout still open.
 
 ### F2 — Signal tests
 
-- [ ] Waitlist landing + live demos  
-- [ ] Fake-door pricing ($19 / $99 / $299)  
-- [ ] Fake `npx` install logger  
+- [x] Waitlist landing + live demos — `/waitlist` with 6 free previews  
+- [x] Fake-door pricing ($19 / $99 / $299) — `/pricing` permitted/not-permitted + WTP beacon  
+- [x] Fake `npx` install logger — `POST /api/install` → `.data/installs.json`  
 - [ ] OSS seed component  
 - [ ] X demo clips + community probes  
 
@@ -116,8 +116,9 @@ These exist so Gate 01 signals can be collected without inventing metrics. Count
 
 | Surface | Path | What it records |
 |---|---|---|
-| Waitlist landing | `/waitlist` + `POST /api/waitlist` | Email signups → `.data/waitlist.json` |
+| Waitlist landing | `/waitlist` + `POST /api/waitlist` | Email signups → `.data/waitlist.json`; page also shows live free demos |
 | WTP intent beacon | `POST /api/intent` | Plan interest (`static` / `personal` / `team`) from pricing Buy clicks and checkout submit → `.data/wtp.json` (rate-limited; non-blocking) |
-| Admin snapshot | `/admin` | Waitlist count + WTP intent counts by plan (reads the files above) |
+| Install intent beacon | `POST /api/install` | Fake CLI / JSX / paste copy from home, `/free`, and material detail → `.data/installs.json` (rate-limited; non-blocking) |
+| Admin snapshot | `/admin` | Waitlist + WTP by plan + install counts by source/SKU (reads the files above) |
 
 Do not treat empty or demo `.data/` files as Gate 01 pass evidence. Thresholds remain in §F4 above.

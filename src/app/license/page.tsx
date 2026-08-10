@@ -19,7 +19,7 @@ import {
 export const metadata: Metadata = {
   title: "License",
   description:
-    "Plain-language Free, Personal, and Team rights for Frameline materials. Full terms pin per order.",
+    "Plain-language Free, Static, Personal, and Team rights for Frameline materials. Full terms pin per order.",
 };
 
 export default function LicensePage() {

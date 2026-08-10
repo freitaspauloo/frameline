@@ -32,6 +32,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { WaitlistForm } from "@/components/waitlist-form";
+import { recordInstallIntent } from "@/lib/install-intent";
 import {
   MATERIALS_CATALOG,
   getFeaturedCollections,
@@ -65,6 +66,11 @@ const PRICING_TEASERS = [
     name: "Free",
     price: "$0",
     blurb: "Evaluate with excellent free materials.",
+  },
+  {
+    name: "Static",
+    price: "$19",
+    blurb: "Still exports for decks and social.",
   },
   {
     name: "Personal",
@@ -154,6 +160,11 @@ export function FramelineHomePage() {
   async function copyInstall() {
     try {
       await navigator.clipboard.writeText(INSTALL_SNIPPET);
+      recordInstallIntent({
+        slug: "aurora-mesh",
+        source: "home",
+        path: "cli",
+      });
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1800);
     } catch {
@@ -504,7 +515,7 @@ export function FramelineHomePage() {
           />
         </MarketingSectionHeader>
 
-        <MarketingRuledGrid>
+        <MarketingRuledGrid cols={2}>
           {PRICING_TEASERS.map((tier) => (
             <MarketingRuledCell key={tier.name} className="space-y-3">
               <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">

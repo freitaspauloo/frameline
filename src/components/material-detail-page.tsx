@@ -15,6 +15,7 @@ import {
 } from "@/components/marketing-shell";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { recordInstallIntent } from "@/lib/install-intent";
 import { getLicensePlan } from "@/lib/license-plans";
 import { cn } from "@/lib/utils";
 import {
@@ -266,12 +267,22 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
 
   async function copySnippet() {
     await navigator.clipboard.writeText(snippet);
+    recordInstallIntent({
+      slug,
+      source: "material-detail",
+      path: "jsx",
+    });
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1600);
   }
 
   async function copyCli() {
     await navigator.clipboard.writeText(cliSnippet);
+    recordInstallIntent({
+      slug,
+      source: "material-detail",
+      path: "cli",
+    });
     setCopiedCli(true);
     window.setTimeout(() => setCopiedCli(false), 1600);
   }

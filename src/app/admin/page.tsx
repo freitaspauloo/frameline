@@ -79,6 +79,61 @@ async function readWtp(): Promise<{
   }
 }
 
+type InstallIntentEntry = {
+  slug?: string;
+  source?: string;
+  path?: string;
+  createdAt?: string;
+};
+
+async function readInstalls(): Promise<{
+  total: number;
+  bySource: Record<string, number>;
+  bySlug: Record<string, number>;
+  recent: InstallIntentEntry[];
+  rawJson: string;
+}> {
+  const installsPath = path.join(process.cwd(), ".data", "installs.json");
+  try {
+    const raw = await readFile(installsPath, "utf8");
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) {
+      return {
+        total: 0,
+        bySource: {},
+        bySlug: {},
+        recent: [],
+        rawJson: "[]\n",
+      };
+    }
+    const entries = parsed as InstallIntentEntry[];
+    const bySource: Record<string, number> = {};
+    const bySlug: Record<string, number> = {};
+    for (const entry of entries) {
+      const source = typeof entry.source === "string" ? entry.source : "unknown";
+      bySource[source] = (bySource[source] ?? 0) + 1;
+      const slug = typeof entry.slug === "string" ? entry.slug : "unknown";
+      bySlug[slug] = (bySlug[slug] ?? 0) + 1;
+    }
+    const recent = [...entries].reverse().slice(0, 5);
+    return {
+      total: entries.length,
+      bySource,
+      bySlug,
+      recent,
+      rawJson: `${JSON.stringify(entries, null, 2)}\n`,
+    };
+  } catch {
+    return {
+      total: 0,
+      bySource: {},
+      bySlug: {},
+      recent: [],
+      rawJson: "[]\n",
+    };
+  }
+}
+
 function formatTs(iso: string | undefined): string {
   if (!iso) return "—";
   const d = new Date(iso);
@@ -96,6 +151,7 @@ export default async function AdminDashboardPage() {
   const waitlistCount = await readWaitlistCount();
   const inboxCount = await readContactCount();
   const wtp = await readWtp();
+  const installs = await readInstalls();
 
   const stats = [
     { label: "Materials", value: materialCount, href: "/admin/materials" },
@@ -107,10 +163,16 @@ export default async function AdminDashboardPage() {
     { label: "Orders", value: orders.length, href: "/admin/orders" },
     { label: "Inbox", value: inboxCount, href: "/admin/inbox" },
     { label: "Waitlist", value: waitlistCount, href: null },
+    { label: "Installs", value: installs.total, href: null },
   ] as const;
 
   const planOrder = ["static", "personal", "team"] as const;
-  const downloadHref = `data:application/json;charset=utf-8,${encodeURIComponent(wtp.rawJson)}`;
+  const sourceOrder = ["home", "free", "material-detail"] as const;
+  const wtpDownloadHref = `data:application/json;charset=utf-8,${encodeURIComponent(wtp.rawJson)}`;
+  const installsDownloadHref = `data:application/json;charset=utf-8,${encodeURIComponent(installs.rawJson)}`;
+  const topSlugs = Object.entries(installs.bySlug)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
 
   return (
     <div className="space-y-8">
@@ -125,7 +187,7 @@ export default async function AdminDashboardPage() {
         </p>
       </div>
 
-      <dl className="grid grid-cols-2 gap-px border border-border bg-border sm:grid-cols-3 lg:grid-cols-5">
+      <dl className="grid grid-cols-2 gap-px border border-border bg-border sm:grid-cols-3 lg:grid-cols-6">
         {stats.map((stat) => {
           const inner = (
             <>
@@ -163,7 +225,7 @@ export default async function AdminDashboardPage() {
             <a
               className="font-mono text-[11px] text-foreground underline underline-offset-4 hover:text-muted-foreground"
               download="wtp.json"
-              href={downloadHref}
+              href={wtpDownloadHref}
             >
               Download wtp.json
             </a>
@@ -234,6 +296,112 @@ export default async function AdminDashboardPage() {
               ))}
             </ul>
           )}
+        </div>
+      </section>
+
+      <section className="border border-border p-4 sm:p-6">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+            Install intent
+          </h2>
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="font-mono text-sm tabular-nums text-foreground">
+              {installs.total} total
+            </p>
+            <a
+              className="font-mono text-[11px] text-foreground underline underline-offset-4 hover:text-muted-foreground"
+              download="installs.json"
+              href={installsDownloadHref}
+            >
+              Download installs.json
+            </a>
+          </div>
+        </div>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Fake npx / copy beacons from{" "}
+          <span className="font-mono">.data/installs.json</span> (home, free,
+          material detail). Instance-local — Gate G4 needs a durable store in
+          production.
+        </p>
+        <dl className="mt-6 grid grid-cols-3 gap-px border border-border bg-border">
+          {sourceOrder.map((source) => (
+            <div className="bg-background p-4" key={source}>
+              <dt className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                {source}
+              </dt>
+              <dd className="mt-3 font-mono text-2xl tabular-nums text-foreground">
+                {installs.bySource[source] ?? 0}
+              </dd>
+            </div>
+          ))}
+        </dl>
+
+        <div className="mt-6 grid gap-6 lg:grid-cols-2">
+          <div>
+            <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+              Top SKUs
+            </p>
+            {topSlugs.length === 0 ? (
+              <p className="mt-3 font-mono text-[11px] text-muted-foreground">
+                No installs yet.
+              </p>
+            ) : (
+              <ul className="mt-3 divide-y divide-border border border-border">
+                {topSlugs.map(([slug, count]) => (
+                  <li
+                    className="flex items-baseline justify-between gap-4 px-3 py-2.5 font-mono text-[11px]"
+                    key={slug}
+                  >
+                    <span className="text-foreground">{slug}</span>
+                    <span className="tabular-nums text-muted-foreground">
+                      {count}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <div>
+            <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+              Last 5
+            </p>
+            {installs.recent.length === 0 ? (
+              <p className="mt-3 font-mono text-[11px] text-muted-foreground">
+                No installs yet.
+              </p>
+            ) : (
+              <ul className="mt-3 divide-y divide-border border border-border">
+                {installs.recent.map((entry, i) => (
+                  <li
+                    className="flex flex-col gap-1 px-3 py-2.5 font-mono text-[11px] sm:flex-row sm:items-baseline sm:justify-between sm:gap-4"
+                    key={`${entry.createdAt ?? "x"}-${entry.slug ?? "s"}-${i}`}
+                  >
+                    <span className="text-foreground">
+                      <span className="text-muted-foreground">sku</span>{" "}
+                      {entry.slug ?? "unknown"}
+                      {entry.path ? (
+                        <>
+                          {" · "}
+                          <span className="text-muted-foreground">path</span>{" "}
+                          {entry.path}
+                        </>
+                      ) : null}
+                      {entry.source ? (
+                        <>
+                          {" · "}
+                          <span className="text-muted-foreground">src</span>{" "}
+                          {entry.source}
+                        </>
+                      ) : null}
+                    </span>
+                    <span className="shrink-0 tabular-nums text-muted-foreground">
+                      {formatTs(entry.createdAt)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       </section>
 
