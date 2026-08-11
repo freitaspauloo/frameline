@@ -4,20 +4,12 @@ import * as React from "react";
 import Link from "next/link";
 
 import { MaterialPreview } from "@/components/material-preview";
-import { marketingPadX } from "@/components/marketing-shell";
 import { useMarqueeLoop } from "@/components/motion/use-marquee-loop";
 import type { MaterialCatalogEntry } from "@/materials";
 import { cn } from "@/lib/utils";
 
 /** Minimum tiles per copy — the catalog repeats until the row overruns the rail. */
 const MIN_TILES = 6;
-
-/** Fine halftone laid over each still so tiles read as print, not as cards. */
-const HALFTONE: React.CSSProperties = {
-  backgroundImage:
-    "radial-gradient(circle, rgba(255,255,255,0.28) 0.5px, transparent 0.75px)",
-  backgroundSize: "4px 4px",
-};
 
 function fill(entries: readonly MaterialCatalogEntry[]) {
   if (entries.length === 0) return [];
@@ -44,7 +36,6 @@ function Tile({
     >
       <div className="relative aspect-[16/9] overflow-hidden bg-foreground">
         <MaterialPreview entry={entry} />
-        <span aria-hidden className="absolute inset-0" style={HALFTONE} />
         <span className="absolute inset-0 bg-background opacity-0 transition-opacity duration-500 group-hover:opacity-15" />
       </div>
       <div className="flex items-baseline justify-between gap-3 border-t border-border px-4 py-3">
@@ -67,14 +58,10 @@ function Tile({
 export function MaterialStrip({
   className,
   entries,
-  hint = "Auto-scroll · hover to hold",
-  label = "In rotation",
   speed = 34,
 }: {
   className?: string;
   entries: readonly MaterialCatalogEntry[];
-  hint?: string;
-  label?: string;
   speed?: number;
 }) {
   const hostRef = React.useRef<HTMLDivElement>(null);
@@ -86,26 +73,7 @@ export function MaterialStrip({
   if (tiles.length === 0) return null;
 
   return (
-    <div
-      className={cn(
-        "border-t border-border bg-background/90 backdrop-blur-[2px]",
-        className,
-      )}
-    >
-      <div
-        className={cn(
-          "flex items-center justify-between gap-4 border-b border-border py-2.5",
-          marketingPadX,
-        )}
-      >
-        <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-          {label}
-        </p>
-        <p className="font-mono text-[10px] tracking-widest text-border uppercase">
-          {reduced ? "Swipe to browse" : hint}
-        </p>
-      </div>
-
+    <div className={cn("bg-background/90 backdrop-blur-[2px]", className)}>
       <div
         ref={hostRef}
         className={cn(
