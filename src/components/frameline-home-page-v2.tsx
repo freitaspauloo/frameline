@@ -277,7 +277,7 @@ export function FramelineHomePageV2() {
 
           {/* —— Hero —— */}
           <section
-            className="relative isolate flex min-h-dvh flex-col bg-background"
+            className="relative isolate flex min-h-dvh flex-col bg-background pb-12 lg:pb-20"
             data-frameline-section
             data-label="Index"
             id="top"
@@ -352,7 +352,7 @@ export function FramelineHomePageV2() {
 
               <div
                 className={cn(
-                  "grid grid-cols-1 gap-y-8 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 lg:gap-x-12 lg:gap-y-12",
+                  "grid grid-cols-1 gap-y-12 py-10 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-14 lg:grid-cols-2 lg:gap-x-12 lg:gap-y-16 lg:py-14",
                   marketingPadX,
                   "pb-2",
                 )}
@@ -413,7 +413,7 @@ export function FramelineHomePageV2() {
 
               <div
                 className={cn(
-                  "flex justify-center py-10",
+                  "flex justify-center py-14 lg:py-20",
                   marketingPadX,
                 )}
               >
