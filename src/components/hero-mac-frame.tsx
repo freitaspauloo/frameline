@@ -466,12 +466,12 @@ export function HeroMacFrame({ className }: { className?: string }) {
     <div
       ref={scope}
       className={cn(
-        "hero-mac-intro relative isolate flex h-full min-h-[min(62dvh,720px)] w-full flex-col",
+        "hero-mac-intro relative isolate flex h-full min-h-[min(62dvh,720px)] w-full flex-col pb-12 lg:pb-20",
         bgReady && "hero-mac-intro--bg-ready",
         className,
       )}
     >
-      {/* Dither atmosphere — clipped to the marketing shell rails (max-w-7xl) */}
+      {/* Dither atmosphere — fills the frame including bottom pad to the next hairline */}
       <div
         aria-hidden
         className="absolute inset-y-0 left-1/2 z-0 w-full max-w-7xl -translate-x-1/2 overflow-hidden bg-[#F3F5FE]"

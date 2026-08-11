@@ -326,7 +326,7 @@ export function FramelineHomePageV2() {
               </div>
             </IntroStagger>
 
-            <div className="relative mt-auto min-h-[min(62dvh,720px)] w-full flex-1 overflow-visible pb-12 lg:pb-20">
+            <div className="relative mt-auto min-h-[min(62dvh,720px)] w-full flex-1 overflow-visible">
               <HeroMacFrame />
             </div>
           </section>
