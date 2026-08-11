@@ -310,27 +310,6 @@ export function FramelineHomePageV2() {
           <MarketingSection id="clients">
             <InkRule />
             <SectionBand label="Shipped with">
-              <div
-                className={cn(
-                  "relative flex flex-col gap-3 border-b border-border py-10 sm:flex-row sm:items-baseline sm:justify-between",
-                  marketingPadX,
-                )}
-              >
-                <MarketingRailCross edge="bottom" />
-                <p
-                  className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase"
-                  data-reveal
-                >
-                  Shipped with
-                </p>
-                <p
-                  className="max-w-[52ch] font-mono text-[11px] leading-relaxed text-muted-foreground"
-                  data-reveal
-                >
-                  Placeholder credits — the studios and shops Frameline is drawn
-                  for.
-                </p>
-              </div>
               <LogoWall names={CREDITS} />
             </SectionBand>
           </MarketingSection>
