@@ -99,7 +99,7 @@ export function MarketingSection({
       className={cn(
         /* Single top hairline — previous blocks never paint a bottom on the same edge */
         /* No content-visibility: it applies paint containment and clips rail crosses */
-        "overflow-visible border-t border-border py-16 lg:py-28",
+        "overflow-visible border-t border-border",
         className,
       )}
       id={id}
@@ -109,6 +109,33 @@ export function MarketingSection({
         {children}
       </div>
     </section>
+  );
+}
+
+/**
+ * Empty white band between ruled sections — adds vertical air without
+ * inflating section content. The next section’s border-t draws the hairline.
+ */
+export function MarketingSectionSpacer({
+  className,
+  size = "md",
+}: {
+  className?: string;
+  size?: "sm" | "md" | "lg";
+}) {
+  return (
+    <div
+      aria-hidden
+      className={cn(
+        "relative bg-background",
+        size === "sm" && "h-8 lg:h-12",
+        size === "md" && "h-12 lg:h-20",
+        size === "lg" && "h-16 lg:h-28",
+        className,
+      )}
+    >
+      <div className="relative mx-auto h-full max-w-7xl overflow-visible" />
+    </div>
   );
 }
 
@@ -128,7 +155,7 @@ export function MarketingSectionHeader({
       )}
     >
       <MarketingRailCross edge="bottom" />
-      <div className={cn("py-16 lg:py-24", marketingPadX)}>{children}</div>
+      <div className={cn("py-14 lg:py-20", marketingPadX)}>{children}</div>
     </div>
   );
 }

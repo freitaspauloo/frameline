@@ -18,6 +18,7 @@ import {
   MarketingRuledGrid,
   MarketingSection,
   MarketingSectionHeader,
+  MarketingSectionSpacer,
   MarketingShell,
   MarketingSplit,
   marketingPadX,
@@ -277,7 +278,7 @@ export function FramelineHomePageV2() {
 
           {/* —— Hero —— */}
           <section
-            className="relative isolate flex min-h-dvh flex-col bg-background pb-12 lg:pb-20"
+            className="relative isolate flex min-h-dvh flex-col bg-background"
             data-frameline-section
             data-label="Index"
             id="top"
@@ -330,13 +331,17 @@ export function FramelineHomePageV2() {
             </div>
           </section>
 
+          <MarketingSectionSpacer size="lg" />
+
           {/* —— Credits —— */}
-          <MarketingSection className="py-0" id="clients">
+          <MarketingSection id="clients">
             <InkRule />
             <SectionBand label="Shipped with">
               <LogoWall names={CREDITS} />
             </SectionBand>
           </MarketingSection>
+
+          <MarketingSectionSpacer size="lg" />
 
           {/* —— Catalog preview —— */}
           <MarketingSection id="browse">
@@ -352,7 +357,7 @@ export function FramelineHomePageV2() {
 
               <div
                 className={cn(
-                  "grid grid-cols-1 gap-y-12 py-10 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-14 lg:grid-cols-2 lg:gap-x-12 lg:gap-y-16 lg:py-14",
+                  "grid grid-cols-1 gap-y-8 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 lg:gap-x-12 lg:gap-y-12",
                   marketingPadX,
                   "pb-2",
                 )}
@@ -413,7 +418,7 @@ export function FramelineHomePageV2() {
 
               <div
                 className={cn(
-                  "flex justify-center py-14 lg:py-20",
+                  "flex justify-center py-10",
                   marketingPadX,
                 )}
               >
@@ -432,6 +437,8 @@ export function FramelineHomePageV2() {
             </SectionBand>
           </MarketingSection>
 
+          <MarketingSectionSpacer size="lg" />
+
           {/* —— Pinned sequence —— */}
           <MarketingSection id="showcase">
             <InkRule />
@@ -440,6 +447,8 @@ export function FramelineHomePageV2() {
             </SectionBand>
           </MarketingSection>
 
+          <MarketingSectionSpacer size="md" />
+
           {/* —— In rotation (moved off hero) —— */}
           <MarketingSection id="rotation">
             <InkRule />
@@ -447,6 +456,8 @@ export function FramelineHomePageV2() {
               <MaterialStrip entries={PUBLIC_CATALOG} />
             </SectionBand>
           </MarketingSection>
+
+          <MarketingSectionSpacer size="lg" />
 
           {/* —— Popular collections —— */}
           <MarketingSection id="collections">
@@ -513,6 +524,8 @@ export function FramelineHomePageV2() {
             </SectionBand>
           </MarketingSection>
 
+          <MarketingSectionSpacer size="lg" />
+
           {/* —— Install —— */}
           <MarketingSection id="install">
             <InkRule />
@@ -562,6 +575,8 @@ export function FramelineHomePageV2() {
               />
             </SectionBand>
           </MarketingSection>
+
+          <MarketingSectionSpacer size="lg" />
 
           {/* —— Configurator —— */}
           <MarketingSection id="configurator">
@@ -615,6 +630,8 @@ export function FramelineHomePageV2() {
             </SectionBand>
           </MarketingSection>
 
+          <MarketingSectionSpacer size="lg" />
+
           {/* —— Why Frameline —— */}
           <MarketingSection id="why">
             <InkRule />
@@ -647,6 +664,8 @@ export function FramelineHomePageV2() {
               </MarketingRuledGrid>
             </SectionBand>
           </MarketingSection>
+
+          <MarketingSectionSpacer size="lg" />
 
           {/* —— Pricing tease —— */}
           <MarketingSection id="pricing">
@@ -696,6 +715,8 @@ export function FramelineHomePageV2() {
             </SectionBand>
           </MarketingSection>
 
+          <MarketingSectionSpacer size="lg" />
+
           {/* —— FAQ —— */}
           <MarketingSection id="faq">
             <InkRule />
@@ -738,6 +759,8 @@ export function FramelineHomePageV2() {
               />
             </SectionBand>
           </MarketingSection>
+
+          <MarketingSectionSpacer size="lg" />
 
           {/* —— Closing CTA —— */}
           <MarketingSection id="start">
