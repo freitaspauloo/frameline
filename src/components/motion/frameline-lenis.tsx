@@ -51,8 +51,8 @@ export function FramelineLenis({ children }: { children: React.ReactNode }) {
     activeLenis = lenis;
 
     ScrollTrigger.scrollerProxy(document.documentElement, {
-      scrollTop(value) {
-        if (arguments.length) {
+      scrollTop(value?: number) {
+        if (typeof value === "number") {
           lenis.scrollTo(value, { immediate: true });
         }
         return lenis.scroll;
