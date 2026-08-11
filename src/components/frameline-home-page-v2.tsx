@@ -413,7 +413,7 @@ export function FramelineHomePageV2() {
 
               <div
                 className={cn(
-                  "flex justify-center border-t border-border py-10",
+                  "flex justify-center py-10",
                   marketingPadX,
                 )}
               >
