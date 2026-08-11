@@ -261,19 +261,34 @@
   animation: frameline-material-in 1.4s var(--ease-emil) both;
 }
 
-/* Hero mac frame — hide window chrome until GSAP intro (BG must paint first) */
-.hero-mac-intro [data-hero-stage="window"],
-.hero-mac-intro [data-hero-stage="toolbar"],
-.hero-mac-intro [data-hero-stage="dock"] {
+/* Hero mac frame — BG dither must paint before any window chrome */
+.hero-mac-intro:not(.hero-mac-intro--bg-ready) [data-hero-stage="chrome"] {
+  display: none !important;
+}
+
+.hero-mac-intro--bg-ready [data-hero-stage="window"],
+.hero-mac-intro--bg-ready [data-hero-stage="dock"] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.hero-mac-intro--bg-ready [data-hero-stage="toolbar"] {
+  display: none;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero-mac-intro:not(.hero-mac-intro--bg-ready) [data-hero-stage="chrome"] {
+    display: block !important;
+  }
+
   .hero-mac-intro [data-hero-stage="window"],
   .hero-mac-intro [data-hero-stage="toolbar"],
   .hero-mac-intro [data-hero-stage="dock"] {
+    display: revert;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;

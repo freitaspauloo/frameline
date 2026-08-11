@@ -213,7 +213,10 @@ function HeroInkDitherPlayground() {
       </div>
 
       {/* Configurator + access — mirrors updated material-detail-page */}
-      <div className="flex min-h-0 flex-col divide-y divide-border lg:border-l lg:border-border">
+      <div
+        className="flex min-h-0 flex-col divide-y divide-border lg:border-l lg:border-border"
+        data-hero-stage="toolbar"
+      >
         <section className="space-y-4 p-4 sm:p-5">
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
@@ -369,13 +372,26 @@ function HeroInkDitherPlayground() {
 export function HeroMacFrame({ className }: { className?: string }) {
   const reduced = useReducedMotion();
   const scope = React.useRef<HTMLDivElement>(null);
+  const [bgReady, setBgReady] = React.useState(false);
+
+  const handleBgReady = React.useCallback(() => {
+    setBgReady(true);
+  }, []);
+
+  React.useEffect(() => {
+    if (reduced || bgReady) return;
+    const fallback = window.setTimeout(() => setBgReady(true), 2800);
+    return () => window.clearTimeout(fallback);
+  }, [bgReady, reduced]);
 
   useGSAP(
     () => {
       const root = scope.current;
       if (!root) return;
 
-      const bg = root.querySelector<HTMLElement>('[data-hero-stage="bg"]');
+      const chrome = root.querySelector<HTMLElement>(
+        '[data-hero-stage="chrome"]',
+      );
       const windowEl = root.querySelector<HTMLElement>(
         '[data-hero-stage="window"]',
       );
@@ -384,10 +400,10 @@ export function HeroMacFrame({ className }: { className?: string }) {
       );
       const dock = root.querySelector<HTMLElement>('[data-hero-stage="dock"]');
 
-      if (!bg || !windowEl || !toolbar) return;
+      if (!chrome || !windowEl || !toolbar) return;
 
       if (reduced) {
-        gsap.set([bg, windowEl, toolbar, dock], {
+        gsap.set([chrome, windowEl, toolbar, dock], {
           opacity: 1,
           visibility: "visible",
           scale: 1,
@@ -396,8 +412,9 @@ export function HeroMacFrame({ className }: { className?: string }) {
         return;
       }
 
-      // BG is visible from first paint — only window chrome waits.
-      gsap.set(bg, { opacity: 1, visibility: "visible" });
+      if (!bgReady) return;
+
+      gsap.set(chrome, { opacity: 1, visibility: "visible" });
       gsap.set(windowEl, {
         opacity: 0,
         visibility: "hidden",
@@ -413,8 +430,6 @@ export function HeroMacFrame({ className }: { className?: string }) {
 
       gsap
         .timeline({ defaults: { ease: "power3.out" } })
-        // Let the dither atmosphere establish before any chrome appears.
-        .to({}, { duration: 0.65 })
         .to(windowEl, {
           opacity: 1,
           visibility: "visible",
@@ -425,12 +440,13 @@ export function HeroMacFrame({ className }: { className?: string }) {
         .to(
           toolbar,
           {
+            display: "flex",
             opacity: 1,
             visibility: "visible",
-            duration: 0.28,
+            duration: 0.32,
             pointerEvents: "auto",
           },
-          "+=0.1",
+          "+=0.12",
         )
         .to(
           dock,
@@ -440,10 +456,10 @@ export function HeroMacFrame({ className }: { className?: string }) {
             duration: 0.24,
             pointerEvents: "auto",
           },
-          "-=0.06",
+          "-=0.08",
         );
     },
-    { dependencies: [reduced], scope },
+    { dependencies: [bgReady, reduced], scope },
   );
 
   return (
@@ -451,6 +467,7 @@ export function HeroMacFrame({ className }: { className?: string }) {
       ref={scope}
       className={cn(
         "hero-mac-intro relative isolate flex h-full min-h-[min(62dvh,720px)] w-full flex-col",
+        bgReady && "hero-mac-intro--bg-ready",
         className,
       )}
     >
@@ -460,20 +477,24 @@ export function HeroMacFrame({ className }: { className?: string }) {
         className="absolute inset-y-0 left-1/2 z-0 w-full max-w-7xl -translate-x-1/2 overflow-hidden bg-white"
         data-hero-stage="bg"
       >
-        <HeroDither colorBack={HERO_PAPER} colorFront={HERO_INK} />
+        <HeroDither
+          colorBack={HERO_PAPER}
+          colorFront={HERO_INK}
+          onReady={handleBgReady}
+        />
       </div>
 
-      {/* Floating mac window */}
-      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-end justify-center px-4 pt-4 pb-6 sm:px-6 sm:pb-7 lg:px-8">
+      {/* Floating mac window — fully suppressed until BG shader has painted */}
+      <div
+        className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-end justify-center px-4 pt-4 pb-6 sm:px-6 sm:pb-7 lg:px-8"
+        data-hero-stage="chrome"
+      >
         <div className="relative w-full max-w-5xl pb-8 sm:pb-10">
           <div
             className="flex max-h-[min(70dvh,640px)] flex-col overflow-hidden rounded-[16px] border border-border bg-background shadow-[0_28px_90px_rgba(0,0,0,0.22)]"
             data-hero-stage="window"
           >
-            <div
-              className="relative z-20 flex h-11 shrink-0 items-center border-b border-border bg-muted/60 px-4"
-              data-hero-stage="toolbar"
-            >
+            <div className="relative z-20 flex h-11 shrink-0 items-center border-b border-border bg-muted/60 px-4">
               <TrafficLights />
             </div>
             <HeroInkDitherPlayground />

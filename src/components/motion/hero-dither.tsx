@@ -41,14 +41,28 @@ export function HeroDither({
   className,
   colorBack,
   colorFront,
+  onReady,
 }: {
   className?: string;
   colorBack: string;
   colorFront: string;
+  /** Fires once the shader mount has painted its first frame. */
+  onReady?: () => void;
 }) {
   const reduced = useReducedMotion();
   const hostRef = React.useRef<HTMLDivElement>(null);
   const shaderRef = React.useRef<PaperShaderElement>(null);
+  const readyFiredRef = React.useRef(false);
+
+  const fireReady = React.useCallback(() => {
+    if (readyFiredRef.current) return;
+    readyFiredRef.current = true;
+    onReady?.();
+  }, [onReady]);
+
+  React.useEffect(() => {
+    if (reduced) fireReady();
+  }, [reduced, fireReady]);
 
   useGSAP(
     () => {
@@ -62,6 +76,10 @@ export function HeroDither({
       const draw = () => {
         const mount = shaderRef.current?.paperShaderMount;
         if (!mount) return;
+
+        if (!readyFiredRef.current) {
+          fireReady();
+        }
 
         live.pointerX += (pointer.x - live.pointerX) * 0.06;
         live.pointerY += (pointer.y - live.pointerY) * 0.06;
