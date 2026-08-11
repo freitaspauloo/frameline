@@ -22,6 +22,11 @@ const HERO_DOCK_APPS: DockApp[] = [
     icon: "/dock/notion.png",
   },
   {
+    id: "frameline",
+    name: "Frameline",
+    icon: "/dock/frameline.svg",
+  },
+  {
     id: "paper",
     name: "Paper",
     icon: "/dock/paper.png",
@@ -47,6 +52,7 @@ const APP_HREF: Record<string, string> = {
   finder: "/materials",
   cursor: "https://cursor.com",
   notion: "https://www.notion.so",
+  frameline: "/",
   paper: "https://paper.design",
   yc: "https://www.ycombinator.com",
   terminal: "/docs",

@@ -1,7 +1,8 @@
 import { cn } from "@/lib/utils";
 
-/** Figma · Group 1 (151:37) — Frameline mark. Brand blue kept as #3A58F0. */
+/** Figma · Brand · Logos (175:29) — four-segment pinwheel mark */
 const BRAND_BLUE = "#3A58F0";
+const VIEWBOX = "0 0 213 218";
 
 const MARK_PATHS = [
   "M0 120.2C0.554261 120.48 3.4839 125.159 4.16224 126.128C8.8822 132.873 18.2166 139.469 26.1013 141.819C34.5256 144.33 48.5035 143.752 57.6861 143.754L85.5502 143.705C91.9461 143.659 99.9305 143.204 106.061 144.884C128.355 150.993 136.644 178.387 125.389 197.511C123.445 200.816 121.708 202.923 119.02 205.665C103.776 219.755 90.2357 217.131 70.8362 217.237C59.9684 217.297 50.4534 217.891 39.8293 214.759C18.9511 208.604 3.65717 190.181 0.627506 168.749C-0.120983 163.381 0.108777 157.281 0.103493 151.757L0.0942013 131.071C0.0932903 127.813 0.213906 123.38 0 120.2Z",
@@ -21,18 +22,22 @@ type LogoProps = {
   className?: string;
 };
 
-function FramelineMark({
+function PinwheelMark({
   className,
   fill = BRAND_BLUE,
-}: LogoProps & { fill?: string }) {
+  canvasFill,
+}: LogoProps & { fill?: string; canvasFill?: string }) {
   return (
     <svg
       aria-hidden
       className={cn("aspect-[213/218] shrink-0", className)}
       fill="none"
-      viewBox="0 0 213 218"
+      viewBox={VIEWBOX}
       xmlns="http://www.w3.org/2000/svg"
     >
+      {canvasFill ? (
+        <rect fill={canvasFill} height="218" width="213" />
+      ) : null}
       {MARK_PATHS.map((d) => (
         <path key={d.slice(0, 24)} d={d} fill={fill} />
       ))}
@@ -50,26 +55,34 @@ function FramelineMark({
   );
 }
 
-/** Primary mark — brand blue on transparent */
+/** 1 · logo blue — blue pinwheel on white field */
 export function Logo01({ className }: LogoProps) {
-  return <FramelineMark className={className} fill={BRAND_BLUE} />;
+  return (
+    <PinwheelMark canvasFill="#FFFFFF" className={className} fill={BRAND_BLUE} />
+  );
 }
 
-/** Inverse mark — white fill for dark surfaces */
+/** 2 · logo white — white pinwheel on blue field (dock / dark surfaces) */
 export function Logo02({ className }: LogoProps) {
-  return <FramelineMark className={className} fill="#FFFFFF" />;
+  return (
+    <PinwheelMark
+      canvasFill={BRAND_BLUE}
+      className={className}
+      fill="#FFFFFF"
+    />
+  );
 }
 
-/** Bare mark for nav & small contexts */
+/** logo no bg — blue pinwheel on transparent */
 export function LogoMark({ className }: LogoProps) {
-  return <FramelineMark className={className} fill={BRAND_BLUE} />;
+  return <PinwheelMark className={className} fill={BRAND_BLUE} />;
 }
 
 /** Horizontal lockup — mark + Frameline wordmark */
 export function LogoLockupHorizontal({ className }: LogoProps) {
   return (
     <span className={cn("inline-flex items-center gap-2", className)}>
-      <FramelineMark className="size-8" fill={BRAND_BLUE} />
+      <LogoMark className="size-8" />
       <span className="font-heading text-sm font-semibold tracking-tight text-foreground">
         Frameline
       </span>
@@ -81,7 +94,7 @@ export function LogoLockupHorizontal({ className }: LogoProps) {
 export function LogoLockupStacked({ className }: LogoProps) {
   return (
     <span className={cn("inline-flex flex-col items-center gap-2", className)}>
-      <FramelineMark className="size-12" fill={BRAND_BLUE} />
+      <LogoMark className="size-12" />
       <span className="font-heading text-sm font-semibold tracking-tight text-foreground">
         Frameline
       </span>
