@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Logo01 } from "@/components/relay-ui";
+import { LogoMark } from "@/components/relay-ui";
 import { Button } from "@/components/ui/button";
 import {
   MarketingRailCross,
@@ -81,7 +81,7 @@ export function MarketingNavbar({
             className="justify-self-center"
             href="/"
           >
-            <Logo01 className="size-8" />
+            <LogoMark className="size-8" />
           </Link>
 
           <div className="flex items-center justify-end gap-2">

@@ -24,7 +24,7 @@ const HERO_DOCK_APPS: DockApp[] = [
   {
     id: "frameline",
     name: "Frameline",
-    icon: "/dock/frameline.svg",
+    icon: "/dock/frameline.png",
   },
   {
     id: "paper",

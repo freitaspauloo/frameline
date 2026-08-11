@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 
-import { Logo01 } from "@/components/relay-ui";
+import { LogoMark } from "@/components/relay-ui";
 import { cn } from "@/lib/utils";
 
 import { WfLabel } from "./primitives";
@@ -38,7 +38,7 @@ export function WireframeShell({
       <header className="sticky top-0 z-50 border-b border-relay-border/80 bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-6 lg:px-8">
           <Link className="flex shrink-0 items-center gap-2" href="/wireframes">
-            <Logo01 className="size-9" />
+            <LogoMark className="size-9" />
             <span className="hidden text-sm font-medium tracking-tight sm:inline">
               Frameline
             </span>

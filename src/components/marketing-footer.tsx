@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Logo01 } from "@/components/relay-ui";
+import { LogoMark } from "@/components/relay-ui";
 import {
   MarketingRuledCell,
   MarketingRuledGrid,
@@ -57,7 +57,7 @@ export function MarketingFooter() {
       <MarketingRuledGrid cols={2} className="lg:grid-cols-[1.2fr_2fr]">
         <MarketingRuledCell className="space-y-4 lg:col-span-1">
           <Link className="inline-flex items-center gap-2" href="/">
-            <Logo01 className="size-8" />
+            <LogoMark className="size-8" />
             <span className="font-heading text-sm font-semibold tracking-tight">
               Frameline
             </span>
