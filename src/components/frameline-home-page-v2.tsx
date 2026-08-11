@@ -326,12 +326,10 @@ export function FramelineHomePageV2() {
               </div>
             </IntroStagger>
 
-            <div className="relative mt-auto min-h-[min(62dvh,720px)] w-full flex-1 overflow-visible">
+            <div className="relative mt-auto min-h-[min(62dvh,720px)] w-full flex-1 overflow-visible pb-12 lg:pb-20">
               <HeroMacFrame />
             </div>
           </section>
-
-          <MarketingSectionSpacer size="lg" />
 
           {/* —— Credits —— */}
           <MarketingSection id="clients">
