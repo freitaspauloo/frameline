@@ -34,7 +34,7 @@ const HERO_DOCK_APPS: DockApp[] = [
   {
     id: "yc",
     name: "Y Combinator",
-    icon: "/dock/ycombinator.svg",
+    icon: "/dock/ycombinator.png",
   },
   {
     id: "terminal",
