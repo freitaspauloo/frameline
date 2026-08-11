@@ -486,10 +486,10 @@ export function HeroMacFrame({ className }: { className?: string }) {
 
       {/* Floating mac window — fully suppressed until BG shader has painted */}
       <div
-        className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-end justify-center px-4 pt-4 pb-6 sm:px-6 sm:pb-7 lg:px-8"
+        className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-end justify-center px-4 pt-4 sm:px-6 lg:px-8"
         data-hero-stage="chrome"
       >
-        <div className="relative w-full max-w-5xl pb-8 sm:pb-10">
+        <div className="relative w-full max-w-5xl">
           <div
             className="flex max-h-[min(70dvh,640px)] flex-col overflow-hidden rounded-[16px] border border-border bg-background shadow-[0_28px_90px_rgba(0,0,0,0.22)]"
             data-hero-stage="window"
