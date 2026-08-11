@@ -1,3 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Paper">
-  <image href="paper.png" x="106" y="106" width="300" height="300" preserveAspectRatio="xMidYMid meet" />
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" role="img" aria-label="Paper">
+  <image xlink:href="/dock/paper.png" href="/dock/paper.png" x="0" y="0" width="512" height="512" preserveAspectRatio="xMidYMid meet" />
 </svg>

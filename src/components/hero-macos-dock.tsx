@@ -14,12 +14,12 @@ const HERO_DOCK_APPS: DockApp[] = [
   {
     id: "cursor",
     name: "Cursor",
-    icon: "/dock/cursor.svg",
+    icon: "/dock/cursor.png",
   },
   {
     id: "notion",
     name: "Notion",
-    icon: "/dock/notion.svg",
+    icon: "/dock/notion.png",
   },
   {
     id: "frameline",
@@ -29,7 +29,7 @@ const HERO_DOCK_APPS: DockApp[] = [
   {
     id: "paper",
     name: "Paper",
-    icon: "/dock/paper.svg",
+    icon: "/dock/paper.png",
   },
   {
     id: "yc",
