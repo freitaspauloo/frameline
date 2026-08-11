@@ -603,7 +603,7 @@ export function FramelineHomePageV2() {
                 }
                 right={
                   <div
-                    className="relative aspect-[16/10] overflow-hidden bg-foreground lg:aspect-auto lg:min-h-[20rem]"
+                    className="pointer-events-none relative aspect-[16/10] overflow-hidden bg-foreground lg:aspect-auto lg:min-h-[20rem]"
                     data-reveal
                   >
                     {PUBLIC_CATALOG[0] ? (

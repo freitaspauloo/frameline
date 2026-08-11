@@ -43,11 +43,29 @@ export function FramelineLenis({ children }: { children: React.ReactNode }) {
 
     const lenis = new Lenis({
       autoRaf: false,
+      allowNestedScroll: true,
       duration: 1.05,
       easing: (t) => Math.min(1, 1.001 - 2 ** (-10 * t)),
       smoothWheel: true,
     });
     activeLenis = lenis;
+
+    ScrollTrigger.scrollerProxy(document.documentElement, {
+      scrollTop(value) {
+        if (arguments.length) {
+          lenis.scrollTo(value, { immediate: true });
+        }
+        return lenis.scroll;
+      },
+      getBoundingClientRect() {
+        return {
+          top: 0,
+          left: 0,
+          width: window.innerWidth,
+          height: window.innerHeight,
+        };
+      },
+    });
 
     lenis.on("scroll", ScrollTrigger.update);
 
@@ -92,6 +110,8 @@ export function FramelineLenis({ children }: { children: React.ReactNode }) {
       cancelAnimationFrame(refresh);
       document.removeEventListener("click", onClick);
       gsap.ticker.remove(ticker);
+      ScrollTrigger.scrollerProxy(document.documentElement, {});
+      ScrollTrigger.refresh();
       lenis.destroy();
       activeLenis = null;
       html.style.scrollBehavior = previousBehavior;

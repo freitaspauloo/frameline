@@ -162,7 +162,7 @@ function PinnedSequence({ stages }: { stages: readonly MaterialSequenceStage[] }
 
   return (
     <div ref={scope}>
-      <div ref={runwayRef} className="h-[300vh]">
+      <div ref={runwayRef} className="h-[220vh]">
         <div className="sticky top-16 flex h-[calc(100dvh-4rem)] divide-x divide-border">
           <div className="relative flex w-[38%] shrink-0 flex-col justify-between p-12">
             <div>
