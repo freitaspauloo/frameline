@@ -141,6 +141,30 @@ const VALUE_PROPS = [
   },
 ] as const;
 
+function CatalogSoonPlaceholder() {
+  return (
+    <div className="relative aspect-[16/9] overflow-hidden bg-[#F3F5FE] sm:aspect-[3/2]">
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `
+            radial-gradient(circle at 22% 36%, rgba(58, 88, 240, 0.2) 0%, transparent 46%),
+            radial-gradient(circle at 78% 64%, rgba(58, 88, 240, 0.14) 0%, transparent 44%),
+            repeating-linear-gradient(0deg, rgba(58, 88, 240, 0.05) 0 1px, transparent 1px 7px),
+            repeating-linear-gradient(90deg, rgba(58, 88, 240, 0.05) 0 1px, transparent 1px 7px)
+          `,
+        }}
+      />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="rounded-none border border-border/60 bg-background/70 px-3 py-1.5 font-mono text-[10px] tracking-[0.18em] text-muted-foreground uppercase backdrop-blur-sm">
+          Placeholder
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /** Marks a band for the ledger index without disturbing the ruled layout. */
 function SectionBand({
   children,
@@ -343,7 +367,7 @@ export function FramelineHomePageV2() {
                         className="flex h-full min-h-[22rem] flex-col border border-border"
                         data-reveal
                       >
-                        <div className="relative aspect-[16/9] bg-muted/50 sm:aspect-[3/2]" />
+                        <CatalogSoonPlaceholder />
                         <div className="space-y-3 border-t border-border p-7 sm:p-9">
                           <p className="font-mono text-[11px] text-muted-foreground">
                             Soon
