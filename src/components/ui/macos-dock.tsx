@@ -374,12 +374,11 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 alt={app.name}
-                className="size-full object-cover"
+                className="object-contain"
                 height={scaledSize}
                 src={app.icon}
                 draggable={false}
                 style={{
-                  borderRadius: `${Math.max(10, scaledSize * 0.22)}px`,
                   filter: `drop-shadow(0 ${scale > 1.2 ? Math.max(2, baseIconSize * 0.05) : Math.max(1, baseIconSize * 0.03)}px ${scale > 1.2 ? Math.max(4, baseIconSize * 0.1) : Math.max(2, baseIconSize * 0.06)}px rgba(0,0,0,${0.2 + (scale - 1) * 0.15}))`,
                 }}
                 width={scaledSize}
