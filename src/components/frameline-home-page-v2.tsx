@@ -331,7 +331,7 @@ export function FramelineHomePageV2() {
           </section>
 
           {/* —— Credits —— */}
-          <MarketingSection id="clients">
+          <MarketingSection className="py-0" id="clients">
             <InkRule />
             <SectionBand label="Shipped with">
               <LogoWall names={CREDITS} />

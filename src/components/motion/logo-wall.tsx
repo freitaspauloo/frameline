@@ -40,7 +40,7 @@ export function LogoWall({
             <span
               key={`${mirrored ? "b" : "a"}-${name}-${index}`}
               aria-hidden={mirrored || undefined}
-              className="flex shrink-0 items-center border-r border-border px-8 py-10 font-heading text-base font-medium tracking-[0.14em] text-muted-foreground uppercase opacity-70 transition-opacity duration-500 hover:opacity-100 sm:px-12 sm:py-12 sm:text-lg"
+              className="flex shrink-0 items-center border-r border-border px-8 py-6 font-heading text-base font-medium tracking-[0.14em] text-muted-foreground uppercase opacity-70 transition-opacity duration-500 hover:opacity-100 sm:px-12 sm:py-8 sm:text-lg"
             >
               {name}
             </span>
