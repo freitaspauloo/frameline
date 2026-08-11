@@ -374,7 +374,7 @@ const MacOSDock: React.FC<MacOSDockProps> = ({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 alt={app.name}
-                className="object-contain"
+                className="size-full object-contain"
                 height={scaledSize}
                 src={app.icon}
                 draggable={false}
