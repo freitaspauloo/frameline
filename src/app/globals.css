@@ -261,6 +261,50 @@
   animation: frameline-material-in 1.4s var(--ease-emil) both;
 }
 
+/* Hero mac frame — instant CSS atmosphere while WebGL compiles */
+@keyframes hero-bg-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.03);
+  }
+}
+
+.hero-mac-intro [data-hero-stage="bg"]::before {
+  content: "";
+  position: absolute;
+  inset: -8%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 28% 42%,
+      rgba(58, 88, 240, 0.22) 0%,
+      transparent 52%
+    ),
+    radial-gradient(
+      circle at 72% 58%,
+      rgba(58, 88, 240, 0.16) 0%,
+      transparent 48%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(58, 88, 240, 0.1) 0%,
+      transparent 55%
+    );
+  animation: hero-bg-breathe 2.4s ease-in-out infinite;
+  transition: opacity 0.35s ease;
+}
+
+.hero-mac-intro--bg-ready [data-hero-stage="bg"]::before {
+  opacity: 0;
+  animation: none;
+}
+
 /* Hero mac frame — BG dither must paint before any window chrome */
 .hero-mac-intro:not(.hero-mac-intro--bg-ready) [data-hero-stage="chrome"] {
   display: none !important;

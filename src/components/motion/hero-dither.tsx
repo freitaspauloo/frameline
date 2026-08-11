@@ -64,6 +64,22 @@ export function HeroDither({
     if (reduced) fireReady();
   }, [reduced, fireReady]);
 
+  // Paint the hero BG as soon as the shader mount exists — don't wait for IO/ticker.
+  React.useLayoutEffect(() => {
+    if (reduced) return;
+
+    let frame = 0;
+    const poll = () => {
+      if (shaderRef.current?.paperShaderMount) {
+        fireReady();
+        return;
+      }
+      frame = window.requestAnimationFrame(poll);
+    };
+    poll();
+    return () => window.cancelAnimationFrame(frame);
+  }, [reduced, fireReady]);
+
   useGSAP(
     () => {
       const host = hostRef.current;
@@ -109,6 +125,9 @@ export function HeroDither({
         shaderRef.current?.paperShaderMount?.setSpeed(0);
       };
 
+      // Hero is above the fold — start the shader loop immediately.
+      start();
+
       const io = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) start();
@@ -131,8 +150,7 @@ export function HeroDither({
 
       gsap.to(live, {
         develop: 0,
-        delay: 0.05,
-        duration: 1.9,
+        duration: 1.35,
         ease: "power2.out",
       });
 
@@ -168,7 +186,7 @@ export function HeroDither({
         className="absolute inset-0 h-full w-full"
         colorBack={colorBack}
         colorFront={colorFront}
-        maxPixelCount={1_280_000}
+        maxPixelCount={900_000}
         minPixelRatio={1}
         scale={REST.scale}
         shape="swirl"

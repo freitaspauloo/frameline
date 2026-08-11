@@ -380,7 +380,7 @@ export function HeroMacFrame({ className }: { className?: string }) {
 
   React.useEffect(() => {
     if (reduced || bgReady) return;
-    const fallback = window.setTimeout(() => setBgReady(true), 2800);
+    const fallback = window.setTimeout(() => setBgReady(true), 450);
     return () => window.clearTimeout(fallback);
   }, [bgReady, reduced]);
 
@@ -474,7 +474,7 @@ export function HeroMacFrame({ className }: { className?: string }) {
       {/* Dither atmosphere — clipped to the marketing shell rails (max-w-7xl) */}
       <div
         aria-hidden
-        className="absolute inset-y-0 left-1/2 z-0 w-full max-w-7xl -translate-x-1/2 overflow-hidden bg-white"
+        className="absolute inset-y-0 left-1/2 z-0 w-full max-w-7xl -translate-x-1/2 overflow-hidden bg-[#F3F5FE]"
         data-hero-stage="bg"
       >
         <HeroDither
