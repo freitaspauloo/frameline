@@ -5,9 +5,8 @@ type LogoProps = {
 };
 
 /**
- * Figma · Brand · Logos (175:29)
- * Rasterized from Assets/Group 1.png (exact mark).
- * 1 logo blue · 2 logo white · logo no bg
+ * Frameline brand mark — pinwheel frame (4 L-segments).
+ * 1 logo blue (blue on white) · 2 logo white (white on blue) · logo no bg
  */
 function LogoImg({
   alt,
