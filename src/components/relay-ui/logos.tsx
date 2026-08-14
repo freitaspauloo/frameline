@@ -5,8 +5,8 @@ type LogoProps = {
 };
 
 /**
- * Frameline brand mark — pinwheel frame (4 L-segments).
- * 1 logo blue (blue on white) · 2 logo white (white on blue) · logo no bg
+ * Frameline brand mark — original SVGs from Assets/
+ * 1 logo blue · 2 logo white · logo no bg
  */
 function LogoImg({
   alt,
