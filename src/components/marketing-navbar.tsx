@@ -81,7 +81,7 @@ export function MarketingNavbar({
             className="justify-self-center"
             href="/"
           >
-            <LogoMark className="size-8" />
+            <LogoMark className="size-10" />
           </Link>
 
           <div className="flex items-center justify-end gap-2">
