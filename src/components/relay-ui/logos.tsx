@@ -31,17 +31,17 @@ function LogoImg({
   );
 }
 
-/** 1 · logo blue — blue mark on white rounded field */
+/** 1 · logo blue — blue mark on white field */
 export function Logo01({ className }: LogoProps) {
   return (
-    <LogoImg alt="Frameline" className={className} src="/relay/logo-01.png" />
+    <LogoImg alt="Frameline" className={className} src="/relay/logo-01.svg" />
   );
 }
 
 /** 2 · logo white — white mark on blue field (dock / dark surfaces) */
 export function Logo02({ className }: LogoProps) {
   return (
-    <LogoImg alt="Frameline" className={className} src="/relay/logo-02.png" />
+    <LogoImg alt="Frameline" className={className} src="/relay/logo-02.svg" />
   );
 }
 
@@ -51,7 +51,7 @@ export function LogoMark({ className }: LogoProps) {
     <LogoImg
       alt="Frameline"
       className={className}
-      src="/relay/logo-mark.png"
+      src="/relay/logo-mark.svg"
     />
   );
 }
