@@ -18,6 +18,7 @@ export const CHECKOUT_PLAN_KEYS = [
   "static",
   "personal",
   "team",
+  "screen",
 ] as const;
 export type CheckoutPlanKey = (typeof CHECKOUT_PLAN_KEYS)[number];
 
@@ -101,6 +102,21 @@ export const LICENSE_PLANS: LicensePlanDefinition[] = [
       "Resell materials in templates or asset kits",
     ],
   },
+  {
+    key: "screen",
+    name: "Screen",
+    priceLabel: "$9",
+    amountCents: 900,
+    summary: "Unlimited prompt + code copies for one screen template.",
+    permitted: [
+      "Unlimited Copy prompt + Copy code for the purchased screen",
+      "Commercial use of the screen source in your projects",
+    ],
+    notPermitted: [
+      "Material registry / React shader installs",
+      "Redistribute as a competing template kit",
+    ],
+  },
 ];
 
 export function getLicensePlan(
@@ -118,7 +134,12 @@ export function isCheckoutPlan(value: string): value is CheckoutPlanKey {
 export function isPublicCheckoutPlan(
   value: string,
 ): value is Exclude<CheckoutPlanKey, "test"> {
-  return value === "static" || value === "personal" || value === "team";
+  return (
+    value === "static" ||
+    value === "personal" ||
+    value === "team" ||
+    value === "screen"
+  );
 }
 
 /** Re-enable `plan=test` with FRAMELINE_ALLOW_TEST_PLAN=true in env. */

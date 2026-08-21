@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type CartPlan = "test" | "personal" | "team" | "static";
+export type CartPlan = "test" | "personal" | "team" | "static" | "screen";
 
 type CartState = {
   plan: CartPlan;
@@ -26,7 +26,8 @@ export function isCartPlan(value: string | undefined): value is CartPlan {
     value === "test" ||
     value === "personal" ||
     value === "team" ||
-    value === "static"
+    value === "static" ||
+    value === "screen"
   );
 }
 

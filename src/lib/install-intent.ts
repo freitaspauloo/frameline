@@ -5,7 +5,7 @@
 export function recordInstallIntent(payload: {
   slug: string;
   source?: string;
-  path?: "cli" | "jsx" | "paste";
+  path?: "cli" | "jsx" | "paste" | "prompt" | "code";
 }) {
   const body = {
     slug: payload.slug,

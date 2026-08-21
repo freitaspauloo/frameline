@@ -27,7 +27,8 @@ import { cn } from "@/lib/utils";
 import { recordWtpIntent } from "@/lib/wtp-intent";
 
 /** Public checkout only — $0.50 smoke SKU gated via FRAMELINE_ALLOW_TEST_PLAN. */
-const PLAN_OPTIONS: CartPlan[] = ["static", "personal", "team"];
+const MATERIAL_PLAN_OPTIONS: CartPlan[] = ["static", "personal", "team"];
+const SCREEN_PLAN_OPTIONS: CartPlan[] = ["screen"];
 
 const CHIP =
   "border border-border px-4 py-2 text-[0.625rem] font-semibold tracking-widest uppercase transition-colors";
@@ -79,6 +80,16 @@ export function CheckoutForm({
     : (initialMaterial ?? materialSlug);
   const license = getLicensePlan(activePlan);
   const amount = license?.priceLabel ?? "$99";
+  const planOptions =
+    activePlan === "screen" || initialPlan === "screen"
+      ? SCREEN_PLAN_OPTIONS
+      : MATERIAL_PLAN_OPTIONS;
+  const productHref =
+    activePlan === "screen" && activeMaterial
+      ? `/screens/${activeMaterial}`
+      : activeMaterial
+        ? `/materials/${activeMaterial}`
+        : null;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -143,7 +154,7 @@ export function CheckoutForm({
         <MarketingPad className="mx-auto max-w-md space-y-8 py-12 lg:py-16">
           <form className="space-y-8" onSubmit={onSubmit}>
             <div className="flex flex-wrap gap-2">
-              {PLAN_OPTIONS.map((key) => {
+              {planOptions.map((key) => {
                 const option = getLicensePlan(key);
                 const selected = activePlan === key;
                 return (
@@ -164,12 +175,12 @@ export function CheckoutForm({
               })}
             </div>
 
-            {activeMaterial ? (
+            {activeMaterial && productHref ? (
               <p className="text-sm text-muted-foreground">
                 Continuing from{" "}
                 <Link
                   className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
-                  href={`/materials/${activeMaterial}`}
+                  href={productHref}
                 >
                   {activeMaterial}
                 </Link>

@@ -8,6 +8,7 @@ import {
   rateLimitResponse,
 } from "@/lib/rate-limit";
 import { getMaterial } from "@/materials/catalog";
+import { getScreenBySlug } from "@/screens/catalog";
 
 /**
  * Fake npx / copy-install logger — Discovery Gate G4.
@@ -24,7 +25,7 @@ type InstallIntentEntry = {
 const DATA_DIR = path.join(process.cwd(), ".data");
 const INSTALLS_PATH = path.join(DATA_DIR, "installs.json");
 
-const INSTALL_PATHS = new Set(["cli", "jsx", "paste"]);
+const INSTALL_PATHS = new Set(["cli", "jsx", "paste", "prompt", "code"]);
 
 async function readInstalls(): Promise<InstallIntentEntry[]> {
   try {
@@ -87,9 +88,9 @@ export async function POST(request: Request) {
   }
 
   const slug = slugRaw.trim().slice(0, 64);
-  if (!getMaterial(slug)) {
+  if (!getMaterial(slug) && !getScreenBySlug(slug)) {
     return NextResponse.json(
-      { ok: false, error: "Unknown material slug" },
+      { ok: false, error: "Unknown material or screen slug" },
       { status: 400 },
     );
   }
@@ -104,7 +105,10 @@ export async function POST(request: Request) {
     const normalized = pathRaw.trim().toLowerCase();
     if (!INSTALL_PATHS.has(normalized)) {
       return NextResponse.json(
-        { ok: false, error: "Invalid path. Expected cli, jsx, or paste." },
+        {
+          ok: false,
+          error: "Invalid path. Expected cli, jsx, paste, prompt, or code.",
+        },
         { status: 400 },
       );
     }

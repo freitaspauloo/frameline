@@ -69,7 +69,7 @@ function materialScopeForPlan(
   plan: CheckoutPlanKey,
   material?: string,
 ): Entitlement["materialScope"] {
-  if (plan === "static" && material) {
+  if ((plan === "static" || plan === "screen") && material) {
     return { kind: "set", materialSlugs: [material] };
   }
   return { kind: "all" };

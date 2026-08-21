@@ -41,7 +41,19 @@ export async function createCheckoutSession(input: {
   const productName =
     input.plan === "static" && input.material
       ? `Frameline Static — ${input.material}`
-      : `Frameline ${license.name}`;
+      : input.plan === "screen" && input.material
+        ? `Frameline Screen — ${input.material}`
+        : `Frameline ${license.name}`;
+
+  const successUrl =
+    input.plan === "screen" && input.material
+      ? `${base}/screens/${encodeURIComponent(input.material)}?unlocked=1&session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(input.email)}&plan=screen`
+      : `${base}/orders/{CHECKOUT_SESSION_ID}?session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(input.email)}&plan=${encodeURIComponent(input.plan)}${input.material ? `&material=${encodeURIComponent(input.material)}` : ""}`;
+
+  const cancelUrl =
+    input.plan === "screen" && input.material
+      ? `${base}/screens/${encodeURIComponent(input.material)}?cancelled=1`
+      : `${base}/checkout?plan=${encodeURIComponent(input.plan)}${input.material ? `&material=${encodeURIComponent(input.material)}` : ""}&cancelled=1`;
 
   return client.checkout.sessions.create({
     mode: "payment",
@@ -64,7 +76,7 @@ export async function createCheckoutSession(input: {
       email: input.email,
       ...(input.material ? { material: input.material } : {}),
     },
-    success_url: `${base}/orders/{CHECKOUT_SESSION_ID}?session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(input.email)}&plan=${encodeURIComponent(input.plan)}${input.material ? `&material=${encodeURIComponent(input.material)}` : ""}`,
-    cancel_url: `${base}/checkout?plan=${encodeURIComponent(input.plan)}${input.material ? `&material=${encodeURIComponent(input.material)}` : ""}&cancelled=1`,
+    success_url: successUrl,
+    cancel_url: cancelUrl,
   });
 }

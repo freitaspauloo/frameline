@@ -9,7 +9,8 @@ export type LicensePlanKey =
   | "test"
   | "static"
   | "personal"
-  | "team";
+  | "team"
+  | "screen";
 
 export type EntitlementStatus = "active" | "revoked";
 

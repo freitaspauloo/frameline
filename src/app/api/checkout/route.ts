@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
-        error: "Invalid plan. Expected static, personal, or team.",
+          error: "Invalid plan. Expected static, personal, team, or screen.",
       },
       { status: 400 },
     );
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
       {
         ok: false,
         error:
-          "Test plan is disabled. Use static, personal, or team — or set FRAMELINE_ALLOW_TEST_PLAN=true.",
+          "Test plan is disabled. Use static, personal, team, or screen — or set FRAMELINE_ALLOW_TEST_PLAN=true.",
       },
       { status: 400 },
     );
@@ -62,6 +62,12 @@ export async function POST(request: Request) {
   }
 
   const material = body.material?.trim() || undefined;
+  if (plan === "screen" && !material) {
+    return NextResponse.json(
+      { ok: false, error: "Screen checkout requires a material (screen slug)." },
+      { status: 400 },
+    );
+  }
   const license = getLicensePlan(plan);
 
   if (!getStripe()) {
@@ -81,6 +87,11 @@ export async function POST(request: Request) {
       });
       if (material) qs.set("material", material);
 
+      const redirectTo =
+        plan === "screen" && material
+          ? `/screens/${encodeURIComponent(material)}?unlocked=1&${qs.toString()}`
+          : `/orders/${fulfilled.orderId}?${qs.toString()}`;
+
       return NextResponse.json({
         ok: true,
         mode: "demo" as const,
@@ -90,7 +101,7 @@ export async function POST(request: Request) {
         amountCents: license?.amountCents,
         orderId: fulfilled.orderId,
         registryToken: fulfilled.registryToken,
-        redirectTo: `/orders/${fulfilled.orderId}?${qs.toString()}`,
+        redirectTo,
       });
     } catch (err) {
       captureException(err, { route: "checkout", plan, email });
