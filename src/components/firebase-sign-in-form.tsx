@@ -4,6 +4,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   clientSignOut,
   getIdToken,
@@ -12,6 +13,9 @@ import {
   signInWithEmail,
   signInWithGoogle,
 } from "@/lib/firebase-client";
+import { cn } from "@/lib/utils";
+
+export type AuthSessionUser = { email: string; role: string };
 
 async function exchangeSession(idToken: string) {
   const res = await fetch("/api/auth/session", {
@@ -22,7 +26,7 @@ async function exchangeSession(idToken: string) {
   const data = (await res.json()) as {
     ok?: boolean;
     error?: string;
-    user?: { email: string; role: string };
+    user?: AuthSessionUser;
   };
   if (!res.ok || !data.ok) {
     throw new Error(data.error ?? "Could not create session");
@@ -30,7 +34,16 @@ async function exchangeSession(idToken: string) {
   return data;
 }
 
-export function FirebaseSignInForm() {
+export function FirebaseSignInForm({
+  onSuccess,
+  className,
+  showClearSession = true,
+}: {
+  /** When set, stay on page instead of navigating to /account */
+  onSuccess?: (user: AuthSessionUser) => void;
+  className?: string;
+  showClearSession?: boolean;
+}) {
   const router = useRouter();
   const configured = isFirebaseClientConfigured();
   const [email, setEmail] = React.useState("");
@@ -43,11 +56,14 @@ export function FirebaseSignInForm() {
 
   if (!configured) {
     return (
-      <div className="space-y-3 border border-border p-5 text-sm text-muted-foreground">
+      <div
+        className={cn(
+          "space-y-3 border border-border p-5 text-sm text-muted-foreground",
+          className,
+        )}
+      >
         <p className="font-medium text-foreground">Firebase web config missing</p>
         <p>
-          Admin SDK is ready for project{" "}
-          <span className="font-mono text-foreground">frameline-b89ac</span>.
           Paste these from Firebase Console → Project settings → Your apps:
         </p>
         <ul className="list-inside list-disc space-y-1 font-mono text-[11px]">
@@ -65,6 +81,10 @@ export function FirebaseSignInForm() {
     const data = await exchangeSession(idToken);
     if (data.user) {
       sessionStorage.setItem("fl_demo_user", JSON.stringify(data.user));
+      if (onSuccess) {
+        onSuccess(data.user);
+        return;
+      }
     }
     router.push("/account");
     router.refresh();
@@ -99,12 +119,7 @@ export function FirebaseSignInForm() {
   }
 
   return (
-    <div className="mx-auto max-w-md space-y-6 border-t border-border pt-10">
-      <p className="text-sm leading-relaxed text-muted-foreground">
-        Firebase Auth · project{" "}
-        <span className="font-mono text-foreground">frameline-b89ac</span>
-      </p>
-
+    <div className={cn("space-y-6", className)}>
       <Button
         className="w-full"
         disabled={status === "loading"}
@@ -127,10 +142,10 @@ export function FirebaseSignInForm() {
           <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
             Email
           </span>
-          <input
+          <Input
             required
             autoComplete="email"
-            className="h-11 w-full border border-border bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="border border-border px-3"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -140,12 +155,12 @@ export function FirebaseSignInForm() {
           <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
             Password
           </span>
-          <input
+          <Input
             required
             autoComplete={
               mode === "register" ? "new-password" : "current-password"
             }
-            className="h-11 w-full border border-border bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="border border-border px-3"
             minLength={6}
             type="password"
             value={password}
@@ -154,13 +169,13 @@ export function FirebaseSignInForm() {
         </label>
 
         {error ? (
-          <p className="text-sm text-red-600" role="alert">
+          <p className="text-sm text-destructive" role="alert">
             {error}
           </p>
         ) : null}
 
         <Button
-          className="w-full"
+          className="w-full bg-[#3A58F0] text-white hover:bg-[#2F4AD4]"
           disabled={status === "loading"}
           size="lg"
           type="submit"
@@ -181,17 +196,105 @@ export function FirebaseSignInForm() {
         }
       >
         {mode === "signin"
-          ? "Need an account? Register"
+          ? "Need an account? Create one"
           : "Have an account? Sign in"}
       </button>
 
-      <button
-        className="block text-xs text-muted-foreground"
-        type="button"
-        onClick={() => void clientSignOut()}
-      >
-        Clear local Firebase session
-      </button>
+      {showClearSession ? (
+        <button
+          className="block text-xs text-muted-foreground"
+          type="button"
+          onClick={() => void clientSignOut()}
+        >
+          Clear local Firebase session
+        </button>
+      ) : null}
     </div>
+  );
+}
+
+/** Email-only demo session when Firebase web keys aren’t present. */
+export function DemoEmailSignInForm({
+  onSuccess,
+  className,
+}: {
+  onSuccess?: (user: AuthSessionUser) => void;
+  className?: string;
+}) {
+  const router = useRouter();
+  const [email, setEmail] = React.useState("");
+  const [status, setStatus] = React.useState<"idle" | "loading" | "error">(
+    "idle",
+  );
+  const [error, setError] = React.useState<string | null>(null);
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setStatus("loading");
+    setError(null);
+    try {
+      const res = await fetch("/api/auth/magic-link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = (await res.json()) as {
+        ok?: boolean;
+        error?: string;
+        user?: AuthSessionUser;
+      };
+      if (!res.ok || !data.ok) {
+        setStatus("error");
+        setError(data.error ?? "Could not sign in");
+        return;
+      }
+      if (data.user) {
+        sessionStorage.setItem("fl_demo_user", JSON.stringify(data.user));
+        if (onSuccess) {
+          onSuccess(data.user);
+          return;
+        }
+      }
+      router.push("/account");
+      router.refresh();
+    } catch {
+      setStatus("error");
+      setError("Network error — try again");
+    }
+  }
+
+  return (
+    <form className={cn("space-y-4", className)} onSubmit={onSubmit}>
+      <p className="text-sm text-muted-foreground">
+        Demo sign-in (Firebase web config missing). Enter your email to
+        continue.
+      </p>
+      <label className="block space-y-2">
+        <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+          Email
+        </span>
+        <Input
+          required
+          autoComplete="email"
+          className="border border-border px-3"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </label>
+      {error ? (
+        <p className="text-sm text-destructive" role="alert">
+          {error}
+        </p>
+      ) : null}
+      <Button
+        className="w-full bg-[#3A58F0] text-white hover:bg-[#2F4AD4]"
+        disabled={status === "loading"}
+        size="lg"
+        type="submit"
+      >
+        {status === "loading" ? "Signing in…" : "Continue"}
+      </Button>
+    </form>
   );
 }

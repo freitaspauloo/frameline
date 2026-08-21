@@ -4,6 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import {
+  DemoEmailSignInForm,
+  FirebaseSignInForm,
+  type AuthSessionUser,
+} from "@/components/firebase-sign-in-form";
 import { MarketingNavbar } from "@/components/marketing-navbar";
 import {
   MarketingPageHeader,
@@ -14,11 +19,16 @@ import {
 } from "@/components/marketing-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { getDemoSession } from "@/lib/auth-client";
 import {
   isCartPlan,
   useCartStore,
   type CartPlan,
 } from "@/lib/cart";
+import {
+  clientSignOut,
+  isFirebaseClientConfigured,
+} from "@/lib/firebase-client";
 import {
   getLicensePlan,
   LICENSE_PLAN_VERSION,
@@ -33,6 +43,24 @@ const SCREEN_PLAN_OPTIONS: CartPlan[] = ["screen"];
 const CHIP =
   "border border-border px-4 py-2 text-[0.625rem] font-semibold tracking-widest uppercase transition-colors";
 
+function readStoredUser(): AuthSessionUser | null {
+  if (typeof window === "undefined") return null;
+  const fromCookie = getDemoSession();
+  if (fromCookie) return fromCookie;
+  try {
+    const raw = sessionStorage.getItem("fl_demo_user");
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<AuthSessionUser>;
+    if (!parsed.email || typeof parsed.email !== "string") return null;
+    return {
+      email: parsed.email,
+      role: parsed.role === "admin" ? "admin" : "buyer",
+    };
+  } catch {
+    return null;
+  }
+}
+
 export function CheckoutForm({
   initialPlan,
   initialMaterial,
@@ -43,15 +71,16 @@ export function CheckoutForm({
   const router = useRouter();
   const plan = useCartStore((s) => s.plan);
   const materialSlug = useCartStore((s) => s.materialSlug);
-  const email = useCartStore((s) => s.email);
   const setPlan = useCartStore((s) => s.setPlan);
   const setMaterial = useCartStore((s) => s.setMaterial);
   const setEmail = useCartStore((s) => s.setEmail);
   const [hydrated, setHydrated] = useState(false);
+  const [user, setUser] = useState<AuthSessionUser | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
   const [stripeMessage, setStripeMessage] = useState<string | null>(null);
-  const [emailValue, setEmailValue] = useState(email ?? "you@studio.dev");
+  /** Guest email only for material plans when not signed in. */
+  const [guestEmail, setGuestEmail] = useState("");
 
   useEffect(() => {
     if (isCartPlan(initialPlan) && initialPlan !== "test") {
@@ -59,12 +88,12 @@ export function CheckoutForm({
     } else if (initialPlan === "test") {
       setPlan("personal");
     } else if (useCartStore.getState().plan === "test") {
-      // Persisted cart may still hold the old smoke SKU.
       setPlan("personal");
     }
     if (initialMaterial) {
       setMaterial(initialMaterial);
     }
+    setUser(readStoredUser());
     setHydrated(true);
   }, [initialPlan, initialMaterial, setPlan, setMaterial]);
 
@@ -80,27 +109,27 @@ export function CheckoutForm({
     : (initialMaterial ?? materialSlug);
   const license = getLicensePlan(activePlan);
   const amount = license?.priceLabel ?? "$99";
-  const planOptions =
-    activePlan === "screen" || initialPlan === "screen"
-      ? SCREEN_PLAN_OPTIONS
-      : MATERIAL_PLAN_OPTIONS;
+  const isScreen = activePlan === "screen" || initialPlan === "screen";
+  const planOptions = isScreen ? SCREEN_PLAN_OPTIONS : MATERIAL_PLAN_OPTIONS;
   const productHref =
-    activePlan === "screen" && activeMaterial
+    isScreen && activeMaterial
       ? `/screens/${activeMaterial}`
       : activeMaterial
         ? `/materials/${activeMaterial}`
         : null;
+  const firebaseReady = isFirebaseClientConfigured();
+  const needsAuth = isScreen;
+  const signedIn = Boolean(user?.email);
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function startPayment(email: string) {
     setStatus("loading");
     setError(null);
     setStripeMessage(null);
-    setEmail(emailValue);
+    setEmail(email);
     recordWtpIntent({
       plan: activePlan,
       material: activeMaterial,
-      email: emailValue,
+      email,
       source: "checkout",
     });
     try {
@@ -109,7 +138,7 @@ export function CheckoutForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           plan: activePlan,
-          email: emailValue,
+          email,
           material: activeMaterial,
         }),
       });
@@ -141,18 +170,65 @@ export function CheckoutForm({
     }
   }
 
+  async function onPay(e: React.FormEvent) {
+    e.preventDefault();
+    const email = (user?.email || guestEmail).trim().toLowerCase();
+    if (!email.includes("@")) {
+      setError("Sign in or enter a valid email to continue.");
+      return;
+    }
+    if (needsAuth && !signedIn) {
+      setError("Sign in before paying.");
+      return;
+    }
+    await startPayment(email);
+  }
+
+  function onAuthSuccess(next: AuthSessionUser) {
+    setUser(next);
+    setEmail(next.email);
+    setError(null);
+  }
+
+  async function onUseDifferentAccount() {
+    try {
+      await clientSignOut();
+    } catch {
+      // still clear Frameline session
+    }
+    try {
+      await fetch("/api/auth/sign-out", { method: "POST" });
+    } catch {
+      // ignore network errors — local clear still applies
+    }
+    sessionStorage.removeItem("fl_demo_user");
+    setUser(null);
+    setError(null);
+    setStripeMessage(null);
+  }
+
   return (
     <MarketingShell>
       <MarketingNavbar />
       <MarketingSection>
         <MarketingPageHeader
           align="center"
-          description="Guest checkout. With Stripe keys, pays via Stripe Checkout; otherwise fulfills instantly into Postgres (or local demo store)."
+          description={
+            isScreen
+              ? signedIn
+                ? "You’re signed in. Continue to Stripe to pay — card details are collected there."
+                : "Sign in or create an account first. Stripe asks for your card on the next step."
+              : "Pay securely with Stripe. Card details are collected on Stripe Checkout."
+          }
           eyebrow="Checkout"
-          title={`${license?.name ?? "Personal"} license`}
+          title={
+            isScreen
+              ? `Screen · ${amount}`
+              : `${license?.name ?? "Personal"} license`
+          }
         />
         <MarketingPad className="mx-auto max-w-md space-y-8 py-12 lg:py-16">
-          <form className="space-y-8" onSubmit={onSubmit}>
+          {!isScreen ? (
             <div className="flex flex-wrap gap-2">
               {planOptions.map((key) => {
                 const option = getLicensePlan(key);
@@ -174,72 +250,124 @@ export function CheckoutForm({
                 );
               })}
             </div>
+          ) : null}
 
-            {activeMaterial && productHref ? (
-              <p className="text-sm text-muted-foreground">
-                Continuing from{" "}
-                <Link
-                  className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
-                  href={productHref}
-                >
-                  {activeMaterial}
-                </Link>
-                .
-              </p>
-            ) : null}
-
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              {license?.summary}
+          {activeMaterial && productHref ? (
+            <p className="text-sm text-muted-foreground">
+              Continuing from{" "}
+              <Link
+                className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+                href={productHref}
+              >
+                {activeMaterial}
+              </Link>
+              .
             </p>
+          ) : null}
 
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            {license?.summary}
+          </p>
+
+          {/* —— Auth gate (required for screens) —— */}
+          {needsAuth && !signedIn ? (
             <div className="space-y-4 border-t border-border pt-6">
-              <label className="block space-y-2">
-                <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                  Email
-                </span>
-                <Input
-                  required
-                  autoComplete="email"
-                  className="border border-border border-b-border px-3 focus-visible:border-foreground"
-                  type="email"
-                  value={emailValue}
-                  onChange={(e) => setEmailValue(e.target.value)}
-                  onBlur={(e) => setEmail(e.target.value)}
+              <div className="space-y-1">
+                <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                  Step 1 · Sign in
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Create an account or log in so we can unlock unlimited copies
+                  after payment.
+                </p>
+              </div>
+              {firebaseReady ? (
+                <FirebaseSignInForm
+                  showClearSession={false}
+                  onSuccess={onAuthSuccess}
                 />
-              </label>
-              <label className="block space-y-2">
-                <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                  Card
-                </span>
-                <Input
-                  readOnly
-                  className="border border-border border-b-border px-3 focus-visible:border-foreground"
-                  defaultValue="•••• •••• •••• 4242"
-                  type="text"
-                />
-              </label>
+              ) : (
+                <DemoEmailSignInForm onSuccess={onAuthSuccess} />
+              )}
             </div>
+          ) : null}
 
-            {error ? (
-              <p className="text-sm text-destructive" role="alert">
-                {error}
-              </p>
-            ) : null}
-            {stripeMessage ? (
-              <p className="text-sm text-muted-foreground" role="status">
-                {stripeMessage}
-              </p>
-            ) : null}
-
-            <Button
-              className="w-full"
-              disabled={status === "loading"}
-              size="lg"
-              type="submit"
+          {/* —— Pay step —— */}
+          {(!needsAuth || signedIn) && (
+            <form
+              className="space-y-6 border-t border-border pt-6"
+              onSubmit={onPay}
             >
-              {status === "loading" ? "Processing…" : `Pay ${amount}`}
-            </Button>
-          </form>
+              {needsAuth ? (
+                <div className="space-y-1">
+                  <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                    Step 2 · Pay
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Signed in as{" "}
+                    <span className="font-medium text-foreground">
+                      {user?.email}
+                    </span>
+                    . You’ll enter card details on Stripe.
+                  </p>
+                </div>
+              ) : signedIn ? (
+                <p className="text-sm text-muted-foreground">
+                  Signed in as{" "}
+                  <span className="font-medium text-foreground">
+                    {user?.email}
+                  </span>
+                  .
+                </p>
+              ) : (
+                <label className="block space-y-2">
+                  <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                    Email
+                  </span>
+                  <Input
+                    required
+                    autoComplete="email"
+                    className="border border-border px-3"
+                    type="email"
+                    value={guestEmail}
+                    onChange={(e) => setGuestEmail(e.target.value)}
+                  />
+                </label>
+              )}
+
+              {error ? (
+                <p className="text-sm text-destructive" role="alert">
+                  {error}
+                </p>
+              ) : null}
+              {stripeMessage ? (
+                <p className="text-sm text-muted-foreground" role="status">
+                  {stripeMessage}
+                </p>
+              ) : null}
+
+              <Button
+                className="w-full bg-[#3A58F0] text-white hover:bg-[#2F4AD4]"
+                disabled={status === "loading"}
+                size="lg"
+                type="submit"
+              >
+                {status === "loading"
+                  ? "Redirecting to Stripe…"
+                  : `Continue to Stripe · ${amount}`}
+              </Button>
+
+              {signedIn && needsAuth ? (
+                <button
+                  className="w-full text-center text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+                  type="button"
+                  onClick={() => void onUseDifferentAccount()}
+                >
+                  Use a different account
+                </button>
+              ) : null}
+            </form>
+          )}
 
           <p className="text-center text-xs text-muted-foreground">
             License plan version{" "}
@@ -258,7 +386,9 @@ export function CheckoutForm({
         </MarketingPad>
       </MarketingSection>
       <div className={cn("border-t border-border py-6", marketingPadX)}>
-        <p className="text-xs text-muted-foreground">Frameline · demo commerce</p>
+        <p className="text-xs text-muted-foreground">
+          Frameline · Stripe Checkout handles card entry
+        </p>
       </div>
     </MarketingShell>
   );

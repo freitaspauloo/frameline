@@ -31,29 +31,6 @@ export function isAdminEmail(email: string): boolean {
   return false;
 }
 
-/**
- * Provider-agnostic session helper (client).
- * Reads `fl_session` cookie set by demo magic-link or Firebase `/api/auth/session`.
- */
-export function getDemoSession(): SessionUser | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const match = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith(`${SESSION_COOKIE}=`));
-    if (!match) return null;
-    const raw = decodeURIComponent(match.slice(SESSION_COOKIE.length + 1));
-    const parsed = JSON.parse(raw) as Partial<SessionUser>;
-    if (!parsed.email || typeof parsed.email !== "string") return null;
-    return {
-      email: parsed.email,
-      role: parsed.role === "admin" ? "admin" : "buyer",
-    };
-  } catch {
-    return null;
-  }
-}
-
 /** Read the httpOnly demo email cookie (server / route handlers). */
 export async function getDemoEmail(): Promise<string | null> {
   const store = await cookies();
