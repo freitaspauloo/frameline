@@ -101,7 +101,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What’s free vs paid?",
-    a: "Free materials are production-ready with the same craft bar. Paid unlocks signature materials and clearer commercial rights.",
+    a: "Materials are $0 — production-ready with the same craft bar. Screen templates are $9 for unlimited prompt + code copies.",
   },
   {
     q: "Does it fit my design system?",
@@ -113,17 +113,12 @@ const PRICING_TEASERS = [
   {
     name: "Free",
     price: "$0",
-    blurb: "Evaluate with excellent free materials.",
+    blurb: "Install and ship materials. Same craft bar.",
   },
   {
-    name: "Personal",
-    price: "$99",
-    blurb: "All personal SKUs · commercial rights.",
-  },
-  {
-    name: "Team",
-    price: "$299",
-    blurb: "Client work · seats · invoice-ready.",
+    name: "Screen",
+    price: "$9",
+    blurb: "Unlimited prompt + code copies for one template.",
   },
 ] as const;
 
@@ -137,8 +132,8 @@ const VALUE_PROPS = [
     body: "CLI or copy JSX. You own the component in your repo.",
   },
   {
-    title: "Buy for depth",
-    body: "Paid unlocks signature materials and commercial clarity.",
+    title: "Screens at $9",
+    body: "One-time unlock for unlimited prompt + code copies.",
   },
 ] as const;
 
@@ -680,9 +675,9 @@ export function FramelineHomePageV2() {
                       View pricing
                     </Button>
                   }
-                  description="Free to evaluate. Paid when you need signature depth and clear commercial rights."
+                  description="Materials are free. Screen templates are $9 — one-time, unlimited copies."
                   eyebrow="Pricing"
-                  title="Licenses that match how you ship"
+                  title="Two prices. That’s it."
                 />
               </MarketingSectionHeader>
 

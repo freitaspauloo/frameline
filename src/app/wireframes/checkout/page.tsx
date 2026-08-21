@@ -48,7 +48,7 @@ export default function WireframeCheckoutPage() {
         </div>
 
         <WfBtn className="mt-6 w-full" href="/wireframes/orders/demo">
-          Pay $99
+          Pay $9
         </WfBtn>
       </div>
     </WireframeShell>

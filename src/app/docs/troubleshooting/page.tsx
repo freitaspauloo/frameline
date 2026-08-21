@@ -129,8 +129,7 @@ return mounted ? <LiveShader /> : <StaticFallback />`}</DocsCode>
           <DocsInlineCode>.env.local</DocsInlineCode> loaded by your tooling).
         </li>
         <li>
-          Confirm the plan covers the material — Personal vs Team scopes differ;
-          revoked refunds invalidate tokens.
+          Confirm the token is still active; revoked refunds invalidate tokens.
         </li>
         <li>
           Regenerate the token from{" "}

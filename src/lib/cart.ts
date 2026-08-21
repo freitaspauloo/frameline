@@ -16,7 +16,7 @@ type CartState = {
 };
 
 const defaults = {
-  plan: "personal" as CartPlan,
+  plan: "screen" as CartPlan,
   materialSlug: undefined as string | undefined,
   email: undefined as string | undefined,
 };

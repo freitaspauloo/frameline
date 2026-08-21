@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
-          error: "Invalid plan. Expected static, personal, team, or screen.",
+        error: "Invalid plan. Expected screen.",
       },
       { status: 400 },
     );
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
       {
         ok: false,
         error:
-          "Test plan is disabled. Use static, personal, team, or screen — or set FRAMELINE_ALLOW_TEST_PLAN=true.",
+          "Test plan is disabled. Use screen — or set FRAMELINE_ALLOW_TEST_PLAN=true.",
       },
       { status: 400 },
     );

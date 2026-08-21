@@ -49,10 +49,10 @@ async function runLive(baseUrl) {
     }
   });
 
-  await check("GET /api/registry/ember-warp → 403", async () => {
+  await check("GET /api/registry/ember-warp → 200", async () => {
     const res = await fetch(`${root}/api/registry/ember-warp`);
-    if (res.status !== 403) {
-      throw new Error(`expected 403, got ${res.status}`);
+    if (res.status !== 200) {
+      throw new Error(`expected 200, got ${res.status}`);
     }
   });
 
@@ -61,9 +61,9 @@ async function runLive(baseUrl) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        plan: "personal",
+        plan: "screen",
         email: "smoke@frameline.test",
-        material: "aurora-mesh",
+        material: "spaceman-moon",
       }),
     });
     if (res.status !== 200) {
@@ -80,9 +80,9 @@ async function runLive(baseUrl) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        plan: "personal",
+        plan: "screen",
         source: "smoke",
-        material: "aurora-mesh",
+        material: "spaceman-moon",
       }),
     });
     if (res.status !== 200) {

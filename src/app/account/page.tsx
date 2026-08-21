@@ -122,7 +122,7 @@ export default async function AccountPage() {
                   nativeButton={false}
                   render={
                     <Link
-                      href={`/checkout?plan=${item.tier === "team" ? "team" : "personal"}&material=${item.slug}`}
+                      href="/screens"
                     />
                   }
                   size="sm"

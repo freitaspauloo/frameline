@@ -14,13 +14,7 @@ export function generateStaticParams() {
 }
 
 function materialMetaDescription(material: MaterialCatalogEntry) {
-  const tierLabel =
-    material.tier === "free"
-      ? "Free"
-      : material.tier === "team"
-        ? "Team"
-        : "Personal";
-  return `${material.description} Installable ${material.type} material · ${tierLabel} on Frameline.`;
+  return `${material.description} Installable ${material.type} material · Free on Frameline.`;
 }
 
 export async function generateMetadata({
@@ -64,11 +58,8 @@ export default async function MaterialPage({
   const material = await getResolvedMaterial(slug);
   if (!material) notFound();
   const initialParams = await searchParams;
-  const plan = getLicensePlan(material.tier);
-  const price =
-    plan && plan.amountCents > 0
-      ? (plan.amountCents / 100).toFixed(0)
-      : "0";
+  const plan = getLicensePlan("free");
+  const price = "0";
 
   const jsonLd = {
     "@context": "https://schema.org",

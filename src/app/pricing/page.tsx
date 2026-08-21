@@ -12,14 +12,13 @@ import {
   MarketingShell,
 } from "@/components/marketing-shell";
 import { Button } from "@/components/ui/button";
-import { PricingBuyLink } from "@/components/pricing-buy-link";
 import { WaitlistForm } from "@/components/waitlist-form";
-import { LICENSE_PLANS } from "@/lib/license-plans";
+import { getPublicPricingPlans } from "@/lib/license-plans";
 
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Free, Static ($19), Personal ($99), and Team ($299) licenses for Frameline materials — clear commercial rights, one-time purchase.",
+    "Free ($0) materials and Screen ($9) templates — one-time purchase, clear commercial rights.",
 };
 
 const TIER_CTAS = {
@@ -29,25 +28,10 @@ const TIER_CTAS = {
     label: "Browse free",
     primary: false,
   },
-  static: {
-    kind: "buy" as const,
-    plan: "static" as const,
-    href: "/checkout?plan=static",
-    label: "Buy Static",
-    primary: true,
-  },
-  personal: {
-    kind: "buy" as const,
-    plan: "personal" as const,
-    href: "/checkout?plan=personal",
-    label: "Buy Personal",
-    primary: true,
-  },
-  team: {
-    kind: "buy" as const,
-    plan: "team" as const,
-    href: "/checkout?plan=team",
-    label: "Buy Team",
+  screen: {
+    kind: "link" as const,
+    href: "/screens",
+    label: "Browse screens",
     primary: true,
   },
 } as const;
@@ -67,8 +51,8 @@ export default async function PricingPage({
           align="center"
           description={
             <>
-              Free to evaluate. Paid when you need signature depth and clear
-              commercial rights.
+              Materials are free. Screen templates are $9 for unlimited prompt +
+              code copies.
               {material ? (
                 <>
                   {" "}
@@ -88,12 +72,13 @@ export default async function PricingPage({
           title="Choose a license"
         />
 
-        <MarketingRuledGrid className="lg:grid-cols-2 xl:grid-cols-4">
-          {LICENSE_PLANS.filter(
-            (tier): tier is (typeof LICENSE_PLANS)[number] & {
-              key: keyof typeof TIER_CTAS;
-            } => tier.key in TIER_CTAS,
-          ).map((tier) => {
+        <MarketingRuledGrid className="md:grid-cols-2">
+          {getPublicPricingPlans()
+            .filter(
+              (tier): tier is (typeof tier) & { key: keyof typeof TIER_CTAS } =>
+                tier.key in TIER_CTAS,
+            )
+            .map((tier) => {
             const cta = TIER_CTAS[tier.key];
             return (
               <MarketingRuledCell key={tier.key} className="flex flex-col">
@@ -139,29 +124,15 @@ export default async function PricingPage({
                   </div>
                 </div>
                 <div className="mt-auto pt-10">
-                  {cta.kind === "buy" ? (
-                    <PricingBuyLink
-                      href={
-                        material
-                          ? `${cta.href}&material=${material}`
-                          : cta.href
-                      }
-                      label={cta.label}
-                      material={material}
-                      plan={cta.plan}
-                      primary={cta.primary}
-                    />
-                  ) : (
-                    <Button
-                      className="w-full"
-                      nativeButton={false}
-                      render={<Link href={cta.href} />}
-                      size="lg"
-                      variant={cta.primary ? "default" : "outline"}
-                    >
-                      {cta.label}
-                    </Button>
-                  )}
+                  <Button
+                    className="w-full"
+                    nativeButton={false}
+                    render={<Link href={cta.href} />}
+                    size="lg"
+                    variant={cta.primary ? "default" : "outline"}
+                  >
+                    {cta.label}
+                  </Button>
                 </div>
               </MarketingRuledCell>
             );

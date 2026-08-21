@@ -13,14 +13,12 @@ export type LicensePlanDefinition = {
 };
 
 /** Plans sold at checkout (excludes free catalog tier). */
-export const CHECKOUT_PLAN_KEYS = [
-  "test",
-  "static",
-  "personal",
-  "team",
-  "screen",
-] as const;
+export const CHECKOUT_PLAN_KEYS = ["test", "screen"] as const;
 export type CheckoutPlanKey = (typeof CHECKOUT_PLAN_KEYS)[number];
+
+/** Customer-facing pricing — Free ($0) and Screen ($9) only. */
+export const PUBLIC_PRICING_KEYS = ["free", "screen"] as const;
+export type PublicPricingKey = (typeof PUBLIC_PRICING_KEYS)[number];
 
 export const LICENSE_PLANS: LicensePlanDefinition[] = [
   {
@@ -130,16 +128,17 @@ export function isCheckoutPlan(value: string): value is CheckoutPlanKey {
   return (CHECKOUT_PLAN_KEYS as readonly string[]).includes(value);
 }
 
+export function getPublicPricingPlans(): LicensePlanDefinition[] {
+  return LICENSE_PLANS.filter((plan) =>
+    (PUBLIC_PRICING_KEYS as readonly string[]).includes(plan.key),
+  );
+}
+
 /** Plans shown on public checkout (excludes internal $0.50 smoke SKU). */
 export function isPublicCheckoutPlan(
   value: string,
 ): value is Exclude<CheckoutPlanKey, "test"> {
-  return (
-    value === "static" ||
-    value === "personal" ||
-    value === "team" ||
-    value === "screen"
-  );
+  return value === "screen";
 }
 
 /** Re-enable `plan=test` with FRAMELINE_ALLOW_TEST_PLAN=true in env. */
@@ -152,14 +151,13 @@ export function isLicensePlan(value: string): value is CheckoutPlanKey {
   return isCheckoutPlan(value);
 }
 
-/** Compact meta for checkout API / UI that only needs paid React plans. */
+/** Compact meta for checkout API / UI that only needs the paid screen SKU. */
 export const LICENSE_PLAN_META: Record<
-  "personal" | "team",
+  "screen",
   { label: string; amountCents: number; amountLabel: string }
 > = {
-  personal: { label: "Personal", amountCents: 9900, amountLabel: "$99" },
-  team: { label: "Team", amountCents: 29900, amountLabel: "$299" },
+  screen: { label: "Screen", amountCents: 900, amountLabel: "$9" },
 };
 
-/** Alias used by early stubs — personal | team only. */
-export type LicensePlan = "personal" | "team";
+/** Alias used by early stubs — paid screen SKU only. */
+export type LicensePlan = "screen";

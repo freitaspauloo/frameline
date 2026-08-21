@@ -2,37 +2,20 @@ import type { Entitlement, LicensePlanKey } from "@/lib/domain";
 import { LICENSE_PLAN_VERSION } from "@/lib/license-plans";
 import type { MaterialCatalogEntry, MaterialTier } from "@/materials";
 
-const TIER_RANK: Record<MaterialTier, number> = {
-  free: 0,
-  personal: 1,
-  team: 2,
-};
-
-const PLAN_RANK: Record<LicensePlanKey, number> = {
-  free: 0,
-  test: 0,
-  static: 0,
-  screen: 0,
-  personal: 1,
-  team: 2,
-};
-
-export function isFreeMaterial(material: MaterialCatalogEntry): boolean {
-  return material.tier === "free";
+export function isFreeMaterial(_material: MaterialCatalogEntry): boolean {
+  // Materials are $0 — only screen templates are paid.
+  return true;
 }
 
 /**
  * Whether a buyer plan unlocks a material's catalog tier.
- * Static does not unlock personal/team registry materials.
+ * Materials are free; screen purchases do not gate registry source.
  */
 export function canAccessMaterial(
-  planKey: LicensePlanKey,
-  materialTier: MaterialTier,
+  _planKey: LicensePlanKey,
+  _materialTier: MaterialTier,
 ): boolean {
-  if (materialTier === "free") return true;
-  if (planKey === "static" || planKey === "test" || planKey === "screen")
-    return false;
-  return PLAN_RANK[planKey] >= TIER_RANK[materialTier];
+  return true;
 }
 
 export function materialUnlockedByEntitlements(

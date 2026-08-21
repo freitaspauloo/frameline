@@ -13,7 +13,7 @@ export default function LicensingDocsPage() {
   return (
     <DocsShell
       currentPath="/docs/licensing"
-      description="Plain-language rights for Free, Personal, and Team. Perpetual, non-exclusive, non-transferable — version pinned on every order. Full legal terms live on the license page."
+      description="Plain-language rights for Free ($0) materials and Screen ($9) templates. Perpetual, non-exclusive, non-transferable — version pinned on every order. Full legal terms live on the license page."
       title="Licensing"
     >
       <DocsP>
@@ -40,19 +40,14 @@ export default function LicensingDocsPage() {
         headers={["Tier", "Permitted", "Not permitted"]}
         rows={[
           [
-            "Free",
-            "Unlimited personal and commercial use of designated free materials in your own products and client work.",
+            "Free · $0",
+            "Unlimited personal and commercial use of Frameline materials in your own products and client work.",
             "Redistributing or reselling the source; including it in a competing asset library or template product.",
           ],
           [
-            "Personal",
-            "One individual; unlimited personal and commercial projects owned by that individual; static exports for decks, social, and marketing.",
-            "Use across a team; deliverables handed to third-party clients as their own asset; redistribution or resale of source.",
-          ],
-          [
-            "Team",
-            "Up to a defined seat count within one organization; unlimited projects; client work where the material ships inside a client deliverable; static exports; invoice-suitable receipt.",
-            "Redistribution or resale of source; sublicensing the library to clients as a standalone asset; inclusion in templates or asset packs for sale.",
+            "Screen · $9",
+            "Unlimited Copy prompt + Copy code for the purchased screen template; commercial use of that screen source in your projects.",
+            "Material registry treated as a paid unlock; redistributing the screen as a competing template kit.",
           ],
         ]}
       />
@@ -71,10 +66,8 @@ export default function LicensingDocsPage() {
           packages, including inside templates, starter kits, or asset bundles.
         </li>
         <li>
-          Client-work rights are explicit. If you ship work product to a client
-          and the material travels with that deliverable, you need Team (or a
-          later Extended / Agency tier). Personal covers projects you own, not
-          assets the client walks away with as theirs.
+          Materials are free. The only paid SKU is a screen template unlock at
+          $9.
         </li>
       </DocsUl>
 
@@ -84,31 +77,23 @@ export default function LicensingDocsPage() {
           <span className="font-medium text-foreground">
             Can I use Free materials in a client project?
           </span>{" "}
-          Yes — free SKUs allow commercial and client use. You still may not
+          Yes — materials allow commercial and client use. You still may not
           resell the source or pack it into a competing library.
         </li>
         <li>
           <span className="font-medium text-foreground">
-            Does Personal cover my agency’s whole studio?
+            What does $9 unlock?
           </span>{" "}
-          No. Personal is one individual. Shared seats and client deliverable
-          rights are Team.
-        </li>
-        <li>
-          <span className="font-medium text-foreground">
-            Can my client reuse the material in other products?
-          </span>{" "}
-          Not as a standalone licensed asset. Team lets the material ship inside
-          the deliverable you built; it does not sublicense Frameline to your
-          client as a library.
+          Unlimited prompt and code copies for one screen template. Materials
+          stay $0.
         </li>
         <li>
           <span className="font-medium text-foreground">
             Are updates included?
           </span>{" "}
-          Purchases include access to entitled materials under the pinned license
-          version. Catalog additions follow your plan’s material scope (see your
-          receipt).
+          Purchases include access to the purchased screen under the pinned
+          license version. Catalog additions follow your plan’s material scope
+          (see your receipt).
         </li>
       </DocsUl>
 

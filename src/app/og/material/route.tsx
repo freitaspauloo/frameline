@@ -28,13 +28,7 @@ export async function GET(request: Request) {
   const material = slug ? getMaterial(slug) : undefined;
 
   const title = material?.title ?? "Frameline";
-  const tier = material
-    ? material.tier === "free"
-      ? "Free"
-      : material.tier === "team"
-        ? "Team"
-        : "Personal"
-    : "Materials";
+  const tier = material ? "Free" : "Materials";
   const type = material?.type ?? "surface";
   const colors = material?.fallbackColors ?? ["#2D6BFF", "#0A0A0A", "#F7F5F0"];
   const accent = colors[0] ?? "#2D6BFF";

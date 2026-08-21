@@ -76,10 +76,10 @@ export default async function OrderConfirmationPage({
     }
   }
 
-  const plan = stored?.planKey ?? planParam ?? "personal";
+  const plan = stored?.planKey ?? planParam ?? "screen";
   const material = stored?.materialSlug ?? materialParam ?? "ink-dither";
   const license = getLicensePlan(plan);
-  const planLabel = license?.name ?? (plan === "team" ? "Team" : "Personal");
+  const planLabel = license?.name ?? "Screen";
   const orderRef = stored?.id ?? token;
   const registryToken = freshRegistryToken || stored?.registryToken || null;
   const email = stored?.email ?? emailParam ?? null;

@@ -12,20 +12,18 @@ import {
   MarketingShell,
 } from "@/components/marketing-shell";
 import {
-  LICENSE_PLANS,
+  getPublicPricingPlans,
   LICENSE_PLAN_VERSION,
 } from "@/lib/license-plans";
 
 export const metadata: Metadata = {
   title: "License",
   description:
-    "Plain-language Free, Static, Personal, and Team rights for Frameline materials. Full terms pin per order.",
+    "Plain-language Free ($0) and Screen ($9) rights for Frameline. Full terms pin per order.",
 };
 
 export default function LicensePage() {
-  const tiers = LICENSE_PLANS.filter(
-    (p) => p.key !== "static" && p.key !== "test",
-  );
+  const tiers = getPublicPricingPlans();
 
   return (
     <MarketingShell>
@@ -118,15 +116,14 @@ export default function LicensePage() {
               Quick comparison
             </h2>
             <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              Free covers designated free SKUs. Personal unlocks paid registry
-              installs for your own commercial work. Team adds client
-              deliverables and multi-seat clarity. Every tier forbids
-              redistributing source packages.
+              Free covers materials you can install and ship. Screen unlocks
+              unlimited prompt + code copies for one template. Every tier
+              forbids redistributing source packages.
             </p>
             <div className="overflow-x-auto border border-border">
               <table className="w-full min-w-[36rem] border-collapse text-left text-sm">
                 <caption className="sr-only">
-                  License tier comparison for Free, Personal, and Team
+                  License tier comparison for Free and Screen
                 </caption>
                 <thead>
                   <tr className="border-b border-border bg-muted/40">
@@ -217,8 +214,8 @@ export default function LicensePage() {
           </div>
 
           <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-            Static export (~$19) is a separate entry SKU for decks, social, and
-            non-React use. See{" "}
+            Screen ($9) is a one-time unlock for unlimited copies of a single
+            template. See{" "}
             <Link
               className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
               href="/docs/licensing"

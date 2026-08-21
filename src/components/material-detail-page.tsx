@@ -220,7 +220,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
   /** Explicit reduced-motion toggle → CSS shell fallback (separate from Pause). */
   const [reducedMotion, setReducedMotion] = React.useState(false);
   const urlSyncReady = React.useRef(false);
-  const license = getLicensePlan(entry.tier);
+  const license = getLicensePlan("free");
   const cliSnippet = `npx shadcn@latest add @frameline/${entry.slug}`;
   const pastePath = `components/ui/${entry.slug}.tsx`;
   const forceStaticPreview = paused || reducedMotion;
@@ -310,7 +310,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
             </Button>
           }
           description={entry.description}
-          eyebrow={`Material · ${entry.type} · ${entry.tier === "free" ? "Free" : "Paid"}`}
+          eyebrow={`Material · ${entry.type} · Free`}
           title={entry.title}
         />
 
@@ -496,17 +496,15 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
                   {entry.tier}
                 </span>
               }
-              title={entry.tier === "free" ? "Install" : "Get access"}
+              title="Install"
             >
               <div className="space-y-4">
-                {entry.tier === "free" ? (
-                  <p
-                    className="border border-border bg-muted/30 px-3 py-2 font-mono text-[11px] leading-relaxed text-foreground"
-                    data-install-speed="under-60s"
-                  >
-                    Install under 60s — CLI or copy-paste, no account required.
-                  </p>
-                ) : null}
+                <p
+                  className="border border-border bg-muted/30 px-3 py-2 font-mono text-[11px] leading-relaxed text-foreground"
+                  data-install-speed="under-60s"
+                >
+                  Install under 60s — CLI or copy-paste, no account required.
+                </p>
 
                 <div className="space-y-2">
                   <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
@@ -546,18 +544,12 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
                   nativeButton={false}
                   render={
                     <Link
-                      href={
-                        entry.tier === "free"
-                          ? `/docs/installation?material=${entry.slug}`
-                          : `/pricing?material=${entry.slug}`
-                      }
+                      href={`/docs/installation?material=${entry.slug}`}
                     />
                   }
                   size="lg"
                 >
-                  {entry.tier === "free"
-                    ? "Installation docs"
-                    : "Buy license"}
+                  Installation docs
                 </Button>
                 <Button
                   className="w-full"
@@ -565,16 +557,10 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
                   variant="outline"
                   onClick={copySnippet}
                 >
-                  {copied
-                    ? "Copied JSX"
-                    : entry.tier === "free"
-                      ? "Copy JSX"
-                      : "Copy preview JSX"}
+                  {copied ? "Copied JSX" : "Copy JSX"}
                 </Button>
                 <p className="pt-1 text-sm leading-relaxed text-muted-foreground">
-                  {entry.tier === "free"
-                    ? "Free — no account required. Source lands in your repo."
-                    : "Install unlocks after purchase. Preview JSX is for evaluation."}{" "}
+                  Free — no account required. Source lands in your repo.{" "}
                   <Link
                     className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
                     href={`/docs/installation?material=${entry.slug}`}
@@ -627,7 +613,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Compare Free, Personal, and Team on{" "}
+                    Compare Free and Screen on{" "}
                     <Link
                       className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
                       href="/pricing"

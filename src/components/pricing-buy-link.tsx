@@ -19,7 +19,7 @@ export function PricingBuyLink({
   className,
 }: {
   href: string;
-  plan: "static" | "personal" | "team";
+  plan: "screen";
   material?: string;
   label: string;
   primary?: boolean;
