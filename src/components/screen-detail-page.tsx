@@ -195,6 +195,23 @@ export function ScreenDetailPage({
 
   return (
     <MarketingShell>
+      {/* Pinned outside the asset — viewport bottom-left gutter */}
+      <div
+        aria-live="polite"
+        className="pointer-events-none fixed bottom-4 left-3 z-[60] sm:bottom-5 sm:left-4"
+        data-frameline-quota
+      >
+        <div className="inline-flex max-w-[min(16rem,calc(100vw-1.5rem))] items-center gap-2 border border-[#3A58F0]/35 bg-[#EEF2FF] px-2.5 py-1.5">
+          <span className="font-mono text-[9px] font-semibold tracking-[0.16em] text-[#3A58F0] uppercase">
+            Frameline
+          </span>
+          <span className="h-3 w-px shrink-0 bg-[#3A58F0]/30" aria-hidden />
+          <span className="font-mono text-[10px] tracking-[0.12em] text-[#1A2A6B] uppercase">
+            {copiesLeftLabel}
+          </span>
+        </div>
+      </div>
+
       <MarketingNavbar />
       <MarketingSection>
         <MarketingPageHeader
@@ -264,23 +281,6 @@ export function ScreenDetailPage({
           ) : (
             <div className="absolute inset-0 bg-muted" />
           )}
-
-          {/* Frameline chrome — outside the Lunar template, bottom-left of the stage */}
-          <div
-            aria-live="polite"
-            className="pointer-events-none absolute bottom-4 left-4 z-50 sm:bottom-6 sm:left-6"
-            data-frameline-quota
-          >
-            <div className="inline-flex items-center gap-2 border border-[#3A58F0]/35 bg-[#EEF2FF]/95 px-3 py-2 shadow-sm backdrop-blur-sm">
-              <span className="font-mono text-[9px] font-semibold tracking-[0.18em] text-[#3A58F0] uppercase">
-                Frameline
-              </span>
-              <span className="h-3 w-px bg-[#3A58F0]/30" aria-hidden />
-              <span className="font-mono text-[10px] tracking-[0.14em] text-[#1A2A6B] uppercase">
-                {copiesLeftLabel}
-              </span>
-            </div>
-          </div>
         </div>
       </MarketingSection>
 
