@@ -12,7 +12,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     priceCents: 900,
     priceLabel: "$9",
     tier: "paid",
-    blurb: "Cinematic lunar hero · $9 · 1 free copy / day",
+    blurb: "Cinematic lunar hero · $9 · 1 free copy / week",
   },
 ];
 

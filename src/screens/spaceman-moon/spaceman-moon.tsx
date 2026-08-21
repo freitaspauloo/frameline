@@ -162,13 +162,15 @@ function createTickEngine() {
 
 export type SpacemanMoonProps = {
   className?: string;
+  /** Fill a fixed-height stage instead of min-height: 100dvh */
+  embed?: boolean;
 };
 
 /**
  * Spaceman on the Moon — full-bleed cinematic hero (video, magenta blend, glass pins).
  * Demo brand: Lunar. Buyers swap copy and assets.
  */
-export function SpacemanMoon({ className }: SpacemanMoonProps) {
+export function SpacemanMoon({ className, embed = false }: SpacemanMoonProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoPhaseRef = useRef<"idle" | "in" | "play" | "out">("idle");
   const hoverPauseRef = useRef(false);
@@ -335,6 +337,7 @@ export function SpacemanMoon({ className }: SpacemanMoonProps) {
       id="top"
       className={cn(
         styles.nudge,
+        embed && styles.nudgeEmbed,
         motionReady && styles["nudge-motion-ready"],
         className,
       )}

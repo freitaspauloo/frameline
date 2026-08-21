@@ -26,7 +26,7 @@ export default function ScreensIndexPage() {
       <MarketingNavbar />
       <MarketingSection>
         <MarketingPageHeader
-          description="Full-page heroes you can drop into any app. One free copy per UTC day, then $9 for unlimited."
+          description="Full-page heroes you can drop into any app. One free copy per week, then $9 for unlimited."
           eyebrow="Screens"
           title="Screen templates"
         />

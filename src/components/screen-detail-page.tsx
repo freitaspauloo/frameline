@@ -11,7 +11,6 @@ import {
   MarketingPageHeader,
   MarketingSection,
   MarketingShell,
-  marketingPad,
   marketingPadX,
 } from "@/components/marketing-shell";
 import { Button } from "@/components/ui/button";
@@ -22,7 +21,7 @@ import { SpacemanMoon } from "@/screens/spaceman-moon";
 
 type AccessState = {
   owned: boolean;
-  freeRemainingToday: number | null;
+  copiesLeftThisWeek: number | null;
   message: string | null;
 };
 
@@ -51,12 +50,18 @@ export function ScreenDetailPage({
     if (emailRef.current) qs.set("email", emailRef.current);
     const res = await fetch(`/api/screens/access?${qs.toString()}`, {
       cache: "no-store",
+      credentials: "same-origin",
     });
-    const data = (await res.json()) as AccessState & { ok?: boolean };
+    const data = (await res.json()) as AccessState & {
+      ok?: boolean;
+      freeRemainingToday?: number | null;
+    };
     if (res.ok && data.ok !== false) {
+      const left =
+        data.copiesLeftThisWeek ?? data.freeRemainingToday ?? null;
       setAccess({
         owned: Boolean(data.owned),
-        freeRemainingToday: data.freeRemainingToday,
+        copiesLeftThisWeek: left,
         message: data.message,
       });
     }
@@ -71,6 +76,7 @@ export function ScreenDetailPage({
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: emailRef.current }),
+            credentials: "same-origin",
           });
         } catch {
           /* optional session bind */
@@ -82,6 +88,7 @@ export function ScreenDetailPage({
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ sessionId }),
+            credentials: "same-origin",
           });
         } catch {
           /* webhook backup may still land */
@@ -95,8 +102,14 @@ export function ScreenDetailPage({
   }, [sessionId, refreshAccess]);
 
   const gated = Boolean(
-    access && !access.owned && access.freeRemainingToday === 0,
+    access && !access.owned && access.copiesLeftThisWeek === 0,
   );
+
+  const copiesLeftLabel = access?.owned
+    ? null
+    : access?.copiesLeftThisWeek === 0
+      ? "0 copies left this week"
+      : "1 copy left this week";
 
   async function copyPath(path: "prompt" | "code") {
     setBusy(path);
@@ -110,18 +123,27 @@ export function ScreenDetailPage({
           path,
           email: emailRef.current,
         }),
+        credentials: "same-origin",
       });
-      const data = (await res.json()) as {
+
+      let data: {
         ok?: boolean;
         text?: string;
         reason?: string;
         message?: string;
-      };
+        error?: string;
+      } = {};
+      try {
+        data = (await res.json()) as typeof data;
+      } catch {
+        setBanner(`Copy failed (${res.status}). Try again.`);
+        return;
+      }
 
-      if (data.reason === "pay" || (!res.ok && data.reason === "pay")) {
+      if (data.reason === "pay") {
         setBanner(
           data.message ??
-            "You’ve used today’s free copy. $9 unlocks unlimited prompt + code.",
+            "You’ve used this week’s free copy. $9 unlocks unlimited prompt + code.",
         );
         await refreshAccess();
         router.push(
@@ -131,7 +153,8 @@ export function ScreenDetailPage({
       }
 
       if (!res.ok || !data.ok || !data.text) {
-        setBanner(data.message ?? "Could not copy — try again.");
+        setBanner(data.message ?? data.error ?? "Could not copy — try again.");
+        await refreshAccess();
         return;
       }
 
@@ -144,8 +167,12 @@ export function ScreenDetailPage({
       setCopied(path);
       window.setTimeout(() => setCopied(null), 1600);
       await refreshAccess();
-    } catch {
-      setBanner("Network error — try again.");
+    } catch (err) {
+      setBanner(
+        err instanceof Error
+          ? `Network error: ${err.message}`
+          : "Network error — try again.",
+      );
     } finally {
       setBusy(null);
     }
@@ -177,122 +204,103 @@ export function ScreenDetailPage({
           eyebrow={`Screen · ${entry.priceLabel} · one-time`}
           title={entry.title}
         />
+      </MarketingSection>
 
-        <div className="relative grid overflow-visible lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
-          <div
-            className={cn(
-              "border-b border-border lg:sticky lg:top-16 lg:self-start lg:border-b-0",
-              marketingPad,
-            )}
-          >
-            <div className="relative aspect-[9/16] max-h-[min(78dvh,820px)] overflow-hidden border border-border bg-[#140810] sm:aspect-[16/10] sm:max-h-none">
-              {entry.slug === "spaceman-moon" ? (
-                <div className="absolute inset-0 overflow-hidden">
-                  <SpacemanMoon className="!min-h-full" />
-                </div>
-              ) : (
-                <div className="absolute inset-0 bg-muted" />
-              )}
-            </div>
-          </div>
+      {/* Full-rail live stage — sized for the cinematic 100% layout */}
+      <MarketingSection className="border-t-0">
+        <div className="relative h-[min(100dvh,1100px)] min-h-[640px] w-full overflow-hidden bg-[#140810]">
+          {entry.slug === "spaceman-moon" ? (
+            <SpacemanMoon className="h-full w-full" embed />
+          ) : (
+            <div className="absolute inset-0 bg-muted" />
+          )}
 
-          <div className={cn("space-y-8", marketingPad)}>
-            <div className="space-y-3">
-              <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Get the source
-              </p>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {access?.owned
-                  ? "Unlimited copies unlocked for this screen."
-                  : (access?.message ??
-                    banner ??
-                    "1 free copy today. Then $9 for unlimited.")}
-              </p>
-              {banner && !access?.owned ? (
-                <p className="text-sm text-foreground" role="status">
-                  {banner}
-                </p>
-              ) : null}
-            </div>
-
-            <div className="flex flex-col gap-3">
-              {gated ? (
-                <>
-                  <Button size="lg" type="button" onClick={goPay}>
-                    Get unlimited copies — $9
-                  </Button>
-                  <p className="text-xs text-muted-foreground">
-                    UTC day free slot used. Purchase unlocks Copy prompt + Copy
-                    code with no daily limit.
-                  </p>
-                </>
-              ) : (
-                <>
-                  <Button
-                    disabled={busy !== null}
-                    size="lg"
-                    type="button"
-                    variant="outline"
-                    onClick={() => void copyPath("prompt")}
-                  >
-                    {copied === "prompt" ? (
-                      <RiCheckLine data-icon="inline-start" />
-                    ) : (
-                      <RiFileCopyLine data-icon="inline-start" />
-                    )}
-                    {copied === "prompt"
-                      ? "Copied"
-                      : busy === "prompt"
-                        ? "Copying…"
-                        : "Copy prompt"}
-                  </Button>
-                  <Button
-                    disabled={busy !== null}
-                    size="lg"
-                    type="button"
-                    onClick={() => void copyPath("code")}
-                  >
-                    {copied === "code" ? (
-                      <RiCheckLine data-icon="inline-start" />
-                    ) : (
-                      <RiFileCopyLine data-icon="inline-start" />
-                    )}
-                    {copied === "code"
-                      ? "Copied"
-                      : busy === "code"
-                        ? "Copying…"
-                        : "Copy code"}
-                  </Button>
-                </>
-              )}
-            </div>
-
-            <dl className="grid gap-5 border-t border-border pt-8">
-              <div className="space-y-1.5">
-                <dt className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                  Price
-                </dt>
-                <dd className="font-heading text-lg font-medium tracking-tight">
-                  {entry.priceLabel} · one-time
-                </dd>
-              </div>
-              <div className="space-y-1.5">
-                <dt className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                  Includes
-                </dt>
-                <dd className="text-sm leading-relaxed text-muted-foreground">
-                  Agent prompt + full TSX + CSS module. No configurator — the
-                  look is the product.
-                </dd>
-              </div>
-            </dl>
-          </div>
+          {copiesLeftLabel ? (
+            <p
+              className="pointer-events-none absolute bottom-4 left-4 z-40 rounded-none bg-black/45 px-2.5 py-1.5 font-mono text-[10px] tracking-[0.14em] text-white/85 uppercase backdrop-blur-sm sm:bottom-6 sm:left-6"
+              data-quota
+            >
+              {copiesLeftLabel}
+            </p>
+          ) : null}
         </div>
       </MarketingSection>
 
-      <div className={cn("py-10 text-center text-sm text-muted-foreground", marketingPadX)}>
-        Live preview above. Install by pasting the copied code into your app.
-      </div>
+      <MarketingSection>
+        <div
+          className={cn(
+            "flex flex-col gap-8 py-10 sm:flex-row sm:items-end sm:justify-between sm:py-12",
+            marketingPadX,
+          )}
+        >
+          <div className="max-w-xl space-y-3">
+            <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+              Get the source
+            </p>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {access?.owned
+                ? "Unlimited copies unlocked for this screen."
+                : (access?.message ??
+                  "1 free copy this week. Then $9 for unlimited.")}
+            </p>
+            {banner ? (
+              <p className="text-sm text-foreground" role="status">
+                {banner}
+              </p>
+            ) : null}
+            <p className="text-xs text-muted-foreground">
+              {entry.priceLabel} · one-time · agent prompt + full TSX + CSS
+              module
+            </p>
+          </div>
+
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:min-w-[16rem]">
+            {gated ? (
+              <Button size="lg" type="button" onClick={goPay}>
+                Get unlimited copies — $9
+              </Button>
+            ) : (
+              <>
+                <Button
+                  disabled={busy !== null}
+                  size="lg"
+                  type="button"
+                  variant="outline"
+                  onClick={() => void copyPath("prompt")}
+                >
+                  {copied === "prompt" ? (
+                    <RiCheckLine data-icon="inline-start" />
+                  ) : (
+                    <RiFileCopyLine data-icon="inline-start" />
+                  )}
+                  {copied === "prompt"
+                    ? "Copied"
+                    : busy === "prompt"
+                      ? "Copying…"
+                      : "Copy prompt"}
+                </Button>
+                <Button
+                  disabled={busy !== null}
+                  size="lg"
+                  type="button"
+                  onClick={() => void copyPath("code")}
+                >
+                  {copied === "code" ? (
+                    <RiCheckLine data-icon="inline-start" />
+                  ) : (
+                    <RiFileCopyLine data-icon="inline-start" />
+                  )}
+                  {copied === "code"
+                    ? "Copied"
+                    : busy === "code"
+                      ? "Copying…"
+                      : "Copy code"}
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+      </MarketingSection>
 
       <MarketingFooter />
     </MarketingShell>

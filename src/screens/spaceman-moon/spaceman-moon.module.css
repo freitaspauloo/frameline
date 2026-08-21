@@ -33,6 +33,12 @@
   font-synthesis: none;
 }
 
+/** Fill a fixed stage (detail page) instead of forcing another 100dvh. */
+.nudgeEmbed {
+  min-height: 100%;
+  height: 100%;
+}
+
 .nudge a {
   text-decoration: none;
   color: inherit;

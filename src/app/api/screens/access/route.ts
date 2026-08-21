@@ -1,52 +1,79 @@
+import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-import {
-  anonymousIdCookieHeader,
-  getOrCreateAnonymousId,
-} from "@/lib/anonymous-id";
 import { getDemoEmail } from "@/lib/auth";
+import { ownsScreen } from "@/lib/screen-access";
 import {
-  hasUsedFreeCopyToday,
-  ownsScreen,
-  screenQuotaSubject,
-} from "@/lib/screen-access";
+  attachQuotaCookie,
+  deviceSeedFromRequest,
+  ensureQuotaPayload,
+  freeCopiesLeftThisWeek,
+  readQuotaCookie,
+} from "@/lib/screen-quota-cookie";
 import { getScreenBySlug } from "@/screens/catalog";
 
-export async function GET(request: Request) {
-  const url = new URL(request.url);
-  const slug = url.searchParams.get("slug")?.trim() ?? "";
-  if (!getScreenBySlug(slug)) {
+const ANON_COOKIE = "fl_anon_id";
+
+export async function GET(request: NextRequest) {
+  try {
+    const url = new URL(request.url);
+    const slug = url.searchParams.get("slug")?.trim() ?? "";
+    if (!getScreenBySlug(slug)) {
+      return NextResponse.json(
+        { ok: false, error: "Unknown screen" },
+        { status: 404 },
+      );
+    }
+
+    const emailParam = url.searchParams.get("email")?.trim().toLowerCase();
+    const sessionEmail = await getDemoEmail();
+    const email =
+      sessionEmail ||
+      (emailParam && emailParam.includes("@") ? emailParam : null);
+
+    let anonId = request.cookies.get(ANON_COOKIE)?.value?.trim() || null;
+    let mintAnon = false;
+    if (!anonId) {
+      anonId = `anon_${deviceSeedFromRequest(request)}_${nanoid(12)}`;
+      mintAnon = true;
+    }
+
+    const owned = await ownsScreen(email, slug);
+    let quota = ensureQuotaPayload(readQuotaCookie(request), anonId);
+    if (email) quota = { ...quota, id: `email:${email}` };
+
+    const left = owned ? null : freeCopiesLeftThisWeek(quota, slug);
+
+    const res = NextResponse.json({
+      ok: true,
+      slug,
+      owned,
+      copiesLeftThisWeek: left,
+      freeRemainingToday: left,
+      message: owned
+        ? null
+        : left === 0
+          ? "You’ve used this week’s free copy. $9 unlocks unlimited prompt + code."
+          : "1 free copy this week. Then $9 for unlimited.",
+    });
+
+    if (mintAnon) {
+      res.cookies.set(ANON_COOKIE, anonId, {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 400,
+        secure: process.env.NODE_ENV === "production",
+      });
+    }
+    attachQuotaCookie(res, quota);
+    return res;
+  } catch (err) {
+    console.error("[screens/access]", err);
     return NextResponse.json(
-      { ok: false, error: "Unknown screen" },
-      { status: 404 },
+      { ok: false, error: "Access check failed" },
+      { status: 500 },
     );
   }
-
-  const emailParam = url.searchParams.get("email")?.trim().toLowerCase();
-  const sessionEmail = await getDemoEmail();
-  const email =
-    sessionEmail ||
-    (emailParam && emailParam.includes("@") ? emailParam : null);
-  const anon = await getOrCreateAnonymousId();
-  const owned = await ownsScreen(email, slug);
-  const subject = screenQuotaSubject({ email, anonymousId: anon.id });
-  const usedFree = owned
-    ? false
-    : await hasUsedFreeCopyToday({ subject, slug });
-
-  const res = NextResponse.json({
-    ok: true,
-    slug,
-    owned,
-    freeRemainingToday: owned ? null : usedFree ? 0 : 1,
-    message: owned
-      ? null
-      : usedFree
-        ? "You’ve used today’s free copy. $9 unlocks unlimited prompt + code."
-        : "1 free copy today. Then $9 for unlimited.",
-  });
-  if (anon.setCookie) {
-    res.headers.append("Set-Cookie", anonymousIdCookieHeader(anon.id));
-  }
-  return res;
 }
