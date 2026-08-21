@@ -39,11 +39,9 @@ export async function createCheckoutSession(input: {
 
   const base = appBaseUrl();
   const productName =
-    input.plan === "static" && input.material
-      ? `Frameline Static — ${input.material}`
-      : input.plan === "screen" && input.material
-        ? `Frameline Screen — ${input.material}`
-        : `Frameline ${license.name}`;
+    input.plan === "screen" && input.material
+      ? `Frameline Screen — ${input.material}`
+      : `Frameline ${license.name}`;
 
   const successUrl =
     input.plan === "screen" && input.material
