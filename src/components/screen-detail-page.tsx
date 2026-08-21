@@ -111,9 +111,11 @@ export function ScreenDetailPage({
 
   const copiesLeftLabel = access?.owned
     ? "Unlimited copies"
-    : access?.copiesLeftThisWeek === 0
-      ? "0 copies left this week"
-      : "1 copy left this week";
+    : access == null
+      ? "1 copy left this week"
+      : access.copiesLeftThisWeek === 0
+        ? "0 copies left this week"
+        : "1 copy left this week";
 
   function openPayGate(message?: string) {
     setBanner(
@@ -198,23 +200,16 @@ export function ScreenDetailPage({
         <MarketingPageHeader
           action={
             <div className="flex flex-col items-stretch gap-3 sm:items-end">
-              <div className="flex flex-wrap items-center justify-end gap-3">
-                <p
-                  className="font-mono text-[10px] tracking-[0.16em] text-muted-foreground uppercase"
-                  data-frameline-quota
-                >
-                  {copiesLeftLabel}
-                </p>
-                <Button
-                  nativeButton={false}
-                  render={<Link href="/screens" />}
-                  size="sm"
-                  variant="outline"
-                >
-                  <RiArrowLeftLine data-icon="inline-start" />
-                  All screens
-                </Button>
-              </div>
+              <Button
+                className="self-end"
+                nativeButton={false}
+                render={<Link href="/screens" />}
+                size="sm"
+                variant="outline"
+              >
+                <RiArrowLeftLine data-icon="inline-start" />
+                All screens
+              </Button>
               <div className="flex flex-wrap items-center justify-end gap-2">
                 <Button
                   className="border-[#3A58F0]/40 bg-[#EEF2FF] text-[#1A2A6B] hover:border-[#3A58F0] hover:bg-[#E0E7FF] hover:text-[#1A2A6B]"
@@ -269,6 +264,23 @@ export function ScreenDetailPage({
           ) : (
             <div className="absolute inset-0 bg-muted" />
           )}
+
+          {/* Frameline chrome — outside the Lunar template, bottom-left of the stage */}
+          <div
+            aria-live="polite"
+            className="pointer-events-none absolute bottom-4 left-4 z-50 sm:bottom-6 sm:left-6"
+            data-frameline-quota
+          >
+            <div className="inline-flex items-center gap-2 border border-[#3A58F0]/35 bg-[#EEF2FF]/95 px-3 py-2 shadow-sm backdrop-blur-sm">
+              <span className="font-mono text-[9px] font-semibold tracking-[0.18em] text-[#3A58F0] uppercase">
+                Frameline
+              </span>
+              <span className="h-3 w-px bg-[#3A58F0]/30" aria-hidden />
+              <span className="font-mono text-[10px] tracking-[0.14em] text-[#1A2A6B] uppercase">
+                {copiesLeftLabel}
+              </span>
+            </div>
+          </div>
         </div>
       </MarketingSection>
 
