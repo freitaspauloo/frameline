@@ -197,22 +197,63 @@ export function ScreenDetailPage({
       <MarketingSection>
         <MarketingPageHeader
           action={
-            <div className="flex flex-wrap items-center gap-3">
-              <p
-                className="font-mono text-[10px] tracking-[0.16em] text-muted-foreground uppercase"
-                data-frameline-quota
-              >
-                {copiesLeftLabel}
-              </p>
-              <Button
-                nativeButton={false}
-                render={<Link href="/screens" />}
-                size="sm"
-                variant="outline"
-              >
-                <RiArrowLeftLine data-icon="inline-start" />
-                All screens
-              </Button>
+            <div className="flex flex-col items-stretch gap-3 sm:items-end">
+              <div className="flex flex-wrap items-center justify-end gap-3">
+                <p
+                  className="font-mono text-[10px] tracking-[0.16em] text-muted-foreground uppercase"
+                  data-frameline-quota
+                >
+                  {copiesLeftLabel}
+                </p>
+                <Button
+                  nativeButton={false}
+                  render={<Link href="/screens" />}
+                  size="sm"
+                  variant="outline"
+                >
+                  <RiArrowLeftLine data-icon="inline-start" />
+                  All screens
+                </Button>
+              </div>
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                <Button
+                  className="border-[#3A58F0]/40 bg-[#EEF2FF] text-[#1A2A6B] hover:border-[#3A58F0] hover:bg-[#E0E7FF] hover:text-[#1A2A6B]"
+                  disabled={busy !== null}
+                  size="sm"
+                  type="button"
+                  variant="outline"
+                  onClick={() => void copyPath("prompt")}
+                >
+                  {copied === "prompt" ? (
+                    <RiCheckLine data-icon="inline-start" />
+                  ) : (
+                    <RiFileCopyLine data-icon="inline-start" />
+                  )}
+                  {copied === "prompt"
+                    ? "Copied"
+                    : busy === "prompt"
+                      ? "Copying…"
+                      : "Copy prompt"}
+                </Button>
+                <Button
+                  className="bg-[#3A58F0] text-white hover:bg-[#2F4AD4]"
+                  disabled={busy !== null}
+                  size="sm"
+                  type="button"
+                  onClick={() => void copyPath("code")}
+                >
+                  {copied === "code" ? (
+                    <RiCheckLine data-icon="inline-start" />
+                  ) : (
+                    <RiFileCopyLine data-icon="inline-start" />
+                  )}
+                  {copied === "code"
+                    ? "Copied"
+                    : busy === "code"
+                      ? "Copying…"
+                      : "Copy code"}
+                </Button>
+              </div>
             </div>
           }
           description={entry.description}
@@ -221,7 +262,6 @@ export function ScreenDetailPage({
         />
       </MarketingSection>
 
-      {/* Full-rail live stage with Frameline copy CTAs overlaid at the top */}
       <MarketingSection className="border-t-0">
         <div className="relative h-[min(100dvh,1100px)] min-h-[640px] w-full overflow-hidden bg-[#140810]">
           {entry.slug === "spaceman-moon" ? (
@@ -229,53 +269,6 @@ export function ScreenDetailPage({
           ) : (
             <div className="absolute inset-0 bg-muted" />
           )}
-
-          <div
-            className={cn(
-              "pointer-events-none absolute inset-x-0 top-0 z-40 flex justify-end pt-[4.75rem] sm:pt-[5.25rem]",
-              marketingPadX,
-            )}
-          >
-            <div className="pointer-events-auto flex flex-wrap items-center justify-end gap-2">
-              <Button
-                className="border-white/25 bg-black/45 text-white backdrop-blur-sm hover:bg-black/60 hover:text-white"
-                disabled={busy !== null}
-                size="sm"
-                type="button"
-                variant="outline"
-                onClick={() => void copyPath("prompt")}
-              >
-                {copied === "prompt" ? (
-                  <RiCheckLine data-icon="inline-start" />
-                ) : (
-                  <RiFileCopyLine data-icon="inline-start" />
-                )}
-                {copied === "prompt"
-                  ? "Copied"
-                  : busy === "prompt"
-                    ? "Copying…"
-                    : "Copy prompt"}
-              </Button>
-              <Button
-                className="bg-white text-foreground hover:bg-white/90"
-                disabled={busy !== null}
-                size="sm"
-                type="button"
-                onClick={() => void copyPath("code")}
-              >
-                {copied === "code" ? (
-                  <RiCheckLine data-icon="inline-start" />
-                ) : (
-                  <RiFileCopyLine data-icon="inline-start" />
-                )}
-                {copied === "code"
-                  ? "Copied"
-                  : busy === "code"
-                    ? "Copying…"
-                    : "Copy code"}
-              </Button>
-            </div>
-          </div>
         </div>
       </MarketingSection>
 
@@ -305,10 +298,18 @@ export function ScreenDetailPage({
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setPayOpen(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setPayOpen(false)}
+            >
               Not now
             </Button>
-            <Button type="button" onClick={goPay}>
+            <Button
+              className="bg-[#3A58F0] text-white hover:bg-[#2F4AD4]"
+              type="button"
+              onClick={goPay}
+            >
               Continue to checkout — {entry.priceLabel}
             </Button>
           </DialogFooter>
