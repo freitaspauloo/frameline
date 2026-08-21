@@ -14,6 +14,14 @@ import {
   marketingPadX,
 } from "@/components/marketing-shell";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { recordInstallIntent } from "@/lib/install-intent";
 import { cn } from "@/lib/utils";
 import type { ScreenCatalogEntry } from "@/screens/types";
@@ -43,6 +51,7 @@ export function ScreenDetailPage({
   const [banner, setBanner] = React.useState<string | null>(
     unlocked ? "Unlocked — unlimited copies for this screen." : null,
   );
+  const [payOpen, setPayOpen] = React.useState(false);
   const emailRef = React.useRef(email);
 
   const refreshAccess = React.useCallback(async () => {
@@ -57,8 +66,7 @@ export function ScreenDetailPage({
       freeRemainingToday?: number | null;
     };
     if (res.ok && data.ok !== false) {
-      const left =
-        data.copiesLeftThisWeek ?? data.freeRemainingToday ?? null;
+      const left = data.copiesLeftThisWeek ?? data.freeRemainingToday ?? null;
       setAccess({
         owned: Boolean(data.owned),
         copiesLeftThisWeek: left,
@@ -101,15 +109,19 @@ export function ScreenDetailPage({
     };
   }, [sessionId, refreshAccess]);
 
-  const gated = Boolean(
-    access && !access.owned && access.copiesLeftThisWeek === 0,
-  );
-
   const copiesLeftLabel = access?.owned
-    ? null
+    ? "Unlimited copies"
     : access?.copiesLeftThisWeek === 0
       ? "0 copies left this week"
       : "1 copy left this week";
+
+  function openPayGate(message?: string) {
+    setBanner(
+      message ??
+        "You’ve used this week’s free copy. $9 unlocks unlimited prompt + code.",
+    );
+    setPayOpen(true);
+  }
 
   async function copyPath(path: "prompt" | "code") {
     setBusy(path);
@@ -141,14 +153,8 @@ export function ScreenDetailPage({
       }
 
       if (data.reason === "pay") {
-        setBanner(
-          data.message ??
-            "You’ve used this week’s free copy. $9 unlocks unlimited prompt + code.",
-        );
         await refreshAccess();
-        router.push(
-          `/checkout?plan=screen&material=${encodeURIComponent(entry.slug)}`,
-        );
+        openPayGate(data.message);
         return;
       }
 
@@ -179,6 +185,7 @@ export function ScreenDetailPage({
   }
 
   function goPay() {
+    setPayOpen(false);
     router.push(
       `/checkout?plan=screen&material=${encodeURIComponent(entry.slug)}`,
     );
@@ -190,15 +197,23 @@ export function ScreenDetailPage({
       <MarketingSection>
         <MarketingPageHeader
           action={
-            <Button
-              nativeButton={false}
-              render={<Link href="/screens" />}
-              size="sm"
-              variant="outline"
-            >
-              <RiArrowLeftLine data-icon="inline-start" />
-              All screens
-            </Button>
+            <div className="flex flex-wrap items-center gap-3">
+              <p
+                className="font-mono text-[10px] tracking-[0.16em] text-muted-foreground uppercase"
+                data-frameline-quota
+              >
+                {copiesLeftLabel}
+              </p>
+              <Button
+                nativeButton={false}
+                render={<Link href="/screens" />}
+                size="sm"
+                variant="outline"
+              >
+                <RiArrowLeftLine data-icon="inline-start" />
+                All screens
+              </Button>
+            </div>
           }
           description={entry.description}
           eyebrow={`Screen · ${entry.priceLabel} · one-time`}
@@ -206,7 +221,7 @@ export function ScreenDetailPage({
         />
       </MarketingSection>
 
-      {/* Full-rail live stage — sized for the cinematic 100% layout */}
+      {/* Full-rail live stage with Frameline copy CTAs overlaid at the top */}
       <MarketingSection className="border-t-0">
         <div className="relative h-[min(100dvh,1100px)] min-h-[640px] w-full overflow-hidden bg-[#140810]">
           {entry.slug === "spaceman-moon" ? (
@@ -215,94 +230,90 @@ export function ScreenDetailPage({
             <div className="absolute inset-0 bg-muted" />
           )}
 
-          {copiesLeftLabel ? (
-            <p
-              className="pointer-events-none absolute bottom-4 left-4 z-40 rounded-none bg-black/45 px-2.5 py-1.5 font-mono text-[10px] tracking-[0.14em] text-white/85 uppercase backdrop-blur-sm sm:bottom-6 sm:left-6"
-              data-quota
-            >
-              {copiesLeftLabel}
-            </p>
-          ) : null}
-        </div>
-      </MarketingSection>
-
-      <MarketingSection>
-        <div
-          className={cn(
-            "flex flex-col gap-8 py-10 sm:flex-row sm:items-end sm:justify-between sm:py-12",
-            marketingPadX,
-          )}
-        >
-          <div className="max-w-xl space-y-3">
-            <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-              Get the source
-            </p>
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              {access?.owned
-                ? "Unlimited copies unlocked for this screen."
-                : (access?.message ??
-                  "1 free copy this week. Then $9 for unlimited.")}
-            </p>
-            {banner ? (
-              <p className="text-sm text-foreground" role="status">
-                {banner}
-              </p>
-            ) : null}
-            <p className="text-xs text-muted-foreground">
-              {entry.priceLabel} · one-time · agent prompt + full TSX + CSS
-              module
-            </p>
-          </div>
-
-          <div className="flex w-full flex-col gap-3 sm:w-auto sm:min-w-[16rem]">
-            {gated ? (
-              <Button size="lg" type="button" onClick={goPay}>
-                Get unlimited copies — $9
-              </Button>
-            ) : (
-              <>
-                <Button
-                  disabled={busy !== null}
-                  size="lg"
-                  type="button"
-                  variant="outline"
-                  onClick={() => void copyPath("prompt")}
-                >
-                  {copied === "prompt" ? (
-                    <RiCheckLine data-icon="inline-start" />
-                  ) : (
-                    <RiFileCopyLine data-icon="inline-start" />
-                  )}
-                  {copied === "prompt"
-                    ? "Copied"
-                    : busy === "prompt"
-                      ? "Copying…"
-                      : "Copy prompt"}
-                </Button>
-                <Button
-                  disabled={busy !== null}
-                  size="lg"
-                  type="button"
-                  onClick={() => void copyPath("code")}
-                >
-                  {copied === "code" ? (
-                    <RiCheckLine data-icon="inline-start" />
-                  ) : (
-                    <RiFileCopyLine data-icon="inline-start" />
-                  )}
-                  {copied === "code"
-                    ? "Copied"
-                    : busy === "code"
-                      ? "Copying…"
-                      : "Copy code"}
-                </Button>
-              </>
+          <div
+            className={cn(
+              "pointer-events-none absolute inset-x-0 top-0 z-40 flex justify-end pt-[4.75rem] sm:pt-[5.25rem]",
+              marketingPadX,
             )}
+          >
+            <div className="pointer-events-auto flex flex-wrap items-center justify-end gap-2">
+              <Button
+                className="border-white/25 bg-black/45 text-white backdrop-blur-sm hover:bg-black/60 hover:text-white"
+                disabled={busy !== null}
+                size="sm"
+                type="button"
+                variant="outline"
+                onClick={() => void copyPath("prompt")}
+              >
+                {copied === "prompt" ? (
+                  <RiCheckLine data-icon="inline-start" />
+                ) : (
+                  <RiFileCopyLine data-icon="inline-start" />
+                )}
+                {copied === "prompt"
+                  ? "Copied"
+                  : busy === "prompt"
+                    ? "Copying…"
+                    : "Copy prompt"}
+              </Button>
+              <Button
+                className="bg-white text-foreground hover:bg-white/90"
+                disabled={busy !== null}
+                size="sm"
+                type="button"
+                onClick={() => void copyPath("code")}
+              >
+                {copied === "code" ? (
+                  <RiCheckLine data-icon="inline-start" />
+                ) : (
+                  <RiFileCopyLine data-icon="inline-start" />
+                )}
+                {copied === "code"
+                  ? "Copied"
+                  : busy === "code"
+                    ? "Copying…"
+                    : "Copy code"}
+              </Button>
+            </div>
           </div>
         </div>
       </MarketingSection>
+
+      {banner ? (
+        <MarketingSection>
+          <p
+            className={cn(
+              "py-4 text-sm text-muted-foreground",
+              marketingPadX,
+            )}
+            role="status"
+          >
+            {banner}
+          </p>
+        </MarketingSection>
+      ) : null}
 
       <MarketingFooter />
+
+      <Dialog open={payOpen} onOpenChange={setPayOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Unlock unlimited copies</DialogTitle>
+            <DialogDescription>
+              You’ve used this week’s free copy. Pay {entry.priceLabel} once for
+              unlimited Copy prompt + Copy code on {entry.title}.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setPayOpen(false)}>
+              Not now
+            </Button>
+            <Button type="button" onClick={goPay}>
+              Continue to checkout — {entry.priceLabel}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </MarketingShell>
   );
 }
