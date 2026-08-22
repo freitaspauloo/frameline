@@ -134,6 +134,65 @@ async function runLive(baseUrl) {
       throw new Error(`expected image content-type, got ${type}`);
     }
   });
+
+  await check("GET /r/aurora-mesh.json → registry item", async () => {
+    const res = await fetch(`${root}/r/aurora-mesh.json`);
+    if (res.status !== 200) {
+      throw new Error(`expected 200, got ${res.status}`);
+    }
+    const data = await res.json();
+    if (data.name !== "aurora-mesh" || !data.files?.[0]?.content) {
+      throw new Error(`unexpected registry body: ${JSON.stringify(data).slice(0, 120)}`);
+    }
+  });
+
+  await check("GET /r/orb.json → paid screen withholds source", async () => {
+    const res = await fetch(`${root}/r/orb.json`);
+    if (res.status !== 200) {
+      throw new Error(`expected 200, got ${res.status}`);
+    }
+    const data = await res.json();
+    if (data.meta?.entitled !== false) {
+      throw new Error("expected entitled=false without a token");
+    }
+    if (data.files?.some((file) => "content" in file)) {
+      throw new Error("paid screen source leaked without an entitlement");
+    }
+  });
+
+  await check("GET /a/... → hosted asset with range support", async () => {
+    const res = await fetch(`${root}/a/screens/spaceman-moon/poster.png`);
+    if (res.status !== 200) {
+      throw new Error(`expected 200, got ${res.status}`);
+    }
+    if (res.headers.get("accept-ranges") !== "bytes") {
+      throw new Error("expected Accept-Ranges: bytes");
+    }
+  });
+
+  await check("GET /a/robots.txt → 404 outside allowed roots", async () => {
+    const res = await fetch(`${root}/a/robots.txt`);
+    if (res.status !== 404) {
+      throw new Error(`expected 404, got ${res.status}`);
+    }
+  });
+
+  await check("copy → manifest URL carries a copy id", async () => {
+    const res = await fetch(`${root}/api/screens/copy`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slug: "spaceman-moon", path: "code" }),
+    });
+    const data = await res.json();
+    // A used-up weekly quota is a valid outcome; only assert on a real payload.
+    if (data.reason === "pay") return;
+    if (!data.ok || !data.copyId) {
+      throw new Error(`expected a copyId, got ${JSON.stringify(data).slice(0, 120)}`);
+    }
+    if (!data.text.includes(`c=${data.copyId}`)) {
+      throw new Error("copied payload does not carry its copy id");
+    }
+  });
 }
 
 const baseUrl = process.env.SMOKE_BASE_URL?.trim();
