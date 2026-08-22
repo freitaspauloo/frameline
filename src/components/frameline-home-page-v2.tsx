@@ -58,15 +58,14 @@ const INSTALL_SNIPPET = `npx shadcn@latest add @frameline/aurora-mesh`;
  * Credits row. Deliberately fictional studio marks — placeholders set as type,
  * so the band reads as editorial rather than as borrowed endorsement.
  */
+/** Real clients shipped through DUDESIGN — see freitaspauloo/dudesign. */
 const CREDITS = [
-  "Northline",
-  "Studio Kern",
-  "Halftone Co",
-  "Verso Labs",
-  "Atelier Nine",
-  "Ferro Type",
-  "Quiet Machines",
-  "Ledger & Co",
+  "Audi",
+  "Samsung",
+  "3M",
+  "Ford",
+  "Afeela",
+  "Costco",
 ] as const;
 
 /** Captions for the pinned mesh → dither → grain beat. */
