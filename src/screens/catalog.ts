@@ -7,52 +7,113 @@ const SCREEN = {
 };
 
 /**
- * Storefront catalog for screen templates — separate from MATERIALS_CATALOG.
- * Titles match the shipped Reticle screens.
+ * Storefront catalog — named for the layout.
+ * Old product slugs stay as aliases.
  */
 export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
   {
     ...SCREEN,
-    slug: "spaceman-moon",
-    title: "Spaceman on the Moon",
+    slug: "orb",
+    title: "Orb",
     description:
-      "Full-bleed cinematic hero — magenta moon video, glass pills, floating pins. Copy the prompt or the real TSX + CSS.",
-    blurb: "Cinematic lunar hero · $9 · 1 free copy / week",
+      "Full-viewport composing orb behind headline, glass header, and yield stats.",
+    blurb: "Hero orb · glass chrome · stats footer",
+    poster: "/screens/built-for-yield/poster.png",
+    aliases: ["built-for-yield"],
+  },
+  {
+    ...SCREEN,
+    slug: "feature-cards",
+    title: "Feature cards",
+    description:
+      "Three-up feature cards on a ruled grid — fluted glass, production stats, GSAP entrance.",
+    blurb: "Three-up cards · ruled grid · fluted glass",
+    poster: "/screens/catch-killer-defects/poster.png",
+    aliases: ["catch-killer-defects", "features"],
+  },
+  {
+    ...SCREEN,
+    slug: "insights",
+    title: "Insights",
+    description:
+      "Interactive insights list with ranked review metrics and a sliding highlight.",
+    blurb: "Insights list · ranked review · metrics",
+    poster: "/screens/defect-capture/poster.png",
+    aliases: ["defect-capture"],
+  },
+  {
+    ...SCREEN,
+    slug: "magenta-landscape",
+    title: "Magenta landscape",
+    description:
+      "Cinematic magenta field — horizon, grain, and a landscape hero lockup.",
+    blurb: "Cinematic field · magenta grain · horizon",
+    poster: "/screens/magenta-landscape/poster.svg",
+  },
+  {
+    ...SCREEN,
+    slug: "browser-frame",
+    title: "Browser frame",
+    description:
+      "Product surface inside realistic window chrome — traffic lights, tab, and address bar.",
+    blurb: "Mac chrome · tab bar · live surface",
+    poster: "/screens/browser-frame/poster.svg",
+  },
+  {
+    ...SCREEN,
+    slug: "feature-rail",
+    title: "Feature rail",
+    description:
+      "Vertical feature rail on the left, live visual on the right. One surface, four beats.",
+    blurb: "Left rail · four beats · live visual",
+    poster: "/screens/feature-rail/poster.svg",
+  },
+  {
+    ...SCREEN,
+    slug: "blueprint",
+    title: "Blueprint",
+    description:
+      "Navy technical plate — hairline grid, callouts, and measured type.",
+    blurb: "Navy grid · callouts · measured type",
+    poster: "/screens/blueprint/poster.svg",
+  },
+  {
+    ...SCREEN,
+    slug: "spaceman-moon",
+    title: "Spaceman on the moon",
+    description:
+      "Full-bleed cinematic hero — magenta moon video, glass pills, floating pins.",
+    blurb: "Cinematic lunar hero · glass pills · pins",
     poster: "/screens/spaceman-moon/poster.png",
   },
   {
     ...SCREEN,
-    slug: "built-for-yield",
-    title: "Built for Yield",
+    slug: "light-rays",
+    title: "Light rays",
     description:
-      "Fab-native hero with a composing orb, glass header, and yield stats. The Reticle home screen.",
-    blurb: "In-line inspection hero · composing orb · yield stats",
-    poster: "/screens/built-for-yield/poster.png",
+      "God-ray bloom field with a quiet type lockup. Heroes that read as light, not stock glow.",
+    blurb: "God rays · bloom field · type lockup",
+    poster: "/screens/light-rays/poster.svg",
   },
   {
     ...SCREEN,
-    slug: "catch-killer-defects",
-    title: "Catch Killer Defects",
+    slug: "prompt-bar",
+    title: "Prompt bar",
     description:
-      "Three-up feature cards on a ruled grid — fluted glass, production stats, and GSAP page entrance.",
-    blurb: "Feature cards · fluted glass · 98% capture",
-    poster: "/screens/catch-killer-defects/poster.png",
+      "AI workspace with a pinned prompt bar — thread above, compose below.",
+    blurb: "Pinned prompt · thread · compose",
+    poster: "/screens/prompt-bar/poster.svg",
   },
-  {
-    ...SCREEN,
-    slug: "defect-capture",
-    title: "Yield Insights",
-    description:
-      "Interactive insights list with ranked review metrics. Headline: yield insights backed by production models.",
-    blurb: "Insights list · ranked review · line-level metrics",
-    poster: "/screens/defect-capture/poster.png",
-  },
+];
+
+/** Still copyable, not listed in the public layout catalog. */
+export const HIDDEN_SCREENS: ScreenCatalogEntry[] = [
   {
     ...SCREEN,
     slug: "yield-skeleton",
     title: "Yield Skeleton",
     description:
-      "Loading skeleton for Built for Yield — shimmer bones over the orb, header, and stats.",
+      "Loading skeleton for Orb — shimmer bones over the orb, header, and stats.",
     blurb: "Hero loading state · orb sweep · shimmer bones",
     poster: "/screens/yield-skeleton/poster.png",
   },
@@ -61,7 +122,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     slug: "features-skeleton",
     title: "Features Skeleton",
     description:
-      "Loading skeleton for Catch Killer Defects — ruled grid, card bones, and stat placeholders.",
+      "Loading skeleton for Feature cards — ruled grid, card bones, and stat placeholders.",
     blurb: "Feature-card loading state · ruled grid",
     poster: "/screens/features-skeleton/poster.png",
   },
@@ -70,7 +131,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     slug: "insights-skeleton",
     title: "Insights Skeleton",
     description:
-      "Loading skeleton for Yield Insights — list rows, metric cards, and highlight bar.",
+      "Loading skeleton for Insights — list rows, metric cards, and highlight bar.",
     blurb: "Insights loading state · list + metrics",
     poster: "/screens/insights-skeleton/poster.png",
   },
@@ -79,9 +140,17 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
 export function getScreenBySlug(
   slug: string,
 ): ScreenCatalogEntry | undefined {
-  return SCREENS_CATALOG.find((entry) => entry.slug === slug);
+  return (
+    SCREENS_CATALOG.find(
+      (entry) => entry.slug === slug || entry.aliases?.includes(slug),
+    ) ?? HIDDEN_SCREENS.find((entry) => entry.slug === slug)
+  );
 }
 
 export function listScreens(): ScreenCatalogEntry[] {
   return SCREENS_CATALOG;
+}
+
+export function listAllScreenEntries(): ScreenCatalogEntry[] {
+  return [...SCREENS_CATALOG, ...HIDDEN_SCREENS];
 }

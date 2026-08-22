@@ -131,18 +131,21 @@ export function runCatalogSmoke() {
     }
   }
 
-  assert(SCREENS_CATALOG.length === 7, `Expected 7 screens, got ${SCREENS_CATALOG.length}`);
+  assert(SCREENS_CATALOG.length === 10, `Expected 10 screens, got ${SCREENS_CATALOG.length}`);
   const screenTitles = SCREENS_CATALOG.map((s) => s.title);
   for (const title of [
-    "Spaceman on the Moon",
-    "Built for Yield",
-    "Catch Killer Defects",
-    "Yield Insights",
-    "Yield Skeleton",
-    "Features Skeleton",
-    "Insights Skeleton",
+    "Orb",
+    "Feature cards",
+    "Insights",
+    "Magenta landscape",
+    "Browser frame",
+    "Feature rail",
+    "Blueprint",
+    "Spaceman on the moon",
+    "Light rays",
+    "Prompt bar",
   ]) {
-    assert(screenTitles.includes(title), `Missing shipped screen title: ${title}`);
+    assert(screenTitles.includes(title), `Missing layout screen title: ${title}`);
   }
 
   const smart = parseSmartQuery("Aurora dither HERO");

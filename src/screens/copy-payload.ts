@@ -2,6 +2,63 @@ import { getScreenBySlug } from "@/screens/catalog";
 import { SPACEMAN_MOON_PROMPT } from "@/screens/spaceman-moon/copy";
 
 const FILES: Record<string, { files: string[]; prompt: string; note: string }> = {
+  orb: {
+    files: [
+      "src/screens/built-for-yield/built-for-yield.tsx",
+      "src/screens/built-for-yield/hero-orb.tsx",
+      "src/screens/built-for-yield/built-for-yield.css",
+      "src/screens/stage.tsx",
+      "src/screens/stage.module.css",
+    ],
+    prompt: `Build a full-viewport Orb layout — composing orb, glass header, stats footer.`,
+    note: "Requires the thinking-orbs package and ScreenStage. Alias: built-for-yield.",
+  },
+  "feature-cards": {
+    files: [
+      "src/screens/catch-killer-defects/catch-killer-defects.tsx",
+      "src/screens/catch-killer-defects/catch-killer-defects.css",
+    ],
+    prompt: `Build a Feature cards layout — three-up ruled grid, fluted glass, GSAP entrance.`,
+    note: "Alias: catch-killer-defects.",
+  },
+  insights: {
+    files: [
+      "src/screens/defect-capture/defect-capture.tsx",
+      "src/screens/defect-capture/defect-capture.css",
+    ],
+    prompt: `Build an Insights layout — ranked list, highlight bar, metric cards.`,
+    note: "Alias: defect-capture.",
+  },
+  "magenta-landscape": {
+    files: ["src/screens/layouts/magenta-landscape.tsx", "src/screens/stage.tsx"],
+    prompt: `Build a Magenta landscape layout — cinematic grain field, horizon, type lockup.`,
+    note: "Uses GrainGradient on ScreenStage.",
+  },
+  "browser-frame": {
+    files: ["src/screens/layouts/browser-frame.tsx", "src/screens/stage.tsx"],
+    prompt: `Build a Browser frame layout — mac chrome around a live dither surface.`,
+    note: "Uses Dithering inside window chrome.",
+  },
+  "feature-rail": {
+    files: ["src/screens/layouts/feature-rail.tsx", "src/screens/stage.tsx"],
+    prompt: `Build a Feature rail layout — left rail of four beats, right live visual.`,
+    note: "1920×1080 split plate.",
+  },
+  blueprint: {
+    files: ["src/screens/layouts/blueprint.tsx", "src/screens/stage.tsx"],
+    prompt: `Build a Blueprint layout — navy hairline grid, callouts, measured type.`,
+    note: "Technical plate on ScreenStage.",
+  },
+  "light-rays": {
+    files: ["src/screens/layouts/light-rays.tsx", "src/screens/stage.tsx"],
+    prompt: `Build a Light rays layout — GodRays bloom field and a quiet type lockup.`,
+    note: "Uses @paper-design/shaders-react GodRays.",
+  },
+  "prompt-bar": {
+    files: ["src/screens/layouts/prompt-bar.tsx", "src/screens/stage.tsx"],
+    prompt: `Build a Prompt bar layout — thread above, pinned compose bar below.`,
+    note: "AI workspace chrome on ScreenStage.",
+  },
   "spaceman-moon": {
     files: [
       "src/screens/spaceman-moon/spaceman-moon.tsx",
@@ -14,60 +71,6 @@ const FILES: Record<string, { files: string[]; prompt: string; note: string }> =
 and the font at:
   public/fonts/manrope-latin.woff2
 `,
-  },
-  "built-for-yield": {
-    files: [
-      "src/screens/built-for-yield/built-for-yield.tsx",
-      "src/screens/built-for-yield/hero-orb.tsx",
-      "src/screens/built-for-yield/built-for-yield.css",
-      "src/screens/stage.tsx",
-      "src/screens/stage.module.css",
-    ],
-    prompt: `Build a full-viewport dark hero called "Built for Yield".
-
-Layout
-- 1920×1080 design stage that scales to the viewport.
-- Giant composing orb (thinking-orbs engine, composing preset, 1600px canvas) behind the type.
-- Glass header: radial wordmark, "Reticle", "Fab-native", nav links, Request Info CTA.
-- Centered headline "Built for Yield", classification pill, short inspection lede.
-- Footer: in-line / high-volume line plus 98% / 6.2x / 40M+ stats.
-
-Motion: orb ticks continuously. Respect prefers-reduced-motion by leaving the last painted frame.
-
-Keep Albert Sans. Do not Tailwind-rewrite the scoped CSS.`,
-    note: "Requires the thinking-orbs package and ScreenStage.",
-  },
-  "catch-killer-defects": {
-    files: [
-      "src/screens/catch-killer-defects/catch-killer-defects.tsx",
-      "src/screens/catch-killer-defects/catch-killer-defects.css",
-    ],
-    prompt: `Build a white 1920×1088 three-card features screen called "Catch Killer Defects".
-
-- Hairline vertical/horizontal grid
-- Three cards: Catch Killer Defects (fluted glass + dither), Built for Yield, Faster Than Review
-- Stats 98%, 40M, 6.2x
-- GSAP clip-path entrance (labels, visuals, copy, stats)
-- Paper FlutedGlass on the first card
-
-Media lives under public/screens/catch-killer-defects/. Keep the scoped CSS.`,
-    note: `Place card media at public/screens/catch-killer-defects/ (card-1-dither.png, card-1-glass.webp, card-2.png, card-3.png).`,
-  },
-  "defect-capture": {
-    files: [
-      "src/screens/defect-capture/defect-capture.tsx",
-      "src/screens/defect-capture/defect-capture.css",
-    ],
-    prompt: `Build a white 1920×1200 insights screen called "Yield Insights".
-
-- Eyebrow: In-line Yield Inspection
-- Headline: Yield insights backed by production models.
-- Five selectable rows (Defect Capture, Production-Qualified Models, Ranked Review, Line-Level Assessment, Classification Preview)
-- Sliding highlight bar, GSAP entrance, metric cards that focus with the active row
-- Right visual uses public/screens/defect-capture/visual.png
-
-Keep the scoped CSS and GSAP choreography.`,
-    note: "Place visual.png at public/screens/defect-capture/visual.png.",
   },
   "yield-skeleton": {
     files: [
@@ -96,12 +99,13 @@ Keep the scoped CSS and GSAP choreography.`,
 };
 
 export function getScreenPrompt(slug: string): string | null {
-  return FILES[slug]?.prompt ?? null;
+  const entry = getScreenBySlug(slug);
+  return FILES[entry?.slug ?? slug]?.prompt ?? FILES[slug]?.prompt ?? null;
 }
 
 export async function buildScreenCodePayload(slug: string): Promise<string | null> {
-  const spec = FILES[slug];
   const entry = getScreenBySlug(slug);
+  const spec = FILES[entry?.slug ?? slug] ?? FILES[slug];
   if (!spec || !entry) return null;
 
   const { readFile } = await import("node:fs/promises");

@@ -9,12 +9,15 @@ import {
   getV1LaunchCatalog,
   type MaterialCatalogEntry,
 } from "@/materials";
-import { getScreenBySlug, listScreens } from "@/screens/catalog";
+import { getScreenBySlug, listAllScreenEntries } from "@/screens/catalog";
 
 export function generateStaticParams() {
   return [
     ...getV1LaunchCatalog().map((m) => ({ slug: m.slug })),
-    ...listScreens().map((screen) => ({ slug: screen.slug })),
+    ...listAllScreenEntries().flatMap((screen) => [
+      { slug: screen.slug },
+      ...(screen.aliases ?? []).map((alias) => ({ slug: alias })),
+    ]),
   ];
 }
 

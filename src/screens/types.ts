@@ -10,6 +10,8 @@ export type ScreenCatalogEntry = {
   /** Short tagline for index cards */
   blurb: string;
   poster: string;
+  /** Previous product slugs that still resolve to this layout. */
+  aliases?: readonly string[];
 };
 
 export type ScreenCopyPath = "prompt" | "code";
