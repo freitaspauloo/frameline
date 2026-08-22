@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { AdminLink } from "@/components/admin-nav";
 
 import {
   BarList,
@@ -127,12 +127,12 @@ export default async function AdminAnalyticsPage() {
                 {usage.map((row) => (
                   <tr className="border-b border-border last:border-b-0" key={row.slug}>
                     <td className="px-3 py-2">
-                      <Link
+                      <AdminLink
                         className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
                         href={`/admin/assets/${row.slug}`}
                       >
                         {row.slug}
-                      </Link>
+                      </AdminLink>
                     </td>
                     <td className="px-3 py-2 text-right tabular-nums">{row.copies}</td>
                     <td className="px-3 py-2 text-right tabular-nums">{row.blocked}</td>

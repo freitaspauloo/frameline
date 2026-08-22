@@ -1,4 +1,6 @@
 import Link from "next/link";
+
+import { AdminLink } from "@/components/admin-nav";
 import { notFound } from "next/navigation";
 
 import {
@@ -79,12 +81,12 @@ export default async function AdminAssetPage({
             </>
           ) : null}
           {" · "}
-          <Link
+          <AdminLink
             className="text-foreground underline underline-offset-4"
             href="/admin/analytics"
           >
             All analytics
-          </Link>
+          </AdminLink>
         </p>
       </div>
 

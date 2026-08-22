@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { AdminAccessGate } from "@/components/admin-access-gate";
+import { AdminNav } from "@/components/admin-nav";
 import { resolveDemoUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
@@ -35,19 +36,15 @@ export default async function AdminLayout({
             </Link>
             <p className="mt-2 text-sm font-medium">Admin</p>
           </div>
-          <nav className="flex flex-col py-2">
-            {NAV.map((item) => (
-              <Link
-                className={cn(
-                  "border-b border-border px-4 py-3 text-sm text-muted-foreground transition-colors last:border-b-0 hover:bg-muted hover:text-foreground",
-                )}
-                href={item.href}
-                key={item.href}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <Suspense fallback={null}>
+            <AdminNav
+              className="flex flex-col py-2"
+              items={NAV}
+              linkClassName={cn(
+                "border-b border-border px-4 py-3 text-sm text-muted-foreground transition-colors last:border-b-0 hover:bg-muted hover:text-foreground",
+              )}
+            />
+          </Suspense>
           {user ? (
             <p className="mt-auto border-t border-border px-4 py-4 font-mono text-[10px] break-all text-muted-foreground">
               {user.email}
@@ -57,17 +54,13 @@ export default async function AdminLayout({
 
         <div className="flex min-w-0 flex-1 flex-col">
           <header className="flex items-center justify-between gap-4 border-b border-border px-4 py-3 md:px-6">
-            <nav className="flex gap-3 overflow-x-auto md:hidden">
-              {NAV.map((item) => (
-                <Link
-                  className="shrink-0 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase hover:text-foreground"
-                  href={item.href}
-                  key={item.href}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+            <Suspense fallback={null}>
+              <AdminNav
+                className="flex gap-3 overflow-x-auto md:hidden"
+                items={NAV}
+                linkClassName="shrink-0 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase hover:text-foreground"
+              />
+            </Suspense>
             <p className="hidden font-mono text-[11px] text-muted-foreground md:block">
               Utilitarian console · demo auth
             </p>

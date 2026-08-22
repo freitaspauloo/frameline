@@ -1,5 +1,4 @@
-import Link from "next/link";
-
+import { AdminLink } from "@/components/admin-nav";
 import type { SeriesPoint } from "@/lib/metrics";
 
 /**
@@ -78,9 +77,9 @@ export function StatGrid({
         return (
           <div className="bg-background p-4" key={stat.label}>
             {stat.href ? (
-              <Link className="block hover:opacity-80" href={stat.href}>
+              <AdminLink className="block hover:opacity-80" href={stat.href}>
                 {inner}
-              </Link>
+              </AdminLink>
             ) : (
               inner
             )}
@@ -143,9 +142,9 @@ export function BarList({
         return (
           <li className="px-3 py-2.5" key={row.label}>
             {row.href ? (
-              <Link className="block hover:opacity-80" href={row.href}>
+              <AdminLink className="block hover:opacity-80" href={row.href}>
                 {content}
-              </Link>
+              </AdminLink>
             ) : (
               content
             )}

@@ -56,24 +56,33 @@ async function runLive(baseUrl) {
     }
   });
 
-  await check("POST /api/checkout (demo) → 200", async () => {
-    const res = await fetch(`${root}/api/checkout`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        plan: "screen",
-        email: "smoke@frameline.test",
-        material: "spaceman-moon",
-      }),
+  // /api/checkout takes the real Stripe path whenever the server has a
+  // STRIPE_SECRET_KEY, which on a live key means this check creates live
+  // Checkout Sessions. Opt in explicitly rather than doing that by accident.
+  if (process.env.SMOKE_ALLOW_CHECKOUT === "1") {
+    await check("POST /api/checkout → 200", async () => {
+      const res = await fetch(`${root}/api/checkout`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          plan: "screen",
+          email: "smoke@frameline.test",
+          material: "spaceman-moon",
+        }),
+      });
+      if (res.status !== 200) {
+        throw new Error(`expected 200, got ${res.status}`);
+      }
+      const data = await res.json();
+      if (!data.ok) {
+        throw new Error(`checkout not ok: ${JSON.stringify(data)}`);
+      }
     });
-    if (res.status !== 200) {
-      throw new Error(`expected 200, got ${res.status}`);
-    }
-    const data = await res.json();
-    if (!data.ok) {
-      throw new Error(`checkout not ok: ${JSON.stringify(data)}`);
-    }
-  });
+  } else {
+    console.log(
+      "skip  POST /api/checkout (set SMOKE_ALLOW_CHECKOUT=1 — hits Stripe for real when a secret key is configured)",
+    );
+  }
 
   await check("POST /api/intent → 200", async () => {
     const res = await fetch(`${root}/api/intent`, {

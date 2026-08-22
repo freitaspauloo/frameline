@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import Link from "next/link";
+import { AdminLink } from "@/components/admin-nav";
 
 import {
   BarList,
@@ -53,6 +53,8 @@ async function readContactCount(): Promise<number> {
     return 0;
   }
 }
+
+export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
   const materialCount = MATERIALS_CATALOG.length;
@@ -117,12 +119,12 @@ export default async function AdminDashboardPage() {
         <p className="mt-2 text-sm text-muted-foreground">
           Signups, revenue, and asset usage from Postgres when configured (else
           local <span className="font-mono">.data/</span>). Full breakdowns in{" "}
-          <Link
+          <AdminLink
             className="text-foreground underline underline-offset-4"
             href="/admin/analytics"
           >
             Analytics
-          </Link>
+          </AdminLink>
           .
         </p>
       </div>
