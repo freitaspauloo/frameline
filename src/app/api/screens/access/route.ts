@@ -54,8 +54,8 @@ export async function GET(request: NextRequest) {
       message: owned
         ? null
         : left === 0
-          ? "You’ve used this week’s free copy. $9 unlocks unlimited prompt + code."
-          : "1 free copy this week. Then $9 for unlimited.",
+          ? "You’ve used this week’s free copy. $9/mo or $49/y unlocks unlimited prompt + code."
+          : "1 free copy this week. Then $9/mo or $49/y for unlimited.",
     });
 
     if (mintAnon) {

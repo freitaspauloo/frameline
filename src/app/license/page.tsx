@@ -19,7 +19,7 @@ import {
 export const metadata: Metadata = {
   title: "License",
   description:
-    "Plain-language Free ($0, 1 copy per week) and Screen ($9) rights for Frameline. Full terms pin per order.",
+    "Plain-language Free ($0, 1 copy per week) and Screen ($9/mo or $49/y) rights for Frameline. Full terms pin per order.",
 };
 
 export default function LicensePage() {
@@ -214,7 +214,7 @@ export default function LicensePage() {
           </div>
 
           <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-            Screen ($9) is a one-time unlock for unlimited copies of a single
+            Screen is $9/mo or $49/y for unlimited copies of a single
             template. See{" "}
             <Link
               className="text-foreground underline underline-offset-4 hover:text-muted-foreground"

@@ -30,6 +30,7 @@ const REQUIRED_PLAN_KEYS = [
   "personal",
   "team",
   "screen",
+  "screen_year",
 ];
 
 function assert(condition, message) {

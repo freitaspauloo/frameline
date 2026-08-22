@@ -26,6 +26,7 @@ import {
 } from "@/lib/firebase-client";
 import {
   getLicensePlan,
+  isScreenPlan,
   LICENSE_PLAN_VERSION,
 } from "@/lib/license-plans";
 import { cn } from "@/lib/utils";
@@ -57,6 +58,7 @@ export function CheckoutForm({
   initialMaterial?: string;
 }) {
   const router = useRouter();
+  const plan = useCartStore((s) => s.plan);
   const materialSlug = useCartStore((s) => s.materialSlug);
   const setPlan = useCartStore((s) => s.setPlan);
   const setMaterial = useCartStore((s) => s.setMaterial);
@@ -68,7 +70,7 @@ export function CheckoutForm({
   const [stripeMessage, setStripeMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    setPlan("screen");
+    setPlan(initialPlan === "screen_year" ? "screen_year" : "screen");
     if (initialMaterial) {
       setMaterial(initialMaterial);
     }
@@ -76,12 +78,12 @@ export function CheckoutForm({
     setHydrated(true);
   }, [initialPlan, initialMaterial, setPlan, setMaterial]);
 
-  const activePlan = "screen" as const;
+  const activePlan = isScreenPlan(plan) ? plan : "screen";
   const activeMaterial = hydrated
     ? materialSlug
     : (initialMaterial ?? materialSlug);
   const license = getLicensePlan(activePlan);
-  const amount = license?.priceLabel ?? "$9";
+  const amount = license?.priceLabel ?? "$9/mo";
   const productHref = activeMaterial ? `/materials/${activeMaterial}` : null;
   const firebaseReady = isFirebaseClientConfigured();
   const signedIn = Boolean(user?.email);
@@ -187,6 +189,31 @@ export function CheckoutForm({
           title={`Screen · ${amount}`}
         />
         <MarketingPad className="mx-auto max-w-md space-y-8 py-12 lg:py-16">
+          <div className="flex flex-wrap gap-2">
+            {(
+              [
+                { key: "screen" as const, label: "$9/mo" },
+                { key: "screen_year" as const, label: "$49/y" },
+              ] as const
+            ).map((option) => {
+              const selected = activePlan === option.key;
+              return (
+                <button
+                  key={option.key}
+                  className={cn(
+                    "border border-border px-4 py-2 text-[0.625rem] font-semibold tracking-widest uppercase transition-colors",
+                    selected
+                      ? "border-foreground bg-foreground text-background"
+                      : "text-muted-foreground hover:border-foreground hover:text-foreground",
+                  )}
+                  type="button"
+                  onClick={() => setPlan(option.key)}
+                >
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
 
           {activeMaterial && productHref ? (
             <p className="text-sm text-muted-foreground">

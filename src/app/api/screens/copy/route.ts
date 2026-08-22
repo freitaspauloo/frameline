@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
         ok: false,
         reason: "pay" as const,
         message:
-          "You’ve used this week’s free copy. $9 unlocks unlimited prompt + code.",
+          "You’ve used this week’s free copy. $9/mo or $49/y unlocks unlimited prompt + code.",
         copiesLeftThisWeek: 0,
         checkout: {
           plan: "screen",

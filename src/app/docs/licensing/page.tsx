@@ -13,7 +13,7 @@ export default function LicensingDocsPage() {
   return (
     <DocsShell
       currentPath="/docs/licensing"
-      description="Plain-language rights for Free ($0) materials and Screen ($9) templates. Perpetual, non-exclusive, non-transferable — version pinned on every order. Full legal terms live on the license page."
+      description="Plain-language rights for Free ($0, 1 copy per week) and Screen ($9/mo or $49/y). Perpetual, non-exclusive, non-transferable — version pinned on every order. Full legal terms live on the license page."
       title="Licensing"
     >
       <DocsP>

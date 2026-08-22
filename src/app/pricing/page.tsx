@@ -19,7 +19,7 @@ import { getPublicPricingPlans } from "@/lib/license-plans";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Free ($0) includes 1 copy per week. Screen ($9) unlocks unlimited prompt + code copies.",
+    "Free ($0) includes 1 copy per week. Screen is $9/mo or $49/y for unlimited copies.",
 };
 
 const TIER_CTAS = {
@@ -30,6 +30,12 @@ const TIER_CTAS = {
     primary: false,
   },
   screen: {
+    kind: "link" as const,
+    href: "/materials",
+    label: "Browse screens",
+    primary: true,
+  },
+  screen_year: {
     kind: "link" as const,
     href: "/materials",
     label: "Browse screens",
@@ -52,8 +58,8 @@ export default async function PricingPage({
           align="center"
           description={
             <>
-              $0 includes 1 free copy per week. $9 unlocks unlimited prompt +
-              code copies.
+              $0 includes 1 free copy per week. Screen is $9/mo or $49/y for
+              unlimited copies.
               {material ? (
                 <>
                   {" "}
@@ -73,7 +79,7 @@ export default async function PricingPage({
           title="Choose a license"
         />
 
-        <MarketingRuledGrid className="md:grid-cols-2">
+        <MarketingRuledGrid className="md:grid-cols-3">
           {getPublicPricingPlans()
             .filter(
               (tier): tier is (typeof tier) & { key: keyof typeof TIER_CTAS } =>

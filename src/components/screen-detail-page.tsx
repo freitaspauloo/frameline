@@ -121,7 +121,7 @@ export function ScreenDetailPage({
   function openPayGate(message?: string) {
     setBanner(
       message ??
-        "You’ve used this week’s free copy. $9 unlocks unlimited prompt + code.",
+        "You’ve used this week’s free copy. $9/mo or $49/y unlocks unlimited prompt + code.",
     );
     setPayOpen(true);
   }
@@ -187,10 +187,10 @@ export function ScreenDetailPage({
     }
   }
 
-  function goPay() {
+  function goPay(plan: "screen" | "screen_year" = "screen") {
     setPayOpen(false);
     router.push(
-      `/checkout?plan=screen&material=${encodeURIComponent(entry.slug)}`,
+      `/checkout?plan=${plan}&material=${encodeURIComponent(entry.slug)}`,
     );
   }
 
@@ -292,11 +292,11 @@ export function ScreenDetailPage({
           <DialogHeader>
             <DialogTitle>Unlock unlimited copies</DialogTitle>
             <DialogDescription>
-              You’ve used this week’s free copy. Pay {entry.priceLabel} once for
-              unlimited Copy prompt + Copy code on {entry.title}.
+              You’ve used this week’s free copy. Unlock unlimited Copy prompt +
+              Copy code on {entry.title} for $9/mo or $49/y.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+          <DialogFooter className="flex-col sm:flex-row">
             <Button
               type="button"
               variant="outline"
@@ -307,9 +307,16 @@ export function ScreenDetailPage({
             <Button
               className="bg-[#3A58F0] text-white hover:bg-[#2F4AD4]"
               type="button"
-              onClick={goPay}
+              onClick={() => goPay("screen")}
             >
-              Continue to checkout — {entry.priceLabel}
+              $9/mo
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => goPay("screen_year")}
+            >
+              $49/y
             </Button>
           </DialogFooter>
         </DialogContent>

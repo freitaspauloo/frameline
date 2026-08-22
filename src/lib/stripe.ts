@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 
 import type { CheckoutPlanKey } from "@/lib/license-plans";
-import { getLicensePlan } from "@/lib/license-plans";
+import { getLicensePlan, isScreenPlan } from "@/lib/license-plans";
 
 let stripe: Stripe | null = null;
 
@@ -39,22 +39,26 @@ export async function createCheckoutSession(input: {
 
   const base = appBaseUrl();
   const productName =
-    input.plan === "screen" && input.material
+    isScreenPlan(input.plan) && input.material
       ? `Frameline Screen — ${input.material}`
       : `Frameline ${license.name}`;
 
   const successUrl =
-    input.plan === "screen" && input.material
-      ? `${base}/materials/${encodeURIComponent(input.material)}?unlocked=1&session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(input.email)}&plan=screen`
+    isScreenPlan(input.plan) && input.material
+      ? `${base}/materials/${encodeURIComponent(input.material)}?unlocked=1&session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(input.email)}&plan=${encodeURIComponent(input.plan)}`
       : `${base}/orders/{CHECKOUT_SESSION_ID}?session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(input.email)}&plan=${encodeURIComponent(input.plan)}${input.material ? `&material=${encodeURIComponent(input.material)}` : ""}`;
 
   const cancelUrl =
-    input.plan === "screen" && input.material
+    isScreenPlan(input.plan) && input.material
       ? `${base}/materials/${encodeURIComponent(input.material)}?cancelled=1`
       : `${base}/checkout?plan=${encodeURIComponent(input.plan)}${input.material ? `&material=${encodeURIComponent(input.material)}` : ""}&cancelled=1`;
 
+  const recurring = license.interval
+    ? { interval: license.interval }
+    : undefined;
+
   return client.checkout.sessions.create({
-    mode: "payment",
+    mode: recurring ? "subscription" : "payment",
     customer_email: input.email,
     line_items: [
       {
@@ -62,6 +66,7 @@ export async function createCheckoutSession(input: {
         price_data: {
           currency: "usd",
           unit_amount: license.amountCents,
+          ...(recurring ? { recurring } : {}),
           product_data: {
             name: productName,
             description: license.summary,

@@ -14,8 +14,14 @@ const TIERS = [
   },
   {
     name: "Screen",
-    price: "$9",
+    price: "$9/mo",
     blurb: "Unlimited prompt + code copies for one template.",
+    cta: true,
+  },
+  {
+    name: "Yearly",
+    price: "$49/y",
+    blurb: "Same unlimited unlock, billed once a year.",
     cta: true,
   },
 ] as const;
@@ -36,7 +42,7 @@ export default function WireframePricingPage() {
         </WfMuted>
       </div>
 
-      <div className="mt-10 grid gap-4 md:grid-cols-2">
+      <div className="mt-10 grid gap-4 md:grid-cols-3">
         {TIERS.map((tier) => (
           <div
             className="flex flex-col rounded-relay-lg border border-relay-border bg-relay-white p-5"

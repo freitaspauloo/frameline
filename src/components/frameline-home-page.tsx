@@ -65,7 +65,7 @@ const PRICING_TEASERS = [
   },
   {
     name: "Screen",
-    price: "$9",
+    price: "$9/mo",
     blurb: "Unlimited prompt + code copies for one template.",
   },
 ] as const;
@@ -433,7 +433,7 @@ export function FramelineHomePage() {
                 View pricing
               </Button>
             }
-            description="$0 is 1 free copy per week. $9 unlocks unlimited prompt + code."
+            description="$0 is 1 free copy per week. Screen is $9/mo or $49/y."
             eyebrow="Pricing"
             title="Two prices. That’s it."
           />

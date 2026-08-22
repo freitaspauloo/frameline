@@ -10,7 +10,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Full-bleed cinematic hero — magenta moon video, glass pills, floating pins. Copy the prompt or the real TSX + CSS.",
     priceCents: 900,
-    priceLabel: "$9",
+    priceLabel: "$9/mo",
     tier: "paid",
     blurb: "Cinematic lunar hero · $9 · 1 free copy / week",
   },

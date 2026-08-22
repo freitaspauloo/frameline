@@ -10,7 +10,8 @@ export type LicensePlanKey =
   | "static"
   | "personal"
   | "team"
-  | "screen";
+  | "screen"
+  | "screen_year";
 
 export type EntitlementStatus = "active" | "revoked";
 
