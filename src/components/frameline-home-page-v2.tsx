@@ -54,10 +54,6 @@ const CATALOG_PREVIEW_SLOTS = 6;
 
 const INSTALL_SNIPPET = `npx shadcn@latest add @frameline/aurora-mesh`;
 
-/**
- * Credits row. Deliberately fictional studio marks — placeholders set as type,
- * so the band reads as editorial rather than as borrowed endorsement.
- */
 /** Real clients shipped through DUDESIGN — see freitaspauloo/dudesign. */
 const CREDITS = [
   "Audi",
