@@ -16,6 +16,7 @@ import {
   mintDemoRegistryToken,
   mintRegistryToken,
 } from "@/lib/tokens";
+import { ensureUser } from "@/lib/users";
 
 const DATA_DIR = path.join(process.cwd(), ".data");
 const ORDERS_PATH = path.join(DATA_DIR, "orders.json");
@@ -393,12 +394,15 @@ async function fulfillOrderInDb(input: FulfillInput): Promise<FulfillResult> {
   const plaintextToken = mintRegistryToken();
   const tokenHash = hashRegistryToken(plaintextToken);
   const materialScope = materialScopeForPlan(plan, material);
+  // A purchase is the strongest signal a person exists; make sure the buyer has
+  // a user row so revenue can be attributed per user rather than per email.
+  const buyer = await ensureUser({ email });
 
   const created = await prisma.$transaction(async (tx) => {
     const order = await tx.order.create({
       data: {
         email,
-        userId: null,
+        userId: buyer?.user.id ?? null,
         paymentProviderRef,
         status: "paid",
         planKey: plan,
@@ -491,11 +495,12 @@ async function fulfillOrderInFiles(input: FulfillInput): Promise<FulfillResult> 
   const entitlementId = `ent_${nanoid(12)}`;
   const tokenId = `tok_${nanoid(12)}`;
   const registryToken = mintDemoRegistryToken();
+  const buyer = await ensureUser({ email });
 
   const order: DemoOrder = {
     id: orderId,
     email,
-    userId: null,
+    userId: buyer?.user.id ?? null,
     paymentProviderRef,
     status: "paid",
     planKey: plan,

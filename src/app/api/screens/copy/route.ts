@@ -1,7 +1,7 @@
-import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+import { attachAnonCookie, resolveAnonId } from "@/lib/anonymous-id";
 import { getDemoEmail } from "@/lib/auth";
 import {
   clientIp,
@@ -11,7 +11,6 @@ import {
 import { ownsScreen } from "@/lib/screen-access";
 import {
   attachQuotaCookie,
-  deviceSeedFromRequest,
   ensureQuotaPayload,
   freeCopiesLeftThisWeek,
   markFreeCopyUsed,
@@ -24,27 +23,6 @@ import {
   getScreenPrompt,
 } from "@/screens/copy-payload";
 import type { ScreenCopyPath } from "@/screens/types";
-
-const ANON_COOKIE = "fl_anon_id";
-
-function readAnonId(request: NextRequest): string | null {
-  return request.cookies.get(ANON_COOKIE)?.value?.trim() || null;
-}
-
-function mintAnonId(request: Request): string {
-  const seed = deviceSeedFromRequest(request);
-  return `anon_${seed}_${nanoid(12)}`;
-}
-
-function attachAnonCookie(res: NextResponse, id: string) {
-  res.cookies.set(ANON_COOKIE, id, {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 400,
-    secure: process.env.NODE_ENV === "production",
-  });
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -85,12 +63,7 @@ export async function POST(request: NextRequest) {
       sessionEmail ||
       (bodyEmail && bodyEmail.includes("@") ? bodyEmail : null);
 
-    let anonId = readAnonId(request);
-    let mintAnon = false;
-    if (!anonId) {
-      anonId = mintAnonId(request);
-      mintAnon = true;
-    }
+    const { id: anonId, minted: mintAnon } = resolveAnonId(request);
 
     const owned = await ownsScreen(email, slug);
     let quota = ensureQuotaPayload(readQuotaCookie(request), anonId);

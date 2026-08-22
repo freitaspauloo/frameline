@@ -146,11 +146,16 @@ model LicensePlan {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  role      UserRole @default(buyer)
-  createdAt DateTime @default(now())
-  orders    Order[]
+  id          String    @id @default(cuid())
+  email       String    @unique
+  firebaseUid String?   @unique
+  displayName String?
+  role        UserRole  @default(buyer)
+  createdAt   DateTime  @default(now())
+  lastSeenAt  DateTime?
+  orders      Order[]
+
+  @@index([createdAt])
 }
 
 model Order {

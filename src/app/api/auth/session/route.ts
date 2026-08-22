@@ -5,6 +5,7 @@ import {
   SESSION_COOKIE,
   sessionUserFromEmail,
 } from "@/lib/auth";
+import { recordEvent } from "@/lib/events";
 import { firebaseAdminEnvSnapshot } from "@/lib/firebase-admin-env";
 import { captureException } from "@/lib/monitoring";
 import {
@@ -12,6 +13,7 @@ import {
   rateLimit,
   rateLimitResponse,
 } from "@/lib/rate-limit";
+import { ensureUser } from "@/lib/users";
 
 const WEEK = 60 * 60 * 24 * 7;
 
@@ -38,6 +40,7 @@ export async function POST(request: Request) {
   let verifyFirebaseIdToken: (idToken: string) => Promise<{
     email?: string;
     uid: string;
+    name?: string;
   }>;
   try {
     const mod = await import("@/lib/firebase-admin");
@@ -96,6 +99,21 @@ export async function POST(request: Request) {
     }
 
     const user = sessionUserFromEmail(email);
+
+    const record = await ensureUser({
+      email,
+      firebaseUid: decoded.uid,
+      displayName: decoded.name ?? null,
+    });
+    await recordEvent({
+      // A user row that did not exist a moment ago is a signup.
+      name: record?.created ? "signup" : "signin",
+      email,
+      request,
+      source: "firebase",
+      props: { uid: decoded.uid },
+    });
+
     const response = NextResponse.json({
       ok: true,
       user,
