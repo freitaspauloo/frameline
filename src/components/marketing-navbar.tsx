@@ -95,10 +95,10 @@ export function MarketingNavbar({
             </Button>
             <Button
               nativeButton={false}
-              render={<Link href="/materials" />}
+              render={<Link href="/account/sign-in" />}
               size="sm"
             >
-              Browse materials
+              Sign up
             </Button>
           </div>
         </div>
