@@ -48,7 +48,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Cinematic magenta field — horizon, grain, and a yield lockup across the line.",
     blurb: "Magenta grain · horizon · yield lockup",
-    poster: "/screens/magenta-landscape/poster.svg",
+    poster: "/screens/magenta-landscape/poster.webp",
     aliases: ["growcode"],
   },
   {
