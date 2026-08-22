@@ -48,7 +48,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Cinematic magenta field — horizon, grain, and a yield lockup across the line.",
     blurb: "Magenta grain · horizon · yield lockup",
-    poster: "/screens/magenta-landscape/poster.svg",
+    poster: "/screens/magenta-landscape/poster.png",
     aliases: ["growcode"],
   },
   {
@@ -58,7 +58,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Wafer map and ranked classifications inside live window chrome.",
     blurb: "Wafer map · AI class · window chrome",
-    poster: "/screens/browser-frame/poster.svg",
+    poster: "/screens/browser-frame/poster.png",
     aliases: ["finlayer"],
   },
   {
@@ -68,7 +68,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Vertical feature rail — four beats that protect yield at production volume.",
     blurb: "In-line · classify · rank · protect",
-    poster: "/screens/feature-rail/poster.svg",
+    poster: "/screens/feature-rail/poster.png",
     aliases: ["features-sec"],
   },
   {
@@ -78,7 +78,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Die-resolution pixel cube — classify every cell before it leaves the line.",
     blurb: "Pixel cube · die map · classified cells",
-    poster: "/screens/blueprint/poster.svg",
+    poster: "/screens/blueprint/poster.png",
     aliases: ["chainova"],
   },
   {
@@ -98,7 +98,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "God-ray bloom over an always-on in-line wafer inspection lockup.",
     blurb: "Always-on · wafer · in-line models",
-    poster: "/screens/light-rays/poster.svg",
+    poster: "/screens/light-rays/poster.png",
     aliases: ["aieigen"],
   },
   {
@@ -108,7 +108,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Defect assistant workspace — ranked thread above, compose bar below.",
     blurb: "Assistant thread · ranked defects · compose",
-    poster: "/screens/prompt-bar/poster.svg",
+    poster: "/screens/prompt-bar/poster.png",
     aliases: ["incredible"],
   },
 ];
