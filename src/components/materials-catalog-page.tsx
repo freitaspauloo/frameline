@@ -282,55 +282,48 @@ export function MaterialsCatalogPage({
             </Link>
           </div>
         ) : (
-          <>
-        {screens.length > 0 ? (
-          <div id="screens">
-            <MarketingRuledGrid>
-              {screens.map((screen) => (
-                <MarketingRuledCell
-                  key={screen.slug}
-                  className="p-0 sm:p-0 lg:p-0"
-                >
-                  <Link
-                    className="group block transition-colors hover:bg-muted/40"
-                    href={`/materials/${screen.slug}`}
-                  >
-                    <div className="relative aspect-[16/9] overflow-hidden bg-[#140810]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        alt=""
-                        className="absolute inset-0 size-full object-cover opacity-90"
-                        src="/screens/spaceman-moon/poster.png"
-                      />
-                      <div
-                        aria-hidden
-                        className="absolute inset-0 bg-[#d600bf] mix-blend-color"
-                      />
-                    </div>
-                    <div className="space-y-2.5 border-t border-border p-6 sm:p-8 lg:p-10">
-                      <div className="flex items-center justify-between gap-3">
-                        <h2 className="font-heading text-base font-medium tracking-tight">
-                          {screen.title}
-                        </h2>
-                        <span className="flex shrink-0 items-center gap-2 text-[0.625rem] font-semibold tracking-widest uppercase">
-                          <span className="text-muted-foreground">Screen</span>
-                          <span className="text-foreground">
-                            {screen.priceLabel}
-                          </span>
-                        </span>
-                      </div>
-                      <p className="text-sm leading-relaxed text-muted-foreground">
-                        {screen.blurb}
-                      </p>
-                    </div>
-                  </Link>
-                </MarketingRuledCell>
-              ))}
-            </MarketingRuledGrid>
-          </div>
-        ) : null}
-        {entries.length > 0 ? (
           <MarketingRuledGrid>
+            {screens.map((screen) => (
+              <MarketingRuledCell
+                key={screen.slug}
+                className="p-0 sm:p-0 lg:p-0"
+                id={screen.slug === screens[0]?.slug ? "screens" : undefined}
+              >
+                <Link
+                  className="group block transition-colors hover:bg-muted/40"
+                  href={`/materials/${screen.slug}`}
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden bg-[#140810]">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      alt=""
+                      className="absolute inset-0 size-full object-cover opacity-90"
+                      src="/screens/spaceman-moon/poster.png"
+                    />
+                    <div
+                      aria-hidden
+                      className="absolute inset-0 bg-[#d600bf] mix-blend-color"
+                    />
+                  </div>
+                  <div className="space-y-2.5 border-t border-border p-6 sm:p-8 lg:p-10">
+                    <div className="flex items-center justify-between gap-3">
+                      <h2 className="font-heading text-base font-medium tracking-tight">
+                        {screen.title}
+                      </h2>
+                      <span className="flex shrink-0 items-center gap-2 text-[0.625rem] font-semibold tracking-widest uppercase">
+                        <span className="text-muted-foreground">Screen</span>
+                        <span className="text-foreground">
+                          {screen.priceLabel}
+                        </span>
+                      </span>
+                    </div>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {screen.blurb}
+                    </p>
+                  </div>
+                </Link>
+              </MarketingRuledCell>
+            ))}
             {entries.map((entry) => (
               <MarketingRuledCell key={entry.slug} className="p-0 sm:p-0 lg:p-0">
                 <Link
@@ -368,8 +361,6 @@ export function MaterialsCatalogPage({
               </MarketingRuledCell>
             ))}
           </MarketingRuledGrid>
-        ) : null}
-          </>
         )}
       </MarketingSection>
       <MarketingFooter />

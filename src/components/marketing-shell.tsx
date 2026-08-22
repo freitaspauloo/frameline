@@ -275,9 +275,11 @@ export function MarketingRuledGrid({
 export function MarketingRuledCell({
   children,
   className,
+  id,
 }: {
   children: ReactNode;
   className?: string;
+  id?: string;
 }) {
   return (
     <div
@@ -287,6 +289,7 @@ export function MarketingRuledCell({
         marketingPad,
         className,
       )}
+      id={id}
     >
       {children}
     </div>
