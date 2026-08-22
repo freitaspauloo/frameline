@@ -92,17 +92,9 @@ export function MarketingFooter() {
         </MarketingRuledCell>
       </MarketingRuledGrid>
 
-      <div
-        className={cn(
-          "flex flex-col gap-3 border-t border-border py-6 sm:flex-row sm:items-center sm:justify-between",
-          marketingPadX,
-        )}
-      >
+      <div className={cn("border-t border-border py-6", marketingPadX)}>
         <p className="text-xs text-muted-foreground">
           © {new Date().getFullYear()} Frameline. All rights reserved.
-        </p>
-        <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-          Sera · Stone · Blue
         </p>
       </div>
     </MarketingSection>
