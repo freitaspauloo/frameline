@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "posters": "node scripts/capture-posters.mjs",
     "smoke": "node --experimental-strip-types --import ./scripts/smoke-register.mjs scripts/smoke.mjs",
     "verify": "pnpm exec tsc --noEmit && pnpm smoke && pnpm build",
     "material:new": "node scripts/new-material.mjs",
@@ -67,6 +68,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
+    "playwright-core": "^1.62.1",
     "prisma": "^6.19.3",
     "tailwindcss": "^4",
     "typescript": "^5"
