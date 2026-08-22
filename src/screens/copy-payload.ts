@@ -1,4 +1,4 @@
-import { registryUrl } from "@/lib/registry-urls";
+import { registryUrl, rewriteAssetReferences } from "@/lib/registry-urls";
 import { getScreenBySlug } from "@/screens/catalog";
 import { SPACEMAN_MOON_PROMPT } from "@/screens/spaceman-moon/copy";
 
@@ -66,12 +66,9 @@ const FILES: Record<string, { files: string[]; prompt: string; note: string }> =
       "src/screens/spaceman-moon/spaceman-moon.module.css",
     ],
     prompt: SPACEMAN_MOON_PROMPT,
-    note: `Place hero media at:
-  public/screens/spaceman-moon/hero.mp4
-  public/screens/spaceman-moon/poster.png
-and the font at:
-  public/fonts/manrope-latin.woff2
-`,
+    note: `Hero video, poster, and the Manrope subset are served from Frameline,
+so this renders as-is. To self-host, download them and swap the URLs back to
+local paths under public/.`,
   },
   "yield-skeleton": {
     files: [
@@ -143,7 +140,12 @@ export async function buildScreenCodePayload(
 
   for (const rel of spec.files) {
     const source = await readFile(path.join(root, rel), "utf8");
-    chunks.push(`// ——— ${rel} ———`, source.trimEnd(), "");
+    // Media points at Frameline so this renders as-is on paste.
+    chunks.push(
+      `// ——— ${rel} ———`,
+      rewriteAssetReferences(source, copyId).trimEnd(),
+      "",
+    );
   }
 
   return chunks.join("\n");

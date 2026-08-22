@@ -5,7 +5,7 @@ import { appBaseUrl } from "@/lib/app-url";
 import type { Entitlement } from "@/lib/domain";
 import { canAccessMaterial, isFreeMaterial } from "@/lib/entitlements";
 import { resolveRegistryToken } from "@/lib/fulfillment";
-import { installCommand } from "@/lib/registry-urls";
+import { assetUrl, installCommand } from "@/lib/registry-urls";
 import { getMaterial } from "@/materials";
 import { getScreenBySlug } from "@/screens/catalog";
 import { getScreenFileSpec } from "@/screens/copy-payload";
@@ -214,7 +214,7 @@ async function resolveScreen(
         price: entry.priceLabel,
         entitled,
         note: spec?.note ?? null,
-        poster: `${appBaseUrl()}${entry.poster}`,
+        poster: assetUrl(entry.poster, request.copyId),
         detail: `${appBaseUrl()}/materials/${canonical}`,
         ...(entitled
           ? {}

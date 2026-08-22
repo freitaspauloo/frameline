@@ -18,13 +18,32 @@ export function registryUrl(slug: string, copyId?: string | null): string {
   return withCopyId(`${appBaseUrl()}/r/${slug}.json`, copyId);
 }
 
-/** Public URL for a screen asset, served by /a/[...path]. */
-export function assetUrl(
-  slug: string,
-  file: string,
+/**
+ * Hosted URL for a static asset, served by /a/[...path].
+ * Takes the same path the asset has under `public/`, so `/screens/x/hero.mp4`
+ * becomes `https://frameline.ai/a/screens/x/hero.mp4`.
+ */
+export function assetUrl(publicPath: string, copyId?: string | null): string {
+  const clean = publicPath.startsWith("/") ? publicPath : `/${publicPath}`;
+  return withCopyId(`${appBaseUrl()}/a${clean}`, copyId);
+}
+
+/** Media and font references inside screen source that we can host. */
+const ASSET_REFERENCE =
+  /\/(?:screens|fonts)\/[A-Za-z0-9._/-]+\.(?:mp4|webm|mov|png|jpe?g|webp|avif|gif|svg|woff2?|ttf|otf)/g;
+
+/**
+ * Point a screen's media at Frameline instead of the reader's empty `public/`.
+ *
+ * Two things fall out of this: the pasted screen renders immediately instead of
+ * showing broken media until someone hand-places files, and the first render
+ * tells us the code was pasted and run.
+ */
+export function rewriteAssetReferences(
+  source: string,
   copyId?: string | null,
 ): string {
-  return withCopyId(`${appBaseUrl()}/a/${slug}/${file}`, copyId);
+  return source.replace(ASSET_REFERENCE, (match) => assetUrl(match, copyId));
 }
 
 /**
