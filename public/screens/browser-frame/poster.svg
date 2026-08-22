@@ -1,4 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
-  <rect width="1600" height="1000" fill="#e8e8ea"/>
-  <text x="80" y="900" fill="#2d6bff" font-family="ui-sans-serif,system-ui,sans-serif" font-size="64" font-weight="600" letter-spacing="4">Browser frame</text>
+  <rect width="1600" height="1000" fill="#d8d6d2"/>
+  <rect x="80" y="70" width="1440" height="860" rx="12" fill="#f4f3f0"/>
+  <rect x="80" y="70" width="1440" height="64" rx="12" fill="#eceae6"/>
+  <circle cx="120" cy="102" r="8" fill="#ff5f57"/>
+  <circle cx="148" cy="102" r="8" fill="#febc2e"/>
+  <circle cx="176" cy="102" r="8" fill="#28c840"/>
+  <text x="120" y="880" fill="#10121c" font-family="ui-sans-serif,system-ui,sans-serif" font-size="48" font-weight="500">AI Inspection Interface</text>
 </svg>

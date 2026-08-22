@@ -90,6 +90,41 @@ const nextConfig: NextConfig = {
         permanent: false,
       },
       {
+        source: "/growcode",
+        destination: "/materials/magenta-landscape",
+        permanent: false,
+      },
+      {
+        source: "/finlayer",
+        destination: "/materials/browser-frame",
+        permanent: false,
+      },
+      {
+        source: "/features-sec",
+        destination: "/materials/feature-rail",
+        permanent: false,
+      },
+      {
+        source: "/chainova",
+        destination: "/materials/blueprint",
+        permanent: false,
+      },
+      {
+        source: "/nudgeai",
+        destination: "/materials/spaceman-moon",
+        permanent: false,
+      },
+      {
+        source: "/aieigen",
+        destination: "/materials/light-rays",
+        permanent: false,
+      },
+      {
+        source: "/incredible",
+        destination: "/materials/prompt-bar",
+        permanent: false,
+      },
+      {
         source: "/materials/built-for-yield",
         destination: "/materials/orb",
         permanent: false,

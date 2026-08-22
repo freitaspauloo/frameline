@@ -16,12 +16,12 @@ const VIDEO_PLAYBACK_RATE = 0.55;
 const VIDEO_FADE_SECONDS = 1.5;
 
 const NAV_LINKS = [
-  { label: "Mission", href: "#mission" },
-  { label: "Surface", href: "#surface" },
-  { label: "Contact", href: "#contact" },
+  { label: "Portfolio", href: "#portfolio" },
+  { label: "Company", href: "#company" },
+  { label: "Careers", href: "#careers" },
 ] as const;
 
-const BRANDS = ["Apollo", "Orion", "Artemis", "Voyager"] as const;
+const BRANDS = ["TSMC", "ASML", "KLA", "Applied"] as const;
 
 type FeaturePin = {
   id: string;
@@ -36,7 +36,7 @@ type FeaturePin = {
 const FEATURE_PINS: FeaturePin[] = [
   {
     id: "descent",
-    label: "Soft lunar descent",
+    label: "Catch killer defects",
     icon: "orbit",
     side: "left",
     x: "5.5%",
@@ -45,7 +45,7 @@ const FEATURE_PINS: FeaturePin[] = [
   },
   {
     id: "horizon",
-    label: "Track the far horizon",
+    label: "Classify dies in-line",
     icon: "signal",
     side: "left",
     x: "21%",
@@ -54,7 +54,7 @@ const FEATURE_PINS: FeaturePin[] = [
   },
   {
     id: "signal",
-    label: "Hold the uplink",
+    label: "Rank for review",
     icon: "sparkles",
     side: "right",
     x: "21%",
@@ -63,7 +63,7 @@ const FEATURE_PINS: FeaturePin[] = [
   },
   {
     id: "return",
-    label: "Safe return window",
+    label: "Protect yield at volume",
     icon: "mail",
     side: "right",
     x: "5.5%",
@@ -167,8 +167,8 @@ export type SpacemanMoonProps = {
 };
 
 /**
- * Spaceman on the Moon — full-bleed cinematic hero (video, magenta blend, glass pins).
- * Demo brand: Lunar. Buyers swap copy and assets.
+ * Space Explorer Hero — full-bleed cinematic hero (video, magenta blend, glass pins).
+ * Reticle yield copy on the lunar stage.
  */
 export function SpacemanMoon({ className, embed = false }: SpacemanMoonProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -184,7 +184,7 @@ export function SpacemanMoon({ className, embed = false }: SpacemanMoonProps) {
     const nodes = [document.documentElement, document.body];
     nodes.forEach((node) => node.classList.add("spaceman-moon-active"));
     const prevTitle = document.title;
-    document.title = "Lunar — Spaceman on the Moon";
+    document.title = "Reticle — Space Explorer";
 
     const preload = document.createElement("link");
     preload.rel = "preload";
@@ -389,7 +389,7 @@ export function SpacemanMoon({ className, embed = false }: SpacemanMoonProps) {
             )}
           >
             <LogoMark className={styles["nudge-mark"]} />
-            Lunar
+            Reticle
           </a>
 
           <nav className={styles["nudge-nav-desktop"]} aria-label="Primary">
@@ -425,7 +425,7 @@ export function SpacemanMoon({ className, embed = false }: SpacemanMoonProps) {
               onPointerEnter={onButtonEnter}
               onClick={playTick}
             >
-              Join mission
+              Request Info
             </a>
             <button
               type="button"
@@ -475,16 +475,16 @@ export function SpacemanMoon({ className, embed = false }: SpacemanMoonProps) {
 
       <div className={styles["nudge-copy"]}>
         <h1 className={cn(styles["nudge-enter"], styles["nudge-d3"])}>
-          Spaceman on the moon.
+          Built for yield, beyond the line.
         </h1>
         <p className={cn(styles["nudge-enter"], styles["nudge-d4"])}>
-          A cinematic full-bleed hero — magenta moon, slow video, glass pins.
-          Drop it in and make it yours.
+          From in-line inspection to ranked review, our models catch killer
+          defects so engineering can focus on yield.
         </p>
 
         <div className={styles["nudge-actions"]}>
           <a
-            href="#mission"
+            href="#portfolio"
             className={cn(
               styles["nudge-btn"],
               styles["nudge-btn-hero"],
@@ -495,7 +495,7 @@ export function SpacemanMoon({ className, embed = false }: SpacemanMoonProps) {
             onPointerEnter={onButtonEnter}
             onClick={playTick}
           >
-            See the surface
+            See Portfolio
           </a>
           <a
             id="start"
@@ -509,7 +509,7 @@ export function SpacemanMoon({ className, embed = false }: SpacemanMoonProps) {
             onPointerEnter={onButtonEnter}
             onClick={playTick}
           >
-            Join mission
+            Request Info
             <ArrowUpRight className={styles["nudge-arrow"]} />
           </a>
         </div>

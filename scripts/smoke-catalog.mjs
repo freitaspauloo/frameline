@@ -134,16 +134,16 @@ export function runCatalogSmoke() {
   assert(SCREENS_CATALOG.length === 10, `Expected 10 screens, got ${SCREENS_CATALOG.length}`);
   const screenTitles = SCREENS_CATALOG.map((s) => s.title);
   for (const title of [
-    "Orb",
-    "Feature cards",
-    "Insights",
-    "Magenta landscape",
-    "Browser frame",
-    "Feature rail",
-    "Blueprint",
-    "Spaceman on the moon",
-    "Light rays",
-    "Prompt bar",
+    "Built for Yield Hero",
+    "Performance Feature Cards",
+    "Yield Inspection Dashboard",
+    "Magenta Landscape Hero",
+    "AI Inspection Interface",
+    "Protect Yield Features",
+    "Pixel Cube Hero",
+    "Space Explorer Hero",
+    "Always-on Wafer Inspection",
+    "Defect Assistant Hero",
   ]) {
     assert(screenTitles.includes(title), `Missing layout screen title: ${title}`);
   }

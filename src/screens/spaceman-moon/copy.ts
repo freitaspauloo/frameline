@@ -2,14 +2,14 @@
  * Agent brief buyers paste into Cursor — enough to rebuild the hero without
  * reverse-engineering the CSS module.
  */
-export const SPACEMAN_MOON_PROMPT = `Build a full-viewport cinematic hero called "Spaceman on the Moon" (demo brand: Lunar).
+export const SPACEMAN_MOON_PROMPT = `Build a full-viewport cinematic hero called "Space Explorer Hero" (Reticle).
 
 Layout & look
 - Full-bleed looping background video of an astronaut on a magenta moon, with a still poster underneath.
 - Magenta color-blend overlay (#d600bf, mix-blend-mode: color), soft pink glow blob, and bottom vignette.
-- Glass pill nav (blur + translucent border): wordmark + links + CTA + mobile menu.
-- Centered headline, short lede, two in-hero CTAs, "Trusted by" logo strip.
-- Four floating feature pins (desktop) with vertical hairlines; mobile shows the same as chips.
+- Glass pill nav (blur + translucent border): Reticle wordmark + Portfolio/Company/Careers + Request Info.
+- Centered headline "Built for yield, beyond the line.", short lede about killer defects, two in-hero CTAs, "Trusted by" logo strip (TSMC, ASML, KLA, Applied).
+- Four floating feature pins: Catch killer defects, Classify dies in-line, Rank for review, Protect yield at volume.
 - Hover on pins pauses the video and lifts the pin; soft tick audio on hover (respect prefers-reduced-motion).
 
 Motion
@@ -22,8 +22,6 @@ Files
 - Styles: src/screens/spaceman-moon/spaceman-moon.module.css (scoped module — keep the ~700 lines; do not Tailwind-rewrite)
 - Media: public/screens/spaceman-moon/hero.mp4 + poster.png
 - Font: public/fonts/manrope-latin.woff2 (Manrope via @font-face)
-
-Rename away from any semiconductor/yield/NudgeAI/Reticle branding. Keep the cinematic lunar look.
 `;
 
 /** One-liner buyers need after pasting the component. */
