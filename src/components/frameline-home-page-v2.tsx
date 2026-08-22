@@ -48,9 +48,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { getV1LaunchCatalog } from "@/materials";
+import { listScreens } from "@/screens/catalog";
 import { cn } from "@/lib/utils";
-
-const CATALOG_PREVIEW_SLOTS = 6;
 
 const INSTALL_SNIPPET = `npx shadcn@latest add @frameline/aurora-mesh`;
 
@@ -133,30 +132,6 @@ const VALUE_PROPS = [
     body: "One-time unlock for unlimited prompt + code copies.",
   },
 ] as const;
-
-function CatalogSoonPlaceholder() {
-  return (
-    <div className="relative aspect-[16/9] overflow-hidden bg-[#F3F5FE] sm:aspect-[3/2]">
-      <div
-        aria-hidden
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `
-            radial-gradient(circle at 22% 36%, rgba(58, 88, 240, 0.2) 0%, transparent 46%),
-            radial-gradient(circle at 78% 64%, rgba(58, 88, 240, 0.14) 0%, transparent 44%),
-            repeating-linear-gradient(0deg, rgba(58, 88, 240, 0.05) 0 1px, transparent 1px 7px),
-            repeating-linear-gradient(90deg, rgba(58, 88, 240, 0.05) 0 1px, transparent 1px 7px)
-          `,
-        }}
-      />
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="rounded-none border border-border/60 bg-background/70 px-3 py-1.5 font-mono text-[10px] tracking-[0.18em] text-muted-foreground uppercase backdrop-blur-sm">
-          Placeholder
-        </span>
-      </div>
-    </div>
-  );
-}
 
 /** Marks a band for the ledger index without disturbing the ruled layout. */
 function SectionBand({
@@ -337,9 +312,9 @@ export function FramelineHomePageV2() {
             <SectionBand label="Catalog">
               <MarketingSectionHeader>
                 <SectionIntro
-                  description="Production-ready materials you can install. Open any one to tune props and copy JSX."
+                  description="Shipped Reticle screens you can copy — prompt or source. Open any one to preview live."
                   eyebrow="Catalog"
-                  title="Materials you can ship"
+                  title="Screens you can ship"
                 />
               </MarketingSectionHeader>
 
@@ -350,58 +325,42 @@ export function FramelineHomePageV2() {
                   "pb-2",
                 )}
               >
-                {Array.from({ length: CATALOG_PREVIEW_SLOTS }, (_, index) => {
-                  const entry = PUBLIC_CATALOG[index];
-
-                  if (!entry) {
-                    return (
-                      <div
-                        key={`soon-${index}`}
-                        className="flex h-full min-h-[22rem] flex-col border border-border"
-                        data-reveal
-                      >
-                        <CatalogSoonPlaceholder />
-                        <div className="space-y-3 border-t border-border p-7 sm:p-9">
-                          <p className="font-mono text-[11px] text-muted-foreground">
-                            Soon
-                          </p>
-                          <h3 className="font-heading text-lg font-medium tracking-tight text-muted-foreground sm:text-xl">
-                            Coming soon
-                          </h3>
-                          <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-                            More surfaces in the next drop.
-                          </p>
-                        </div>
+                {listScreens().map((screen) => (
+                  <Link
+                    key={screen.slug}
+                    className="group flex h-full min-h-[22rem] flex-col border border-border transition-colors hover:bg-muted/40"
+                    data-reveal
+                    href={`/materials/${screen.slug}`}
+                  >
+                    <div className="relative aspect-[16/9] overflow-hidden bg-foreground sm:aspect-[3/2]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        alt=""
+                        className="absolute inset-0 size-full object-cover"
+                        src={screen.poster}
+                      />
+                      {screen.slug === "spaceman-moon" ? (
+                        <div
+                          aria-hidden
+                          className="absolute inset-0 bg-[#d600bf] mix-blend-color"
+                        />
+                      ) : null}
+                    </div>
+                    <div className="space-y-3 border-t border-border p-7 sm:p-9">
+                      <div className="flex items-center justify-between gap-3">
+                        <h3 className="font-heading text-lg font-medium tracking-tight sm:text-xl">
+                          {screen.title}
+                        </h3>
+                        <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                          Screen
+                        </span>
                       </div>
-                    );
-                  }
-
-                  return (
-                    <Link
-                      key={entry.slug}
-                      className="group flex h-full min-h-[22rem] flex-col border border-border transition-colors hover:bg-muted/40"
-                      data-reveal
-                      href={`/materials/${entry.slug}`}
-                    >
-                      <div className="relative aspect-[16/9] overflow-hidden bg-foreground sm:aspect-[3/2]">
-                        <MaterialPreview entry={entry} />
-                      </div>
-                      <div className="space-y-3 border-t border-border p-7 sm:p-9">
-                        <div className="flex items-center justify-between gap-3">
-                          <h3 className="font-heading text-lg font-medium tracking-tight sm:text-xl">
-                            {entry.title}
-                          </h3>
-                          <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                            {entry.type}
-                          </span>
-                        </div>
-                        <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-                          {entry.description}
-                        </p>
-                      </div>
-                    </Link>
-                  );
-                })}
+                      <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+                        {screen.blurb}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
               </div>
 
               <div
