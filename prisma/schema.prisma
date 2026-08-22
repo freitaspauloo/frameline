@@ -201,14 +201,32 @@ model RegistryToken {
   @@index([userEmail])
 }
 
-model AccessEvent {
+/// Append-only analytics stream: signups, copies, registry/asset fetches, money.
+/// Written through src/lib/events.ts, which falls back to .data/events.json
+/// when DATABASE_URL is unset.
+model Event {
   id        String   @id @default(cuid())
-  subject   String
-  actor     String?
-  kind      String
+  name      String
+  /// Stable identity for funnels: `email:<addr>` when known, else the anon id.
+  subjectId String
+  email     String?
+  anonId    String?
+  /// Material or screen slug the event is about.
+  slug      String?
+  plan      String?
+  /// Correlates a clipboard copy with the registry/asset fetch it later causes.
+  copyId    String?
+  source    String?
+  agentKind String?
+  userAgent String?
+  ipHash    String?
+  props     Json?
   createdAt DateTime @default(now())
 
-  @@index([subject, kind])
+  @@index([name, createdAt])
+  @@index([subjectId, createdAt])
+  @@index([slug, name])
+  @@index([copyId])
   @@index([createdAt])
 }
 
