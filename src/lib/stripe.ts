@@ -74,6 +74,19 @@ export async function createCheckoutSession(input: {
       email: input.email,
       ...(input.material ? { material: input.material } : {}),
     },
+    // Copied onto the subscription so renewal invoices can still be attributed
+    // to a plan and material months later.
+    ...(recurring
+      ? {
+          subscription_data: {
+            metadata: {
+              plan: input.plan,
+              email: input.email,
+              ...(input.material ? { material: input.material } : {}),
+            },
+          },
+        }
+      : {}),
     success_url: successUrl,
     cancel_url: cancelUrl,
   });

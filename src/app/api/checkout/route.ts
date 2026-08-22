@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { recordEvent } from "@/lib/events";
 import { fulfillDemoOrder } from "@/lib/fulfillment";
 import {
   getLicensePlan,
@@ -65,6 +66,15 @@ export async function POST(request: Request) {
   const material = body.material?.trim() || undefined;
   const license = getLicensePlan(plan);
 
+  await recordEvent({
+    name: "checkout_started",
+    email,
+    plan,
+    slug: material,
+    source: getStripe() ? "stripe" : "demo",
+    request,
+  });
+
   if (!getStripe()) {
     try {
       const fulfilled = await fulfillDemoOrder({
@@ -73,6 +83,21 @@ export async function POST(request: Request) {
         material,
         paymentProviderRef: null,
       });
+
+      if (fulfilled.created) {
+        await recordEvent({
+          name: "order_paid",
+          email,
+          plan,
+          slug: material,
+          source: "demo",
+          request,
+          props: {
+            orderId: fulfilled.orderId,
+            amountCents: license?.amountCents ?? 0,
+          },
+        });
+      }
 
       const qs = new URLSearchParams({
         plan,

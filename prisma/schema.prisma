@@ -171,10 +171,17 @@ model Order {
   tax                Int           @default(0)
   total              Int
   createdAt          DateTime      @default(now())
+  /// Stripe linkage — without these, renewals and churn are invisible.
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  refundedAt           DateTime?
+  canceledAt           DateTime?
   entitlements       Entitlement[]
 
   @@index([email])
   @@index([paymentProviderRef])
+  @@index([stripeSubscriptionId])
+  @@index([createdAt])
 }
 
 model Entitlement {
