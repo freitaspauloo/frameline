@@ -108,7 +108,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Defect assistant workspace — ranked thread above, compose bar below.",
     blurb: "Assistant thread · ranked defects · compose",
-    poster: "/screens/prompt-bar/poster.svg",
+    poster: "/screens/prompt-bar/poster.webp",
     aliases: ["incredible"],
   },
 ];
