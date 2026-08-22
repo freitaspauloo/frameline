@@ -1,17 +1,21 @@
+/** Trig output is rounded so server and client render byte-identical markup. */
+export const RETICLE_MARK_LINES = Array.from({ length: 24 }, (_, i) => {
+  const a = -Math.PI / 2 + (i / 24) * Math.PI * 2;
+  const cx = 18.5;
+  const cy = 18;
+  const inner = 6.6;
+  const outer = 16.4;
+  const round = (n: number) => Math.round(n * 1000) / 1000;
+  return {
+    x1: round(cx + Math.cos(a) * inner),
+    y1: round(cy + Math.sin(a) * inner),
+    x2: round(cx + Math.cos(a) * outer),
+    y2: round(cy + Math.sin(a) * outer),
+  };
+});
+
 export function ReticleMark({ className }: { className?: string }) {
-  const lines = Array.from({ length: 24 }, (_, i) => {
-    const a = -Math.PI / 2 + (i / 24) * Math.PI * 2;
-    const cx = 18.5;
-    const cy = 18;
-    const inner = 6.6;
-    const outer = 16.4;
-    return {
-      x1: cx + Math.cos(a) * inner,
-      y1: cy + Math.sin(a) * inner,
-      x2: cx + Math.cos(a) * outer,
-      y2: cy + Math.sin(a) * outer,
-    };
-  });
+  const lines = RETICLE_MARK_LINES;
 
   return (
     <svg
