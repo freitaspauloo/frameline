@@ -78,7 +78,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Die-resolution pixel cube — classify every cell before it leaves the line.",
     blurb: "Pixel cube · die map · classified cells",
-    poster: "/screens/blueprint/poster.svg",
+    poster: "/screens/blueprint/poster.webp",
     aliases: ["chainova"],
   },
   {
