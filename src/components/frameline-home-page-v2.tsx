@@ -26,10 +26,6 @@ import {
 import { HeroMacFrame } from "@/components/hero-mac-frame";
 import { FramelineLenis } from "@/components/motion/frameline-lenis";
 import { LogoWall } from "@/components/motion/logo-wall";
-import {
-  MaterialSequence,
-  type MaterialSequenceStage,
-} from "@/components/motion/material-sequence";
 import { MaterialStrip } from "@/components/motion/material-strip";
 import { RailProgress } from "@/components/motion/rail-progress";
 import {
@@ -64,26 +60,7 @@ const CREDITS = [
   "Costco",
 ] as const;
 
-/** Captions for the pinned mesh → dither → grain beat. */
 const PUBLIC_CATALOG = getV1LaunchCatalog();
-
-const SEQUENCE_COPY: Record<string, { caption: string; label: string }> = {
-  "fog-layer": {
-    caption:
-      "Atmosphere first — soft fog for heroes that reads like air, not a WebGL flex.",
-    label: "Fog",
-  },
-  "aurora-mesh": {
-    caption:
-      "Then mesh — a soft multi-color field for the top of the page, wired to your tokens instead of a stock gradient.",
-    label: "Mesh",
-  },
-  "ink-dither": {
-    caption:
-      "Then dither — two tones, one halftone grid. The loud brand moment that still prints as paper.",
-    label: "Dither",
-  },
-};
 
 const FAQ_ITEMS = [
   {
@@ -229,10 +206,6 @@ function InstallTerminal() {
     </div>
   );
 }
-
-const SEQUENCE_STAGES: MaterialSequenceStage[] = PUBLIC_CATALOG.filter(
-  (entry) => entry.slug in SEQUENCE_COPY,
-).map((entry) => ({ entry, ...SEQUENCE_COPY[entry.slug] }));
 
 export function FramelineHomePageV2() {
   return (
@@ -385,16 +358,6 @@ export function FramelineHomePageV2() {
           </MarketingSection>
 
           <MarketingSectionSpacer size="lg" />
-
-          {/* —— Pinned sequence —— */}
-          <MarketingSection id="showcase">
-            <InkRule />
-            <SectionBand label="Sequence">
-              <MaterialSequence stages={SEQUENCE_STAGES} />
-            </SectionBand>
-          </MarketingSection>
-
-          <MarketingSectionSpacer size="md" />
 
           {/* —— In rotation (moved off hero) —— */}
           <MarketingSection id="rotation">
