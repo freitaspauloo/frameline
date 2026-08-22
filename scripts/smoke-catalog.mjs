@@ -13,6 +13,10 @@ import {
 } from "../src/materials/component-names.ts";
 import { MATERIAL_PROPS } from "../src/materials/props.ts";
 import { LICENSE_PLANS } from "../src/lib/license-plans.ts";
+import {
+  buildMaterialsHref,
+  parseSmartQuery,
+} from "../src/lib/catalog-query.ts";
 
 const REQUIRED_CONTEXTS = [
   "hero",
@@ -125,6 +129,21 @@ export function runCatalogSmoke() {
       );
     }
   }
+
+  const smart = parseSmartQuery("Aurora dither HERO free");
+  assert(smart.type === "dither", `parseSmartQuery type: ${smart.type}`);
+  assert(smart.context === "hero", `parseSmartQuery context: ${smart.context}`);
+  assert(smart.tier === "free", `parseSmartQuery tier: ${smart.tier}`);
+  assert(smart.q === "aurora", `parseSmartQuery leftover: ${smart.q}`);
+  assert(
+    parseSmartQuery("spaceman moon").q === "spaceman moon",
+    "parseSmartQuery should keep plain text",
+  );
+  assert(
+    buildMaterialsHref({ type: "mesh", q: "aurora", sort: "name" }) ===
+      "/materials?type=mesh&q=aurora",
+    "buildMaterialsHref should omit default sort",
+  );
 
   return {
     catalog: MATERIALS_CATALOG.length,

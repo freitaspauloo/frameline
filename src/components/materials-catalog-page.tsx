@@ -25,52 +25,32 @@ import {
   type MaterialType,
   type MaterialUseContext,
 } from "@/materials";
+import {
+  buildMaterialsHref,
+  isSort,
+  isTierFilter,
+  parseSmartQuery,
+  type CatalogSort,
+  type CatalogTierFilter,
+} from "@/lib/catalog-query";
 import { listScreens } from "@/screens/catalog";
 import type { ScreenCatalogEntry } from "@/screens/types";
-import { cn } from "@/lib/utils";
 
-/** Hairline filter — outline, not a soft pill. */
-const CHIP =
-  "border border-border px-4 py-2 text-[0.625rem] font-semibold tracking-widest uppercase transition-colors";
+export type { CatalogSort, CatalogTierFilter };
+
+const SELECT =
+  "h-10 shrink-0 border border-border bg-transparent px-3 text-[0.625rem] font-semibold tracking-widest text-foreground uppercase outline-none focus-visible:border-foreground";
 
 const TIER_FILTERS = [
   { value: "free" as const, label: "Free" },
   { value: "paid" as const, label: "Paid" },
 ];
 
-export type CatalogTierFilter = "free" | "paid";
-export type CatalogSort = "name" | "tier";
-
 const TIER_SORT_RANK: Record<MaterialTier, number> = {
   free: 0,
   personal: 1,
   team: 2,
 };
-
-function isTierFilter(value: string): value is CatalogTierFilter {
-  return value === "free" || value === "paid";
-}
-
-function isSort(value: string): value is CatalogSort {
-  return value === "name" || value === "tier";
-}
-
-function buildMaterialsHref(params: {
-  type?: string;
-  q?: string;
-  context?: string;
-  tier?: string;
-  sort?: string;
-}) {
-  const sp = new URLSearchParams();
-  if (params.type) sp.set("type", params.type);
-  if (params.q?.trim()) sp.set("q", params.q.trim());
-  if (params.context) sp.set("context", params.context);
-  if (params.tier) sp.set("tier", params.tier);
-  if (params.sort && params.sort !== "name") sp.set("sort", params.sort);
-  const qs = sp.toString();
-  return qs ? `/materials?${qs}` : "/materials";
-}
 
 export function MaterialsCatalogPage({
   typeFilter,
@@ -160,13 +140,6 @@ export function MaterialsCatalogPage({
     return list;
   }, [activeType, activeContext, activeTier, activeQ]);
 
-  const contextCoverage = useMemo(() => {
-    return MATERIAL_USE_CONTEXTS.map((c) => ({
-      ...c,
-      count: catalog.filter((m) => m.useContexts.includes(c.value)).length,
-    }));
-  }, [catalog]);
-
   const typeMeta = MATERIAL_TYPES.find((t) => t.type === activeType);
 
   function navigate(next: Partial<typeof baseParams>) {
@@ -179,8 +152,13 @@ export function MaterialsCatalogPage({
   function onSearchSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const fd = new FormData(event.currentTarget);
-    const q = String(fd.get("q") ?? "");
-    navigate({ q: q || undefined });
+    const parsed = parseSmartQuery(String(fd.get("q") ?? ""));
+    navigate({
+      q: parsed.q,
+      type: parsed.type ?? activeType,
+      context: parsed.context ?? activeContext,
+      tier: parsed.tier ?? activeTier,
+    });
   }
 
   return (
@@ -202,163 +180,93 @@ export function MaterialsCatalogPage({
           eyebrow={`Materials${activeType ? ` · ${activeType}` : ""}`}
           title={typeMeta ? typeMeta.title : "Surface as code"}
         >
-          <div className="space-y-6">
-            <p className="font-mono text-[11px] leading-relaxed text-muted-foreground">
-              Contexts:{" "}
-              {contextCoverage.map((c, i) => (
-                <span key={c.value}>
-                  {i > 0 ? " · " : null}
-                  <Link
-                    className="hover:text-foreground"
-                    href={`/materials/contexts/${c.value}`}
-                  >
-                    {c.value} ({c.count})
-                  </Link>
-                </span>
-              ))}
-            </p>
-
-            <form
-              className="flex flex-col gap-3 sm:flex-row sm:items-end"
-              onSubmit={onSearchSubmit}
+          <form
+            className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center lg:flex-nowrap"
+            onSubmit={onSearchSubmit}
+          >
+            <label className="sr-only" htmlFor="materials-catalog-search">
+              Search
+            </label>
+            <input
+              aria-label="Search materials"
+              autoComplete="off"
+              className="h-10 min-w-0 flex-1 border border-border bg-transparent px-3 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-foreground"
+              defaultValue={activeQ}
+              id="materials-catalog-search"
+              key={activeQ}
+              name="q"
+              placeholder="Search — or type dither, hero, free…"
+              type="search"
+            />
+            <select
+              aria-label="Type"
+              className={SELECT}
+              onChange={(e) => {
+                const value = e.target.value;
+                navigate({
+                  type: isMaterialType(value) ? value : undefined,
+                });
+              }}
+              value={activeType ?? ""}
             >
-              <label
-                className="min-w-0 flex-1 space-y-2"
-                htmlFor="materials-catalog-search"
-              >
-                <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                  Search
-                </span>
-                <input
-                  aria-label="Search materials"
-                  className="h-10 w-full border border-border bg-transparent px-3 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-foreground"
-                  defaultValue={activeQ}
-                  id="materials-catalog-search"
-                  key={activeQ}
-                  name="q"
-                  placeholder="Title, description, tags…"
-                  type="search"
-                />
-              </label>
-              <button className={cn(CHIP, "text-foreground")} type="submit">
-                Search
-              </button>
-              <label className="space-y-2">
-                <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                  Sort
-                </span>
-                <select
-                  className="flex h-10 border border-border bg-transparent px-3 text-[0.625rem] font-semibold tracking-widest text-foreground uppercase outline-none focus-visible:border-foreground"
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    navigate({
-                      sort: isSort(value) ? value : "name",
-                    });
-                  }}
-                  value={activeSort}
-                >
-                  <option value="name">Name</option>
-                  <option value="tier">Tier</option>
-                </select>
-              </label>
-            </form>
-
-            <div className="flex flex-wrap gap-2">
-              <Link
-                className={cn(
-                  CHIP,
-                  !activeType
-                    ? "border-foreground bg-foreground text-background"
-                    : "text-muted-foreground hover:border-foreground hover:text-foreground",
-                )}
-                href={buildMaterialsHref({ ...baseParams, type: undefined })}
-              >
-                All
-              </Link>
+              <option value="">All types</option>
               {MATERIAL_TYPES.map((t) => (
-                <Link
-                  key={t.type}
-                  className={cn(
-                    CHIP,
-                    activeType === t.type
-                      ? "border-foreground bg-foreground text-background"
-                      : "text-muted-foreground hover:border-foreground hover:text-foreground",
-                  )}
-                  href={buildMaterialsHref({ ...baseParams, type: t.type })}
-                >
+                <option key={t.type} value={t.type}>
                   {t.title}
-                </Link>
+                </option>
               ))}
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              <span className="self-center pr-1 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Context
-              </span>
-              <Link
-                className={cn(
-                  CHIP,
-                  !activeContext
-                    ? "border-foreground bg-foreground text-background"
-                    : "text-muted-foreground hover:border-foreground hover:text-foreground",
-                )}
-                href={buildMaterialsHref({
-                  ...baseParams,
-                  context: undefined,
-                })}
-              >
-                Any
-              </Link>
+            </select>
+            <select
+              aria-label="Context"
+              className={SELECT}
+              onChange={(e) => {
+                const value = e.target.value;
+                navigate({
+                  context: isMaterialUseContext(value) ? value : undefined,
+                });
+              }}
+              value={activeContext ?? ""}
+            >
+              <option value="">Any context</option>
               {MATERIAL_USE_CONTEXTS.map((c) => (
-                <Link
-                  key={c.value}
-                  className={cn(
-                    CHIP,
-                    activeContext === c.value
-                      ? "border-foreground bg-foreground text-background"
-                      : "text-muted-foreground hover:border-foreground hover:text-foreground",
-                  )}
-                  href={buildMaterialsHref({
-                    ...baseParams,
-                    context: c.value,
-                  })}
-                >
+                <option key={c.value} value={c.value}>
                   {c.label}
-                </Link>
+                </option>
               ))}
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              <span className="self-center pr-1 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Tier
-              </span>
-              <Link
-                className={cn(
-                  CHIP,
-                  !activeTier
-                    ? "border-foreground bg-foreground text-background"
-                    : "text-muted-foreground hover:border-foreground hover:text-foreground",
-                )}
-                href={buildMaterialsHref({ ...baseParams, tier: undefined })}
-              >
-                Any
-              </Link>
+            </select>
+            <select
+              aria-label="Tier"
+              className={SELECT}
+              onChange={(e) => {
+                const value = e.target.value;
+                navigate({
+                  tier: isTierFilter(value) ? value : undefined,
+                });
+              }}
+              value={activeTier ?? ""}
+            >
+              <option value="">Any tier</option>
               {TIER_FILTERS.map((t) => (
-                <Link
-                  key={t.value}
-                  className={cn(
-                    CHIP,
-                    activeTier === t.value
-                      ? "border-foreground bg-foreground text-background"
-                      : "text-muted-foreground hover:border-foreground hover:text-foreground",
-                  )}
-                  href={buildMaterialsHref({ ...baseParams, tier: t.value })}
-                >
+                <option key={t.value} value={t.value}>
                   {t.label}
-                </Link>
+                </option>
               ))}
-            </div>
-          </div>
+            </select>
+            <select
+              aria-label="Sort"
+              className={SELECT}
+              onChange={(e) => {
+                const value = e.target.value;
+                navigate({
+                  sort: isSort(value) ? value : "name",
+                });
+              }}
+              value={activeSort}
+            >
+              <option value="name">Name</option>
+              <option value="tier">Tier</option>
+            </select>
+          </form>
         </MarketingPageHeader>
 
         {screens.length === 0 && entries.length === 0 ? (
