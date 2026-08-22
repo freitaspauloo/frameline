@@ -38,7 +38,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Interactive insights list with ranked review metrics and a sliding highlight.",
     blurb: "Ranked review · capture rate · line-level yield",
-    poster: "/screens/defect-capture/poster.png",
+    poster: "/screens/defect-capture/poster.webp",
     aliases: ["defect-capture"],
   },
   {
@@ -58,7 +58,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Wafer map and ranked classifications inside live window chrome.",
     blurb: "Wafer map · AI class · window chrome",
-    poster: "/screens/browser-frame/poster.svg",
+    poster: "/screens/browser-frame/poster.webp",
     aliases: ["finlayer"],
   },
   {
@@ -68,7 +68,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Vertical feature rail — four beats that protect yield at production volume.",
     blurb: "In-line · classify · rank · protect",
-    poster: "/screens/feature-rail/poster.svg",
+    poster: "/screens/feature-rail/poster.webp",
     aliases: ["features-sec"],
   },
   {
