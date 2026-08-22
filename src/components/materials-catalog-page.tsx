@@ -24,6 +24,7 @@ import {
   type MaterialType,
   type MaterialUseContext,
 } from "@/materials";
+import { getMaterialThumbnailSrc } from "@/materials/thumbnails";
 import { buildMaterialsHref, parseSmartQuery } from "@/lib/catalog-query";
 import { listScreens } from "@/screens/catalog";
 import type { ScreenCatalogEntry } from "@/screens/types";
@@ -224,7 +225,9 @@ export function MaterialsCatalogPage({
                     <img
                       alt=""
                       className="absolute inset-0 size-full object-cover opacity-90"
-                      src={screen.poster}
+                      src={
+                        getMaterialThumbnailSrc(screen.slug) ?? screen.poster
+                      }
                     />
                     {screen.slug === "spaceman-moon" ? (
                       <div

@@ -29,6 +29,7 @@ import {
   getMaterialComponentName,
   renderMaterial,
 } from "@/materials/renderers";
+import { getMaterialThumbnailSrc } from "@/materials/thumbnails";
 
 type Props = {
   slug: string;
@@ -65,6 +66,22 @@ function LivePreview({
   forceStatic?: boolean;
   props: Record<string, unknown>;
 }) {
+  const thumbnailSrc = getMaterialThumbnailSrc(entry.slug);
+
+  // Paused / reduced motion shows the uploaded still when there is one —
+  // it reads as the material rather than as a flat gradient.
+  if (forceStatic && thumbnailSrc) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- catalog stills are pre-sized, the optimizer adds nothing
+      <img
+        alt=""
+        aria-hidden
+        className="absolute inset-0 size-full object-cover"
+        src={thumbnailSrc}
+      />
+    );
+  }
+
   return renderMaterial(entry.slug, {
     className: "absolute inset-0 h-full w-full",
     forceStatic,
