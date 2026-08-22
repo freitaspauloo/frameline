@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frameline
 
-## Getting Started
+Storefront for animated shader "materials". Next.js 16 (App Router, Turbopack).
 
-First, run the development server:
+## Run locally
+
+Requirements: Node.js 20.9+ (Next 16's minimum; CI and the cloud environment run
+22.x) and pnpm 9+ for the v9 lockfile (`corepack enable pnpm`).
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+git clone https://github.com/freitaspauloo/frameline.git
+cd frameline
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open `localhost:3000` in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+No `.env` is required to boot. Every external service degrades gracefully when
+its keys are absent: checkout fulfills straight into `.data/` files without
+`STRIPE_SECRET_KEY`, receipts are skipped without `RESEND_API_KEY`, and the
+Firebase admin sync no-ops. Copy `.env.example` to `.env` and fill in only the
+integrations you actually need.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`pnpm install` warns that build scripts for `@firebase/util` and `protobufjs`
+were ignored. That is expected and harmless — neither package needs its build
+step here, and `dev`, `build`, and `lint` all work without them. Do not run the
+interactive `pnpm approve-builds`; `pnpm-workspace.yaml` is the place to record
+a decision, and it already denies `sharp` and `unrs-resolver` while allowing the
+Prisma packages.
 
-## Learn More
+Use pnpm rather than npm. `pnpm-workspace.yaml` carries pnpm-only settings
+(`minimumReleaseAgeExclude`, the build-script allowlist) that npm ignores
+silently.
 
-To learn more about Next.js, take a look at the following resources:
+Material detail pages such as `/materials/aurora-mesh` render live WebGL shaders
+via `@paper-design/shaders-react`, so they need a browser with WebGL enabled.
+The dev and build servers themselves do not.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Command | What it does |
+| --- | --- |
+| `pnpm dev` | Dev server on port 3000 |
+| `pnpm build` | Production build |
+| `pnpm start` | Serve the production build |
+| `pnpm lint` | ESLint |
+| `pnpm verify` | `tsc --noEmit`, then smoke tests, then build |
+| `pnpm material:new` | Scaffold a new material |
+| `pnpm demo:seed` | Seed demo data |
+| `pnpm db:push` | Push the Prisma schema |
+| `pnpm db:studio` | Prisma Studio |
 
-## Deploy on Vercel
+`pnpm lint` currently reports pre-existing errors (mostly
+`react-hooks/set-state-in-effect`). A non-zero exit does not mean your setup is
+broken.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Production is https://frameline.ai.
