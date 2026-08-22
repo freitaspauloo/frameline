@@ -285,11 +285,15 @@ export async function signupSummary(): Promise<SignupSummary> {
     orders.filter((o) => o.status === "paid").map((o) => o.email),
   );
 
+  // Only count buyers who actually have a user record. Orders predating user
+  // records would otherwise push this above 100%.
+  const payingUsers = users.filter((u) => payingEmails.has(u.email)).length;
+
   return {
     total,
     last30: recent.length,
     series: dailySeries(users),
-    paidConversion: total ? payingEmails.size / total : 0,
+    paidConversion: total ? payingUsers / total : 0,
   };
 }
 
