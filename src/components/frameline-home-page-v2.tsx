@@ -64,6 +64,7 @@ const CREDITS = [
   "Samsung",
   "3M",
   "Ford",
+  "Sony Honda",
   "Afeela",
   "Costco",
 ] as const;
