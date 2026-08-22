@@ -1,8 +1,10 @@
+import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 import { attachAnonCookie, resolveAnonId } from "@/lib/anonymous-id";
 import { getDemoEmail } from "@/lib/auth";
+import { recordEvent } from "@/lib/events";
 import {
   clientIp,
   rateLimit,
@@ -75,6 +77,19 @@ export async function POST(request: NextRequest) {
     const left = owned ? null : freeCopiesLeftThisWeek(quota, slug);
 
     if (!owned && left === 0) {
+      // The paywall hit is the conversion trigger — more actionable than the
+      // successful copies, because it is the moment someone wanted to pay.
+      await recordEvent({
+        name: "copy_blocked",
+        email,
+        anonId,
+        slug,
+        plan: "screen",
+        source: "screen-detail",
+        request,
+        props: { path: copyPath },
+      });
+
       const res = NextResponse.json({
         ok: false,
         reason: "pay" as const,
@@ -109,11 +124,28 @@ export async function POST(request: NextRequest) {
       quota = markFreeCopyUsed(quota, slug);
     }
 
+    // Correlates this clipboard payload with the registry or asset fetch it
+    // causes later, once the code is pasted somewhere and actually runs.
+    const copyId = `cp_${nanoid(16)}`;
+
+    await recordEvent({
+      name: "copy",
+      email,
+      anonId,
+      slug,
+      copyId,
+      plan: owned ? "paid" : "free",
+      source: "screen-detail",
+      request,
+      props: { path: copyPath, owned },
+    });
+
     const res = NextResponse.json({
       ok: true,
       path: copyPath,
       text,
       owned,
+      copyId,
       copiesLeftThisWeek: owned ? null : 0,
     });
     if (mintAnon) attachAnonCookie(res, anonId);

@@ -149,6 +149,7 @@ export function ScreenDetailPage({
         reason?: string;
         message?: string;
         error?: string;
+        copyId?: string;
       } = {};
       try {
         data = (await res.json()) as typeof data;
@@ -174,6 +175,7 @@ export function ScreenDetailPage({
         slug: entry.slug,
         source: "screen-detail",
         path,
+        copyId: data.copyId,
       });
       setCopied(path);
       window.setTimeout(() => setCopied(null), 1600);
