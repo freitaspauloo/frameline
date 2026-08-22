@@ -54,6 +54,10 @@ export const metadata: Metadata = {
     description:
       "Design assets for the AI era — shippable surface so builders don’t ship the default AI look.",
   },
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/relay/logo-02.svg", type: "image/svg+xml" }],
+  },
 };
 
 export default function RootLayout({
