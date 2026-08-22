@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { createPortal } from "react-dom";
 
 import { cn } from "@/lib/utils";
 
@@ -26,16 +27,16 @@ function CopiesQuotaChip({
     <div
       aria-live="polite"
       className={cn(
-        "pointer-events-none fixed bottom-4 left-4 z-[60] sm:bottom-6 sm:left-6",
+        "pointer-events-none fixed bottom-4 left-4 z-[9999] sm:bottom-6 sm:left-6",
         className,
       )}
       data-frameline-quota
     >
-      <div className="inline-flex max-w-[min(18rem,calc(100vw-2rem))] items-center gap-2 border border-[#3A58F0]/35 bg-[#EEF2FF]/95 px-3 py-2 shadow-sm backdrop-blur-sm">
+      <div className="inline-flex max-w-[min(22rem,calc(100vw-2rem))] items-center gap-2 border border-[#3A58F0] bg-[#EEF2FF] px-3 py-2 shadow-[0_8px_24px_rgba(26,42,107,0.18)]">
         <span className="font-mono text-[9px] font-semibold tracking-[0.18em] text-[#3A58F0] uppercase">
           Frameline
         </span>
-        <span aria-hidden className="h-3 w-px shrink-0 bg-[#3A58F0]/30" />
+        <span aria-hidden className="h-3 w-px shrink-0 bg-[#3A58F0]/40" />
         <span className="font-mono text-[10px] tracking-[0.14em] text-[#1A2A6B] uppercase">
           {label}
         </span>
@@ -45,8 +46,8 @@ function CopiesQuotaChip({
 }
 
 /**
- * Page-level copies chip. Fixed bottom-left of the viewport so it never
- * sits on a screen or material asset.
+ * Viewport-fixed copies chip. Portaled to document.body so Lenis, transforms,
+ * and page overflow cannot pin it to an asset or scroll it away.
  */
 export function CopiesQuotaProvider({
   children,
@@ -54,12 +55,19 @@ export function CopiesQuotaProvider({
   children: React.ReactNode;
 }) {
   const [label, setLabel] = React.useState(DEFAULT_LABEL);
+  const [mounted, setMounted] = React.useState(false);
   const value = React.useMemo(() => ({ label, setLabel }), [label]);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const chip = <CopiesQuotaChip label={label} />;
 
   return (
     <CopiesQuotaContext.Provider value={value}>
       {children}
-      <CopiesQuotaChip label={label} />
+      {mounted ? createPortal(chip, document.body) : chip}
     </CopiesQuotaContext.Provider>
   );
 }
@@ -84,5 +92,13 @@ export function CopiesQuotaWidget({
   label: string;
   className?: string;
 }) {
-  return <CopiesQuotaChip label={label} className={className} />;
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const chip = <CopiesQuotaChip label={label} className={className} />;
+  if (!mounted) return chip;
+  return createPortal(chip, document.body);
 }
