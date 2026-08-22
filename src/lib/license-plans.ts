@@ -26,11 +26,11 @@ export const LICENSE_PLANS: LicensePlanDefinition[] = [
     name: "Free",
     priceLabel: "$0",
     amountCents: 0,
-    summary: "Excellent free materials. Same craft bar as paid.",
+    summary: "1 free copy per week. Then $9 for unlimited prompt + code.",
     permitted: [
-      "Install free SKUs into your projects",
+      "1 free prompt or code copy per week",
+      "Install materials into your projects",
       "Commercial use of free materials",
-      "Copy / CLI install without an account",
     ],
     notPermitted: [
       "Redistribute source packages",

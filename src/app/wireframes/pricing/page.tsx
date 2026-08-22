@@ -9,7 +9,7 @@ const TIERS = [
   {
     name: "Free",
     price: "$0",
-    blurb: "Install and ship materials. Same craft bar.",
+    blurb: "1 free copy per week.",
     cta: false,
   },
   {

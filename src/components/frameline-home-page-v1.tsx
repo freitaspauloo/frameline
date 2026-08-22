@@ -59,7 +59,7 @@ const PRICING_TEASERS = [
   {
     name: "Free",
     price: "$0",
-    blurb: "Install and ship materials. Same craft bar.",
+    blurb: "1 free copy per week.",
   },
   {
     name: "Screen",
@@ -454,7 +454,7 @@ export function FramelineHomePageV1() {
                 View pricing
               </Button>
             }
-            description="Materials are free. Screen templates are $9 — one-time, unlimited copies."
+            description="$0 is 1 free copy per week. $9 unlocks unlimited prompt + code."
             eyebrow="Pricing"
             title="Two prices. That’s it."
           />

@@ -11,6 +11,7 @@ import {
   MarketingSection,
   MarketingShell,
 } from "@/components/marketing-shell";
+import { CopiesQuotaWidget } from "@/components/copies-quota-widget";
 import { Button } from "@/components/ui/button";
 import { WaitlistForm } from "@/components/waitlist-form";
 import { getPublicPricingPlans } from "@/lib/license-plans";
@@ -18,7 +19,7 @@ import { getPublicPricingPlans } from "@/lib/license-plans";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Free ($0) materials and Screen ($9) templates — one-time purchase, clear commercial rights.",
+    "Free ($0) includes 1 copy per week. Screen ($9) unlocks unlimited prompt + code copies.",
 };
 
 const TIER_CTAS = {
@@ -51,7 +52,7 @@ export default async function PricingPage({
           align="center"
           description={
             <>
-              Materials are free. Screen templates are $9 for unlimited prompt +
+              $0 includes 1 free copy per week. $9 unlocks unlimited prompt +
               code copies.
               {material ? (
                 <>
@@ -123,7 +124,7 @@ export default async function PricingPage({
                     </ul>
                   </div>
                 </div>
-                <div className="mt-auto pt-10">
+                <div className="mt-auto space-y-6 pt-10">
                   <Button
                     className="w-full"
                     nativeButton={false}
@@ -133,6 +134,9 @@ export default async function PricingPage({
                   >
                     {cta.label}
                   </Button>
+                  {tier.key === "free" ? (
+                    <CopiesQuotaWidget label="1 free copy per week" />
+                  ) : null}
                 </div>
               </MarketingRuledCell>
             );
