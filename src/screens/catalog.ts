@@ -18,7 +18,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Full-viewport composing orb behind the yield headline, glass header, and fab stats.",
     blurb: "Hero orb · glass chrome · 40M dies classified",
-    poster: "/screens/built-for-yield/poster.png",
+    poster: "/screens/built-for-yield/poster.webp",
     aliases: ["built-for-yield"],
   },
   {

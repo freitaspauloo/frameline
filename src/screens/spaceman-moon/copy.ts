@@ -20,14 +20,14 @@ Motion
 Files
 - Component: src/screens/spaceman-moon/spaceman-moon.tsx ("use client")
 - Styles: src/screens/spaceman-moon/spaceman-moon.module.css (scoped module — keep the ~700 lines; do not Tailwind-rewrite)
-- Media: public/screens/spaceman-moon/hero.mp4 + poster.png
+- Media: public/screens/spaceman-moon/hero.mp4 + poster.webp
 - Font: public/fonts/manrope-latin.woff2 (Manrope via @font-face)
 `;
 
 /** One-liner buyers need after pasting the component. */
 export const SPACEMAN_MOON_MEDIA_NOTE = `Place hero media at:
   public/screens/spaceman-moon/hero.mp4
-  public/screens/spaceman-moon/poster.png
+  public/screens/spaceman-moon/poster.webp
 and the font at:
   public/fonts/manrope-latin.woff2
 `;

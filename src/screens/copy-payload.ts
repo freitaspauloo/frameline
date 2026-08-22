@@ -91,7 +91,7 @@ const FILES: Record<string, { files: string[]; prompt: string; note: string }> =
     prompt: SPACEMAN_MOON_PROMPT,
     note: `Place hero media at:
   public/screens/spaceman-moon/hero.mp4
-  public/screens/spaceman-moon/poster.png
+  public/screens/spaceman-moon/poster.webp
 and the font at:
   public/fonts/manrope-latin.woff2
 `,
