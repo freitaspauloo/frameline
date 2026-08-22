@@ -220,12 +220,12 @@ export function ScreenDetailPage({
               <Button
                 className="self-end"
                 nativeButton={false}
-                render={<Link href="/screens" />}
+                render={<Link href="/materials" />}
                 size="sm"
                 variant="outline"
               >
                 <RiArrowLeftLine data-icon="inline-start" />
-                All screens
+                All materials
               </Button>
               <div className="flex flex-wrap items-center justify-end gap-2">
                 <Button

@@ -6,7 +6,7 @@ import { getResolvedCatalog } from "@/lib/demo-catalog";
 export const metadata: Metadata = {
   title: "Materials",
   description:
-    "Browse production-ready Frameline materials — mesh, dither, and grain surfaces you can install.",
+    "Browse Frameline screens and materials — cinematic templates plus mesh, dither, and grain surfaces you can install.",
 };
 
 export default async function MaterialsPage({

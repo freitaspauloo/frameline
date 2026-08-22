@@ -10,6 +10,30 @@ const nextConfig: NextConfig = {
   },
   // Keep Admin SDK / Prisma out of the Turbopack server graph.
   serverExternalPackages: ["firebase-admin", "@prisma/client", "prisma"],
+  async redirects() {
+    return [
+      {
+        source: "/screens",
+        destination: "/materials",
+        permanent: true,
+      },
+      {
+        source: "/screens/:slug",
+        destination: "/materials/:slug",
+        permanent: true,
+      },
+      {
+        source: "/collections",
+        destination: "/materials",
+        permanent: true,
+      },
+      {
+        source: "/collections/:slug",
+        destination: "/materials",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -47,11 +47,7 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import {
-  getV1LaunchCatalog,
-  getFeaturedCollections,
-  getCollectionMaterials,
-} from "@/materials";
+import { getV1LaunchCatalog } from "@/materials";
 import { cn } from "@/lib/utils";
 
 const CATALOG_PREVIEW_SLOTS = 6;
@@ -263,8 +259,6 @@ const SEQUENCE_STAGES: MaterialSequenceStage[] = PUBLIC_CATALOG.filter(
 ).map((entry) => ({ entry, ...SEQUENCE_COPY[entry.slug] }));
 
 export function FramelineHomePageV2() {
-  const featuredCollections = getFeaturedCollections();
-
   return (
     <FramelineLenis>
       <FramelineReveal>
@@ -447,73 +441,6 @@ export function FramelineHomePageV2() {
             <InkRule />
             <SectionBand label="In rotation">
               <MaterialStrip entries={PUBLIC_CATALOG} />
-            </SectionBand>
-          </MarketingSection>
-
-          <MarketingSectionSpacer size="lg" />
-
-          {/* —— Popular collections —— */}
-          <MarketingSection id="collections">
-            <InkRule />
-            <SectionBand label="Collections">
-              <MarketingSectionHeader>
-                <SectionIntro
-                  action={
-                    <Button
-                      nativeButton={false}
-                      render={<Link href="/collections" />}
-                      variant="outline"
-                    >
-                      See all
-                      <RiArrowRightLine data-icon="inline-end" />
-                    </Button>
-                  }
-                  description="Editorial drops — materials grouped by job, not by trend."
-                  eyebrow="Collections"
-                  title="Popular collections"
-                />
-              </MarketingSectionHeader>
-
-              <MarketingRuledGrid cols={2}>
-                {featuredCollections.map((collection) => {
-                  const materials = getCollectionMaterials(collection);
-                  const preview = materials[0];
-
-                  return (
-                    <MarketingRuledCell
-                      key={collection.slug}
-                      className="p-0 sm:p-0 lg:p-0"
-                    >
-                      <Link
-                        className="group block transition-colors hover:bg-muted/40"
-                        data-reveal
-                        href={`/collections/${collection.slug}`}
-                      >
-                        <div className="relative aspect-[21/9] overflow-hidden bg-foreground">
-                          {preview ? (
-                            <MaterialPreview entry={preview} />
-                          ) : (
-                            <div className="absolute inset-0 bg-muted" />
-                          )}
-                        </div>
-                        <div className="flex items-center justify-between gap-4 border-t border-border p-6 sm:p-8">
-                          <div className="space-y-2">
-                            <h3 className="font-heading text-base font-medium tracking-tight">
-                              {collection.title}
-                            </h3>
-                            <p className="max-w-[40ch] text-sm leading-relaxed text-muted-foreground">
-                              {collection.description}
-                            </p>
-                          </div>
-                          <p className="shrink-0 font-mono text-[11px] text-muted-foreground">
-                            {materials.length} materials
-                          </p>
-                        </div>
-                      </Link>
-                    </MarketingRuledCell>
-                  );
-                })}
-              </MarketingRuledGrid>
             </SectionBand>
           </MarketingSection>
 
@@ -782,14 +709,6 @@ export function FramelineHomePageV2() {
                     size="lg"
                   >
                     Browse materials
-                  </Button>
-                  <Button
-                    nativeButton={false}
-                    render={<Link href="/collections" />}
-                    size="lg"
-                    variant="outline"
-                  >
-                    Explore collections
                   </Button>
                 </div>
               </div>

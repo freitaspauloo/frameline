@@ -89,7 +89,7 @@ export async function POST(request: Request) {
 
       const redirectTo =
         plan === "screen" && material
-          ? `/screens/${encodeURIComponent(material)}?unlocked=1&${qs.toString()}`
+          ? `/materials/${encodeURIComponent(material)}?unlocked=1&${qs.toString()}`
           : `/orders/${fulfilled.orderId}?${qs.toString()}`;
 
       return NextResponse.json({

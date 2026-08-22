@@ -3,9 +3,9 @@ import type { MetadataRoute } from "next";
 import { DOCS_NAV } from "@/components/docs-shell";
 import {
   getV1LaunchCatalog,
-  MATERIALS_COLLECTIONS,
   MATERIAL_USE_CONTEXTS,
 } from "@/materials";
+import { listScreens } from "@/screens/catalog";
 
 const BASE = "https://frameline.ai";
 
@@ -16,7 +16,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "",
     "/materials",
     "/free",
-    "/collections",
     "/pricing",
     "/waitlist",
     "/about",
@@ -46,11 +45,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: m.tier === "free" ? 0.85 : 0.8,
   }));
 
-  const collections: MetadataRoute.Sitemap = MATERIALS_COLLECTIONS.map((c) => ({
-    url: `${BASE}/collections/${c.slug}`,
+  const screens: MetadataRoute.Sitemap = listScreens().map((screen) => ({
+    url: `${BASE}/materials/${screen.slug}`,
     lastModified: now,
     changeFrequency: "weekly",
-    priority: 0.75,
+    priority: 0.85,
   }));
 
   const contexts: MetadataRoute.Sitemap = MATERIAL_USE_CONTEXTS.map((c) => ({
@@ -60,5 +59,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.72,
   }));
 
-  return [...staticRoutes, ...materials, ...collections, ...contexts];
+  return [...staticRoutes, ...screens, ...materials, ...contexts];
 }

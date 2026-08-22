@@ -30,7 +30,7 @@ const TIER_CTAS = {
   },
   screen: {
     kind: "link" as const,
-    href: "/screens",
+    href: "/materials",
     label: "Browse screens",
     primary: true,
   },

@@ -82,7 +82,7 @@ export function CheckoutForm({
     : (initialMaterial ?? materialSlug);
   const license = getLicensePlan(activePlan);
   const amount = license?.priceLabel ?? "$9";
-  const productHref = activeMaterial ? `/screens/${activeMaterial}` : null;
+  const productHref = activeMaterial ? `/materials/${activeMaterial}` : null;
   const firebaseReady = isFirebaseClientConfigured();
   const signedIn = Boolean(user?.email);
 

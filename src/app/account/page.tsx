@@ -122,7 +122,7 @@ export default async function AccountPage() {
                   nativeButton={false}
                   render={
                     <Link
-                      href="/screens"
+                      href="/materials"
                     />
                   }
                   size="sm"

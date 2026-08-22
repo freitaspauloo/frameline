@@ -2,15 +2,20 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { MaterialDetailPage } from "@/components/material-detail-page";
+import { ScreenDetailPage } from "@/components/screen-detail-page";
 import { getResolvedMaterial } from "@/lib/demo-catalog";
 import { getLicensePlan } from "@/lib/license-plans";
 import {
   getV1LaunchCatalog,
   type MaterialCatalogEntry,
 } from "@/materials";
+import { getScreenBySlug, listScreens } from "@/screens/catalog";
 
 export function generateStaticParams() {
-  return getV1LaunchCatalog().map((m) => ({ slug: m.slug }));
+  return [
+    ...getV1LaunchCatalog().map((m) => ({ slug: m.slug })),
+    ...listScreens().map((screen) => ({ slug: screen.slug })),
+  ];
 }
 
 function materialMetaDescription(material: MaterialCatalogEntry) {
@@ -23,6 +28,13 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const screen = getScreenBySlug(slug);
+  if (screen) {
+    return {
+      title: screen.title,
+      description: screen.description,
+    };
+  }
   const material = await getResolvedMaterial(slug);
   if (!material) {
     return { title: "Material" };
@@ -55,9 +67,24 @@ export default async function MaterialPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { slug } = await params;
+  const screen = getScreenBySlug(slug);
+  const initialParams = await searchParams;
+
+  if (screen) {
+    const first = (value: string | string[] | undefined) =>
+      Array.isArray(value) ? value[0] : value;
+    return (
+      <ScreenDetailPage
+        email={first(initialParams.email)}
+        entry={screen}
+        sessionId={first(initialParams.session_id)}
+        unlocked={first(initialParams.unlocked) === "1"}
+      />
+    );
+  }
+
   const material = await getResolvedMaterial(slug);
   if (!material) notFound();
-  const initialParams = await searchParams;
   const plan = getLicensePlan("free");
   const price = "0";
 

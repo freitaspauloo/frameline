@@ -25,6 +25,8 @@ import {
   type MaterialType,
   type MaterialUseContext,
 } from "@/materials";
+import { listScreens } from "@/screens/catalog";
+import type { ScreenCatalogEntry } from "@/screens/types";
 import { cn } from "@/lib/utils";
 
 /** Hairline filter — outline, not a soft pill. */
@@ -142,6 +144,22 @@ export function MaterialsCatalogPage({
     return list;
   }, [catalog, activeType, activeContext, activeTier, activeQ, activeSort]);
 
+  const screens = useMemo(() => {
+    if (activeType || activeContext) return [] as ScreenCatalogEntry[];
+    if (activeTier === "free") return [] as ScreenCatalogEntry[];
+    let list = listScreens();
+    if (activeQ) {
+      const needle = activeQ.toLowerCase();
+      list = list.filter((screen) => {
+        const hay = [screen.title, screen.description, screen.blurb]
+          .join(" ")
+          .toLowerCase();
+        return hay.includes(needle);
+      });
+    }
+    return list;
+  }, [activeType, activeContext, activeTier, activeQ]);
+
   const contextCoverage = useMemo(() => {
     return MATERIAL_USE_CONTEXTS.map((c) => ({
       ...c,
@@ -172,13 +190,14 @@ export function MaterialsCatalogPage({
         <MarketingPageHeader
           action={
             <p className="font-mono text-[11px] text-muted-foreground">
-              {entries.length} {entries.length === 1 ? "material" : "materials"}
+              {screens.length + entries.length}{" "}
+              {screens.length + entries.length === 1 ? "item" : "items"}
             </p>
           }
           description={
             typeMeta
               ? typeMeta.description
-              : "Production-ready materials you can install. Open any material to tune props and copy JSX."
+              : "Screen templates and production-ready materials you can install. Open any item to copy source or tune props."
           }
           eyebrow={`Materials${activeType ? ` · ${activeType}` : ""}`}
           title={typeMeta ? typeMeta.title : "Surface as code"}
@@ -342,7 +361,7 @@ export function MaterialsCatalogPage({
           </div>
         </MarketingPageHeader>
 
-        {entries.length === 0 ? (
+        {screens.length === 0 && entries.length === 0 ? (
           <div className="border-b border-border px-6 py-16 text-center sm:px-8 lg:px-12">
             <p className="text-sm text-muted-foreground">
               No materials match these filters.
@@ -355,6 +374,54 @@ export function MaterialsCatalogPage({
             </Link>
           </div>
         ) : (
+          <>
+        {screens.length > 0 ? (
+          <div id="screens">
+            <MarketingRuledGrid>
+              {screens.map((screen) => (
+                <MarketingRuledCell
+                  key={screen.slug}
+                  className="p-0 sm:p-0 lg:p-0"
+                >
+                  <Link
+                    className="group block transition-colors hover:bg-muted/40"
+                    href={`/materials/${screen.slug}`}
+                  >
+                    <div className="relative aspect-[16/9] overflow-hidden bg-[#140810]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        alt=""
+                        className="absolute inset-0 size-full object-cover opacity-90"
+                        src="/screens/spaceman-moon/poster.png"
+                      />
+                      <div
+                        aria-hidden
+                        className="absolute inset-0 bg-[#d600bf] mix-blend-color"
+                      />
+                    </div>
+                    <div className="space-y-2.5 border-t border-border p-6 sm:p-8 lg:p-10">
+                      <div className="flex items-center justify-between gap-3">
+                        <h2 className="font-heading text-base font-medium tracking-tight">
+                          {screen.title}
+                        </h2>
+                        <span className="flex shrink-0 items-center gap-2 text-[0.625rem] font-semibold tracking-widest uppercase">
+                          <span className="text-muted-foreground">Screen</span>
+                          <span className="text-foreground">
+                            {screen.priceLabel}
+                          </span>
+                        </span>
+                      </div>
+                      <p className="text-sm leading-relaxed text-muted-foreground">
+                        {screen.blurb}
+                      </p>
+                    </div>
+                  </Link>
+                </MarketingRuledCell>
+              ))}
+            </MarketingRuledGrid>
+          </div>
+        ) : null}
+        {entries.length > 0 ? (
           <MarketingRuledGrid>
             {entries.map((entry) => (
               <MarketingRuledCell key={entry.slug} className="p-0 sm:p-0 lg:p-0">
@@ -393,6 +460,8 @@ export function MaterialsCatalogPage({
               </MarketingRuledCell>
             ))}
           </MarketingRuledGrid>
+        ) : null}
+          </>
         )}
       </MarketingSection>
       <MarketingFooter />
