@@ -18,7 +18,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Full-viewport composing orb behind the yield headline, glass header, and fab stats.",
     blurb: "Hero orb · glass chrome · 40M dies classified",
-    poster: "/screens/built-for-yield/poster.png",
+    poster: "/screens/built-for-yield/poster.webp",
     aliases: ["built-for-yield"],
   },
   {
@@ -28,7 +28,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Three-up feature cards on a ruled grid — fluted glass, production stats, GSAP entrance.",
     blurb: "Three-up cards · killer defects · 6.2× review",
-    poster: "/screens/catch-killer-defects/poster.png",
+    poster: "/screens/catch-killer-defects/poster.webp",
     aliases: ["catch-killer-defects", "features"],
   },
   {
@@ -38,7 +38,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Interactive insights list with ranked review metrics and a sliding highlight.",
     blurb: "Ranked review · capture rate · line-level yield",
-    poster: "/screens/defect-capture/poster.png",
+    poster: "/screens/defect-capture/poster.webp",
     aliases: ["defect-capture"],
   },
   {
@@ -48,7 +48,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Cinematic magenta field — horizon, grain, and a yield lockup across the line.",
     blurb: "Magenta grain · horizon · yield lockup",
-    poster: "/screens/magenta-landscape/poster.png",
+    poster: "/screens/magenta-landscape/poster.webp",
     aliases: ["growcode"],
   },
   {
@@ -58,7 +58,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Wafer map and ranked classifications inside live window chrome.",
     blurb: "Wafer map · AI class · window chrome",
-    poster: "/screens/browser-frame/poster.png",
+    poster: "/screens/browser-frame/poster.webp",
     aliases: ["finlayer"],
   },
   {
@@ -68,7 +68,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Vertical feature rail — four beats that protect yield at production volume.",
     blurb: "In-line · classify · rank · protect",
-    poster: "/screens/feature-rail/poster.png",
+    poster: "/screens/feature-rail/poster.webp",
     aliases: ["features-sec"],
   },
   {
@@ -78,7 +78,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Die-resolution pixel cube — classify every cell before it leaves the line.",
     blurb: "Pixel cube · die map · classified cells",
-    poster: "/screens/blueprint/poster.png",
+    poster: "/screens/blueprint/poster.webp",
     aliases: ["chainova"],
   },
   {
@@ -88,7 +88,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Full-bleed cinematic hero — magenta moon video, glass pills, yield pins.",
     blurb: "Cinematic lunar hero · yield pins · Request Info",
-    poster: "/screens/spaceman-moon/poster.png",
+    poster: "/screens/spaceman-moon/poster.webp",
     aliases: ["nudgeai"],
   },
   {
@@ -98,7 +98,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "God-ray bloom over an always-on in-line wafer inspection lockup.",
     blurb: "Always-on · wafer · in-line models",
-    poster: "/screens/light-rays/poster.png",
+    poster: "/screens/light-rays/poster.webp",
     aliases: ["aieigen"],
   },
   {
@@ -108,7 +108,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Defect assistant workspace — ranked thread above, compose bar below.",
     blurb: "Assistant thread · ranked defects · compose",
-    poster: "/screens/prompt-bar/poster.png",
+    poster: "/screens/prompt-bar/poster.webp",
     aliases: ["incredible"],
   },
 ];

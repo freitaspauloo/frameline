@@ -11,7 +11,7 @@ import {
 import styles from "./spaceman-moon.module.css";
 
 const HERO_VIDEO = "/screens/spaceman-moon/hero.mp4";
-const HERO_POSTER = "/screens/spaceman-moon/poster.png";
+const HERO_POSTER = "/screens/spaceman-moon/poster.webp";
 const VIDEO_PLAYBACK_RATE = 0.55;
 const VIDEO_FADE_SECONDS = 1.5;
 
