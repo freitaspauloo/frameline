@@ -1,0 +1,372 @@
+/* Scoped from Reticle — do not Tailwind-rewrite */
+.fl-defect-capture { color: inherit; }
+
+.fl-defect-capture .insights-stage .stage {
+  overflow: clip;
+}
+.fl-defect-capture .ins-root {
+  position: absolute;
+  inset: 0;
+}
+.fl-defect-capture .ins-vline, .fl-defect-capture .ins-hline, .fl-defect-capture .ins-rule {
+  pointer-events: none;
+}
+.fl-defect-capture .ins-vline, .fl-defect-capture .ins-hline {
+  position: absolute;
+  z-index: 4;
+}
+.fl-defect-capture .ins-vline {
+  width: 1px;
+  height: 1200px;
+}
+.fl-defect-capture .ins-hline {
+  left: 0;
+  width: 1920px;
+  height: 1px;
+}
+.fl-defect-capture .ins-rule {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 1px;
+  min-height: 1px;
+  max-height: 1px;
+  flex: none;
+}
+.fl-defect-capture .ins-stroke {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #dddddd;
+}
+.fl-defect-capture .ins-vline > .ins-stroke {
+  transform: scaleX(calc(1 / var(--stage-scale, 1)));
+  transform-origin: 0 50%;
+}
+.fl-defect-capture .ins-hline > .ins-stroke, .fl-defect-capture .ins-rule > .ins-stroke {
+  transform: scaleY(calc(1 / var(--stage-scale, 1)));
+  transform-origin: 50% 0;
+}
+.fl-defect-capture .ins-frame {
+  position: absolute;
+  left: 279px;
+  top: 186px;
+  width: 1362px;
+  height: 828px;
+  display: flex;
+  overflow: clip;
+  background: #fff;
+}
+.fl-defect-capture .ins-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 615px;
+  height: 828px;
+  padding-top: 40px;
+  padding-bottom: 0;
+  overflow: visible;
+  flex-shrink: 0;
+  background: #fff;
+}
+.fl-defect-capture .ins-header {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  padding-inline: 80px;
+  padding-bottom: 40px;
+  flex-shrink: 0;
+}
+.fl-defect-capture .ins-eyebrow {
+  color: #d600bf;
+  font-family: Geist, system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+}
+.fl-defect-capture .ins-headline-clip {
+  width: 454px;
+}
+.fl-defect-capture .ins-headline {
+  display: flex;
+  flex-direction: column;
+  width: 454px;
+  color: #000;
+  font-family: Geist, system-ui, sans-serif;
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 48px;
+  letter-spacing: -0.03em;
+}
+.fl-defect-capture .ins-headline-line {
+  white-space: nowrap;
+}
+.fl-defect-capture .ins-list {
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) 1px minmax(0, 1fr) 1px minmax(0, 1fr) 1px minmax(0, 1fr) 1px minmax(0, 1fr);
+  width: 100%;
+  flex: 1 1 0;
+  height: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.fl-defect-capture .ins-highlight {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 115px;
+  background: #f8f8f8;
+  pointer-events: none;
+  z-index: 0;
+  will-change: top, height;
+}
+.fl-defect-capture .ins-highlight-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: #d600bf;
+}
+.fl-defect-capture .ins-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  appearance: none;
+  color: inherit;
+}
+.fl-defect-capture .ins-accent {
+  width: 3px;
+  flex-shrink: 0;
+  background: transparent;
+}
+.fl-defect-capture .ins-row-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  flex: 1;
+  min-height: 0;
+  padding: 16px 80px 16px 77px;
+}
+.fl-defect-capture .ins-row-title {
+  color: #000;
+  font-family: Geist, system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+}
+.fl-defect-capture .ins-row-body {
+  width: 373px;
+  color: #6b6b6b;
+  font-family: Geist, system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 22px;
+}
+.fl-defect-capture .ins-visual {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 747px;
+  height: 828px;
+  overflow: clip;
+  flex-shrink: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+}
+.fl-defect-capture .ins-fill {
+  position: absolute;
+  inset: 0;
+  width: 747px;
+  height: 828px;
+  background-image: url("/screens/defect-capture/visual.png");
+  background-size: cover;
+  background-position: 50%;
+}
+.fl-defect-capture .ins-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: 560px;
+  padding: 32px;
+  border-radius: 20px;
+  border: 1px solid #ffffff24;
+  background: #10080e6b;
+  backdrop-filter: blur(28px);
+}
+.fl-defect-capture .ins-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.fl-defect-capture .ins-card-title {
+  color: #fff;
+  font-family: "Geist Pixel", system-ui, sans-serif;
+  font-variation-settings: "ELSH" 0;
+  font-size: 40px;
+  line-height: 44px;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.fl-defect-capture .ins-card-sub {
+  color: #ffffffb8;
+  font-family: Geist, system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 20px;
+}
+.fl-defect-capture .ins-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.fl-defect-capture .ins-metric-row {
+  display: flex;
+  gap: 24px;
+}
+.fl-defect-capture .ins-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.fl-defect-capture .ins-metric-a {
+  width: 224px;
+}
+.fl-defect-capture .ins-metric-b {
+  width: 247px;
+}
+.fl-defect-capture .ins-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #ffffff29;
+  flex-shrink: 0;
+  overflow: visible;
+}
+.fl-defect-capture .ins-icon svg {
+  display: block;
+  flex-shrink: 0;
+  overflow: visible;
+}
+.fl-defect-capture .ins-metric-value {
+  color: #fff;
+  font-family: "Geist Pixel Circle", "Geist Pixel", system-ui, sans-serif;
+  font-variation-settings: "ELSH" 20;
+  font-size: 40px;
+  line-height: 40px;
+}
+.fl-defect-capture .ins-metric-label {
+  color: #fff;
+  font-family: Geist, system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 20px;
+}
+.fl-defect-capture .ins-metric-desc {
+  color: #ffffffad;
+  font-family: Geist, system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 18px;
+}
+.fl-defect-capture .ins-metric-a .ins-metric-desc {
+  width: 196px;
+}
+.fl-defect-capture .ins-metric-b .ins-metric-desc {
+  width: 239px;
+}
+.fl-defect-capture .ins-skel .ins-highlight {
+  top: 230px;
+}
+.fl-defect-capture .ins-skel .ins-row {
+  cursor: default;
+  pointer-events: none;
+}
+.fl-defect-capture .ins-skel .ins-copy .bone, .fl-defect-capture .ins-skel .ins-card .bone {
+  --bone: #ececec;
+  --shine: rgba(255, 255, 255, 0.7);
+}
+.fl-defect-capture .ins-skel .ins-card .bone {
+  --bone: #2a2a2a;
+  --shine: rgba(255, 255, 255, 0.1);
+}
+.fl-defect-capture .ins-skel-eyebrow {
+  width: 196px;
+  height: 16px;
+}
+.fl-defect-capture .ins-skel-headline {
+  width: 454px;
+  height: 48px;
+}
+.fl-defect-capture .ins-skel-headline-short {
+  width: 320px;
+  height: 48px;
+}
+.fl-defect-capture .ins-skel-row-title {
+  width: 220px;
+  height: 18px;
+}
+.fl-defect-capture .ins-skel-row-line {
+  width: 373px;
+  height: 14px;
+}
+.fl-defect-capture .ins-skel-row-line-short {
+  width: 280px;
+  height: 14px;
+}
+.fl-defect-capture .ins-skel-card-title {
+  width: 420px;
+  height: 36px;
+}
+.fl-defect-capture .ins-skel-card-sub {
+  width: 360px;
+  height: 14px;
+}
+.fl-defect-capture .ins-skel-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+}
+.fl-defect-capture .ins-skel-value {
+  width: 96px;
+  height: 36px;
+}
+.fl-defect-capture .ins-skel-label {
+  width: 168px;
+  height: 14px;
+}
+.fl-defect-capture .ins-skel-desc {
+  width: 196px;
+  height: 12px;
+}
+.fl-defect-capture .ins-skel-desc-wide {
+  width: 239px;
+  height: 12px;
+}
+

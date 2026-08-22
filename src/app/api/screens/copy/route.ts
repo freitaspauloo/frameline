@@ -20,9 +20,9 @@ import {
 } from "@/lib/screen-quota-cookie";
 import { getScreenBySlug } from "@/screens/catalog";
 import {
-  buildSpacemanMoonCodePayload,
-  SPACEMAN_MOON_PROMPT,
-} from "@/screens/spaceman-moon/copy";
+  buildScreenCodePayload,
+  getScreenPrompt,
+} from "@/screens/copy-payload";
 import type { ScreenCopyPath } from "@/screens/types";
 
 const ANON_COOKIE = "fl_anon_id";
@@ -119,14 +119,15 @@ export async function POST(request: NextRequest) {
       return res;
     }
 
-    let text: string;
+    let text: string | null;
     if (copyPath === "prompt") {
-      text = SPACEMAN_MOON_PROMPT;
-    } else if (slug === "spaceman-moon") {
-      text = await buildSpacemanMoonCodePayload();
+      text = getScreenPrompt(slug);
     } else {
+      text = await buildScreenCodePayload(slug);
+    }
+    if (!text) {
       return NextResponse.json(
-        { ok: false, error: "No code payload for this screen" },
+        { ok: false, error: "No copy payload for this screen" },
         { status: 404 },
       );
     }

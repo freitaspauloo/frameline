@@ -224,12 +224,14 @@ export function MaterialsCatalogPage({
                     <img
                       alt=""
                       className="absolute inset-0 size-full object-cover opacity-90"
-                      src="/screens/spaceman-moon/poster.png"
+                      src={screen.poster}
                     />
-                    <div
-                      aria-hidden
-                      className="absolute inset-0 bg-[#d600bf] mix-blend-color"
-                    />
+                    {screen.slug === "spaceman-moon" ? (
+                      <div
+                        aria-hidden
+                        className="absolute inset-0 bg-[#d600bf] mix-blend-color"
+                      />
+                    ) : null}
                   </div>
                   <div className="space-y-2.5 border-t border-border p-6 sm:p-8 lg:p-10">
                     <div className="flex items-center justify-between gap-3">

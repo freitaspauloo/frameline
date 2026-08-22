@@ -1,0 +1,401 @@
+/* Scoped from Reticle — do not Tailwind-rewrite */
+.fl-yield-skeleton { color: inherit; }
+
+.fl-yield-skeleton .viewport {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fl-yield-skeleton .stage {
+  width: 1920px;
+  height: 1080px;
+  position: relative;
+  flex-shrink: 0;
+  transform-origin: center center;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: clip;
+}
+.fl-yield-skeleton .orb {
+  position: absolute;
+  left: 160px;
+  top: calc(50% + 32px);
+  width: 1600px;
+  height: 1600px;
+  translate: 0 -50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 0;
+}
+.fl-yield-skeleton .orb-canvas {
+  width: 1600px;
+  height: 1600px;
+  display: block;
+}
+.fl-yield-skeleton .header, .fl-yield-skeleton .footer {
+  position: relative;
+  z-index: 2;
+  width: 1440px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow: clip;
+  backdrop-filter: blur(12px);
+  background: transparent;
+  border-left: 2px solid #191919;
+  border-right: 2px solid #191919;
+}
+.fl-yield-skeleton .header {
+  height: 100px;
+  gap: 24px;
+}
+.fl-yield-skeleton .brand {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  gap: 16px;
+  padding-left: 32px;
+}
+.fl-yield-skeleton .logo {
+  width: 37px;
+  height: 36px;
+  flex-shrink: 0;
+}
+.fl-yield-skeleton .brand-name {
+  color: #fff;
+  font-size: 17px;
+  line-height: 22px;
+}
+.fl-yield-skeleton .brand-rule {
+  width: 1px;
+  height: 24px;
+  background: #d600bf;
+  flex-shrink: 0;
+}
+.fl-yield-skeleton .brand-tag {
+  color: #484848;
+  font-size: 14px;
+  line-height: 18px;
+}
+.fl-yield-skeleton .nav {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  gap: 32px;
+}
+.fl-yield-skeleton .nav-links {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+.fl-yield-skeleton .nav-links a, .fl-yield-skeleton .help {
+  color: #484848;
+  font-size: 14px;
+  line-height: 18px;
+  text-decoration: none;
+}
+.fl-yield-skeleton .nav-end {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  gap: 24px;
+  padding-inline: 24px;
+  border-left: 2px solid #191919;
+}
+.fl-yield-skeleton .cta {
+  background: #d600bf;
+  color: #fff;
+  font-size: 14px;
+  line-height: 18px;
+  padding: 12px 32px;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+.fl-yield-skeleton .hero {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  align-self: stretch;
+  border-top: 2px solid #191919;
+  border-bottom: 2px solid #191919;
+}
+.fl-yield-skeleton .hero-inner {
+  position: absolute;
+  left: 240px;
+  top: -1px;
+  bottom: -1px;
+  width: 1440px;
+  border-left: 2px solid #191919;
+  border-right: 2px solid #191919;
+}
+.fl-yield-skeleton .headline {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  color: #fff;
+  font-size: 226px;
+  font-weight: 300;
+  line-height: 272px;
+  white-space: nowrap;
+}
+.fl-yield-skeleton .pill {
+  position: absolute;
+  left: 49px;
+  top: 287px;
+  display: flex;
+  align-items: center;
+  background: #1c1c1c;
+  padding: 8px 16px;
+  color: #a2a2a2;
+  font-size: 12px;
+  line-height: 16px;
+}
+.fl-yield-skeleton .body {
+  position: absolute;
+  left: 1100px;
+  top: 551px;
+  width: 297px;
+  color: #fff;
+  font-size: 12px;
+  line-height: 16px;
+}
+.fl-yield-skeleton .footer {
+  height: 120px;
+  gap: 24px;
+  padding-inline: 24px;
+}
+.fl-yield-skeleton .footer-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  align-self: stretch;
+}
+.fl-yield-skeleton .footer-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+.fl-yield-skeleton .footer-copy .on {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 18px;
+}
+.fl-yield-skeleton .footer-copy .off {
+  color: #484848;
+  font-size: 14px;
+  line-height: 18px;
+}
+.fl-yield-skeleton .stats {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+.fl-yield-skeleton .stat {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+.fl-yield-skeleton .stat-num {
+  display: flex;
+  align-items: flex-end;
+}
+.fl-yield-skeleton .stat-value {
+  color: #fff;
+  font-size: 48px;
+  line-height: 58px;
+  height: 49px;
+}
+.fl-yield-skeleton .stat-unit {
+  color: #d600bf;
+  font-size: 32px;
+  line-height: 40px;
+  height: 34px;
+}
+.fl-yield-skeleton .stat-label {
+  color: #484848;
+  font-size: 14px;
+  line-height: 18px;
+}
+.fl-yield-skeleton .bone {
+  --bone: #161616;
+  --shine: rgba(255, 255, 255, 0.07);
+  position: relative;
+  overflow: hidden;
+  background: var(--bone);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.fl-yield-skeleton .bone::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 28%,
+    var(--shine) 48%,
+    rgba(214, 0, 191, 0.08) 50%,
+    var(--shine) 52%,
+    transparent 72%
+  );
+  background-size: 220% 100%;
+  animation: bone-shimmer 1.8s linear infinite;
+  animation-delay: calc(-1 * var(--delay, 0ms));
+}
+.fl-yield-skeleton .bone-logo {
+  width: 37px;
+  height: 36px;
+  border-radius: 50%;
+}
+.fl-yield-skeleton .bone-brand {
+  width: 68px;
+  height: 16px;
+}
+.fl-yield-skeleton .bone-rule {
+  opacity: 0.35;
+}
+.fl-yield-skeleton .bone-tag {
+  width: 78px;
+  height: 14px;
+}
+.fl-yield-skeleton .bone-nav {
+  width: 64px;
+  height: 14px;
+  margin-top: 2px;
+}
+.fl-yield-skeleton .bone-help {
+  width: 36px;
+  height: 14px;
+}
+.fl-yield-skeleton .bone-cta {
+  width: 140px;
+  height: 42px;
+  background: #3a0a34;
+  --shine: rgba(214, 0, 191, 0.22);
+}
+.fl-yield-skeleton .bone-headline {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: 1180px;
+  height: 88px;
+  border-radius: 4px;
+}
+.fl-yield-skeleton .bone-pill {
+  position: absolute;
+  left: 49px;
+  top: 287px;
+  width: 292px;
+  height: 32px;
+  border-radius: 2px;
+}
+.fl-yield-skeleton .bone-body {
+  position: absolute;
+  left: 1100px;
+  top: 551px;
+  width: 297px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fl-yield-skeleton .bone-line {
+  height: 12px;
+}
+.fl-yield-skeleton .bone-line-full {
+  width: 100%;
+}
+.fl-yield-skeleton .bone-line-short {
+  width: 62%;
+}
+.fl-yield-skeleton .bone-footer-row {
+  width: 420px;
+  height: 16px;
+}
+.fl-yield-skeleton .bone-footer-sub {
+  width: 292px;
+  height: 16px;
+}
+.fl-yield-skeleton .bone-stat-num {
+  width: 92px;
+  height: 48px;
+  border-radius: 3px;
+}
+.fl-yield-skeleton .bone-stat-label {
+  width: 148px;
+  height: 14px;
+}
+.fl-yield-skeleton .orb-skel {
+  position: relative;
+  width: 760px;
+  height: 760px;
+}
+.fl-yield-skeleton .orb-skel-core {
+  position: absolute;
+  inset: 18%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #101010 0%, #0a0a0a 70%, transparent 100%);
+  animation: orb-breathe 2.4s ease-in-out infinite;
+}
+.fl-yield-skeleton .orb-skel-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 18px solid #141414;
+  mask: radial-gradient(circle, transparent 62%, #000 63%);
+}
+.fl-yield-skeleton .orb-skel-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(255, 255, 255, 0.05) 28deg,
+    rgba(214, 0, 191, 0.1) 42deg,
+    transparent 70deg
+  );
+  mask: radial-gradient(circle, transparent 61%, #000 63%, #000 72%, transparent 74%);
+  animation: orb-sweep 3.6s linear infinite;
+}
+
+@keyframes bone-shimmer {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -20% 0;
+  }
+}
+
+@keyframes orb-sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orb-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+

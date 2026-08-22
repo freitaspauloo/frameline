@@ -1,0 +1,25 @@
+.viewport {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.embed {
+  width: 100%;
+  height: 100%;
+}
+
+.stage {
+  position: relative;
+  flex-shrink: 0;
+  transform-origin: center center;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: clip;
+}

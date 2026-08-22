@@ -1,0 +1,179 @@
+/* Scoped from Reticle — do not Tailwind-rewrite */
+.fl-catch-killer-defects { color: inherit; }
+
+.fl-catch-killer-defects .features-stage .stage {
+  overflow: clip;
+}
+.fl-catch-killer-defects .feat-root {
+  position: absolute;
+  inset: 0;
+}
+.fl-catch-killer-defects .feat-grid-v, .fl-catch-killer-defects .feat-grid-h {
+  position: absolute;
+  left: 0;
+  pointer-events: none;
+}
+.fl-catch-killer-defects .feat-grid-v {
+  top: -12px;
+  width: 1920px;
+  height: 1214px;
+}
+.fl-catch-killer-defects .feat-grid-h {
+  top: 40px;
+  width: 1920px;
+  height: 1040px;
+}
+.fl-catch-killer-defects .feat-vline {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 1115px;
+  background: #f2f2f2;
+}
+.fl-catch-killer-defects .feat-hline {
+  position: absolute;
+  left: 0;
+  width: 1920px;
+  height: 1px;
+  background: #f2f2f2;
+}
+.fl-catch-killer-defects .feat-label {
+  position: absolute;
+  width: 159px;
+  height: 39px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 10px;
+  overflow: clip;
+}
+.fl-catch-killer-defects .feat-label span {
+  color: #fff;
+  font-family: Geist, system-ui, sans-serif;
+  font-size: 11px;
+  line-height: 14px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.fl-catch-killer-defects .feat-card {
+  position: absolute;
+  top: 200px;
+  width: 480px;
+  height: 720px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+.fl-catch-killer-defects .feat-visual {
+  position: relative;
+  width: 480px;
+  height: 480px;
+  overflow: clip;
+  flex-shrink: 0;
+  background: #aeaeae;
+}
+.fl-catch-killer-defects .feat-visual img {
+  width: 480px;
+  height: 480px;
+  object-fit: cover;
+  display: block;
+}
+.fl-catch-killer-defects .feat-fill {
+  position: absolute;
+  background-size: cover;
+  background-position: 50%;
+  rotate: 180deg;
+  transform-origin: 0% 0%;
+}
+.fl-catch-killer-defects .feat-glass-clip {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.fl-catch-killer-defects .feat-stat {
+  position: absolute;
+  left: 50%;
+  top: 26px;
+  translate: -50%;
+  width: max-content;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: "Geist Pixel", "Geist Pixel Circle", "GeistPixelRegular-Circle", system-ui, sans-serif;
+  font-variation-settings: "ELSH" 20;
+  font-size: 120px;
+  line-height: 94px;
+  letter-spacing: -0.02em;
+  white-space: pre;
+  pointer-events: none;
+}
+.fl-catch-killer-defects .feat-copy {
+  width: 480px;
+  height: 240px;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  padding: 32px 36px;
+  flex-shrink: 0;
+  overflow: clip;
+}
+.fl-catch-killer-defects .feat-title {
+  color: #fff;
+  font-family: Geist, system-ui, sans-serif;
+  font-size: 28px;
+  line-height: 34px;
+  white-space: nowrap;
+}
+.fl-catch-killer-defects .feat-body {
+  width: 408px;
+  color: #d6d6d6;
+  font-family: Geist, system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  white-space: pre-wrap;
+}
+.fl-catch-killer-defects .feat-skel .feat-visual {
+  background: #ececec;
+}
+.fl-catch-killer-defects .feat-skel .feat-copy .bone, .fl-catch-killer-defects .feat-skel .feat-label .bone {
+  --bone: #2a2a2a;
+  --shine: rgba(255, 255, 255, 0.1);
+}
+.fl-catch-killer-defects .feat-skel .feat-visual .bone {
+  --bone: #e0e0e0;
+  --shine: rgba(255, 255, 255, 0.7);
+}
+.fl-catch-killer-defects .feat-skel-label {
+  width: 139px;
+  height: 14px;
+}
+.fl-catch-killer-defects .feat-skel-visual {
+  width: 480px;
+  height: 480px;
+}
+.fl-catch-killer-defects .feat-skel-stat {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: 168px;
+  height: 72px;
+}
+.fl-catch-killer-defects .feat-skel-title {
+  width: 280px;
+  height: 34px;
+}
+.fl-catch-killer-defects .feat-skel-line {
+  width: 408px;
+  height: 14px;
+}
+.fl-catch-killer-defects .feat-skel-line-short {
+  width: 268px;
+  height: 14px;
+}
+

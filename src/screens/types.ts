@@ -9,6 +9,7 @@ export type ScreenCatalogEntry = {
   tier: ScreenTier;
   /** Short tagline for index cards */
   blurb: string;
+  poster: string;
 };
 
 export type ScreenCopyPath = "prompt" | "code";

@@ -17,6 +17,7 @@ import {
   buildMaterialsHref,
   parseSmartQuery,
 } from "../src/lib/catalog-query.ts";
+import { SCREENS_CATALOG } from "../src/screens/catalog.ts";
 
 const REQUIRED_CONTEXTS = [
   "hero",
@@ -128,6 +129,20 @@ export function runCatalogSmoke() {
         `Collection ${collection.slug} references unknown slug: ${slug}`,
       );
     }
+  }
+
+  assert(SCREENS_CATALOG.length === 7, `Expected 7 screens, got ${SCREENS_CATALOG.length}`);
+  const screenTitles = SCREENS_CATALOG.map((s) => s.title);
+  for (const title of [
+    "Spaceman on the Moon",
+    "Built for Yield",
+    "Catch Killer Defects",
+    "Yield Insights",
+    "Yield Skeleton",
+    "Features Skeleton",
+    "Insights Skeleton",
+  ]) {
+    assert(screenTitles.includes(title), `Missing shipped screen title: ${title}`);
   }
 
   const smart = parseSmartQuery("Aurora dither HERO");

@@ -1,0 +1,347 @@
+/* Scoped from Reticle — do not Tailwind-rewrite */
+.fl-features-skeleton { color: inherit; }
+
+.fl-features-skeleton .features-stage .stage {
+  overflow: clip;
+}
+.fl-features-skeleton .feat-root {
+  position: absolute;
+  inset: 0;
+}
+.fl-features-skeleton .feat-grid-v, .fl-features-skeleton .feat-grid-h {
+  position: absolute;
+  left: 0;
+  pointer-events: none;
+}
+.fl-features-skeleton .feat-grid-v {
+  top: -12px;
+  width: 1920px;
+  height: 1214px;
+}
+.fl-features-skeleton .feat-grid-h {
+  top: 40px;
+  width: 1920px;
+  height: 1040px;
+}
+.fl-features-skeleton .feat-vline {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 1115px;
+  background: #f2f2f2;
+}
+.fl-features-skeleton .feat-hline {
+  position: absolute;
+  left: 0;
+  width: 1920px;
+  height: 1px;
+  background: #f2f2f2;
+}
+.fl-features-skeleton .feat-label {
+  position: absolute;
+  width: 159px;
+  height: 39px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 10px;
+  overflow: clip;
+}
+.fl-features-skeleton .feat-label span {
+  color: #fff;
+  font-family: Geist, system-ui, sans-serif;
+  font-size: 11px;
+  line-height: 14px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.fl-features-skeleton .feat-card {
+  position: absolute;
+  top: 200px;
+  width: 480px;
+  height: 720px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+.fl-features-skeleton .feat-visual {
+  position: relative;
+  width: 480px;
+  height: 480px;
+  overflow: clip;
+  flex-shrink: 0;
+  background: #aeaeae;
+}
+.fl-features-skeleton .feat-visual img {
+  width: 480px;
+  height: 480px;
+  object-fit: cover;
+  display: block;
+}
+.fl-features-skeleton .feat-fill {
+  position: absolute;
+  background-size: cover;
+  background-position: 50%;
+  rotate: 180deg;
+  transform-origin: 0% 0%;
+}
+.fl-features-skeleton .feat-glass-clip {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.fl-features-skeleton .feat-stat {
+  position: absolute;
+  left: 50%;
+  top: 26px;
+  translate: -50%;
+  width: max-content;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: "Geist Pixel", "Geist Pixel Circle", "GeistPixelRegular-Circle", system-ui, sans-serif;
+  font-variation-settings: "ELSH" 20;
+  font-size: 120px;
+  line-height: 94px;
+  letter-spacing: -0.02em;
+  white-space: pre;
+  pointer-events: none;
+}
+.fl-features-skeleton .feat-copy {
+  width: 480px;
+  height: 240px;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  padding: 32px 36px;
+  flex-shrink: 0;
+  overflow: clip;
+}
+.fl-features-skeleton .feat-title {
+  color: #fff;
+  font-family: Geist, system-ui, sans-serif;
+  font-size: 28px;
+  line-height: 34px;
+  white-space: nowrap;
+}
+.fl-features-skeleton .feat-body {
+  width: 408px;
+  color: #d6d6d6;
+  font-family: Geist, system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  white-space: pre-wrap;
+}
+.fl-features-skeleton .feat-skel .feat-visual {
+  background: #ececec;
+}
+.fl-features-skeleton .feat-skel .feat-copy .bone, .fl-features-skeleton .feat-skel .feat-label .bone {
+  --bone: #2a2a2a;
+  --shine: rgba(255, 255, 255, 0.1);
+}
+.fl-features-skeleton .feat-skel .feat-visual .bone {
+  --bone: #e0e0e0;
+  --shine: rgba(255, 255, 255, 0.7);
+}
+.fl-features-skeleton .feat-skel-label {
+  width: 139px;
+  height: 14px;
+}
+.fl-features-skeleton .feat-skel-visual {
+  width: 480px;
+  height: 480px;
+}
+.fl-features-skeleton .feat-skel-stat {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: 168px;
+  height: 72px;
+}
+.fl-features-skeleton .feat-skel-title {
+  width: 280px;
+  height: 34px;
+}
+.fl-features-skeleton .feat-skel-line {
+  width: 408px;
+  height: 14px;
+}
+.fl-features-skeleton .feat-skel-line-short {
+  width: 268px;
+  height: 14px;
+}
+.fl-features-skeleton .bone {
+  --bone: #161616;
+  --shine: rgba(255, 255, 255, 0.07);
+  position: relative;
+  overflow: hidden;
+  background: var(--bone);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.fl-features-skeleton .bone::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 28%,
+    var(--shine) 48%,
+    rgba(214, 0, 191, 0.08) 50%,
+    var(--shine) 52%,
+    transparent 72%
+  );
+  background-size: 220% 100%;
+  animation: bone-shimmer 1.8s linear infinite;
+  animation-delay: calc(-1 * var(--delay, 0ms));
+}
+.fl-features-skeleton .bone-logo {
+  width: 37px;
+  height: 36px;
+  border-radius: 50%;
+}
+.fl-features-skeleton .bone-brand {
+  width: 68px;
+  height: 16px;
+}
+.fl-features-skeleton .bone-rule {
+  opacity: 0.35;
+}
+.fl-features-skeleton .bone-tag {
+  width: 78px;
+  height: 14px;
+}
+.fl-features-skeleton .bone-nav {
+  width: 64px;
+  height: 14px;
+  margin-top: 2px;
+}
+.fl-features-skeleton .bone-help {
+  width: 36px;
+  height: 14px;
+}
+.fl-features-skeleton .bone-cta {
+  width: 140px;
+  height: 42px;
+  background: #3a0a34;
+  --shine: rgba(214, 0, 191, 0.22);
+}
+.fl-features-skeleton .bone-headline {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: 1180px;
+  height: 88px;
+  border-radius: 4px;
+}
+.fl-features-skeleton .bone-pill {
+  position: absolute;
+  left: 49px;
+  top: 287px;
+  width: 292px;
+  height: 32px;
+  border-radius: 2px;
+}
+.fl-features-skeleton .bone-body {
+  position: absolute;
+  left: 1100px;
+  top: 551px;
+  width: 297px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fl-features-skeleton .bone-line {
+  height: 12px;
+}
+.fl-features-skeleton .bone-line-full {
+  width: 100%;
+}
+.fl-features-skeleton .bone-line-short {
+  width: 62%;
+}
+.fl-features-skeleton .bone-footer-row {
+  width: 420px;
+  height: 16px;
+}
+.fl-features-skeleton .bone-footer-sub {
+  width: 292px;
+  height: 16px;
+}
+.fl-features-skeleton .bone-stat-num {
+  width: 92px;
+  height: 48px;
+  border-radius: 3px;
+}
+.fl-features-skeleton .bone-stat-label {
+  width: 148px;
+  height: 14px;
+}
+.fl-features-skeleton .orb-skel {
+  position: relative;
+  width: 760px;
+  height: 760px;
+}
+.fl-features-skeleton .orb-skel-core {
+  position: absolute;
+  inset: 18%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #101010 0%, #0a0a0a 70%, transparent 100%);
+  animation: orb-breathe 2.4s ease-in-out infinite;
+}
+.fl-features-skeleton .orb-skel-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 18px solid #141414;
+  mask: radial-gradient(circle, transparent 62%, #000 63%);
+}
+.fl-features-skeleton .orb-skel-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(255, 255, 255, 0.05) 28deg,
+    rgba(214, 0, 191, 0.1) 42deg,
+    transparent 70deg
+  );
+  mask: radial-gradient(circle, transparent 61%, #000 63%, #000 72%, transparent 74%);
+  animation: orb-sweep 3.6s linear infinite;
+}
+
+@keyframes bone-shimmer {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -20% 0;
+  }
+}
+
+@keyframes orb-sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orb-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+

@@ -25,8 +25,8 @@ import {
 } from "@/components/ui/dialog";
 import { recordInstallIntent } from "@/lib/install-intent";
 import { cn } from "@/lib/utils";
+import { ScreenLivePreview } from "@/screens/preview";
 import type { ScreenCatalogEntry } from "@/screens/types";
-import { SpacemanMoon } from "@/screens/spaceman-moon";
 
 type AccessState = {
   owned: boolean;
@@ -263,11 +263,7 @@ export function ScreenDetailPage({
 
       <MarketingSection className="border-t-0">
         <div className="relative h-[min(100dvh,1100px)] min-h-[640px] w-full overflow-hidden bg-[#140810]">
-          {entry.slug === "spaceman-moon" ? (
-            <SpacemanMoon className="h-full w-full" embed />
-          ) : (
-            <div className="absolute inset-0 bg-muted" />
-          )}
+          <ScreenLivePreview embed slug={entry.slug} />
         </div>
       </MarketingSection>
 
