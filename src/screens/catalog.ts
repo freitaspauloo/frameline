@@ -28,7 +28,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Three-up feature cards on a ruled grid — fluted glass, production stats, GSAP entrance.",
     blurb: "Three-up cards · killer defects · 6.2× review",
-    poster: "/screens/catch-killer-defects/poster.png",
+    poster: "/screens/catch-killer-defects/poster.webp",
     aliases: ["catch-killer-defects", "features"],
   },
   {
