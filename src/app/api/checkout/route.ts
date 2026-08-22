@@ -63,12 +63,6 @@ export async function POST(request: Request) {
   }
 
   const material = body.material?.trim() || undefined;
-  if (isScreenPlan(plan) && !material) {
-    return NextResponse.json(
-      { ok: false, error: "Screen checkout requires a material (screen slug)." },
-      { status: 400 },
-    );
-  }
   const license = getLicensePlan(plan);
 
   if (!getStripe()) {

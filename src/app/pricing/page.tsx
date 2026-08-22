@@ -11,7 +11,7 @@ import {
   MarketingSection,
   MarketingShell,
 } from "@/components/marketing-shell";
-import { CopiesQuotaWidget } from "@/components/copies-quota-widget";
+import { PricingBuyLink } from "@/components/pricing-buy-link";
 import { Button } from "@/components/ui/button";
 import { WaitlistForm } from "@/components/waitlist-form";
 import { getPublicPricingPlans } from "@/lib/license-plans";
@@ -24,21 +24,21 @@ export const metadata: Metadata = {
 
 const TIER_CTAS = {
   free: {
-    kind: "link" as const,
+    kind: "browse" as const,
     href: "/free",
     label: "Browse free",
     primary: false,
   },
   screen: {
-    kind: "link" as const,
-    href: "/materials",
-    label: "Browse screens",
+    kind: "subscribe" as const,
+    plan: "screen" as const,
+    label: "Sign monthly plan",
     primary: true,
   },
   screen_year: {
-    kind: "link" as const,
-    href: "/materials",
-    label: "Browse screens",
+    kind: "subscribe" as const,
+    plan: "screen_year" as const,
+    label: "Sign yearly plan",
     primary: true,
   },
 } as const;
@@ -131,18 +131,29 @@ export default async function PricingPage({
                   </div>
                 </div>
                 <div className="mt-auto space-y-6 pt-10">
-                  <Button
-                    className="w-full"
-                    nativeButton={false}
-                    render={<Link href={cta.href} />}
-                    size="lg"
-                    variant={cta.primary ? "default" : "outline"}
-                  >
-                    {cta.label}
-                  </Button>
-                  {tier.key === "free" ? (
-                    <CopiesQuotaWidget label="1 free copy per week" />
-                  ) : null}
+                  {cta.kind === "subscribe" ? (
+                    <PricingBuyLink
+                      href={
+                        material
+                          ? `/checkout?plan=${cta.plan}&material=${encodeURIComponent(material)}`
+                          : `/checkout?plan=${cta.plan}`
+                      }
+                      label={cta.label}
+                      material={material}
+                      plan={cta.plan}
+                      primary={cta.primary}
+                    />
+                  ) : (
+                    <Button
+                      className="w-full"
+                      nativeButton={false}
+                      render={<Link href={cta.href} />}
+                      size="lg"
+                      variant={cta.primary ? "default" : "outline"}
+                    >
+                      {cta.label}
+                    </Button>
+                  )}
                 </div>
               </MarketingRuledCell>
             );
