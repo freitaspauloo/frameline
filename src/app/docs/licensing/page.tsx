@@ -45,7 +45,7 @@ export default function LicensingDocsPage() {
             "Redistributing or reselling the source; including it in a competing asset library or template product.",
           ],
           [
-            "Screen · $9",
+            "Screen · $9/mo or $49/y",
             "Unlimited Copy prompt + Copy code for the purchased screen template; commercial use of that screen source in your projects.",
             "Material registry treated as a paid unlock; redistributing the screen as a competing template kit.",
           ],
@@ -66,8 +66,7 @@ export default function LicensingDocsPage() {
           packages, including inside templates, starter kits, or asset bundles.
         </li>
         <li>
-          Materials are free. The only paid SKU is a screen template unlock at
-          $9.
+          Materials are free. Paid screen unlocks are $9/mo or $49/y.
         </li>
       </DocsUl>
 
@@ -82,7 +81,7 @@ export default function LicensingDocsPage() {
         </li>
         <li>
           <span className="font-medium text-foreground">
-            What does $9 unlock?
+            What do $9/mo and $49/y unlock?
           </span>{" "}
           Unlimited prompt and code copies for one screen template. Materials
           stay $0.
