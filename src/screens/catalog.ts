@@ -98,7 +98,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "God-ray bloom over an always-on in-line wafer inspection lockup.",
     blurb: "Always-on · wafer · in-line models",
-    poster: "/screens/light-rays/poster.svg",
+    poster: "/screens/light-rays/poster.webp",
     aliases: ["aieigen"],
   },
   {
