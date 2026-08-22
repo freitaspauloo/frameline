@@ -130,10 +130,9 @@ export function runCatalogSmoke() {
     }
   }
 
-  const smart = parseSmartQuery("Aurora dither HERO free");
+  const smart = parseSmartQuery("Aurora dither HERO");
   assert(smart.type === "dither", `parseSmartQuery type: ${smart.type}`);
   assert(smart.context === "hero", `parseSmartQuery context: ${smart.context}`);
-  assert(smart.tier === "free", `parseSmartQuery tier: ${smart.tier}`);
   assert(smart.q === "aurora", `parseSmartQuery leftover: ${smart.q}`);
   assert(
     parseSmartQuery("spaceman moon").q === "spaceman moon",

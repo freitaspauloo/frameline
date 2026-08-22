@@ -21,43 +21,20 @@ import {
   isMaterialType,
   isMaterialUseContext,
   type MaterialCatalogEntry,
-  type MaterialTier,
   type MaterialType,
   type MaterialUseContext,
 } from "@/materials";
-import {
-  buildMaterialsHref,
-  isSort,
-  isTierFilter,
-  parseSmartQuery,
-  type CatalogSort,
-  type CatalogTierFilter,
-} from "@/lib/catalog-query";
+import { buildMaterialsHref, parseSmartQuery } from "@/lib/catalog-query";
 import { listScreens } from "@/screens/catalog";
 import type { ScreenCatalogEntry } from "@/screens/types";
 
-export type { CatalogSort, CatalogTierFilter };
-
 const SELECT =
   "h-10 shrink-0 border border-border bg-transparent px-3 text-[0.625rem] font-semibold tracking-widest text-foreground uppercase outline-none focus-visible:border-foreground";
-
-const TIER_FILTERS = [
-  { value: "free" as const, label: "Free" },
-  { value: "paid" as const, label: "Paid" },
-];
-
-const TIER_SORT_RANK: Record<MaterialTier, number> = {
-  free: 0,
-  personal: 1,
-  team: 2,
-};
 
 export function MaterialsCatalogPage({
   typeFilter,
   qFilter,
   contextFilter,
-  tierFilter,
-  sortFilter,
   catalog = getV1LaunchCatalog(),
 }: {
   typeFilter?: string;
@@ -77,18 +54,12 @@ export function MaterialsCatalogPage({
     contextFilter && isMaterialUseContext(contextFilter)
       ? contextFilter
       : undefined;
-  const activeTier: CatalogTierFilter | undefined =
-    tierFilter && isTierFilter(tierFilter) ? tierFilter : undefined;
-  const activeSort: CatalogSort =
-    sortFilter && isSort(sortFilter) ? sortFilter : "name";
   const activeQ = qFilter?.trim() ?? "";
 
   const baseParams = {
     type: activeType,
     q: activeQ || undefined,
     context: activeContext,
-    tier: activeTier,
-    sort: activeSort,
   };
 
   const entries = useMemo(() => {
@@ -100,11 +71,6 @@ export function MaterialsCatalogPage({
     if (activeContext) {
       list = list.filter((m) => m.useContexts.includes(activeContext));
     }
-    if (activeTier === "free") {
-      list = list.filter((m) => m.tier === "free");
-    } else if (activeTier === "paid") {
-      list = list.filter((m) => m.tier === "personal" || m.tier === "team");
-    }
     if (activeQ) {
       const needle = activeQ.toLowerCase();
       list = list.filter((m) => {
@@ -113,20 +79,13 @@ export function MaterialsCatalogPage({
       });
     }
 
-    list.sort((a, b) => {
-      if (activeSort === "tier") {
-        const diff = TIER_SORT_RANK[a.tier] - TIER_SORT_RANK[b.tier];
-        if (diff !== 0) return diff;
-      }
-      return a.title.localeCompare(b.title);
-    });
+    list.sort((a, b) => a.title.localeCompare(b.title));
 
     return list;
-  }, [catalog, activeType, activeContext, activeTier, activeQ, activeSort]);
+  }, [catalog, activeType, activeContext, activeQ]);
 
   const screens = useMemo(() => {
     if (activeType || activeContext) return [] as ScreenCatalogEntry[];
-    if (activeTier === "free") return [] as ScreenCatalogEntry[];
     let list = listScreens();
     if (activeQ) {
       const needle = activeQ.toLowerCase();
@@ -138,7 +97,7 @@ export function MaterialsCatalogPage({
       });
     }
     return list;
-  }, [activeType, activeContext, activeTier, activeQ]);
+  }, [activeType, activeContext, activeQ]);
 
   const typeMeta = MATERIAL_TYPES.find((t) => t.type === activeType);
 
@@ -157,7 +116,6 @@ export function MaterialsCatalogPage({
       q: parsed.q,
       type: parsed.type ?? activeType,
       context: parsed.context ?? activeContext,
-      tier: parsed.tier ?? activeTier,
     });
   }
 
@@ -193,9 +151,9 @@ export function MaterialsCatalogPage({
               className="h-10 min-w-0 flex-1 border border-border bg-transparent px-3 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-foreground"
               defaultValue={activeQ}
               id="materials-catalog-search"
-              key={`${activeQ}|${activeType ?? ""}|${activeContext ?? ""}|${activeTier ?? ""}`}
+              key={`${activeQ}|${activeType ?? ""}|${activeContext ?? ""}`}
               name="q"
-              placeholder="Search — or type dither, hero, free…"
+              placeholder="Search — or type dither, hero…"
               type="search"
             />
             <select
@@ -233,38 +191,6 @@ export function MaterialsCatalogPage({
                   {c.label}
                 </option>
               ))}
-            </select>
-            <select
-              aria-label="Tier"
-              className={SELECT}
-              onChange={(e) => {
-                const value = e.target.value;
-                navigate({
-                  tier: isTierFilter(value) ? value : undefined,
-                });
-              }}
-              value={activeTier ?? ""}
-            >
-              <option value="">Any tier</option>
-              {TIER_FILTERS.map((t) => (
-                <option key={t.value} value={t.value}>
-                  {t.label}
-                </option>
-              ))}
-            </select>
-            <select
-              aria-label="Sort"
-              className={SELECT}
-              onChange={(e) => {
-                const value = e.target.value;
-                navigate({
-                  sort: isSort(value) ? value : "name",
-                });
-              }}
-              value={activeSort}
-            >
-              <option value="name">Name</option>
-              <option value="tier">Tier</option>
             </select>
           </form>
         </MarketingPageHeader>
@@ -338,19 +264,8 @@ export function MaterialsCatalogPage({
                       <h2 className="font-heading text-base font-medium tracking-tight">
                         {entry.title}
                       </h2>
-                      <span className="flex shrink-0 items-center gap-2 text-[0.625rem] font-semibold tracking-widest uppercase">
-                        <span className="text-muted-foreground">
-                          {(entry.renderingTechnique ?? "webgl").toUpperCase()}
-                        </span>
-                        <span
-                          className={
-                            entry.tier === "free"
-                              ? "text-muted-foreground"
-                              : "text-foreground"
-                          }
-                        >
-                          {entry.tier === "free" ? "Free" : "Paid"}
-                        </span>
+                      <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                        {(entry.renderingTechnique ?? "webgl").toUpperCase()}
                       </span>
                     </div>
                     <p className="text-sm leading-relaxed text-muted-foreground">

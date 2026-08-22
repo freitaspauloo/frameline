@@ -396,7 +396,7 @@ export function FramelineHomePageV2() {
                             {entry.title}
                           </h3>
                           <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                            {entry.tier === "free" ? "Free" : "Paid"}
+                            {entry.type}
                           </span>
                         </div>
                         <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">

@@ -33,17 +33,15 @@ export function buildMaterialsHref(params: {
   return qs ? `/materials?${qs}` : "/materials";
 }
 
-/** Pull type / context / tier tokens out of a free-text search. */
+/** Pull type / context tokens out of a free-text search. */
 export function parseSmartQuery(raw: string): {
   q?: string;
   type?: MaterialType;
   context?: MaterialUseContext;
-  tier?: CatalogTierFilter;
 } {
   const leftover: string[] = [];
   let type: MaterialType | undefined;
   let context: MaterialUseContext | undefined;
-  let tier: CatalogTierFilter | undefined;
 
   for (const token of raw.trim().toLowerCase().split(/\s+/).filter(Boolean)) {
     if (!type && isMaterialType(token)) {
@@ -54,10 +52,6 @@ export function parseSmartQuery(raw: string): {
       context = token;
       continue;
     }
-    if (!tier && isTierFilter(token)) {
-      tier = token;
-      continue;
-    }
     leftover.push(token);
   }
 
@@ -65,6 +59,5 @@ export function parseSmartQuery(raw: string): {
     q: leftover.length ? leftover.join(" ") : undefined,
     type,
     context,
-    tier,
   };
 }

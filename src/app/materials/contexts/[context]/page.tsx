@@ -141,15 +141,8 @@ export default async function MaterialContextPage({
                       <h2 className="font-heading text-base font-medium tracking-tight">
                         {entry.title}
                       </h2>
-                      <span
-                        className={cn(
-                          "text-[0.625rem] font-semibold tracking-widest uppercase",
-                          entry.tier === "free"
-                            ? "text-muted-foreground"
-                            : "text-foreground",
-                        )}
-                      >
-                        {entry.tier === "free" ? "Free" : "Paid"}
+                      <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                        {(entry.renderingTechnique ?? "webgl").toUpperCase()}
                       </span>
                     </div>
                     <p className="text-sm leading-relaxed text-muted-foreground">

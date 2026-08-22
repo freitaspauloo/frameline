@@ -310,7 +310,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
             </Button>
           }
           description={entry.description}
-          eyebrow={`Material · ${entry.type} · Free`}
+          eyebrow={`Material · ${entry.type}`}
           title={entry.title}
         />
 
