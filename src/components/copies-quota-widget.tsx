@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { createPortal } from "react-dom";
+import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
@@ -56,18 +57,20 @@ export function CopiesQuotaProvider({
 }) {
   const [label, setLabel] = React.useState(DEFAULT_LABEL);
   const [mounted, setMounted] = React.useState(false);
+  const pathname = usePathname();
   const value = React.useMemo(() => ({ label, setLabel }), [label]);
 
   React.useEffect(() => {
     setMounted(true);
   }, []);
 
-  const chip = <CopiesQuotaChip label={label} />;
+  const hide = pathname === "/";
+  const chip = hide ? null : <CopiesQuotaChip label={label} />;
 
   return (
     <CopiesQuotaContext.Provider value={value}>
       {children}
-      {mounted ? createPortal(chip, document.body) : chip}
+      {mounted && chip ? createPortal(chip, document.body) : chip}
     </CopiesQuotaContext.Provider>
   );
 }

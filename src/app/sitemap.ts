@@ -5,6 +5,7 @@ import {
   getV1LaunchCatalog,
   MATERIAL_USE_CONTEXTS,
 } from "@/materials";
+import { LAYOUT_ROUTES } from "@/lib/layout-routes";
 import { listScreens } from "@/screens/catalog";
 
 const BASE = "https://frameline.ai";
@@ -14,6 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const staticRoutes: MetadataRoute.Sitemap = [
     "",
+    ...LAYOUT_ROUTES.map((route) => route.href),
     "/materials",
     "/free",
     "/pricing",

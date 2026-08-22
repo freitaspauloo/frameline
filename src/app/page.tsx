@@ -1,6 +1,5 @@
-import { FramelineHomePageV2 } from "@/components/frameline-home-page-v2";
+import { LayoutIndexPage } from "@/components/layout-index-page";
 
-/** Production homepage — Phase-03 landing (formerly /v2). */
 export default function Home() {
-  return <FramelineHomePageV2 />;
+  return <LayoutIndexPage />;
 }
