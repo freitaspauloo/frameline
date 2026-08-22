@@ -255,7 +255,7 @@ export function ScreenDetailPage({
             </div>
           }
           description={entry.description}
-          eyebrow={`Screen · ${entry.priceLabel} · one-time`}
+          eyebrow="Screen"
           title={entry.title}
         />
       </MarketingSection>

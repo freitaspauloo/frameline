@@ -238,11 +238,8 @@ export function MaterialsCatalogPage({
                       <h2 className="font-heading text-base font-medium tracking-tight">
                         {screen.title}
                       </h2>
-                      <span className="flex shrink-0 items-center gap-2 text-[0.625rem] font-semibold tracking-widest uppercase">
-                        <span className="text-muted-foreground">Screen</span>
-                        <span className="text-foreground">
-                          {screen.priceLabel}
-                        </span>
+                      <span className="shrink-0 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                        Screen
                       </span>
                     </div>
                     <p className="text-sm leading-relaxed text-muted-foreground">
