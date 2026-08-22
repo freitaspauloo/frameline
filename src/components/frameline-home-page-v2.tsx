@@ -285,9 +285,9 @@ export function FramelineHomePageV2() {
             <SectionBand label="Catalog">
               <MarketingSectionHeader>
                 <SectionIntro
-                  description="Shipped Reticle screens you can copy — prompt or source. Open any one to preview live."
+                  description="The ten Reticle landings — Built for Yield through Defect Assistant. Copy prompt or source."
                   eyebrow="Catalog"
-                  title="Screens you can ship"
+                  title="Reticle pages you can ship"
                 />
               </MarketingSectionHeader>
 

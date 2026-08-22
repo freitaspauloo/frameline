@@ -1,4 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
   <rect width="1600" height="1000" fill="#050508"/>
-  <text x="80" y="900" fill="#3A58F0" font-family="ui-sans-serif,system-ui,sans-serif" font-size="64" font-weight="600" letter-spacing="4">Light rays</text>
+  <circle cx="800" cy="380" r="220" fill="none" stroke="#d600bf" stroke-width="2" opacity="0.45"/>
+  <circle cx="800" cy="380" r="140" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.2"/>
+  <text x="80" y="860" fill="#d600bf" font-family="ui-sans-serif,system-ui,sans-serif" font-size="24" font-weight="600" letter-spacing="6">ALWAYS-ON</text>
+  <text x="80" y="930" fill="#ffffff" font-family="ui-sans-serif,system-ui,sans-serif" font-size="48" font-weight="500">Wafer Inspection</text>
 </svg>

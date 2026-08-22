@@ -7,102 +7,109 @@ const SCREEN = {
 };
 
 /**
- * Storefront catalog — named for the layout.
- * Old product slugs stay as aliases.
+ * Storefront catalog — the ten Reticle landing pages.
+ * Layout slugs and old product slugs stay as aliases.
  */
 export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
   {
     ...SCREEN,
     slug: "orb",
-    title: "Orb",
+    title: "Built for Yield Hero",
     description:
-      "Full-viewport composing orb behind headline, glass header, and yield stats.",
-    blurb: "Hero orb · glass chrome · stats footer",
+      "Full-viewport composing orb behind the yield headline, glass header, and fab stats.",
+    blurb: "Hero orb · glass chrome · 40M dies classified",
     poster: "/screens/built-for-yield/poster.png",
     aliases: ["built-for-yield"],
   },
   {
     ...SCREEN,
     slug: "feature-cards",
-    title: "Feature cards",
+    title: "Performance Feature Cards",
     description:
       "Three-up feature cards on a ruled grid — fluted glass, production stats, GSAP entrance.",
-    blurb: "Three-up cards · ruled grid · fluted glass",
+    blurb: "Three-up cards · killer defects · 6.2× review",
     poster: "/screens/catch-killer-defects/poster.png",
     aliases: ["catch-killer-defects", "features"],
   },
   {
     ...SCREEN,
     slug: "insights",
-    title: "Insights",
+    title: "Yield Inspection Dashboard",
     description:
       "Interactive insights list with ranked review metrics and a sliding highlight.",
-    blurb: "Insights list · ranked review · metrics",
+    blurb: "Ranked review · capture rate · line-level yield",
     poster: "/screens/defect-capture/poster.png",
     aliases: ["defect-capture"],
   },
   {
     ...SCREEN,
     slug: "magenta-landscape",
-    title: "Magenta landscape",
+    title: "Magenta Landscape Hero",
     description:
-      "Cinematic magenta field — horizon, grain, and a landscape hero lockup.",
-    blurb: "Cinematic field · magenta grain · horizon",
+      "Cinematic magenta field — horizon, grain, and a yield lockup across the line.",
+    blurb: "Magenta grain · horizon · yield lockup",
     poster: "/screens/magenta-landscape/poster.svg",
+    aliases: ["growcode"],
   },
   {
     ...SCREEN,
     slug: "browser-frame",
-    title: "Browser frame",
+    title: "AI Inspection Interface",
     description:
-      "Product surface inside realistic window chrome — traffic lights, tab, and address bar.",
-    blurb: "Mac chrome · tab bar · live surface",
+      "Wafer map and ranked classifications inside live window chrome.",
+    blurb: "Wafer map · AI class · window chrome",
     poster: "/screens/browser-frame/poster.svg",
+    aliases: ["finlayer"],
   },
   {
     ...SCREEN,
     slug: "feature-rail",
-    title: "Feature rail",
+    title: "Protect Yield Features",
     description:
-      "Vertical feature rail on the left, live visual on the right. One surface, four beats.",
-    blurb: "Left rail · four beats · live visual",
+      "Vertical feature rail — four beats that protect yield at production volume.",
+    blurb: "In-line · classify · rank · protect",
     poster: "/screens/feature-rail/poster.svg",
+    aliases: ["features-sec"],
   },
   {
     ...SCREEN,
     slug: "blueprint",
-    title: "Blueprint",
+    title: "Pixel Cube Hero",
     description:
-      "Navy technical plate — hairline grid, callouts, and measured type.",
-    blurb: "Navy grid · callouts · measured type",
+      "Die-resolution pixel cube — classify every cell before it leaves the line.",
+    blurb: "Pixel cube · die map · classified cells",
     poster: "/screens/blueprint/poster.svg",
+    aliases: ["chainova"],
   },
   {
     ...SCREEN,
     slug: "spaceman-moon",
-    title: "Spaceman on the moon",
+    title: "Space Explorer Hero",
     description:
-      "Full-bleed cinematic hero — magenta moon video, glass pills, floating pins.",
-    blurb: "Cinematic lunar hero · glass pills · pins",
+      "Full-bleed cinematic hero — magenta moon video, glass pills, yield pins.",
+    blurb: "Cinematic lunar hero · yield pins · Request Info",
     poster: "/screens/spaceman-moon/poster.png",
+    aliases: ["nudgeai"],
   },
   {
     ...SCREEN,
     slug: "light-rays",
-    title: "Light rays",
+    title: "Always-on Wafer Inspection",
     description:
-      "God-ray bloom field with a quiet type lockup. Heroes that read as light, not stock glow.",
-    blurb: "God rays · bloom field · type lockup",
+      "God-ray bloom over an always-on in-line wafer inspection lockup.",
+    blurb: "Always-on · wafer · in-line models",
     poster: "/screens/light-rays/poster.svg",
+    aliases: ["aieigen"],
   },
   {
     ...SCREEN,
     slug: "prompt-bar",
-    title: "Prompt bar",
+    title: "Defect Assistant Hero",
     description:
-      "AI workspace with a pinned prompt bar — thread above, compose below.",
-    blurb: "Pinned prompt · thread · compose",
+      "Defect assistant workspace — ranked thread above, compose bar below.",
+    blurb: "Assistant thread · ranked defects · compose",
     poster: "/screens/prompt-bar/poster.svg",
+    aliases: ["incredible"],
   },
 ];
 
@@ -113,7 +120,7 @@ export const HIDDEN_SCREENS: ScreenCatalogEntry[] = [
     slug: "yield-skeleton",
     title: "Yield Skeleton",
     description:
-      "Loading skeleton for Orb — shimmer bones over the orb, header, and stats.",
+      "Loading skeleton for Built for Yield Hero — shimmer bones over the orb, header, and stats.",
     blurb: "Hero loading state · orb sweep · shimmer bones",
     poster: "/screens/yield-skeleton/poster.png",
   },
@@ -122,7 +129,7 @@ export const HIDDEN_SCREENS: ScreenCatalogEntry[] = [
     slug: "features-skeleton",
     title: "Features Skeleton",
     description:
-      "Loading skeleton for Feature cards — ruled grid, card bones, and stat placeholders.",
+      "Loading skeleton for Performance Feature Cards — ruled grid, card bones, and stat placeholders.",
     blurb: "Feature-card loading state · ruled grid",
     poster: "/screens/features-skeleton/poster.png",
   },
@@ -131,7 +138,7 @@ export const HIDDEN_SCREENS: ScreenCatalogEntry[] = [
     slug: "insights-skeleton",
     title: "Insights Skeleton",
     description:
-      "Loading skeleton for Insights — list rows, metric cards, and highlight bar.",
+      "Loading skeleton for Yield Inspection Dashboard — list rows, metric cards, and highlight bar.",
     blurb: "Insights loading state · list + metrics",
     poster: "/screens/insights-skeleton/poster.png",
   },
