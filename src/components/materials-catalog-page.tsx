@@ -193,7 +193,7 @@ export function MaterialsCatalogPage({
               className="h-10 min-w-0 flex-1 border border-border bg-transparent px-3 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-foreground"
               defaultValue={activeQ}
               id="materials-catalog-search"
-              key={activeQ}
+              key={`${activeQ}|${activeType ?? ""}|${activeContext ?? ""}|${activeTier ?? ""}`}
               name="q"
               placeholder="Search — or type dither, hero, free…"
               type="search"
