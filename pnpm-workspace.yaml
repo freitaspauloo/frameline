@@ -6,5 +6,7 @@ allowBuilds:
   prisma: true
   "@prisma/engines": true
   "@prisma/client": true
+  '@firebase/util': false
+  protobufjs: false
 minimumReleaseAgeExclude:
   - ai@7.0.16
