@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { CopiesQuotaProvider } from "@/components/copies-quota-widget";
 import { cn } from "@/lib/utils";
 
 /** Consistent inset from the vertical rails — use everywhere. */
@@ -77,9 +78,11 @@ export function MarketingShell({
       >
         <div className="h-full border-x border-border" />
       </div>
-      <main className="relative z-0 overflow-visible" id="main">
-        {children}
-      </main>
+      <CopiesQuotaProvider>
+        <main className="relative z-0 overflow-visible" id="main">
+          {children}
+        </main>
+      </CopiesQuotaProvider>
     </div>
   );
 }

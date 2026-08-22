@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 import { RiArrowLeftLine, RiCheckLine, RiFileCopyLine } from "@remixicon/react";
 
-import { CopiesQuotaWidget } from "@/components/copies-quota-widget";
+import { useCopiesQuotaLabel } from "@/components/copies-quota-widget";
 import { MarketingFooter } from "@/components/marketing-footer";
 import { MarketingNavbar } from "@/components/marketing-navbar";
 import {
@@ -117,6 +117,8 @@ export function ScreenDetailPage({
       : access.copiesLeftThisWeek === 0
         ? "0 copies left this week"
         : "1 copy left this week";
+
+  useCopiesQuotaLabel(copiesLeftLabel);
 
   function openPayGate(message?: string) {
     setBanner(
@@ -256,9 +258,6 @@ export function ScreenDetailPage({
           eyebrow={`Screen · ${entry.priceLabel} · one-time`}
           title={entry.title}
         />
-        <div className={cn("pb-8", marketingPadX)}>
-          <CopiesQuotaWidget label={copiesLeftLabel} />
-        </div>
       </MarketingSection>
 
       <MarketingSection className="border-t-0">
