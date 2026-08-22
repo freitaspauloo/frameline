@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { recordInstallIntent } from "@/lib/install-intent";
 import { getLicensePlan } from "@/lib/license-plans";
+import { installCommand } from "@/lib/registry-urls";
 import { cn } from "@/lib/utils";
 import {
   getMaterial,
@@ -221,7 +222,10 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
   const [reducedMotion, setReducedMotion] = React.useState(false);
   const urlSyncReady = React.useRef(false);
   const license = getLicensePlan("free");
-  const cliSnippet = `npx shadcn@latest add @frameline/${entry.slug}`;
+  // Full registry URL rather than the @frameline namespace: it resolves on a
+  // cold machine with no components.json setup, and every resolve is a usage
+  // signal we can attribute to this material.
+  const cliSnippet = installCommand(entry.slug);
   const pastePath = `components/ui/${entry.slug}.tsx`;
   const forceStaticPreview = paused || reducedMotion;
 

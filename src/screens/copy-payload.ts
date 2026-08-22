@@ -1,3 +1,4 @@
+import { registryUrl } from "@/lib/registry-urls";
 import { getScreenBySlug } from "@/screens/catalog";
 import { SPACEMAN_MOON_PROMPT } from "@/screens/spaceman-moon/copy";
 
@@ -98,12 +99,33 @@ and the font at:
   },
 };
 
-export function getScreenPrompt(slug: string): string | null {
+export type ScreenFileSpec = { files: string[]; prompt: string; note: string };
+
+/** File list / prompt / install note for a screen, resolving catalog aliases. */
+export function getScreenFileSpec(slug: string): ScreenFileSpec | null {
   const entry = getScreenBySlug(slug);
-  return FILES[entry?.slug ?? slug]?.prompt ?? FILES[slug]?.prompt ?? null;
+  return FILES[entry?.slug ?? slug] ?? FILES[slug] ?? null;
 }
 
-export async function buildScreenCodePayload(slug: string): Promise<string | null> {
+export function getScreenPrompt(slug: string, copyId?: string | null): string | null {
+  const entry = getScreenBySlug(slug);
+  const prompt = FILES[entry?.slug ?? slug]?.prompt ?? FILES[slug]?.prompt;
+  if (!prompt) return null;
+
+  const canonical = entry?.slug ?? slug;
+  // Agents resolve URLs they are given, so the manifest link doubles as the
+  // signal that this prompt was pasted into one.
+  return [
+    prompt,
+    "",
+    `Manifest (file list, assets, install notes): ${registryUrl(canonical, copyId)}`,
+  ].join("\n");
+}
+
+export async function buildScreenCodePayload(
+  slug: string,
+  copyId?: string | null,
+): Promise<string | null> {
   const entry = getScreenBySlug(slug);
   const spec = FILES[entry?.slug ?? slug] ?? FILES[slug];
   if (!spec || !entry) return null;
@@ -111,7 +133,13 @@ export async function buildScreenCodePayload(slug: string): Promise<string | nul
   const { readFile } = await import("node:fs/promises");
   const path = await import("node:path");
   const root = process.cwd();
-  const chunks: string[] = [spec.note, ""];
+  const chunks: string[] = [
+    `// ${entry.title} — Frameline`,
+    `// Manifest: ${registryUrl(entry.slug, copyId)}`,
+    "",
+    spec.note,
+    "",
+  ];
 
   for (const rel of spec.files) {
     const source = await readFile(path.join(root, rel), "utf8");

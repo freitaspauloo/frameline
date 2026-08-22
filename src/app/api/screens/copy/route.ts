@@ -107,11 +107,15 @@ export async function POST(request: NextRequest) {
       return res;
     }
 
+    // Minted before the payload is built so the manifest URL embedded in the
+    // clipboard text carries it.
+    const copyId = `cp_${nanoid(16)}`;
+
     let text: string | null;
     if (copyPath === "prompt") {
-      text = getScreenPrompt(slug);
+      text = getScreenPrompt(slug, copyId);
     } else {
-      text = await buildScreenCodePayload(slug);
+      text = await buildScreenCodePayload(slug, copyId);
     }
     if (!text) {
       return NextResponse.json(
@@ -123,10 +127,6 @@ export async function POST(request: NextRequest) {
     if (!owned) {
       quota = markFreeCopyUsed(quota, slug);
     }
-
-    // Correlates this clipboard payload with the registry or asset fetch it
-    // causes later, once the code is pasted somewhere and actually runs.
-    const copyId = `cp_${nanoid(16)}`;
 
     await recordEvent({
       name: "copy",

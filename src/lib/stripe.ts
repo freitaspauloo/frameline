@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 
+import { appBaseUrl } from "@/lib/app-url";
 import type { CheckoutPlanKey } from "@/lib/license-plans";
 import { getLicensePlan, isScreenPlan } from "@/lib/license-plans";
 
@@ -14,13 +15,7 @@ export function getStripe(): Stripe | null {
   return stripe;
 }
 
-export function appBaseUrl(): string {
-  const fromEnv = process.env.NEXT_PUBLIC_APP_URL?.trim();
-  if (fromEnv) return fromEnv.replace(/\/$/, "");
-  if (process.env.VERCEL_URL)
-    return `https://${process.env.VERCEL_URL.replace(/\/$/, "")}`;
-  return "http://localhost:3000";
-}
+export { appBaseUrl };
 
 export async function createCheckoutSession(input: {
   email: string;
