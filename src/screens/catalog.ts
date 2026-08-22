@@ -88,7 +88,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Full-bleed cinematic hero — magenta moon video, glass pills, yield pins.",
     blurb: "Cinematic lunar hero · yield pins · Request Info",
-    poster: "/screens/spaceman-moon/poster.png",
+    poster: "/screens/spaceman-moon/poster.webp",
     aliases: ["nudgeai"],
   },
   {
