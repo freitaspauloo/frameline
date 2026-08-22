@@ -44,11 +44,21 @@ export default async function InstallationDocsPage({
         From your app root (Next.js, Vite, or any project already set up for
         the shadcn CLI):
       </DocsP>
-      <DocsCode>{`# Free or entitled materials
-npx shadcn@latest add @frameline/${material}
+      <DocsCode>{`# Explicit registry URL — no components.json setup needed
+npx shadcn@latest add "https://frameline.ai/r/${material}.json"
 
-# Explicit registry URL (CI / non-interactive)
-npx shadcn@latest add "https://frameline.ai/r/${material}.json"`}</DocsCode>
+# Or via the @frameline namespace, once configured below
+npx shadcn@latest add @frameline/${material}`}</DocsCode>
+      <DocsP>
+        Resolving a registry URL tells us the material was installed. See{" "}
+        <Link
+          className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+          href="/docs/telemetry"
+        >
+          Telemetry
+        </Link>{" "}
+        for exactly what that records and how to self-host instead.
+      </DocsP>
       <DocsP>
         Continuing from a material page? Replace{" "}
         <DocsInlineCode>{material}</DocsInlineCode> with any catalog slug, or

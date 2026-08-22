@@ -146,11 +146,16 @@ model LicensePlan {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  role      UserRole @default(buyer)
-  createdAt DateTime @default(now())
-  orders    Order[]
+  id          String    @id @default(cuid())
+  email       String    @unique
+  firebaseUid String?   @unique
+  displayName String?
+  role        UserRole  @default(buyer)
+  createdAt   DateTime  @default(now())
+  lastSeenAt  DateTime?
+  orders      Order[]
+
+  @@index([createdAt])
 }
 
 model Order {
@@ -166,10 +171,17 @@ model Order {
   tax                Int           @default(0)
   total              Int
   createdAt          DateTime      @default(now())
+  /// Stripe linkage — without these, renewals and churn are invisible.
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  refundedAt           DateTime?
+  canceledAt           DateTime?
   entitlements       Entitlement[]
 
   @@index([email])
   @@index([paymentProviderRef])
+  @@index([stripeSubscriptionId])
+  @@index([createdAt])
 }
 
 model Entitlement {
@@ -201,14 +213,32 @@ model RegistryToken {
   @@index([userEmail])
 }
 
-model AccessEvent {
+/// Append-only analytics stream: signups, copies, registry/asset fetches, money.
+/// Written through src/lib/events.ts, which falls back to .data/events.json
+/// when DATABASE_URL is unset.
+model Event {
   id        String   @id @default(cuid())
-  subject   String
-  actor     String?
-  kind      String
+  name      String
+  /// Stable identity for funnels: `email:<addr>` when known, else the anon id.
+  subjectId String
+  email     String?
+  anonId    String?
+  /// Material or screen slug the event is about.
+  slug      String?
+  plan      String?
+  /// Correlates a clipboard copy with the registry/asset fetch it later causes.
+  copyId    String?
+  source    String?
+  agentKind String?
+  userAgent String?
+  ipHash    String?
+  props     Json?
   createdAt DateTime @default(now())
 
-  @@index([subject, kind])
+  @@index([name, createdAt])
+  @@index([subjectId, createdAt])
+  @@index([slug, name])
+  @@index([copyId])
   @@index([createdAt])
 }
 

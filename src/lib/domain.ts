@@ -75,4 +75,8 @@ export type Order = {
   tax: number;
   total: number;
   createdAt: string;
+  stripeCustomerId?: string | null;
+  stripeSubscriptionId?: string | null;
+  refundedAt?: string | null;
+  canceledAt?: string | null;
 };

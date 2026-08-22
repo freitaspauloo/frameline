@@ -1,3 +1,4 @@
+import { registryUrl, rewriteAssetReferences } from "@/lib/registry-urls";
 import { getScreenBySlug } from "@/screens/catalog";
 import { SPACEMAN_MOON_PROMPT } from "@/screens/spaceman-moon/copy";
 
@@ -89,12 +90,9 @@ const FILES: Record<string, { files: string[]; prompt: string; note: string }> =
       "src/screens/spaceman-moon/spaceman-moon.module.css",
     ],
     prompt: SPACEMAN_MOON_PROMPT,
-    note: `Place hero media at:
-  public/screens/spaceman-moon/hero.mp4
-  public/screens/spaceman-moon/poster.png
-and the font at:
-  public/fonts/manrope-latin.woff2
-`,
+    note: `Hero video, poster, and the Manrope subset are served from Frameline,
+so this renders as-is. To self-host, download them and swap the URLs back to
+local paths under public/.`,
   },
   "yield-skeleton": {
     files: [
@@ -122,12 +120,33 @@ and the font at:
   },
 };
 
-export function getScreenPrompt(slug: string): string | null {
+export type ScreenFileSpec = { files: string[]; prompt: string; note: string };
+
+/** File list / prompt / install note for a screen, resolving catalog aliases. */
+export function getScreenFileSpec(slug: string): ScreenFileSpec | null {
   const entry = getScreenBySlug(slug);
-  return FILES[entry?.slug ?? slug]?.prompt ?? FILES[slug]?.prompt ?? null;
+  return FILES[entry?.slug ?? slug] ?? FILES[slug] ?? null;
 }
 
-export async function buildScreenCodePayload(slug: string): Promise<string | null> {
+export function getScreenPrompt(slug: string, copyId?: string | null): string | null {
+  const entry = getScreenBySlug(slug);
+  const prompt = FILES[entry?.slug ?? slug]?.prompt ?? FILES[slug]?.prompt;
+  if (!prompt) return null;
+
+  const canonical = entry?.slug ?? slug;
+  // Agents resolve URLs they are given, so the manifest link doubles as the
+  // signal that this prompt was pasted into one.
+  return [
+    prompt,
+    "",
+    `Manifest (file list, assets, install notes): ${registryUrl(canonical, copyId)}`,
+  ].join("\n");
+}
+
+export async function buildScreenCodePayload(
+  slug: string,
+  copyId?: string | null,
+): Promise<string | null> {
   const entry = getScreenBySlug(slug);
   const spec = FILES[entry?.slug ?? slug] ?? FILES[slug];
   if (!spec || !entry) return null;
@@ -135,11 +154,22 @@ export async function buildScreenCodePayload(slug: string): Promise<string | nul
   const { readFile } = await import("node:fs/promises");
   const path = await import("node:path");
   const root = process.cwd();
-  const chunks: string[] = [spec.note, ""];
+  const chunks: string[] = [
+    `// ${entry.title} — Frameline`,
+    `// Manifest: ${registryUrl(entry.slug, copyId)}`,
+    "",
+    spec.note,
+    "",
+  ];
 
   for (const rel of spec.files) {
     const source = await readFile(path.join(root, rel), "utf8");
-    chunks.push(`// ——— ${rel} ———`, source.trimEnd(), "");
+    // Media points at Frameline so this renders as-is on paste.
+    chunks.push(
+      `// ——— ${rel} ———`,
+      rewriteAssetReferences(source, copyId).trimEnd(),
+      "",
+    );
   }
 
   return chunks.join("\n");
