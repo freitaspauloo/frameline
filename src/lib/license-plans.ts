@@ -14,11 +14,21 @@ export type LicensePlanDefinition = {
 };
 
 /** Plans sold at checkout (excludes free catalog tier). */
-export const CHECKOUT_PLAN_KEYS = ["test", "screen", "screen_year"] as const;
+export const CHECKOUT_PLAN_KEYS = [
+  "test",
+  "screen",
+  "screen_year",
+  "screen_lifetime",
+] as const;
 export type CheckoutPlanKey = (typeof CHECKOUT_PLAN_KEYS)[number];
 
-/** Customer-facing pricing — Free ($0), Screen ($9/mo), Yearly ($49/y). */
-export const PUBLIC_PRICING_KEYS = ["free", "screen", "screen_year"] as const;
+/** Customer-facing pricing — Free, monthly, yearly, lifetime. */
+export const PUBLIC_PRICING_KEYS = [
+  "free",
+  "screen",
+  "screen_year",
+  "screen_lifetime",
+] as const;
 export type PublicPricingKey = (typeof PUBLIC_PRICING_KEYS)[number];
 
 export const LICENSE_PLANS: LicensePlanDefinition[] = [
@@ -133,6 +143,22 @@ export const LICENSE_PLANS: LicensePlanDefinition[] = [
       "Redistribute as a competing template kit",
     ],
   },
+  {
+    key: "screen_lifetime",
+    name: "Lifetime",
+    priceLabel: "$150",
+    amountCents: 15000,
+    summary: "Pay once — unlimited copies for that screen, forever.",
+    permitted: [
+      "Unlimited Copy prompt + Copy code for the purchased screen",
+      "Commercial use of the screen source in your projects",
+      "No renewals — access does not expire",
+    ],
+    notPermitted: [
+      "Material registry / React shader installs",
+      "Redistribute as a competing template kit",
+    ],
+  },
 ];
 
 export function getLicensePlan(
@@ -158,11 +184,20 @@ export function isScreenPlan(
   return value === "screen" || value === "screen_year";
 }
 
+/** Any plan that unlocks unlimited copies for a screen slug. */
+export function isScreenUnlockPlan(
+  value: string | undefined,
+): value is "screen" | "screen_year" | "screen_lifetime" {
+  return (
+    value === "screen" || value === "screen_year" || value === "screen_lifetime"
+  );
+}
+
 /** Plans shown on public checkout (excludes internal $0.50 smoke SKU). */
 export function isPublicCheckoutPlan(
   value: string,
 ): value is Exclude<CheckoutPlanKey, "test"> {
-  return isScreenPlan(value);
+  return isScreenUnlockPlan(value);
 }
 
 /** Re-enable `plan=test` with FRAMELINE_ALLOW_TEST_PLAN=true in env. */
@@ -177,12 +212,17 @@ export function isLicensePlan(value: string): value is CheckoutPlanKey {
 
 /** Compact meta for checkout API / UI that only needs the paid screen SKU. */
 export const LICENSE_PLAN_META: Record<
-  "screen" | "screen_year",
+  "screen" | "screen_year" | "screen_lifetime",
   { label: string; amountCents: number; amountLabel: string }
 > = {
   screen: { label: "Screen", amountCents: 900, amountLabel: "$9/mo" },
   screen_year: { label: "Yearly", amountCents: 4900, amountLabel: "$49/y" },
+  screen_lifetime: {
+    label: "Lifetime",
+    amountCents: 15000,
+    amountLabel: "$150",
+  },
 };
 
 /** Alias used by early stubs — paid screen SKUs. */
-export type LicensePlan = "screen" | "screen_year";
+export type LicensePlan = "screen" | "screen_year" | "screen_lifetime";

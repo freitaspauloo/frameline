@@ -9,7 +9,8 @@ export type CartPlan =
   | "team"
   | "static"
   | "screen"
-  | "screen_year";
+  | "screen_year"
+  | "screen_lifetime";
 
 type CartState = {
   plan: CartPlan;
@@ -34,7 +35,8 @@ export function isCartPlan(value: string | undefined): value is CartPlan {
     value === "team" ||
     value === "static" ||
     value === "screen" ||
-    value === "screen_year"
+    value === "screen_year" ||
+    value === "screen_lifetime"
   );
 }
 

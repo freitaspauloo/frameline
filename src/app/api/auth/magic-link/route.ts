@@ -6,11 +6,13 @@ import {
   SESSION_COOKIE,
   sessionUserFromEmail,
 } from "@/lib/auth";
+import { recordEvent } from "@/lib/events";
 import {
   clientIp,
   rateLimit,
   rateLimitResponse,
 } from "@/lib/rate-limit";
+import { ensureUser } from "@/lib/users";
 
 export async function POST(request: Request) {
   const limited = rateLimit(`magic-link:${clientIp(request)}`);
@@ -35,6 +37,16 @@ export async function POST(request: Request) {
   }
 
   const user = sessionUserFromEmail(email);
+
+  const record = await ensureUser({ email });
+  await recordEvent({
+    name: record?.created ? "signup" : "signin",
+    email,
+    request,
+    source: "magic-link",
+    props: { authMethod: "email" },
+  });
+
   const store = await cookies();
 
   store.set(DEMO_EMAIL_COOKIE, email, {

@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 
-import { fulfillDemoOrder } from "@/lib/fulfillment";
+import { recordEvent } from "@/lib/events";
+import {
+  fulfillDemoOrder,
+  markOrderRefunded,
+  markSubscriptionCanceled,
+} from "@/lib/fulfillment";
 import { isCheckoutPlan } from "@/lib/license-plans";
 import { captureException } from "@/lib/monitoring";
 import { getStripe } from "@/lib/stripe";
@@ -36,12 +41,22 @@ export async function POST(request: Request) {
       );
     }
 
-    if (event.type !== "checkout.session.completed") {
-      return NextResponse.json({ ok: true, ignored: event.type });
+    switch (event.type) {
+      case "checkout.session.completed":
+        return fulfillFromStripeSession(
+          event.data.object as Stripe.Checkout.Session,
+        );
+      case "invoice.paid":
+        return handleInvoicePaid(event.data.object as Stripe.Invoice);
+      case "customer.subscription.deleted":
+        return handleSubscriptionDeleted(
+          event.data.object as Stripe.Subscription,
+        );
+      case "charge.refunded":
+        return handleChargeRefunded(event.data.object as Stripe.Charge);
+      default:
+        return NextResponse.json({ ok: true, ignored: event.type });
     }
-
-    const session = event.data.object as Stripe.Checkout.Session;
-    return fulfillFromStripeSession(session);
   }
 
   if (webhookSecret && !stripe) {
@@ -113,6 +128,18 @@ export async function POST(request: Request) {
       paymentProviderRef,
     });
 
+    if (result.created) {
+      await recordEvent({
+        name: "order_paid",
+        email,
+        plan,
+        slug: material,
+        source: "demo-webhook",
+        request,
+        props: { orderId: result.orderId },
+      });
+    }
+
     return NextResponse.json({
       ok: true,
       mode: "demo" as const,
@@ -125,6 +152,152 @@ export async function POST(request: Request) {
     captureException(err, { route: "webhooks/stripe", plan, email });
     return NextResponse.json(
       { ok: false, error: "Fulfillment failed" },
+      { status: 500 },
+    );
+  }
+}
+
+function stripeId(value: unknown): string | null {
+  if (typeof value === "string") return value.trim() || null;
+  if (value && typeof value === "object" && "id" in value) {
+    const id = (value as { id?: unknown }).id;
+    return typeof id === "string" ? id : null;
+  }
+  return null;
+}
+
+/**
+ * Subscription renewals. Without this, a $9/mo customer looked like a single
+ * $9 sale forever, so MRR and lifetime value were both wrong.
+ */
+async function handleInvoicePaid(invoice: Stripe.Invoice) {
+  const billingReason = invoice.billing_reason ?? "";
+  // The first invoice of a subscription is already recorded by
+  // checkout.session.completed; counting it here would double the revenue.
+  if (billingReason === "subscription_create") {
+    return NextResponse.json({ ok: true, skipped: "subscription_create" });
+  }
+  if (!billingReason.startsWith("subscription")) {
+    return NextResponse.json({ ok: true, ignored: billingReason || "invoice" });
+  }
+
+  const email = invoice.customer_email?.trim().toLowerCase();
+  const subscriptionId = stripeId(
+    (invoice as unknown as { subscription?: unknown }).subscription,
+  );
+  const customerId = stripeId(invoice.customer);
+
+  if (!email) {
+    return NextResponse.json({ ok: true, skipped: "no customer email" });
+  }
+
+  // Subscription metadata is set at checkout so renewals stay attributable;
+  // the amount is the fallback when an older subscription lacks it.
+  const subscriptionMetadata =
+    (invoice as unknown as {
+      subscription_details?: { metadata?: Record<string, string> | null };
+    }).subscription_details?.metadata ?? {};
+
+  const planFromMetadata = subscriptionMetadata.plan?.trim();
+  const plan =
+    planFromMetadata === "screen_year" || planFromMetadata === "screen"
+      ? planFromMetadata
+      : invoice.amount_paid >= 4900
+        ? "screen_year"
+        : "screen";
+
+  const material =
+    subscriptionMetadata.material?.trim() ||
+    invoice.metadata?.material?.trim() ||
+    undefined;
+
+  try {
+    const result = await fulfillDemoOrder({
+      email,
+      plan,
+      material,
+      // Invoice id keeps renewals idempotent across webhook retries.
+      paymentProviderRef: invoice.id,
+      stripeCustomerId: customerId,
+      stripeSubscriptionId: subscriptionId,
+    });
+
+    await recordEvent({
+      name: "subscription_renewed",
+      email,
+      plan,
+      slug: material,
+      source: "stripe",
+      props: {
+        orderId: result.orderId,
+        amountCents: invoice.amount_paid,
+        subscriptionId,
+      },
+    });
+
+    return NextResponse.json({ ok: true, renewed: true, orderId: result.orderId });
+  } catch (err) {
+    captureException(err, { route: "webhooks/stripe", phase: "invoice.paid" });
+    return NextResponse.json(
+      { ok: false, error: "Renewal fulfillment failed" },
+      { status: 500 },
+    );
+  }
+}
+
+/** Subscription actually ended — stop access and record the churn. */
+async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
+  try {
+    const result = await markSubscriptionCanceled(subscription.id);
+    await recordEvent({
+      name: "subscription_canceled",
+      email: result?.email ?? null,
+      plan: result?.planKey ?? null,
+      source: "stripe",
+      props: {
+        subscriptionId: subscription.id,
+        orderId: result?.orderId ?? null,
+        matched: Boolean(result),
+      },
+    });
+    return NextResponse.json({ ok: true, canceled: Boolean(result) });
+  } catch (err) {
+    captureException(err, {
+      route: "webhooks/stripe",
+      phase: "subscription.deleted",
+    });
+    return NextResponse.json(
+      { ok: false, error: "Cancellation failed" },
+      { status: 500 },
+    );
+  }
+}
+
+async function handleChargeRefunded(charge: Stripe.Charge) {
+  try {
+    const result = await markOrderRefunded({
+      stripeCustomerId: stripeId(charge.customer),
+      email: charge.billing_details?.email ?? charge.receipt_email ?? null,
+    });
+    await recordEvent({
+      name: "order_refunded",
+      email: result?.email ?? null,
+      plan: result?.planKey ?? null,
+      source: "stripe",
+      props: {
+        orderId: result?.orderId ?? null,
+        amountRefundedCents: charge.amount_refunded,
+        matched: Boolean(result),
+      },
+    });
+    return NextResponse.json({ ok: true, refunded: Boolean(result) });
+  } catch (err) {
+    captureException(err, {
+      route: "webhooks/stripe",
+      phase: "charge.refunded",
+    });
+    return NextResponse.json(
+      { ok: false, error: "Refund handling failed" },
       { status: 500 },
     );
   }
@@ -167,7 +340,23 @@ async function fulfillFromStripeSession(session: Stripe.Checkout.Session) {
       plan,
       material,
       paymentProviderRef: session.id,
+      stripeCustomerId: stripeId(session.customer),
+      stripeSubscriptionId: stripeId(session.subscription),
     });
+
+    if (result.created) {
+      await recordEvent({
+        name: "order_paid",
+        email,
+        plan,
+        slug: material,
+        source: "stripe",
+        props: {
+          orderId: result.orderId,
+          amountCents: session.amount_total ?? null,
+        },
+      });
+    }
 
     return NextResponse.json({
       ok: true,

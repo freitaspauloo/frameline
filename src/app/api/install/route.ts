@@ -1,7 +1,8 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { NextResponse } from "next/server";
 
+import { readAnonId } from "@/lib/anonymous-id";
+import { getDemoEmail } from "@/lib/auth";
+import { readEvents, recordEvent } from "@/lib/events";
 import {
   clientIp,
   rateLimit,
@@ -11,48 +12,30 @@ import { getMaterial } from "@/materials/catalog";
 import { getScreenBySlug } from "@/screens/catalog";
 
 /**
- * Fake npx / copy-install logger — Discovery Gate G4.
- * Appends to .data/installs.json on this instance.
+ * Install / copy beacon for materials.
+ *
+ * Materials are copied entirely client-side (JSX snippet or CLI command), so
+ * unlike screens there is no server choke point. This beacon is the only
+ * record that a material copy happened; it now lands in the event stream
+ * instead of a local JSON file so it survives a deploy.
  */
-
-type InstallIntentEntry = {
-  slug: string;
-  source?: string;
-  path?: string;
-  createdAt: string;
-};
-
-const DATA_DIR = path.join(process.cwd(), ".data");
-const INSTALLS_PATH = path.join(DATA_DIR, "installs.json");
 
 const INSTALL_PATHS = new Set(["cli", "jsx", "paste", "prompt", "code"]);
 
-async function readInstalls(): Promise<InstallIntentEntry[]> {
-  try {
-    const raw = await readFile(INSTALLS_PATH, "utf8");
-    const parsed = JSON.parse(raw) as unknown;
-    return Array.isArray(parsed) ? (parsed as InstallIntentEntry[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-async function writeInstalls(entries: InstallIntentEntry[]) {
-  await mkdir(DATA_DIR, { recursive: true });
-  await writeFile(INSTALLS_PATH, `${JSON.stringify(entries, null, 2)}\n`, "utf8");
-}
-
 export async function GET() {
-  const entries = await readInstalls();
+  const events = await readEvents({ names: ["install_intent"], limit: 50_000 });
+
   const bySlug: Record<string, number> = {};
   const bySource: Record<string, number> = {};
-  for (const entry of entries) {
-    bySlug[entry.slug] = (bySlug[entry.slug] ?? 0) + 1;
-    const source = entry.source ?? "unknown";
+  for (const event of events) {
+    const slug = event.slug ?? "unknown";
+    bySlug[slug] = (bySlug[slug] ?? 0) + 1;
+    const source = event.source ?? "unknown";
     bySource[source] = (bySource[source] ?? 0) + 1;
   }
+
   return NextResponse.json({
-    count: entries.length,
+    count: events.length,
     bySlug,
     bySource,
   });
@@ -79,6 +62,7 @@ export async function POST(request: Request) {
   const slugRaw = "slug" in body ? body.slug : undefined;
   const sourceRaw = "source" in body ? body.source : undefined;
   const pathRaw = "path" in body ? body.path : undefined;
+  const copyIdRaw = "copyId" in body ? body.copyId : undefined;
 
   if (typeof slugRaw !== "string" || !slugRaw.trim()) {
     return NextResponse.json(
@@ -115,14 +99,21 @@ export async function POST(request: Request) {
     installPath = normalized;
   }
 
-  const entries = await readInstalls();
-  entries.push({
+  const copyId =
+    typeof copyIdRaw === "string" && copyIdRaw.trim()
+      ? copyIdRaw.trim().slice(0, 64)
+      : undefined;
+
+  await recordEvent({
+    name: "install_intent",
+    email: await getDemoEmail(),
+    anonId: readAnonId(request),
     slug,
+    copyId,
     source,
-    path: installPath,
-    createdAt: new Date().toISOString(),
+    request,
+    props: { path: installPath },
   });
-  await writeInstalls(entries);
 
   return NextResponse.json({ ok: true });
 }

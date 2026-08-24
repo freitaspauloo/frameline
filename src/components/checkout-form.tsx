@@ -26,7 +26,7 @@ import {
 } from "@/lib/firebase-client";
 import {
   getLicensePlan,
-  isScreenPlan,
+  isScreenUnlockPlan,
   LICENSE_PLAN_VERSION,
 } from "@/lib/license-plans";
 import { cn } from "@/lib/utils";
@@ -70,7 +70,13 @@ export function CheckoutForm({
   const [stripeMessage, setStripeMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    setPlan(initialPlan === "screen_year" ? "screen_year" : "screen");
+    const plan =
+      initialPlan === "screen_year"
+        ? "screen_year"
+        : initialPlan === "screen_lifetime"
+          ? "screen_lifetime"
+          : "screen";
+    setPlan(plan);
     if (initialMaterial) {
       setMaterial(initialMaterial);
     }
@@ -78,7 +84,7 @@ export function CheckoutForm({
     setHydrated(true);
   }, [initialPlan, initialMaterial, setPlan, setMaterial]);
 
-  const activePlan = isScreenPlan(plan) ? plan : "screen";
+  const activePlan = isScreenUnlockPlan(plan) ? plan : "screen";
   const activeMaterial = hydrated
     ? materialSlug
     : (initialMaterial ?? materialSlug);
@@ -194,6 +200,7 @@ export function CheckoutForm({
               [
                 { key: "screen" as const, label: "$9/mo" },
                 { key: "screen_year" as const, label: "$49/y" },
+                { key: "screen_lifetime" as const, label: "$150" },
               ] as const
             ).map((option) => {
               const selected = activePlan === option.key;

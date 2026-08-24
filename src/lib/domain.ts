@@ -11,7 +11,8 @@ export type LicensePlanKey =
   | "personal"
   | "team"
   | "screen"
-  | "screen_year";
+  | "screen_year"
+  | "screen_lifetime";
 
 export type EntitlementStatus = "active" | "revoked";
 
@@ -75,4 +76,8 @@ export type Order = {
   tax: number;
   total: number;
   createdAt: string;
+  stripeCustomerId?: string | null;
+  stripeSubscriptionId?: string | null;
+  refundedAt?: string | null;
+  canceledAt?: string | null;
 };

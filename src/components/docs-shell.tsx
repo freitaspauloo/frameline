@@ -58,6 +58,11 @@ export const DOCS_NAV = [
     label: "Licensing",
     description: "Free, Personal, and Team rights.",
   },
+  {
+    href: "/docs/telemetry",
+    label: "Telemetry",
+    description: "What copied code fetches, and how to self-host.",
+  },
 ] as const;
 
 export type DocsNavHref = (typeof DOCS_NAV)[number]["href"];

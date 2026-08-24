@@ -1,7 +1,8 @@
 import Stripe from "stripe";
 
+import { appBaseUrl } from "@/lib/app-url";
 import type { CheckoutPlanKey } from "@/lib/license-plans";
-import { getLicensePlan, isScreenPlan } from "@/lib/license-plans";
+import { getLicensePlan, isScreenUnlockPlan } from "@/lib/license-plans";
 
 let stripe: Stripe | null = null;
 
@@ -14,13 +15,7 @@ export function getStripe(): Stripe | null {
   return stripe;
 }
 
-export function appBaseUrl(): string {
-  const fromEnv = process.env.NEXT_PUBLIC_APP_URL?.trim();
-  if (fromEnv) return fromEnv.replace(/\/$/, "");
-  if (process.env.VERCEL_URL)
-    return `https://${process.env.VERCEL_URL.replace(/\/$/, "")}`;
-  return "http://localhost:3000";
-}
+export { appBaseUrl };
 
 export async function createCheckoutSession(input: {
   email: string;
@@ -39,17 +34,17 @@ export async function createCheckoutSession(input: {
 
   const base = appBaseUrl();
   const productName =
-    isScreenPlan(input.plan) && input.material
+    isScreenUnlockPlan(input.plan) && input.material
       ? `Frameline Screen — ${input.material}`
       : `Frameline ${license.name}`;
 
   const successUrl =
-    isScreenPlan(input.plan) && input.material
+    isScreenUnlockPlan(input.plan) && input.material
       ? `${base}/materials/${encodeURIComponent(input.material)}?unlocked=1&session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(input.email)}&plan=${encodeURIComponent(input.plan)}`
       : `${base}/orders/{CHECKOUT_SESSION_ID}?session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(input.email)}&plan=${encodeURIComponent(input.plan)}${input.material ? `&material=${encodeURIComponent(input.material)}` : ""}`;
 
   const cancelUrl =
-    isScreenPlan(input.plan) && input.material
+    isScreenUnlockPlan(input.plan) && input.material
       ? `${base}/materials/${encodeURIComponent(input.material)}?cancelled=1`
       : `${base}/checkout?plan=${encodeURIComponent(input.plan)}${input.material ? `&material=${encodeURIComponent(input.material)}` : ""}&cancelled=1`;
 
@@ -79,6 +74,19 @@ export async function createCheckoutSession(input: {
       email: input.email,
       ...(input.material ? { material: input.material } : {}),
     },
+    // Copied onto the subscription so renewal invoices can still be attributed
+    // to a plan and material months later.
+    ...(recurring
+      ? {
+          subscription_data: {
+            metadata: {
+              plan: input.plan,
+              email: input.email,
+              ...(input.material ? { material: input.material } : {}),
+            },
+          },
+        }
+      : {}),
     success_url: successUrl,
     cancel_url: cancelUrl,
   });

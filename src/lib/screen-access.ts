@@ -56,7 +56,12 @@ export async function ownsScreen(
   return store.entitlements.some((ent) => {
     if (ent.status !== "active") return false;
     if (ent.userEmail.toLowerCase() !== normalized) return false;
-    if (ent.planKey !== "screen" && ent.planKey !== "screen_year") return false;
+    if (
+      ent.planKey !== "screen" &&
+      ent.planKey !== "screen_year" &&
+      ent.planKey !== "screen_lifetime"
+    )
+      return false;
     if (ent.materialScope.kind === "all") return true;
     return ent.materialScope.materialSlugs.includes(slug);
   });
