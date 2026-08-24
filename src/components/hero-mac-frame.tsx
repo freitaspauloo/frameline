@@ -466,15 +466,15 @@ export function HeroMacFrame({ className }: { className?: string }) {
     <div
       ref={scope}
       className={cn(
-        "hero-mac-intro relative isolate flex h-full min-h-[min(48dvh,520px)] w-full flex-col pb-4 sm:pb-5",
+        "hero-mac-intro relative isolate flex h-full min-h-[min(52dvh,580px)] w-full flex-col pb-8 sm:pb-10 lg:pb-12",
         bgReady && "hero-mac-intro--bg-ready",
         className,
       )}
     >
-      {/* Dither atmosphere — fills the frame including bottom pad to the next hairline */}
+      {/* Dither atmosphere — wraps window, dock gap, and dock inside the hero band */}
       <div
         aria-hidden
-        className="absolute inset-y-0 left-1/2 z-0 w-full max-w-7xl -translate-x-1/2 overflow-hidden bg-[#F3F5FE]"
+        className="absolute inset-0 left-1/2 z-0 w-full max-w-7xl -translate-x-1/2 overflow-hidden bg-[#F3F5FE]"
         data-hero-stage="bg"
       >
         <HeroDither
@@ -489,9 +489,9 @@ export function HeroMacFrame({ className }: { className?: string }) {
         className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-end justify-center px-4 pt-4 sm:px-6 lg:px-8"
         data-hero-stage="chrome"
       >
-        <div className="relative w-full max-w-5xl">
+        <div className="flex w-full max-w-5xl flex-col items-center gap-5 sm:gap-6">
           <div
-            className="flex max-h-[min(70dvh,640px)] flex-col overflow-hidden rounded-[16px] border border-border bg-background shadow-[0_28px_90px_rgba(0,0,0,0.22)]"
+            className="flex max-h-[min(70dvh,640px)] w-full flex-col overflow-hidden rounded-[16px] border border-border bg-background shadow-[0_24px_64px_rgba(0,0,0,0.18)]"
             data-hero-stage="window"
           >
             <div className="relative z-20 flex h-11 shrink-0 items-center border-b border-border bg-muted/60 px-4">
@@ -500,14 +500,11 @@ export function HeroMacFrame({ className }: { className?: string }) {
             <HeroInkDitherPlayground />
           </div>
 
-          {/* Dock sits on the window bottom, over the dither (no empty white strip below) */}
           <div
-            className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex justify-center px-3"
+            className="flex w-full justify-center px-3"
             data-hero-stage="dock"
           >
-            <div className="pointer-events-auto">
-              <HeroMacOSDock variant="inline" />
-            </div>
+            <HeroMacOSDock variant="inline" />
           </div>
         </div>
       </div>

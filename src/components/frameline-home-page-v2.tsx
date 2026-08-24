@@ -277,8 +277,6 @@ export function FramelineHomePageV2() {
             </SectionBand>
           </MarketingSection>
 
-          <MarketingSectionSpacer size="sm" />
-
           {/* —— Catalog preview —— */}
           <MarketingSection id="browse">
             <InkRule />
