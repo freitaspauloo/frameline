@@ -6,6 +6,7 @@ import { useGSAP } from "@gsap/react";
 import Link from "next/link";
 import {
   RiCheckLine,
+  RiFileCopyLine,
   RiPauseLine,
   RiPlayLine,
   RiResetLeftLine,
@@ -21,7 +22,6 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import {
-  getMaterial,
   getMaterialPropDefaults,
   getMaterialProps,
 } from "@/materials";
@@ -32,6 +32,8 @@ const HERO_PAPER = "#FFFFFF";
 /** Ink dither stage back is locked white in the hero. */
 const LOCKED_BACK = "#FFFFFF";
 const SLUG = "ink-dither";
+/** Screen linked from hero copy CTAs — matches homepage catalog tease. */
+const HERO_SCREEN_SLUG = "orb";
 
 function TrafficLights() {
   return (
@@ -87,28 +89,20 @@ function useInkDitherControls() {
 }
 
 function HeroInkDitherPlayground() {
-  const entry = getMaterial(SLUG)!;
   const { defaults, fields, colors } = useInkDitherControls();
   const [props, setProps] = React.useState<Record<string, unknown>>(() => ({
     ...defaults,
   }));
   const [paused, setPaused] = React.useState(false);
   const [reducedMotion, setReducedMotion] = React.useState(false);
-  const [copiedCli, setCopiedCli] = React.useState(false);
   const [copiedShare, setCopiedShare] = React.useState(false);
 
   const forceStatic = paused || reducedMotion;
-  const cliSnippet = `npx shadcn@latest add @frameline/${SLUG}`;
   const liveProps = withLockedBack(props);
+  const screenHref = `/materials/${HERO_SCREEN_SLUG}`;
 
   function resetConfigurator() {
     setProps({ ...defaults });
-  }
-
-  async function copyCli() {
-    await navigator.clipboard.writeText(cliSnippet);
-    setCopiedCli(true);
-    window.setTimeout(() => setCopiedCli(false), 1600);
   }
 
   async function shareConfig() {
@@ -135,10 +129,10 @@ function HeroInkDitherPlayground() {
   }
 
   return (
-    <div className="grid min-h-0 flex-1 grid-cols-1 overflow-auto lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
-      {/* Preview + metadata */}
-      <div className="flex min-h-0 flex-col gap-4 border-b border-border p-4 sm:p-5 lg:border-b-0">
-        <div className="relative aspect-[16/10] w-full overflow-hidden border border-border bg-white">
+    <div className="grid min-h-0 flex-1 grid-cols-1 overflow-auto lg:grid-cols-[1.15fr_0.85fr] lg:items-stretch">
+      {/* Preview */}
+      <div className="flex min-h-0 flex-col gap-4 border-b border-border p-4 sm:p-5 lg:min-h-[360px] lg:flex-1 lg:border-b-0">
+        <div className="relative aspect-[16/10] min-h-[280px] w-full flex-1 overflow-hidden border border-border bg-white lg:aspect-auto lg:min-h-[320px]">
           {renderMaterial(SLUG, {
             className: "absolute inset-0 h-full w-full",
             forceStatic,
@@ -173,56 +167,19 @@ function HeroInkDitherPlayground() {
             </Button>
           </div>
         </div>
-
-        <dl className="grid grid-cols-2 gap-x-6 gap-y-3 border-t border-border pt-4 sm:grid-cols-3">
-          <div className="space-y-1">
-            <dt className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-              Type
-            </dt>
-            <dd className="font-mono text-[11px] text-foreground">{entry.type}</dd>
-          </div>
-          <div className="space-y-1">
-            <dt className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-              Contexts
-            </dt>
-            <dd className="font-mono text-[11px] text-foreground">
-              {entry.useContexts.join(" · ")}
-            </dd>
-          </div>
-          <div className="space-y-1">
-            <dt className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-              Tags
-            </dt>
-            <dd className="font-mono text-[11px] text-foreground">
-              {entry.tags.join(" · ")}
-            </dd>
-          </div>
-          {entry.perfNotes ? (
-            <div className="col-span-2 space-y-1 sm:col-span-3">
-              <dt className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Perf
-              </dt>
-              <dd className="font-mono text-[11px] leading-relaxed text-foreground">
-                {entry.renderingTechnique
-                  ? `${entry.renderingTechnique} · ${entry.perfNotes}`
-                  : entry.perfNotes}
-              </dd>
-            </div>
-          ) : null}
-        </dl>
       </div>
 
-      {/* Configurator + access — mirrors updated material-detail-page */}
+      {/* Configurator + copy CTAs */}
       <div
-        className="flex min-h-0 flex-col divide-y divide-border lg:border-l lg:border-border"
+        className="flex min-h-0 flex-1 flex-col lg:border-l lg:border-border"
         data-hero-stage="toolbar"
       >
-        <section className="space-y-4 p-4 sm:p-5">
-          <div className="flex items-center justify-between gap-3">
+        <section className="flex flex-1 flex-col gap-3 p-3 sm:p-4">
+          <div className="flex items-center justify-between gap-2">
             <h2 className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
               Configurator
             </h2>
-            <div className="flex flex-wrap items-center justify-end gap-1.5">
+            <div className="flex items-center gap-1">
               <Button
                 aria-label="Reset configurator to defaults"
                 size="icon-xs"
@@ -246,18 +203,13 @@ function HeroInkDitherPlayground() {
             </div>
           </div>
 
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            Tune the live preview. Reset restores defaults; Share config copies
-            a link to this exact setup.
-          </p>
-
-          <div className="space-y-5">
+          <div className="flex flex-1 flex-col gap-3">
             {fields.map((field) => {
               const value = Number(liveProps[field.key]);
               const labelId = `hero-config-${field.key}`;
               return (
                 <div key={field.key}>
-                  <div className="flex items-baseline justify-between font-mono text-[11px]">
+                  <div className="flex items-baseline justify-between gap-2 font-mono text-[10px]">
                     <span className="text-muted-foreground" id={labelId}>
                       {field.label}
                     </span>
@@ -267,7 +219,7 @@ function HeroInkDitherPlayground() {
                   </div>
                   <Slider
                     aria-labelledby={labelId}
-                    className="mt-3 py-1"
+                    className="mt-1.5 py-0.5"
                     max={field.max}
                     min={field.min}
                     step={field.step}
@@ -281,7 +233,9 @@ function HeroInkDitherPlayground() {
                 </div>
               );
             })}
+          </div>
 
+          <div className="flex flex-col gap-3 border-t border-border pt-3">
             {colors.map((c) => {
               const hex =
                 c.key === "colorBack"
@@ -290,20 +244,20 @@ function HeroInkDitherPlayground() {
               const locked = c.key === "colorBack";
               return (
                 <div
-                  className="flex items-center justify-between gap-3 border-t border-border pt-4"
+                  className="flex items-center justify-between gap-2"
                   key={c.key}
                 >
-                  <span className="font-mono text-[11px] text-muted-foreground">
+                  <span className="font-mono text-[10px] text-muted-foreground">
                     {c.label}
                   </span>
-                  <span className="flex items-center gap-3">
-                    <span className="font-mono text-[11px] text-foreground uppercase tabular-nums">
+                  <span className="flex items-center gap-2">
+                    <span className="font-mono text-[10px] text-foreground uppercase tabular-nums">
                       {hex}
                     </span>
                     <input
                       aria-label={c.label}
                       className={cn(
-                        "size-8 border border-border bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-moz-color-swatch]:rounded-none [&::-moz-color-swatch]:border-0 [&::-webkit-color-swatch]:rounded-none [&::-webkit-color-swatch]:border-0 [&::-webkit-color-swatch-wrapper]:p-0",
+                        "size-6 border border-border bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-moz-color-swatch]:rounded-none [&::-moz-color-swatch]:border-0 [&::-webkit-color-swatch]:rounded-none [&::-webkit-color-swatch]:border-0 [&::-webkit-color-swatch-wrapper]:p-0",
                         locked ? "cursor-not-allowed opacity-70" : "cursor-pointer",
                       )}
                       disabled={locked}
@@ -321,44 +275,28 @@ function HeroInkDitherPlayground() {
               );
             })}
           </div>
-        </section>
 
-        <section className="space-y-3 p-4 sm:p-5">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-              Get access
-            </h2>
-            <span className="font-mono text-[11px] tracking-wide text-muted-foreground uppercase">
-              {entry.tier}
-            </span>
+          <div className="mt-auto flex flex-wrap gap-2 border-t border-border pt-3">
+            <Button
+              className="min-w-0 flex-1 border-[#3A58F0]/40 bg-[#EEF2FF] text-[#1A2A6B] hover:border-[#3A58F0] hover:bg-[#E0E7FF] hover:text-[#1A2A6B]"
+              nativeButton={false}
+              render={<Link href={screenHref} />}
+              size="sm"
+              variant="outline"
+            >
+              <RiFileCopyLine data-icon="inline-start" />
+              Copy prompt
+            </Button>
+            <Button
+              className="min-w-0 flex-1 bg-[#3A58F0] text-white hover:bg-[#2F4AD4]"
+              nativeButton={false}
+              render={<Link href={screenHref} />}
+              size="sm"
+            >
+              <RiFileCopyLine data-icon="inline-start" />
+              Copy code
+            </Button>
           </div>
-          <div className="space-y-2">
-            <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-              CLI
-            </p>
-            <div className="flex items-stretch gap-2">
-              <code className="flex min-w-0 flex-1 items-center overflow-x-auto border border-[#3A58F0] bg-[#EEF2FF] px-3 py-2 font-mono text-[11px] leading-none text-[#1A2A6B]">
-                {cliSnippet}
-              </code>
-              <Button
-                className="h-auto self-stretch px-3"
-                size="xs"
-                type="button"
-                variant="outline"
-                onClick={copyCli}
-              >
-                {copiedCli ? "Copied" : "Copy"}
-              </Button>
-            </div>
-          </div>
-          <Button
-            className="w-full"
-            nativeButton={false}
-            render={<Link href={`/materials/${SLUG}`} />}
-            size="sm"
-          >
-            Open material
-          </Button>
         </section>
       </div>
     </div>
@@ -466,7 +404,7 @@ export function HeroMacFrame({ className }: { className?: string }) {
     <div
       ref={scope}
       className={cn(
-        "hero-mac-intro relative isolate flex h-full min-h-[min(52dvh,580px)] w-full flex-col pb-8 sm:pb-10 lg:pb-12",
+        "hero-mac-intro relative isolate flex h-full min-h-[min(56dvh,640px)] w-full flex-col pb-8 sm:pb-10 lg:pb-12",
         bgReady && "hero-mac-intro--bg-ready",
         className,
       )}
@@ -491,7 +429,7 @@ export function HeroMacFrame({ className }: { className?: string }) {
       >
         <div className="flex w-full max-w-5xl flex-col items-center gap-5 sm:gap-6">
           <div
-            className="flex max-h-[min(70dvh,640px)] w-full flex-col overflow-hidden rounded-[16px] border border-border bg-background shadow-[0_24px_64px_rgba(0,0,0,0.18)]"
+            className="flex min-h-[min(54dvh,500px)] max-h-[min(80dvh,760px)] w-full flex-col overflow-hidden rounded-[16px] border border-border bg-background shadow-[0_24px_64px_rgba(0,0,0,0.18)]"
             data-hero-stage="window"
           >
             <div className="relative z-20 flex h-11 shrink-0 items-center border-b border-border bg-muted/60 px-4">

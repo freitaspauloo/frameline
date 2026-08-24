@@ -62,7 +62,7 @@ export function MarketingFooter() {
             </span>
           </Link>
           <p className="max-w-[28ch] text-sm leading-relaxed text-muted-foreground">
-            Design assets for the AI era — shippable surface so you don’t ship
+            Design assets for the AI era. Shippable surface so you don’t ship
             the default look.
           </p>
         </MarketingRuledCell>

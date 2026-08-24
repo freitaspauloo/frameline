@@ -20,7 +20,7 @@ function NavLinkSkeleton() {
 function CatalogCardSkeleton() {
   return (
     <div className="flex h-full min-h-[22rem] flex-col border border-border">
-      <Skeleton className="aspect-[16/9] w-full rounded-none sm:aspect-[3/2]" />
+      <Skeleton className="aspect-[16/9] w-full rounded-none" />
       <div className="space-y-3 border-t border-border p-7 sm:p-9">
         <div className="flex items-center justify-between gap-3">
           <Skeleton className="h-6 w-36 rounded-none" />
@@ -147,7 +147,7 @@ export function FramelineHomeSkeleton() {
             className={cn(
               "grid grid-cols-1 gap-y-8 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 lg:gap-x-12 lg:gap-y-12",
               marketingPadX,
-              "pb-2",
+              "pt-10 pb-2 lg:pt-14",
             )}
           >
             {Array.from({ length: 6 }, (_, i) => (
@@ -218,7 +218,7 @@ export function FramelineHomeSkeleton() {
             <SectionIntroSkeleton />
           </MarketingSectionHeader>
 
-          <MarketingRuledGrid>
+          <MarketingRuledGrid closeBottom>
             {Array.from({ length: 3 }, (_, i) => (
               <MarketingRuledCell key={i} className="space-y-3">
                 <Skeleton className="h-5 w-32 rounded-none" />

@@ -33,7 +33,7 @@ export default function SignInPage() {
           title="Sign in"
         />
         <div className={marketingPad}>
-          <div className="mx-auto max-w-md space-y-8 border-t border-border pt-10">
+          <div className="mx-auto max-w-md space-y-8">
             {firebaseReady ? (
               <FirebaseSignInForm />
             ) : (

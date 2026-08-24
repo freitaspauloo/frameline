@@ -392,7 +392,6 @@ export function ScreenDetailPage({
           </DialogHeader>
           {firebaseReady ? (
             <FirebaseSignInForm
-              showClearSession={false}
               onSuccess={onAuthSuccess}
             />
           ) : (

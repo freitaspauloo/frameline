@@ -253,7 +253,6 @@ export function CheckoutForm({
               </div>
               {firebaseReady ? (
                 <FirebaseSignInForm
-                  showClearSession={false}
                   onSuccess={onAuthSuccess}
                 />
               ) : (

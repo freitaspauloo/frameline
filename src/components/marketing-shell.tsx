@@ -240,30 +240,45 @@ export function MarketingRuledGrid({
   children,
   className,
   cols = 3,
+  closeBottom = false,
 }: {
   children: ReactNode;
   className?: string;
-  cols?: 2 | 3;
+  cols?: 2 | 3 | 4;
+  /** Keep the last row's bottom hairlines when nothing follows inside the section. */
+  closeBottom?: boolean;
 }) {
+  const colRules =
+    cols === 2
+      ? [
+          "sm:grid-cols-2",
+          "sm:[&>*:nth-child(2n)]:border-r-0",
+          !closeBottom && "[&>*:last-child]:border-b-0",
+          !closeBottom && "sm:[&>*:nth-last-child(-n+2)]:border-b-0",
+        ]
+      : cols === 4
+        ? [
+            "md:grid-cols-2",
+            "lg:grid-cols-4",
+            "md:[&>*:nth-child(2n)]:border-r-0",
+            "lg:[&>*:nth-child(2n)]:border-r",
+            "lg:[&>*:nth-child(4n)]:border-r-0",
+            !closeBottom && "[&>*:last-child]:border-b-0",
+            !closeBottom && "md:[&>*:nth-last-child(-n+2)]:border-b-0",
+            !closeBottom && "lg:[&>*:nth-last-child(-n+4)]:border-b-0",
+          ]
+        : [
+            "sm:grid-cols-3",
+            "sm:[&>*:nth-child(3n)]:border-r-0",
+            !closeBottom && "[&>*:last-child]:border-b-0",
+            !closeBottom && "sm:[&>*:nth-last-child(-n+3)]:border-b-0",
+          ];
+
   return (
     <div
       className={cn(
         "grid grid-cols-1",
-        cols === 2
-          ? [
-              "sm:grid-cols-2",
-              /* no right border on the last column (rail is the outer edge) */
-              "sm:[&>*:nth-child(2n)]:border-r-0",
-              /* no bottom border on the last row (next section draws the line) */
-              "[&>*:last-child]:border-b-0",
-              "sm:[&>*:nth-last-child(-n+2)]:border-b-0",
-            ]
-          : [
-              "sm:grid-cols-3",
-              "sm:[&>*:nth-child(3n)]:border-r-0",
-              "[&>*:last-child]:border-b-0",
-              "sm:[&>*:nth-last-child(-n+3)]:border-b-0",
-            ],
+        colRules,
         className,
       )}
     >
@@ -325,12 +340,16 @@ export function MarketingSplit({
     <div
       className={cn(
         /* Bottom edge comes from the next section’s border-t */
-        "relative grid overflow-visible lg:grid-cols-2 lg:divide-x lg:divide-border",
+        "relative grid overflow-visible lg:grid-cols-2 lg:items-stretch",
         className,
       )}
     >
       <MarketingSplitCross edge="top" />
       <MarketingSplitCross edge="bottom" />
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 left-1/2 z-20 hidden w-px -translate-x-1/2 bg-border lg:block"
+      />
       <div
         className={cn(
           "border-b border-border lg:border-b-0",

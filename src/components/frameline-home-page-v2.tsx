@@ -5,8 +5,6 @@ import Link from "next/link";
 import {
   RiArrowDownLine,
   RiArrowRightLine,
-  RiCheckLine,
-  RiFileCopyLine,
 } from "@remixicon/react";
 
 import { MarketingFooter } from "@/components/marketing-footer";
@@ -23,6 +21,7 @@ import {
   MarketingSplit,
   marketingPadX,
 } from "@/components/marketing-shell";
+import { MarketingFaq } from "@/components/marketing-faq";
 import { HeroMacFrame } from "@/components/hero-mac-frame";
 import { FramelineLenis } from "@/components/motion/frameline-lenis";
 import { LogoWall } from "@/components/motion/logo-wall";
@@ -33,47 +32,36 @@ import {
   InkRule,
   IntroStagger,
 } from "@/components/motion/reveal";
-import { TypeOnView } from "@/components/motion/type-on-view";
 import { WordMask } from "@/components/motion/word-mask";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { getV1LaunchCatalog } from "@/materials";
 import { listScreens } from "@/screens/catalog";
 import { cn } from "@/lib/utils";
 
-const INSTALL_SNIPPET = `npx shadcn@latest add @frameline/aurora-mesh`;
-
-/** Real clients shipped through DUDESIGN — see freitaspauloo/dudesign. */
-const CREDITS = [
-  "Audi",
-  "Samsung",
-  "3M",
-  "Ford",
-  "Sony Honda",
-  "Afeela",
-  "Costco",
-] as const;
+import { CLIENT_LOGOS } from "@/lib/client-logos";
 
 const PUBLIC_CATALOG = getV1LaunchCatalog();
 
 const FAQ_ITEMS = [
   {
-    q: "Do I own the code after install?",
-    a: "Yes. Materials install as source in your repo — typed React components you can edit, theme, and ship.",
+    q: "What is a screen?",
+    a: "A production-ready landing page — hero, dashboard, or marketing section shipped as React source. Browse the catalog, preview live, then copy what you need.",
   },
   {
     q: "What’s free vs paid?",
-    a: "Materials are $0 — production-ready with the same craft bar. Screen templates are $9 for unlimited prompt + code copies.",
+    a: "Materials install free. Each screen includes 1 free copy per week. After that, $9/mo, $49/y, or $150 lifetime unlocks unlimited Copy prompt + Copy code for that screen.",
   },
   {
-    q: "Does it fit my design system?",
-    a: "Materials are token-bound by default. Wire colors to your theme — they shouldn’t force Frameline’s palette.",
+    q: "What do Copy prompt and Copy code give me?",
+    a: "Copy prompt is a structured brief for your AI coding tool. Copy code is the actual React/CSS Frameline ships for that layout — ready to paste into your repo.",
+  },
+  {
+    q: "Do I own what I copy?",
+    a: "Yes. Use copied screens in client and commercial work. You may not resell the source or repackage it as a competing template library.",
+  },
+  {
+    q: "Why sign in to copy?",
+    a: "Every copy — prompt, code, or CLI — goes through your account. Sign-in ties your free weekly allowance and paid unlocks to you.",
   },
 ] as const;
 
@@ -92,6 +80,11 @@ const PRICING_TEASERS = [
     name: "Yearly",
     price: "$49/y",
     blurb: "Same unlimited unlock, billed once a year.",
+  },
+  {
+    name: "Lifetime",
+    price: "$150",
+    blurb: "Pay once — unlimited copies forever.",
   },
 ] as const;
 
@@ -163,50 +156,6 @@ function SectionIntro({
   );
 }
 
-function InstallTerminal() {
-  const [copied, setCopied] = React.useState(false);
-
-  async function copyInstall() {
-    try {
-      await navigator.clipboard.writeText(INSTALL_SNIPPET);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    } catch {
-      setCopied(false);
-    }
-  }
-
-  return (
-    <div
-      className="space-y-3 border border-[#3A58F0] bg-[#EEF2FF] p-5 text-[#1A2A6B] sm:p-6"
-      data-reveal
-    >
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-[0.625rem] font-semibold tracking-widest text-[#3A58F0]/70 uppercase">
-          Terminal
-        </p>
-        <Button
-          className="text-[#3A58F0] hover:bg-[#3A58F0]/10 hover:text-[#1A2A6B]"
-          size="xs"
-          type="button"
-          variant="ghost"
-          onClick={copyInstall}
-        >
-          {copied ? <RiCheckLine /> : <RiFileCopyLine />}
-          {copied ? "Copied" : "Copy"}
-        </Button>
-      </div>
-      <pre className="overflow-x-auto font-mono text-[13px] leading-relaxed text-[#1A2A6B]">
-        <TypeOnView text={INSTALL_SNIPPET} />
-      </pre>
-      <Separator className="bg-[#3A58F0]/20" />
-      <pre className="overflow-x-auto font-mono text-[12px] leading-relaxed text-[#3A58F0]/75">
-        {`import { AuroraMesh } from "@/materials"`}
-      </pre>
-    </div>
-  );
-}
-
 export function FramelineHomePageV2() {
   return (
     <FramelineLenis>
@@ -273,19 +222,18 @@ export function FramelineHomePageV2() {
           <MarketingSection id="clients">
             <InkRule />
             <SectionBand label="Shipped with">
-              <LogoWall names={CREDITS} />
+              <LogoWall logos={CLIENT_LOGOS} />
             </SectionBand>
           </MarketingSection>
 
           {/* —— Catalog preview —— */}
           <MarketingSection id="browse">
-            <InkRule />
             <SectionBand label="Catalog">
               <MarketingSectionHeader>
                 <SectionIntro
-                  description="The ten Reticle landings — Built for Yield through Defect Assistant. Copy prompt or source."
+                  description="Full landing screens — copy prompt or source."
                   eyebrow="Catalog"
-                  title="Reticle pages you can ship"
+                  title="Pages you can ship"
                 />
               </MarketingSectionHeader>
 
@@ -293,7 +241,7 @@ export function FramelineHomePageV2() {
                 className={cn(
                   "grid grid-cols-1 gap-y-8 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 lg:gap-x-12 lg:gap-y-12",
                   marketingPadX,
-                  "pb-2",
+                  "pt-10 pb-2 lg:pt-14",
                 )}
               >
                 {listScreens().map((screen) => (
@@ -303,7 +251,7 @@ export function FramelineHomePageV2() {
                     data-reveal
                     href={`/materials/${screen.slug}`}
                   >
-                    <div className="relative aspect-[16/9] overflow-hidden bg-foreground sm:aspect-[3/2]">
+                    <div className="relative aspect-[16/9] overflow-hidden bg-foreground">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         alt=""
@@ -361,59 +309,7 @@ export function FramelineHomePageV2() {
           <MarketingSection id="rotation">
             <InkRule />
             <SectionBand label="In rotation">
-              <MaterialStrip entries={PUBLIC_CATALOG} />
-            </SectionBand>
-          </MarketingSection>
-
-          <MarketingSectionSpacer size="lg" />
-
-          {/* —— Install —— */}
-          <MarketingSection id="install">
-            <InkRule />
-            <SectionBand label="Install">
-              <MarketingSplit
-                left={
-                  <div className="space-y-5">
-                    <p
-                      className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase"
-                      data-reveal
-                    >
-                      Install
-                    </p>
-                    <h2
-                      className="font-heading text-3xl font-light tracking-tight sm:text-4xl"
-                      data-reveal
-                    >
-                      Install as source
-                    </h2>
-                    <p
-                      className="max-w-[42ch] text-base leading-relaxed text-muted-foreground"
-                      data-reveal
-                    >
-                      Compatible with the shadcn registry flow. Install, import,
-                      theme against your tokens — no locked runtime.
-                    </p>
-                    <div className="flex flex-wrap gap-3 pt-1" data-reveal>
-                      <Button
-                        nativeButton={false}
-                        render={<Link href="/docs/installation" />}
-                        size="lg"
-                      >
-                        Installation docs
-                      </Button>
-                      <Button
-                        nativeButton={false}
-                        render={<Link href="/materials" />}
-                        size="lg"
-                        variant="outline"
-                      >
-                        Pick a material
-                      </Button>
-                    </div>
-                  </div>
-                }
-                right={<InstallTerminal />}
-              />
+              <MaterialStrip entries={listScreens()} />
             </SectionBand>
           </MarketingSection>
 
@@ -485,7 +381,7 @@ export function FramelineHomePageV2() {
                 />
               </MarketingSectionHeader>
 
-              <MarketingRuledGrid>
+              <MarketingRuledGrid closeBottom>
                 {VALUE_PROPS.map((item) => (
                   <MarketingRuledCell key={item.title} className="space-y-2">
                     <h3
@@ -523,13 +419,13 @@ export function FramelineHomePageV2() {
                       View pricing
                     </Button>
                   }
-                  description="$0 is 1 free copy per week. Screen is $9/mo or $49/y."
+                  description="$0 is 1 free copy per week. Screen is $9/mo, $49/y, or $150 lifetime."
                   eyebrow="Pricing"
                   title="Two prices. That’s it."
                 />
               </MarketingSectionHeader>
 
-              <MarketingRuledGrid>
+              <MarketingRuledGrid closeBottom cols={4}>
                 {PRICING_TEASERS.map((tier) => (
                   <MarketingRuledCell key={tier.name} className="space-y-3">
                     <p
@@ -563,6 +459,7 @@ export function FramelineHomePageV2() {
             <InkRule />
             <SectionBand label="FAQ">
               <MarketingSplit
+                className="[&>div:first-child]:px-6 [&>div:first-child]:py-8 sm:[&>div:first-child]:px-8 lg:[&>div:first-child]:px-12 lg:[&>div:first-child]:py-10 [&>div:last-child]:p-0"
                 left={
                   <div className="space-y-3">
                     <p
@@ -575,33 +472,20 @@ export function FramelineHomePageV2() {
                       className="font-heading text-3xl font-light tracking-tight sm:text-4xl"
                       data-reveal
                     >
-                      Before you install
+                      Before you copy
                     </h2>
                     <p
                       className="max-w-[36ch] text-base leading-relaxed text-muted-foreground"
                       data-reveal
                     >
-                      Short answers on ownership, tiers, and theming.
+                      Screens, pricing, and what lands in your repo.
                     </p>
                   </div>
                 }
-                right={
-                  <Accordion>
-                    {FAQ_ITEMS.map((item) => (
-                      <AccordionItem key={item.q} data-reveal value={item.q}>
-                        <AccordionTrigger>{item.q}</AccordionTrigger>
-                        <AccordionContent className="text-muted-foreground">
-                          {item.a}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                }
+                right={<MarketingFaq items={FAQ_ITEMS} />}
               />
             </SectionBand>
           </MarketingSection>
-
-          <MarketingSectionSpacer size="lg" />
 
           {/* —— Closing CTA —— */}
           <MarketingSection id="start">
@@ -609,7 +493,7 @@ export function FramelineHomePageV2() {
             <SectionBand label="Start">
               <div
                 className={cn(
-                  "flex flex-col items-start gap-6 py-16 lg:py-20",
+                  "flex flex-col items-start gap-6 pt-10 pb-16 lg:pt-12 lg:pb-20",
                   marketingPadX,
                 )}
               >

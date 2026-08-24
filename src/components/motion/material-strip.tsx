@@ -3,17 +3,16 @@
 import * as React from "react";
 import Link from "next/link";
 
-import { MaterialPreview } from "@/components/material-preview";
 import { useMarqueeLoop } from "@/components/motion/use-marquee-loop";
-import type { MaterialCatalogEntry } from "@/materials";
+import type { ScreenCatalogEntry } from "@/screens/types";
 import { cn } from "@/lib/utils";
 
 /** Minimum tiles per copy — the catalog repeats until the row overruns the rail. */
 const MIN_TILES = 6;
 
-function fill(entries: readonly MaterialCatalogEntry[]) {
+function fill(entries: readonly ScreenCatalogEntry[]) {
   if (entries.length === 0) return [];
-  const out: MaterialCatalogEntry[] = [];
+  const out: ScreenCatalogEntry[] = [];
   while (out.length < MIN_TILES) out.push(entries[out.length % entries.length]);
   return out;
 }
@@ -23,7 +22,7 @@ function Tile({
   index,
   mirrored,
 }: {
-  entry: MaterialCatalogEntry;
+  entry: ScreenCatalogEntry;
   index: number;
   mirrored: boolean;
 }) {
@@ -35,7 +34,18 @@ function Tile({
       tabIndex={mirrored ? -1 : undefined}
     >
       <div className="relative aspect-[16/9] overflow-hidden bg-foreground">
-        <MaterialPreview entry={entry} />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          alt=""
+          className="absolute inset-0 size-full object-cover"
+          src={entry.poster}
+        />
+        {entry.slug === "spaceman-moon" ? (
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-[#d600bf] mix-blend-color"
+          />
+        ) : null}
         <span className="absolute inset-0 bg-background opacity-0 transition-opacity duration-500 group-hover:opacity-15" />
       </div>
       <div className="flex items-baseline justify-between gap-3 border-t border-border px-4 py-3">
@@ -51,7 +61,7 @@ function Tile({
 }
 
 /**
- * Hero product strip — a paper band of material stills drifting across the
+ * Hero product strip — a paper band of screen stills drifting across the
  * dither. Ruled frames, no shadows; hover parks the row, reduced motion turns
  * it into a plain scrollable shelf.
  */
@@ -61,7 +71,7 @@ export function MaterialStrip({
   speed = 34,
 }: {
   className?: string;
-  entries: readonly MaterialCatalogEntry[];
+  entries: readonly ScreenCatalogEntry[];
   speed?: number;
 }) {
   const hostRef = React.useRef<HTMLDivElement>(null);
