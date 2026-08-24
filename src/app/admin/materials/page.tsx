@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AdminMaterialEditForm } from "@/components/admin-material-edit-form";
+import { AdminMaterialThumb } from "@/components/admin-material-thumb";
 import {
   getResolvedCatalog,
   readCatalogOverrides,
@@ -37,6 +38,9 @@ export default async function AdminMaterialsPage() {
         <table className="w-full min-w-[42rem] text-left text-sm">
           <thead className="border-b border-border bg-muted/40">
             <tr>
+              <th className="w-24 px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                Preview
+              </th>
               <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
                 Title
               </th>
@@ -65,9 +69,15 @@ export default async function AdminMaterialsPage() {
               const status = overrides[item.slug]?.status ?? "published";
               return (
                 <tr
-                  className="border-b border-border align-top last:border-b-0"
+                  className="border-b border-border align-middle last:border-b-0"
                   key={item.slug}
                 >
+                  <td className="px-3 py-2.5">
+                    <AdminMaterialThumb
+                      entry={item}
+                      href={`/materials/${item.slug}`}
+                    />
+                  </td>
                   <td className="px-3 py-2.5 font-medium">{item.title}</td>
                   <td className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground">
                     {item.slug}
