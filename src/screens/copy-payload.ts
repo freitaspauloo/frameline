@@ -90,7 +90,6 @@ const FILES: Record<string, { files: string[]; prompt: string; note: string }> =
       "src/screens/spaceman-moon/spaceman-moon.module.css",
     ],
     prompt: SPACEMAN_MOON_PROMPT,
-<<<<<<< HEAD
     note: `Hero video, poster, and the Manrope subset are served from Frameline,
 so this renders as-is. To self-host, download them and swap the URLs back to
 local paths under public/.`,
