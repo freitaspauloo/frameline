@@ -5,7 +5,7 @@ import { fulfillDemoOrder } from "@/lib/fulfillment";
 import {
   getLicensePlan,
   isCheckoutPlan,
-  isScreenPlan,
+  isScreenUnlockPlan,
   isTestCheckoutAllowed,
 } from "@/lib/license-plans";
 import { captureException } from "@/lib/monitoring";
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
-        error: "Invalid plan. Expected screen or screen_year.",
+        error: "Invalid plan. Expected screen, screen_year, or screen_lifetime.",
       },
       { status: 400 },
     );
@@ -108,7 +108,7 @@ export async function POST(request: Request) {
       if (material) qs.set("material", material);
 
       const redirectTo =
-        isScreenPlan(plan) && material
+        isScreenUnlockPlan(plan) && material
           ? `/materials/${encodeURIComponent(material)}?unlocked=1&${qs.toString()}`
           : `/orders/${fulfilled.orderId}?${qs.toString()}`;
 

@@ -11,7 +11,8 @@ export type LicensePlanKey =
   | "personal"
   | "team"
   | "screen"
-  | "screen_year";
+  | "screen_year"
+  | "screen_lifetime";
 
 export type EntitlementStatus = "active" | "revoked";
 

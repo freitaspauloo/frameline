@@ -13,6 +13,7 @@ import {
   fetchesByAgent,
   funnelSummary,
   signupSummary,
+  trafficSummary,
   usageBySlug,
 } from "@/lib/metrics";
 
@@ -28,12 +29,13 @@ const AGENT_GROUP_LABEL: Record<string, string> = {
 };
 
 export default async function AdminAnalyticsPage() {
-  const [signups, funnel, usage, agents, recent] = await Promise.all([
+  const [signups, funnel, usage, agents, recent, traffic] = await Promise.all([
     signupSummary(),
     funnelSummary(),
     usageBySlug(),
     fetchesByAgent(),
     readEvents({ limit: 25 }),
+    trafficSummary(),
   ]);
 
   const agentTotal = agents.reduce((sum, row) => sum + row.count, 0);
@@ -59,6 +61,8 @@ export default async function AdminAnalyticsPage() {
 
       <StatGrid
         stats={[
+          { label: "Page views", value: traffic.pageViews, hint: `${traffic.uniqueVisitors} unique` },
+          { label: "Clicks", value: traffic.clicks },
           { label: "Signups", value: signups.total, hint: `${signups.last30} in 30d` },
           {
             label: "Signup → paid",
@@ -75,10 +79,63 @@ export default async function AdminAnalyticsPage() {
       />
 
       <Panel
+        description="Unique visitors and page views over the last 30 days."
+        title="Site traffic"
+      >
+        <Sparkline points={traffic.viewsSeries} />
+        <div className="mt-6 grid gap-6 lg:grid-cols-2">
+          <div>
+            <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+              Top pages
+            </p>
+            <div className="mt-3">
+              <BarList
+                empty="No page views yet."
+                rows={traffic.topPages.map((row) => ({
+                  label: row.path,
+                  value: row.count,
+                }))}
+              />
+            </div>
+          </div>
+          <div>
+            <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+              Top clicks
+            </p>
+            <div className="mt-3">
+              <BarList
+                empty="No clicks yet."
+                rows={traffic.topClicks.map((row) => ({
+                  label: row.label,
+                  value: row.count,
+                  sublabel: row.href,
+                }))}
+              />
+            </div>
+          </div>
+        </div>
+      </Panel>
+
+      <Panel
         description="New user records per day over the last 30 days."
         title="Signups"
       >
         <Sparkline points={signups.series} />
+        {signups.byAuthMethod.length > 0 ? (
+          <div className="mt-6">
+            <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+              By auth method
+            </p>
+            <div className="mt-3">
+              <BarList
+                rows={signups.byAuthMethod.map((row) => ({
+                  label: row.method,
+                  value: row.count,
+                }))}
+              />
+            </div>
+          </div>
+        ) : null}
       </Panel>
 
       <Panel
@@ -116,6 +173,7 @@ export default async function AdminAnalyticsPage() {
               <thead>
                 <tr className="border-b border-border text-left text-muted-foreground">
                   <th className="px-3 py-2 font-normal">Slug</th>
+                  <th className="px-3 py-2 text-right font-normal">Views</th>
                   <th className="px-3 py-2 text-right font-normal">Copies</th>
                   <th className="px-3 py-2 text-right font-normal">Blocked</th>
                   <th className="px-3 py-2 text-right font-normal">Registry</th>
@@ -134,6 +192,7 @@ export default async function AdminAnalyticsPage() {
                         {row.slug}
                       </AdminLink>
                     </td>
+                    <td className="px-3 py-2 text-right tabular-nums">{row.views}</td>
                     <td className="px-3 py-2 text-right tabular-nums">{row.copies}</td>
                     <td className="px-3 py-2 text-right tabular-nums">{row.blocked}</td>
                     <td className="px-3 py-2 text-right tabular-nums">

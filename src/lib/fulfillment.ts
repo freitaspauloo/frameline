@@ -73,7 +73,12 @@ function materialScopeForPlan(
   plan: CheckoutPlanKey,
   material?: string,
 ): Entitlement["materialScope"] {
-  if ((plan === "screen" || plan === "screen_year") && material) {
+  if (
+    (plan === "screen" ||
+      plan === "screen_year" ||
+      plan === "screen_lifetime") &&
+    material
+  ) {
     return { kind: "set", materialSlugs: [material] };
   }
   return { kind: "all" };

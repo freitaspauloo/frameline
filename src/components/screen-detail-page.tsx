@@ -7,6 +7,7 @@ import { RiArrowLeftLine, RiCheckLine, RiFileCopyLine } from "@remixicon/react";
 
 import { useCopiesQuotaLabel } from "@/components/copies-quota-widget";
 import { MarketingFooter } from "@/components/marketing-footer";
+import { MaterialViewBeacon } from "@/components/site-analytics";
 import { MarketingNavbar } from "@/components/marketing-navbar";
 import {
   MarketingPageHeader,
@@ -191,7 +192,7 @@ export function ScreenDetailPage({
     }
   }
 
-  function goPay(plan: "screen" | "screen_year" = "screen") {
+  function goPay(plan: "screen" | "screen_year" | "screen_lifetime" = "screen") {
     setPayOpen(false);
     router.push(
       `/checkout?plan=${plan}&material=${encodeURIComponent(entry.slug)}`,
@@ -200,6 +201,7 @@ export function ScreenDetailPage({
 
   return (
     <MarketingShell>
+      <MaterialViewBeacon slug={entry.slug} />
       <MarketingNavbar />
       <MarketingSection>
         <MarketingPageHeader
@@ -290,7 +292,7 @@ export function ScreenDetailPage({
             <DialogTitle>Unlock unlimited copies</DialogTitle>
             <DialogDescription>
               You’ve used this week’s free copy. Unlock unlimited Copy prompt +
-              Copy code on {entry.title} for $9/mo or $49/y.
+              Copy code on {entry.title} for $9/mo, $49/y, or $150 lifetime.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex-col sm:flex-row">
@@ -314,6 +316,13 @@ export function ScreenDetailPage({
               onClick={() => goPay("screen_year")}
             >
               $49/y
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => goPay("screen_lifetime")}
+            >
+              $150 lifetime
             </Button>
           </DialogFooter>
         </DialogContent>

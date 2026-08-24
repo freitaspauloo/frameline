@@ -36,6 +36,7 @@ const REQUIRED_PLAN_KEYS = [
   "team",
   "screen",
   "screen_year",
+  "screen_lifetime",
 ];
 
 function assert(condition, message) {

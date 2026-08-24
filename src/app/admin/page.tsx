@@ -16,6 +16,7 @@ import {
   funnelSummary,
   revenueSummary,
   signupSummary,
+  trafficSummary,
   usageBySlug,
 } from "@/lib/metrics";
 import {
@@ -62,7 +63,7 @@ export default async function AdminDashboardPage() {
   const freeCount = MATERIALS_CATALOG.filter((m) => m.tier === "free").length;
   const paidCount = materialCount - freeCount;
 
-  const [orders, waitlistCount, inboxCount, revenue, signups, funnel, usage] =
+  const [orders, waitlistCount, inboxCount, revenue, signups, funnel, usage, traffic] =
     await Promise.all([
       readDemoOrders(),
       readWaitlistCount(),
@@ -71,9 +72,11 @@ export default async function AdminDashboardPage() {
       signupSummary(),
       funnelSummary(),
       usageBySlug(),
+      trafficSummary(),
     ]);
 
   const stats: Stat[] = [
+    { label: "Visits", value: traffic.pageViews, hint: `${traffic.uniqueVisitors} unique` },
     { label: "Signups", value: signups.total, href: "/admin/analytics" },
     {
       label: "MRR",
@@ -104,8 +107,8 @@ export default async function AdminDashboardPage() {
 
   const topAssets = usage.slice(0, 6).map((row) => ({
     label: row.slug,
-    value: row.copies + row.registryFetches + row.assetFetches,
-    sublabel: `${row.copies} copies · ${row.registryFetches + row.assetFetches} fetches`,
+    value: row.views + row.copies + row.registryFetches + row.assetFetches,
+    sublabel: `${row.views} views · ${row.copies} copies · ${row.registryFetches + row.assetFetches} fetches`,
     href: `/admin/assets/${row.slug}`,
   }));
 
@@ -156,6 +159,31 @@ export default async function AdminDashboardPage() {
             },
           ]}
         />
+        <div className="mt-6">
+          <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+            Subscriptions
+          </p>
+          <StatGrid
+            columns={3}
+            stats={[
+              {
+                label: "Monthly",
+                value: revenue.subscriptions.monthly.active,
+                hint: `${formatCents(revenue.subscriptions.monthly.mrrCents)} MRR`,
+              },
+              {
+                label: "Yearly",
+                value: revenue.subscriptions.yearly.active,
+                hint: `${formatCents(revenue.subscriptions.yearly.mrrCents)} MRR`,
+              },
+              {
+                label: "Lifetime",
+                value: revenue.subscriptions.lifetime.count,
+                hint: formatCents(revenue.subscriptions.lifetime.grossCents),
+              },
+            ]}
+          />
+        </div>
         <div className="mt-6">
           <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
             By plan

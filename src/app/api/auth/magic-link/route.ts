@@ -44,6 +44,7 @@ export async function POST(request: Request) {
     email,
     request,
     source: "magic-link",
+    props: { authMethod: "email" },
   });
 
   const store = await cookies();

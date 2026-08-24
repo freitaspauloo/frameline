@@ -2,7 +2,7 @@ import Stripe from "stripe";
 
 import { appBaseUrl } from "@/lib/app-url";
 import type { CheckoutPlanKey } from "@/lib/license-plans";
-import { getLicensePlan, isScreenPlan } from "@/lib/license-plans";
+import { getLicensePlan, isScreenUnlockPlan } from "@/lib/license-plans";
 
 let stripe: Stripe | null = null;
 
@@ -34,17 +34,17 @@ export async function createCheckoutSession(input: {
 
   const base = appBaseUrl();
   const productName =
-    isScreenPlan(input.plan) && input.material
+    isScreenUnlockPlan(input.plan) && input.material
       ? `Frameline Screen — ${input.material}`
       : `Frameline ${license.name}`;
 
   const successUrl =
-    isScreenPlan(input.plan) && input.material
+    isScreenUnlockPlan(input.plan) && input.material
       ? `${base}/materials/${encodeURIComponent(input.material)}?unlocked=1&session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(input.email)}&plan=${encodeURIComponent(input.plan)}`
       : `${base}/orders/{CHECKOUT_SESSION_ID}?session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(input.email)}&plan=${encodeURIComponent(input.plan)}${input.material ? `&material=${encodeURIComponent(input.material)}` : ""}`;
 
   const cancelUrl =
-    isScreenPlan(input.plan) && input.material
+    isScreenUnlockPlan(input.plan) && input.material
       ? `${base}/materials/${encodeURIComponent(input.material)}?cancelled=1`
       : `${base}/checkout?plan=${encodeURIComponent(input.plan)}${input.material ? `&material=${encodeURIComponent(input.material)}` : ""}&cancelled=1`;
 

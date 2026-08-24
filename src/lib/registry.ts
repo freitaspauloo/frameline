@@ -184,7 +184,8 @@ async function resolveScreen(
     if (
       resolved &&
       (resolved.entitlement.planKey === "screen" ||
-        resolved.entitlement.planKey === "screen_year") &&
+        resolved.entitlement.planKey === "screen_year" ||
+        resolved.entitlement.planKey === "screen_lifetime") &&
       entitlementCoversSlug(resolved.entitlement, canonical)
     ) {
       entitled = true;

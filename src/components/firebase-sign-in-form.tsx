@@ -17,11 +17,14 @@ import { cn } from "@/lib/utils";
 
 export type AuthSessionUser = { email: string; role: string };
 
-async function exchangeSession(idToken: string) {
+async function exchangeSession(
+  idToken: string,
+  authMethod: "google" | "email",
+) {
   const res = await fetch("/api/auth/session", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ idToken }),
+    body: JSON.stringify({ idToken, authMethod }),
   });
   const data = (await res.json()) as {
     ok?: boolean;
@@ -75,10 +78,10 @@ export function FirebaseSignInForm({
     );
   }
 
-  async function finish(userToken?: string) {
+  async function finish(userToken?: string, authMethod: "google" | "email" = "email") {
     const idToken = userToken ?? (await getIdToken(true));
     if (!idToken) throw new Error("No Firebase ID token");
-    const data = await exchangeSession(idToken);
+    const data = await exchangeSession(idToken, authMethod);
     if (data.user) {
       sessionStorage.setItem("fl_demo_user", JSON.stringify(data.user));
       if (onSuccess) {
@@ -95,7 +98,7 @@ export function FirebaseSignInForm({
     setError(null);
     try {
       const user = await signInWithGoogle();
-      await finish(await user.getIdToken());
+      await finish(await user.getIdToken(), "google");
     } catch (e) {
       setStatus("error");
       setError(e instanceof Error ? e.message : "Google sign-in failed");
@@ -111,7 +114,7 @@ export function FirebaseSignInForm({
         mode === "register"
           ? await registerWithEmail(email, password)
           : await signInWithEmail(email, password);
-      await finish(await user.getIdToken());
+      await finish(await user.getIdToken(), "email");
     } catch (err) {
       setStatus("error");
       setError(err instanceof Error ? err.message : "Sign-in failed");

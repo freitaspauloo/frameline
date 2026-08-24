@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Instrument_Serif, Inter, Syne } from "next/font/google";
 import { GeistPixelCircle, GeistPixelSquare } from "geist/font/pixel";
 import { Analytics } from "@/components/analytics";
+import { SiteAnalyticsBoundary } from "@/components/site-analytics-boundary";
 import { CopiesQuotaProvider } from "@/components/copies-quota-widget";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -80,6 +81,7 @@ export default function RootLayout({
           <TooltipProvider>{children}</TooltipProvider>
         </CopiesQuotaProvider>
         <Analytics />
+        <SiteAnalyticsBoundary />
       </body>
     </html>
   );

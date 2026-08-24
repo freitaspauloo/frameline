@@ -23,6 +23,13 @@ export type RevenueSummary = {
   canceledSubscriptions: number;
   arpuCents: number;
   byPlan: Array<{ plan: string; orders: number; grossCents: number }>;
+  subscriptions: SubscriptionBreakdown;
+};
+
+export type SubscriptionBreakdown = {
+  monthly: { active: number; mrrCents: number; grossCents: number };
+  yearly: { active: number; mrrCents: number; grossCents: number };
+  lifetime: { count: number; grossCents: number };
 };
 
 export type FunnelSummary = {
@@ -44,6 +51,10 @@ export function formatCents(cents: number): string {
 
 function isSubscriptionPlan(planKey: string): boolean {
   return planKey === "screen" || planKey === "screen_year";
+}
+
+function isLifetimePlan(planKey: string): boolean {
+  return planKey === "screen_lifetime";
 }
 
 /** Per-month value of a plan, so yearly and monthly can be added together. */
@@ -85,6 +96,14 @@ export async function revenueSummary(): Promise<RevenueSummary> {
 
   const customers = new Set(paid.map((o) => o.email)).size;
 
+  const monthlyPaid = paid.filter(
+    (o) => o.planKey === "screen" && !o.canceledAt,
+  );
+  const yearlyPaid = paid.filter(
+    (o) => o.planKey === "screen_year" && !o.canceledAt,
+  );
+  const lifetimePaid = paid.filter((o) => isLifetimePlan(o.planKey));
+
   return {
     grossCents,
     refundedCents,
@@ -98,6 +117,25 @@ export async function revenueSummary(): Promise<RevenueSummary> {
     byPlan: [...byPlanMap.entries()]
       .map(([plan, value]) => ({ plan, ...value }))
       .sort((a, b) => b.grossCents - a.grossCents),
+    subscriptions: {
+      monthly: {
+        active: monthlyPaid.length,
+        mrrCents: monthlyPaid.length * monthlyValueCents("screen"),
+        grossCents: monthlyPaid.reduce((sum, o) => sum + o.total, 0),
+      },
+      yearly: {
+        active: yearlyPaid.length,
+        mrrCents: yearlyPaid.reduce(
+          (sum, o) => sum + monthlyValueCents(o.planKey),
+          0,
+        ),
+        grossCents: yearlyPaid.reduce((sum, o) => sum + o.total, 0),
+      },
+      lifetime: {
+        count: lifetimePaid.length,
+        grossCents: lifetimePaid.reduce((sum, o) => sum + o.total, 0),
+      },
+    },
   };
 }
 
@@ -155,10 +193,11 @@ export async function funnelSummary(since?: Date): Promise<FunnelSummary> {
   };
 }
 
-/** Copies, paywall hits, and downstream usage per material or screen. */
+/** Copies, paywall hits, views, and downstream usage per material or screen. */
 export async function usageBySlug(since?: Date): Promise<
   Array<{
     slug: string;
+    views: number;
     copies: number;
     blocked: number;
     registryFetches: number;
@@ -168,6 +207,7 @@ export async function usageBySlug(since?: Date): Promise<
 > {
   const events = await readEvents({
     names: [
+      "material_view",
       "copy",
       "copy_blocked",
       "registry_fetch",
@@ -182,6 +222,7 @@ export async function usageBySlug(since?: Date): Promise<
     string,
     {
       slug: string;
+      views: number;
       copies: number;
       blocked: number;
       registryFetches: number;
@@ -194,12 +235,14 @@ export async function usageBySlug(since?: Date): Promise<
     if (!event.slug) continue;
     const row = rows.get(event.slug) ?? {
       slug: event.slug,
+      views: 0,
       copies: 0,
       blocked: 0,
       registryFetches: 0,
       assetFetches: 0,
       installs: 0,
     };
+    if (event.name === "material_view") row.views += 1;
     if (event.name === "copy") row.copies += 1;
     if (event.name === "copy_blocked") row.blocked += 1;
     if (event.name === "registry_fetch") row.registryFetches += 1;
@@ -210,7 +253,8 @@ export async function usageBySlug(since?: Date): Promise<
 
   return [...rows.values()].sort(
     (a, b) =>
-      b.copies + b.registryFetches - (a.copies + a.registryFetches) ||
+      b.views + b.copies + b.registryFetches -
+        (a.views + a.copies + a.registryFetches) ||
       a.slug.localeCompare(b.slug),
   );
 }
@@ -268,13 +312,72 @@ export type SignupSummary = {
   last30: number;
   series: SeriesPoint[];
   paidConversion: number;
+  byAuthMethod: Array<{ method: string; count: number }>;
 };
 
+export type TrafficSummary = {
+  pageViews: number;
+  uniqueVisitors: number;
+  clicks: number;
+  viewsSeries: SeriesPoint[];
+  topPages: Array<{ path: string; count: number }>;
+  topClicks: Array<{ label: string; count: number; href?: string }>;
+};
+
+export async function trafficSummary(since?: Date): Promise<TrafficSummary> {
+  const events = await readEvents({
+    names: ["page_view", "click"],
+    since,
+    limit: 50_000,
+  });
+
+  const pageViews = events.filter((e) => e.name === "page_view");
+  const clicks = events.filter((e) => e.name === "click");
+  const visitors = new Set(
+    pageViews.map((e) => e.subjectId || e.ipHash || e.id),
+  );
+
+  const pageCounts = new Map<string, number>();
+  for (const event of pageViews) {
+    const path = event.source ?? "unknown";
+    pageCounts.set(path, (pageCounts.get(path) ?? 0) + 1);
+  }
+
+  const clickCounts = new Map<
+    string,
+    { label: string; count: number; href?: string }
+  >();
+  for (const event of clicks) {
+    const label =
+      (event.props?.label as string | undefined)?.trim() || "Unlabeled";
+    const href = (event.props?.href as string | undefined)?.trim();
+    const key = `${label}::${href ?? ""}`;
+    const current = clickCounts.get(key) ?? { label, count: 0, href };
+    current.count += 1;
+    clickCounts.set(key, current);
+  }
+
+  return {
+    pageViews: pageViews.length,
+    uniqueVisitors: visitors.size,
+    clicks: clicks.length,
+    viewsSeries: dailySeries(pageViews),
+    topPages: [...pageCounts.entries()]
+      .map(([path, count]) => ({ path, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 12),
+    topClicks: [...clickCounts.values()]
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 12),
+  };
+}
+
 export async function signupSummary(): Promise<SignupSummary> {
-  const [users, orders, total] = await Promise.all([
+  const [users, orders, total, signupEvents] = await Promise.all([
     readUsers(),
     readDemoOrders(),
     countUsers(),
+    readEvents({ names: ["signup"], limit: 50_000 }),
   ]);
 
   const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
@@ -289,11 +392,21 @@ export async function signupSummary(): Promise<SignupSummary> {
   // records would otherwise push this above 100%.
   const payingUsers = users.filter((u) => payingEmails.has(u.email)).length;
 
+  const authCounts = new Map<string, number>();
+  for (const event of signupEvents) {
+    const method =
+      (event.props?.authMethod as string | undefined)?.trim() || "unknown";
+    authCounts.set(method, (authCounts.get(method) ?? 0) + 1);
+  }
+
   return {
     total,
     last30: recent.length,
     series: dailySeries(users),
     paidConversion: total ? payingUsers / total : 0,
+    byAuthMethod: [...authCounts.entries()]
+      .map(([method, count]) => ({ method, count }))
+      .sort((a, b) => b.count - a.count),
   };
 }
 

@@ -70,9 +70,9 @@ export async function POST(request: Request) {
     );
   }
 
-  let body: { idToken?: string } = {};
+  let body: { idToken?: string; authMethod?: string } = {};
   try {
-    body = (await request.json()) as { idToken?: string };
+    body = (await request.json()) as { idToken?: string; authMethod?: string };
   } catch {
     return NextResponse.json(
       { ok: false, error: "Invalid JSON body" },
@@ -100,6 +100,13 @@ export async function POST(request: Request) {
 
     const user = sessionUserFromEmail(email);
 
+    const authMethod =
+      body.authMethod === "google"
+        ? "google"
+        : body.authMethod === "email"
+          ? "email"
+          : "unknown";
+
     const record = await ensureUser({
       email,
       firebaseUid: decoded.uid,
@@ -111,7 +118,7 @@ export async function POST(request: Request) {
       email,
       request,
       source: "firebase",
-      props: { uid: decoded.uid },
+      props: { uid: decoded.uid, authMethod },
     });
 
     const response = NextResponse.json({

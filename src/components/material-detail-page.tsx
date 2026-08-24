@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { RiArrowLeftLine } from "@remixicon/react";
 
 import { MarketingFooter } from "@/components/marketing-footer";
+import { MaterialViewBeacon } from "@/components/site-analytics";
 import { MarketingNavbar } from "@/components/marketing-navbar";
 import {
   MarketingPageHeader,
@@ -299,6 +300,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
 
   return (
     <MarketingShell>
+      <MaterialViewBeacon slug={slug} />
       <MarketingNavbar />
       <MarketingSection>
         <MarketingPageHeader

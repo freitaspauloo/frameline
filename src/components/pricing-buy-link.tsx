@@ -19,7 +19,7 @@ export function PricingBuyLink({
   className,
 }: {
   href: string;
-  plan: "screen" | "screen_year";
+  plan: "screen" | "screen_year" | "screen_lifetime";
   material?: string;
   label: string;
   primary?: boolean;
