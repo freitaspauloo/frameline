@@ -22,7 +22,14 @@ export default async function AdminMaterialsPage() {
         <p className="mt-2 text-sm text-muted-foreground">
           Edit title, description, and tier via demo overrides in{" "}
           <span className="font-mono">.data/catalog-overrides.json</span> —
-          source catalog stays untouched.
+          source catalog stays untouched. Card stills live in the{" "}
+          <Link
+            className="underline underline-offset-4 hover:text-foreground"
+            href="/studio/thumbnails"
+          >
+            thumbnail studio
+          </Link>
+          .
         </p>
       </div>
 

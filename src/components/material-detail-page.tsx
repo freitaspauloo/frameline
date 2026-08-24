@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { RiArrowLeftLine } from "@remixicon/react";
 
 import { MarketingFooter } from "@/components/marketing-footer";
+import { MaterialViewBeacon } from "@/components/site-analytics";
 import { MarketingNavbar } from "@/components/marketing-navbar";
 import {
   MarketingPageHeader,
@@ -17,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { recordInstallIntent } from "@/lib/install-intent";
 import { getLicensePlan } from "@/lib/license-plans";
+import { installCommand } from "@/lib/registry-urls";
 import { cn } from "@/lib/utils";
 import {
   getMaterial,
@@ -29,6 +31,7 @@ import {
   getMaterialComponentName,
   renderMaterial,
 } from "@/materials/renderers";
+import { getMaterialThumbnailSrc } from "@/materials/thumbnails";
 
 type Props = {
   slug: string;
@@ -65,6 +68,22 @@ function LivePreview({
   forceStatic?: boolean;
   props: Record<string, unknown>;
 }) {
+  const thumbnailSrc = getMaterialThumbnailSrc(entry.slug);
+
+  // Paused / reduced motion shows the uploaded still when there is one —
+  // it reads as the material rather than as a flat gradient.
+  if (forceStatic && thumbnailSrc) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- catalog stills are pre-sized, the optimizer adds nothing
+      <img
+        alt=""
+        aria-hidden
+        className="absolute inset-0 size-full object-cover"
+        src={thumbnailSrc}
+      />
+    );
+  }
+
   return renderMaterial(entry.slug, {
     className: "absolute inset-0 h-full w-full",
     forceStatic,
@@ -221,7 +240,10 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
   const [reducedMotion, setReducedMotion] = React.useState(false);
   const urlSyncReady = React.useRef(false);
   const license = getLicensePlan("free");
-  const cliSnippet = `npx shadcn@latest add @frameline/${entry.slug}`;
+  // Full registry URL rather than the @frameline namespace: it resolves on a
+  // cold machine with no components.json setup, and every resolve is a usage
+  // signal we can attribute to this material.
+  const cliSnippet = installCommand(entry.slug);
   const pastePath = `components/ui/${entry.slug}.tsx`;
   const forceStaticPreview = paused || reducedMotion;
 
@@ -295,6 +317,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
 
   return (
     <MarketingShell>
+      <MaterialViewBeacon slug={slug} />
       <MarketingNavbar />
       <MarketingSection>
         <MarketingPageHeader

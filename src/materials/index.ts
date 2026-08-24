@@ -106,6 +106,19 @@ export {
   getMaterialComponentName,
   slugToComponentName,
 } from "./component-names";
+export {
+  MATERIAL_THUMBNAILS,
+  THUMBNAIL_ASPECT_RATIO,
+  THUMBNAIL_HEIGHT,
+  THUMBNAIL_WIDTH,
+  getMaterialThumbnail,
+  getMaterialThumbnailSrc,
+  hasMaterialThumbnail,
+} from "./thumbnails";
+export type {
+  MaterialThumbnail,
+  MaterialThumbnailManifest,
+} from "./thumbnails";
 export { renderMaterial } from "./renderers";
 export type { MaterialRenderProps } from "./renderers";
 export { MaterialShell } from "./material-shell";

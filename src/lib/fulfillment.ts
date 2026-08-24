@@ -16,6 +16,7 @@ import {
   mintDemoRegistryToken,
   mintRegistryToken,
 } from "@/lib/tokens";
+import { ensureUser } from "@/lib/users";
 
 const DATA_DIR = path.join(process.cwd(), ".data");
 const ORDERS_PATH = path.join(DATA_DIR, "orders.json");
@@ -40,6 +41,9 @@ export type FulfillInput = {
   material?: string;
   /** When set, retries with the same ref return the existing order. */
   paymentProviderRef?: string | null;
+  /** Stripe linkage so renewals and cancellations can find this order. */
+  stripeCustomerId?: string | null;
+  stripeSubscriptionId?: string | null;
 };
 
 export type FulfillResult = {
@@ -69,7 +73,12 @@ function materialScopeForPlan(
   plan: CheckoutPlanKey,
   material?: string,
 ): Entitlement["materialScope"] {
-  if ((plan === "screen" || plan === "screen_year") && material) {
+  if (
+    (plan === "screen" ||
+      plan === "screen_year" ||
+      plan === "screen_lifetime") &&
+    material
+  ) {
     return { kind: "set", materialSlugs: [material] };
   }
   return { kind: "all" };
@@ -341,6 +350,10 @@ function mapDbOrder(row: {
   tax: number;
   total: number;
   createdAt: Date;
+  stripeCustomerId?: string | null;
+  stripeSubscriptionId?: string | null;
+  refundedAt?: Date | null;
+  canceledAt?: Date | null;
   entitlements: Array<{
     id: string;
     materialScope: unknown;
@@ -361,6 +374,10 @@ function mapDbOrder(row: {
     tax: row.tax,
     total: row.total,
     createdAt: toIso(row.createdAt),
+    stripeCustomerId: row.stripeCustomerId ?? null,
+    stripeSubscriptionId: row.stripeSubscriptionId ?? null,
+    refundedAt: row.refundedAt ? toIso(row.refundedAt) : null,
+    canceledAt: row.canceledAt ? toIso(row.canceledAt) : null,
     materialSlug: materialSlugFromScope(scope),
     // Hash-only at rest — plaintext is returned only from fulfillResult.
     registryToken: null,
@@ -393,12 +410,15 @@ async function fulfillOrderInDb(input: FulfillInput): Promise<FulfillResult> {
   const plaintextToken = mintRegistryToken();
   const tokenHash = hashRegistryToken(plaintextToken);
   const materialScope = materialScopeForPlan(plan, material);
+  // A purchase is the strongest signal a person exists; make sure the buyer has
+  // a user row so revenue can be attributed per user rather than per email.
+  const buyer = await ensureUser({ email });
 
   const created = await prisma.$transaction(async (tx) => {
     const order = await tx.order.create({
       data: {
         email,
-        userId: null,
+        userId: buyer?.user.id ?? null,
         paymentProviderRef,
         status: "paid",
         planKey: plan,
@@ -406,6 +426,8 @@ async function fulfillOrderInDb(input: FulfillInput): Promise<FulfillResult> {
         subtotal: amountCents,
         tax: 0,
         total: amountCents,
+        stripeCustomerId: input.stripeCustomerId?.trim() || null,
+        stripeSubscriptionId: input.stripeSubscriptionId?.trim() || null,
       },
     });
 
@@ -491,11 +513,12 @@ async function fulfillOrderInFiles(input: FulfillInput): Promise<FulfillResult> 
   const entitlementId = `ent_${nanoid(12)}`;
   const tokenId = `tok_${nanoid(12)}`;
   const registryToken = mintDemoRegistryToken();
+  const buyer = await ensureUser({ email });
 
   const order: DemoOrder = {
     id: orderId,
     email,
-    userId: null,
+    userId: buyer?.user.id ?? null,
     paymentProviderRef,
     status: "paid",
     planKey: plan,
@@ -504,6 +527,8 @@ async function fulfillOrderInFiles(input: FulfillInput): Promise<FulfillResult> 
     tax: 0,
     total: amountCents,
     createdAt: now,
+    stripeCustomerId: input.stripeCustomerId?.trim() || null,
+    stripeSubscriptionId: input.stripeSubscriptionId?.trim() || null,
     materialSlug: material ?? null,
     registryToken,
     entitlementId,
@@ -553,5 +578,187 @@ async function fulfillOrderInFiles(input: FulfillInput): Promise<FulfillResult> 
     entitlementId,
     created: true,
     order,
+  };
+}
+
+// ——— Subscription lifecycle ———
+
+export type LifecycleResult = {
+  orderId: string;
+  email: string;
+  planKey: string;
+  amountCents: number;
+} | null;
+
+/**
+ * End access for an order: revoke its entitlements and their tokens.
+ * Used for refunds and for subscriptions that have actually ended.
+ */
+async function revokeAccessForOrder(orderId: string): Promise<void> {
+  const now = new Date();
+
+  if (hasDatabaseUrl()) {
+    const prisma = getPrisma();
+    await prisma.entitlement.updateMany({
+      where: { orderId, status: "active" },
+      data: { status: "revoked", revokedAt: now },
+    });
+    const entitlements = await prisma.entitlement.findMany({
+      where: { orderId },
+      select: { id: true },
+    });
+    await prisma.registryToken.updateMany({
+      where: { entitlementId: { in: entitlements.map((e) => e.id) } },
+      data: { revokedAt: now },
+    });
+    return;
+  }
+
+  const store = await readJsonFile<Partial<DemoEntitlementStore>>(
+    ENTITLEMENTS_PATH,
+    { entitlements: [], tokens: [] },
+  );
+  const entitlements = Array.isArray(store.entitlements)
+    ? store.entitlements
+    : [];
+  const tokens = Array.isArray(store.tokens) ? store.tokens : [];
+  const affected = new Set(
+    entitlements.filter((e) => e.orderId === orderId).map((e) => e.id),
+  );
+
+  await writeJsonFile(ENTITLEMENTS_PATH, {
+    entitlements: entitlements.map((e) =>
+      affected.has(e.id)
+        ? { ...e, status: "revoked" as const, revokedAt: now.toISOString() }
+        : e,
+    ),
+    tokens: tokens.map((t) =>
+      affected.has(t.entitlementId)
+        ? { ...t, revokedAt: now.toISOString() }
+        : t,
+    ),
+  });
+}
+
+async function updateOrderInFiles(
+  match: (order: DemoOrder) => boolean,
+  patch: Partial<DemoOrder>,
+): Promise<DemoOrder | null> {
+  const orders = await readJsonFile<DemoOrder[]>(ORDERS_PATH, []).then((p) =>
+    Array.isArray(p) ? p : [],
+  );
+  const index = orders.findIndex(match);
+  if (index < 0) return null;
+
+  const updated = { ...orders[index], ...patch };
+  orders[index] = updated;
+  await writeJsonFile(ORDERS_PATH, orders);
+  return updated;
+}
+
+/**
+ * Mark the most recent paid order for a Stripe customer as refunded.
+ * Stripe's charge object does not carry our checkout session id, so the
+ * customer id (falling back to email) is the join key.
+ */
+export async function markOrderRefunded(input: {
+  stripeCustomerId?: string | null;
+  email?: string | null;
+}): Promise<LifecycleResult> {
+  const customerId = input.stripeCustomerId?.trim() || null;
+  const email = input.email?.trim().toLowerCase() || null;
+  if (!customerId && !email) return null;
+  const now = new Date();
+
+  if (hasDatabaseUrl()) {
+    const prisma = getPrisma();
+    const order = await prisma.order.findFirst({
+      where: {
+        status: "paid",
+        ...(customerId ? { stripeCustomerId: customerId } : { email: email! }),
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    if (!order) return null;
+
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { status: "refunded", refundedAt: now },
+    });
+    await revokeAccessForOrder(order.id);
+
+    return {
+      orderId: order.id,
+      email: order.email,
+      planKey: order.planKey,
+      amountCents: order.total,
+    };
+  }
+
+  const updated = await updateOrderInFiles(
+    (order) =>
+      order.status === "paid" &&
+      (customerId
+        ? order.stripeCustomerId === customerId
+        : order.email === email),
+    { status: "refunded", refundedAt: now.toISOString() },
+  );
+  if (!updated) return null;
+  await revokeAccessForOrder(updated.id);
+
+  return {
+    orderId: updated.id,
+    email: updated.email,
+    planKey: updated.planKey,
+    amountCents: updated.total,
+  };
+}
+
+/** End a subscription: stamp the order and revoke the access it granted. */
+export async function markSubscriptionCanceled(
+  stripeSubscriptionId: string,
+): Promise<LifecycleResult> {
+  const subscriptionId = stripeSubscriptionId.trim();
+  if (!subscriptionId) return null;
+  const now = new Date();
+
+  if (hasDatabaseUrl()) {
+    const prisma = getPrisma();
+    const order = await prisma.order.findFirst({
+      where: { stripeSubscriptionId: subscriptionId },
+      orderBy: { createdAt: "desc" },
+    });
+    if (!order) return null;
+
+    await prisma.order.updateMany({
+      where: { stripeSubscriptionId: subscriptionId, canceledAt: null },
+      data: { canceledAt: now },
+    });
+    const related = await prisma.order.findMany({
+      where: { stripeSubscriptionId: subscriptionId },
+      select: { id: true },
+    });
+    for (const row of related) await revokeAccessForOrder(row.id);
+
+    return {
+      orderId: order.id,
+      email: order.email,
+      planKey: order.planKey,
+      amountCents: order.total,
+    };
+  }
+
+  const updated = await updateOrderInFiles(
+    (order) => order.stripeSubscriptionId === subscriptionId,
+    { canceledAt: now.toISOString() },
+  );
+  if (!updated) return null;
+  await revokeAccessForOrder(updated.id);
+
+  return {
+    orderId: updated.id,
+    email: updated.email,
+    planKey: updated.planKey,
+    amountCents: updated.total,
   };
 }

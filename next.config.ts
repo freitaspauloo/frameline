@@ -4,12 +4,18 @@ import { fileURLToPath } from "url";
 
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
+/** Extra hosts allowed to reach `next dev`, e.g. a tunnel used to share a preview. */
+const extraDevOrigins = (process.env.FRAMELINE_DEV_ORIGINS ?? "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 const nextConfig: NextConfig = {
   turbopack: {
     root: projectRoot,
   },
   // Cursor Simple Browser hits 127.0.0.1 while next binds 0.0.0.0.
-  allowedDevOrigins: ["127.0.0.1", "localhost"],
+  allowedDevOrigins: ["127.0.0.1", "localhost", ...extraDevOrigins],
   // Keep Admin SDK / Prisma out of the Turbopack server graph.
   serverExternalPackages: ["firebase-admin", "@prisma/client", "prisma"],
   async redirects() {

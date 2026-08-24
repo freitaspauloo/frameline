@@ -1,19 +1,16 @@
-import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+import { attachAnonCookie, resolveAnonId } from "@/lib/anonymous-id";
 import { getDemoEmail } from "@/lib/auth";
 import { ownsScreen } from "@/lib/screen-access";
 import {
   attachQuotaCookie,
-  deviceSeedFromRequest,
   ensureQuotaPayload,
   freeCopiesLeftThisWeek,
   readQuotaCookie,
 } from "@/lib/screen-quota-cookie";
 import { getScreenBySlug } from "@/screens/catalog";
-
-const ANON_COOKIE = "fl_anon_id";
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,12 +29,7 @@ export async function GET(request: NextRequest) {
       sessionEmail ||
       (emailParam && emailParam.includes("@") ? emailParam : null);
 
-    let anonId = request.cookies.get(ANON_COOKIE)?.value?.trim() || null;
-    let mintAnon = false;
-    if (!anonId) {
-      anonId = `anon_${deviceSeedFromRequest(request)}_${nanoid(12)}`;
-      mintAnon = true;
-    }
+    const { id: anonId, minted: mintAnon } = resolveAnonId(request);
 
     const owned = await ownsScreen(email, slug);
     let quota = ensureQuotaPayload(readQuotaCookie(request), anonId);
@@ -58,15 +50,7 @@ export async function GET(request: NextRequest) {
           : "1 free copy this week. Then $9/mo or $49/y for unlimited.",
     });
 
-    if (mintAnon) {
-      res.cookies.set(ANON_COOKIE, anonId, {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        maxAge: 60 * 60 * 24 * 400,
-        secure: process.env.NODE_ENV === "production",
-      });
-    }
+    if (mintAnon) attachAnonCookie(res, anonId);
     attachQuotaCookie(res, quota);
     return res;
   } catch (err) {

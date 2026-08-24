@@ -1,8 +1,33 @@
 import { ImageResponse } from "next/og";
 
 import { getMaterial } from "@/materials/catalog";
+import { getMaterialThumbnail } from "@/materials/thumbnails";
 
 const SIZE = { width: 1200, height: 630 };
+
+/**
+ * Satori needs the bytes inline. Failing to load the still is not worth a
+ * broken share card, so callers fall back to the gradient.
+ */
+async function loadThumbnailDataUri(
+  slug: string,
+  requestUrl: string,
+): Promise<string | undefined> {
+  const thumbnail = getMaterialThumbnail(slug);
+  if (!thumbnail) return undefined;
+
+  try {
+    const url = new URL(thumbnail.path, requestUrl);
+    const response = await fetch(url, { cache: "force-cache" });
+    if (!response.ok) return undefined;
+
+    const contentType = response.headers.get("content-type") ?? "image/webp";
+    const base64 = Buffer.from(await response.arrayBuffer()).toString("base64");
+    return `data:${contentType};base64,${base64}`;
+  } catch {
+    return undefined;
+  }
+}
 
 function surfaceGradient(colors: string[] | undefined): string {
   const stops = colors?.filter(Boolean) ?? [];
@@ -33,6 +58,9 @@ export async function GET(request: Request) {
   const colors = material?.fallbackColors ?? ["#2D6BFF", "#0A0A0A", "#F7F5F0"];
   const accent = colors[0] ?? "#2D6BFF";
   const surface = surfaceGradient(colors);
+  const thumbnail = material
+    ? await loadThumbnailDataUri(material.slug, request.url)
+    : undefined;
 
   return new ImageResponse(
     (
@@ -46,15 +74,30 @@ export async function GET(request: Request) {
           position: "relative",
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            display: "flex",
-            backgroundImage: surface,
-            opacity: 0.92,
-          }}
-        />
+        {thumbnail ? (
+          // eslint-disable-next-line @next/next/no-img-element -- satori renders raw JSX, next/image does not apply
+          <img
+            alt=""
+            height={SIZE.height}
+            src={thumbnail}
+            style={{
+              position: "absolute",
+              inset: 0,
+              objectFit: "cover",
+            }}
+            width={SIZE.width}
+          />
+        ) : (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              backgroundImage: surface,
+              opacity: 0.92,
+            }}
+          />
+        )}
         <div
           style={{
             position: "absolute",

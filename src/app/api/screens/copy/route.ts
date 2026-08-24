@@ -2,7 +2,9 @@ import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+import { attachAnonCookie, resolveAnonId } from "@/lib/anonymous-id";
 import { getDemoEmail } from "@/lib/auth";
+import { recordEvent } from "@/lib/events";
 import {
   clientIp,
   rateLimit,
@@ -11,7 +13,6 @@ import {
 import { ownsScreen } from "@/lib/screen-access";
 import {
   attachQuotaCookie,
-  deviceSeedFromRequest,
   ensureQuotaPayload,
   freeCopiesLeftThisWeek,
   markFreeCopyUsed,
@@ -24,27 +25,6 @@ import {
   getScreenPrompt,
 } from "@/screens/copy-payload";
 import type { ScreenCopyPath } from "@/screens/types";
-
-const ANON_COOKIE = "fl_anon_id";
-
-function readAnonId(request: NextRequest): string | null {
-  return request.cookies.get(ANON_COOKIE)?.value?.trim() || null;
-}
-
-function mintAnonId(request: Request): string {
-  const seed = deviceSeedFromRequest(request);
-  return `anon_${seed}_${nanoid(12)}`;
-}
-
-function attachAnonCookie(res: NextResponse, id: string) {
-  res.cookies.set(ANON_COOKIE, id, {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 400,
-    secure: process.env.NODE_ENV === "production",
-  });
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -85,12 +65,7 @@ export async function POST(request: NextRequest) {
       sessionEmail ||
       (bodyEmail && bodyEmail.includes("@") ? bodyEmail : null);
 
-    let anonId = readAnonId(request);
-    let mintAnon = false;
-    if (!anonId) {
-      anonId = mintAnonId(request);
-      mintAnon = true;
-    }
+    const { id: anonId, minted: mintAnon } = resolveAnonId(request);
 
     const owned = await ownsScreen(email, slug);
     let quota = ensureQuotaPayload(readQuotaCookie(request), anonId);
@@ -102,6 +77,19 @@ export async function POST(request: NextRequest) {
     const left = owned ? null : freeCopiesLeftThisWeek(quota, slug);
 
     if (!owned && left === 0) {
+      // The paywall hit is the conversion trigger — more actionable than the
+      // successful copies, because it is the moment someone wanted to pay.
+      await recordEvent({
+        name: "copy_blocked",
+        email,
+        anonId,
+        slug,
+        plan: "screen",
+        source: "screen-detail",
+        request,
+        props: { path: copyPath },
+      });
+
       const res = NextResponse.json({
         ok: false,
         reason: "pay" as const,
@@ -119,11 +107,15 @@ export async function POST(request: NextRequest) {
       return res;
     }
 
+    // Minted before the payload is built so the manifest URL embedded in the
+    // clipboard text carries it.
+    const copyId = `cp_${nanoid(16)}`;
+
     let text: string | null;
     if (copyPath === "prompt") {
-      text = getScreenPrompt(slug);
+      text = getScreenPrompt(slug, copyId);
     } else {
-      text = await buildScreenCodePayload(slug);
+      text = await buildScreenCodePayload(slug, copyId);
     }
     if (!text) {
       return NextResponse.json(
@@ -136,11 +128,24 @@ export async function POST(request: NextRequest) {
       quota = markFreeCopyUsed(quota, slug);
     }
 
+    await recordEvent({
+      name: "copy",
+      email,
+      anonId,
+      slug,
+      copyId,
+      plan: owned ? "paid" : "free",
+      source: "screen-detail",
+      request,
+      props: { path: copyPath, owned },
+    });
+
     const res = NextResponse.json({
       ok: true,
       path: copyPath,
       text,
       owned,
+      copyId,
       copiesLeftThisWeek: owned ? null : 0,
     });
     if (mintAnon) attachAnonCookie(res, anonId);
