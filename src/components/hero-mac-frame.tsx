@@ -466,7 +466,7 @@ export function HeroMacFrame({ className }: { className?: string }) {
     <div
       ref={scope}
       className={cn(
-        "hero-mac-intro relative isolate flex h-full min-h-[min(62dvh,720px)] w-full flex-col pb-12 lg:pb-20",
+        "hero-mac-intro relative isolate flex h-full min-h-[min(48dvh,520px)] w-full flex-col pb-4 sm:pb-5",
         bgReady && "hero-mac-intro--bg-ready",
         className,
       )}

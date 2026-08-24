@@ -216,7 +216,7 @@ export function FramelineHomePageV2() {
 
           {/* —— Hero —— */}
           <section
-            className="relative isolate flex min-h-dvh flex-col bg-background"
+            className="relative isolate flex flex-col bg-background"
             data-frameline-section
             data-label="Index"
             id="top"
@@ -227,7 +227,7 @@ export function FramelineHomePageV2() {
               <div className="relative z-10 mx-auto w-full max-w-7xl">
                 <div
                   className={cn(
-                    "flex flex-col items-center pt-16 pb-12 text-center sm:pt-20 sm:pb-14 lg:pt-24 lg:pb-16",
+                    "flex flex-col items-center pt-14 pb-8 text-center sm:pt-16 sm:pb-10 lg:pt-20 lg:pb-12",
                     marketingPadX,
                   )}
                 >
@@ -264,7 +264,7 @@ export function FramelineHomePageV2() {
               </div>
             </IntroStagger>
 
-            <div className="relative mt-auto min-h-[min(62dvh,720px)] w-full flex-1 overflow-visible">
+            <div className="relative w-full overflow-visible">
               <HeroMacFrame />
             </div>
           </section>
@@ -277,7 +277,7 @@ export function FramelineHomePageV2() {
             </SectionBand>
           </MarketingSection>
 
-          <MarketingSectionSpacer size="lg" />
+          <MarketingSectionSpacer size="sm" />
 
           {/* —— Catalog preview —— */}
           <MarketingSection id="browse">
