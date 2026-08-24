@@ -107,8 +107,8 @@ export default async function AdminDashboardPage() {
 
   const topAssets = usage.slice(0, 6).map((row) => ({
     label: row.slug,
-    value: row.views + row.copies + row.registryFetches + row.assetFetches,
-    sublabel: `${row.views} views · ${row.copies} copies · ${row.registryFetches + row.assetFetches} fetches`,
+    value: row.copies,
+    sublabel: `${row.copies} copies · ${row.views} views · ${row.registryFetches + row.assetFetches} fetches`,
     href: `/admin/assets/${row.slug}`,
   }));
 

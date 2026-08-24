@@ -193,7 +193,7 @@ export async function funnelSummary(since?: Date): Promise<FunnelSummary> {
   };
 }
 
-/** Copies, paywall hits, views, and downstream usage per material or screen. */
+/** Copies, paywall hits, views, and downstream usage per material or screen. Newest-first by copy count. */
 export async function usageBySlug(since?: Date): Promise<
   Array<{
     slug: string;
@@ -253,8 +253,9 @@ export async function usageBySlug(since?: Date): Promise<
 
   return [...rows.values()].sort(
     (a, b) =>
-      b.views + b.copies + b.registryFetches -
-        (a.views + a.copies + a.registryFetches) ||
+      b.copies - a.copies ||
+      b.blocked - a.blocked ||
+      b.registryFetches - a.registryFetches ||
       a.slug.localeCompare(b.slug),
   );
 }
