@@ -6,6 +6,11 @@ import * as React from "react";
 import { RiArrowLeftLine, RiCheckLine, RiFileCopyLine } from "@remixicon/react";
 
 import { useCopiesQuotaLabel } from "@/components/copies-quota-widget";
+import {
+  DemoEmailSignInForm,
+  FirebaseSignInForm,
+  type AuthSessionUser,
+} from "@/components/firebase-sign-in-form";
 import { MarketingFooter } from "@/components/marketing-footer";
 import { MaterialViewBeacon } from "@/components/site-analytics";
 import { MarketingNavbar } from "@/components/marketing-navbar";
@@ -25,12 +30,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { recordInstallIntent } from "@/lib/install-intent";
+import { getDemoSession, type ClientSessionUser } from "@/lib/auth-client";
+import { isFirebaseClientConfigured } from "@/lib/firebase-client";
 import { cn } from "@/lib/utils";
 import { ScreenLivePreview } from "@/screens/preview";
 import type { ScreenCatalogEntry } from "@/screens/types";
 
 type AccessState = {
   owned: boolean;
+  signedIn: boolean;
   copiesLeftThisWeek: number | null;
   message: string | null;
 };
@@ -47,6 +55,7 @@ export function ScreenDetailPage({
   email?: string;
 }) {
   const router = useRouter();
+  const [user, setUser] = React.useState<ClientSessionUser | null>(null);
   const [access, setAccess] = React.useState<AccessState | null>(null);
   const [copied, setCopied] = React.useState<"prompt" | "code" | null>(null);
   const [busy, setBusy] = React.useState<"prompt" | "code" | null>(null);
@@ -54,7 +63,14 @@ export function ScreenDetailPage({
     unlocked ? "Unlocked — unlimited copies for this screen." : null,
   );
   const [payOpen, setPayOpen] = React.useState(false);
+  const [authOpen, setAuthOpen] = React.useState(false);
+  const [authIntent, setAuthIntent] = React.useState<"prompt" | null>(null);
   const emailRef = React.useRef(email);
+  const firebaseReady = isFirebaseClientConfigured();
+
+  React.useEffect(() => {
+    setUser(getDemoSession());
+  }, []);
 
   const refreshAccess = React.useCallback(async () => {
     const qs = new URLSearchParams({ slug: entry.slug });
@@ -71,6 +87,7 @@ export function ScreenDetailPage({
       const left = data.copiesLeftThisWeek ?? data.freeRemainingToday ?? null;
       setAccess({
         owned: Boolean(data.owned),
+        signedIn: Boolean(data.signedIn ?? emailRef.current),
         copiesLeftThisWeek: left,
         message: data.message,
       });
@@ -129,7 +146,31 @@ export function ScreenDetailPage({
     setPayOpen(true);
   }
 
+  function openAuthGate() {
+    setAuthIntent("prompt");
+    setAuthOpen(true);
+  }
+
+  function onAuthSuccess(next: AuthSessionUser) {
+    const sessionUser: ClientSessionUser = {
+      email: next.email,
+      role: next.role === "admin" ? "admin" : "buyer",
+    };
+    setUser(sessionUser);
+    emailRef.current = next.email;
+    setAuthOpen(false);
+    void refreshAccess();
+    if (authIntent === "prompt") {
+      setAuthIntent(null);
+      void copyPath("prompt");
+    }
+  }
+
   async function copyPath(path: "prompt" | "code") {
+    if (path === "prompt" && !user?.email && !emailRef.current) {
+      openAuthGate();
+      return;
+    }
     setBusy(path);
     setBanner(null);
     try {
@@ -156,6 +197,12 @@ export function ScreenDetailPage({
         data = (await res.json()) as typeof data;
       } catch {
         setBanner(`Copy failed (${res.status}). Try again.`);
+        return;
+      }
+
+      if (data.reason === "auth") {
+        openAuthGate();
+        setBanner(data.message ?? "Sign in to copy the prompt.");
         return;
       }
 
@@ -224,7 +271,11 @@ export function ScreenDetailPage({
                   size="sm"
                   type="button"
                   variant="outline"
-                  onClick={() => void copyPath("prompt")}
+                  onClick={() =>
+                    user?.email || emailRef.current
+                      ? void copyPath("prompt")
+                      : openAuthGate()
+                  }
                 >
                   {copied === "prompt" ? (
                     <RiCheckLine data-icon="inline-start" />
@@ -235,7 +286,9 @@ export function ScreenDetailPage({
                     ? "Copied"
                     : busy === "prompt"
                       ? "Copying…"
-                      : "Copy prompt"}
+                      : user?.email || emailRef.current
+                        ? "Copy prompt"
+                        : "Sign in · Copy prompt"}
                 </Button>
                 <Button
                   className="bg-[#3A58F0] text-white hover:bg-[#2F4AD4]"
@@ -325,6 +378,26 @@ export function ScreenDetailPage({
               $150 lifetime
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={authOpen} onOpenChange={setAuthOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Sign in to copy the prompt</DialogTitle>
+            <DialogDescription>
+              Create a free account or sign in — then you can copy the AI prompt
+              for {entry.title}. Your weekly free copy applies after sign-in.
+            </DialogDescription>
+          </DialogHeader>
+          {firebaseReady ? (
+            <FirebaseSignInForm
+              showClearSession={false}
+              onSuccess={onAuthSuccess}
+            />
+          ) : (
+            <DemoEmailSignInForm onSuccess={onAuthSuccess} />
+          )}
         </DialogContent>
       </Dialog>
     </MarketingShell>

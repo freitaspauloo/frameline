@@ -67,6 +67,27 @@ export async function POST(request: NextRequest) {
 
     const { id: anonId, minted: mintAnon } = resolveAnonId(request);
 
+    if (copyPath === "prompt" && !email) {
+      await recordEvent({
+        name: "copy_blocked",
+        email: null,
+        anonId,
+        slug,
+        plan: "free",
+        source: "screen-detail",
+        request,
+        props: { path: copyPath, reason: "auth" },
+      });
+
+      const res = NextResponse.json({
+        ok: false,
+        reason: "auth" as const,
+        message: "Create an account or sign in to copy the prompt.",
+      });
+      if (mintAnon) attachAnonCookie(res, anonId);
+      return res;
+    }
+
     const owned = await ownsScreen(email, slug);
     let quota = ensureQuotaPayload(readQuotaCookie(request), anonId);
     // Prefer email-bound subject id when signed in so refresh can't reset week
