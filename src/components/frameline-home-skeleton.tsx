@@ -19,16 +19,8 @@ function NavLinkSkeleton() {
 
 function CatalogCardSkeleton() {
   return (
-    <div className="flex h-full min-h-[22rem] flex-col border border-border">
+    <div className="border border-border">
       <Skeleton className="aspect-[16/9] w-full rounded-none" />
-      <div className="space-y-3 border-t border-border p-7 sm:p-9">
-        <div className="flex items-center justify-between gap-3">
-          <Skeleton className="h-6 w-36 rounded-none" />
-          <Skeleton className="h-3 w-10 rounded-none" />
-        </div>
-        <Skeleton className="h-4 w-full rounded-none" />
-        <Skeleton className="h-4 w-4/5 rounded-none" />
-      </div>
     </div>
   );
 }

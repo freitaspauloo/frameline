@@ -220,6 +220,7 @@ export function MaterialsCatalogPage({
                 <Link
                   className="group block transition-colors hover:bg-muted/40"
                   href={`/materials/${screen.slug}`}
+                  aria-label={screen.title}
                 >
                   <div className="relative aspect-[16/9] overflow-hidden bg-[#140810]">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -237,19 +238,6 @@ export function MaterialsCatalogPage({
                       />
                     ) : null}
                   </div>
-                  <div className="space-y-2.5 border-t border-border p-6 sm:p-8 lg:p-10">
-                    <div className="flex items-center justify-between gap-3">
-                      <h2 className="font-heading text-base font-medium tracking-tight">
-                        {screen.title}
-                      </h2>
-                      <span className="shrink-0 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                        Screen
-                      </span>
-                    </div>
-                    <p className="text-sm leading-relaxed text-muted-foreground">
-                      {screen.blurb}
-                    </p>
-                  </div>
                 </Link>
               </MarketingRuledCell>
             ))}
@@ -258,22 +246,10 @@ export function MaterialsCatalogPage({
                 <Link
                   className="group block transition-colors hover:bg-muted/40"
                   href={`/materials/${entry.slug}`}
+                  aria-label={entry.title}
                 >
                   <div className="relative aspect-[16/10] overflow-hidden bg-foreground">
                     <MaterialPreview entry={entry} />
-                  </div>
-                  <div className="space-y-2.5 border-t border-border p-6 sm:p-8 lg:p-10">
-                    <div className="flex items-center justify-between gap-3">
-                      <h2 className="font-heading text-base font-medium tracking-tight">
-                        {entry.title}
-                      </h2>
-                      <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                        {(entry.renderingTechnique ?? "webgl").toUpperCase()}
-                      </span>
-                    </div>
-                    <p className="text-sm leading-relaxed text-muted-foreground">
-                      {entry.description}
-                    </p>
                   </div>
                 </Link>
               </MarketingRuledCell>

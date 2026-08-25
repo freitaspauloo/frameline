@@ -248,9 +248,10 @@ export function FramelineHomePageV2() {
                 {listScreens().map((screen) => (
                   <Link
                     key={screen.slug}
-                    className="group flex h-full min-h-[22rem] flex-col border border-border transition-colors hover:bg-muted/40"
+                    className="group block border border-border transition-colors hover:bg-muted/40"
                     data-reveal
                     href={`/materials/${screen.slug}`}
+                    aria-label={screen.title}
                   >
                     <div className="relative aspect-[16/9] overflow-hidden bg-foreground">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -265,19 +266,6 @@ export function FramelineHomePageV2() {
                           className="absolute inset-0 bg-[#d600bf] mix-blend-color"
                         />
                       ) : null}
-                    </div>
-                    <div className="space-y-3 border-t border-border p-7 sm:p-9">
-                      <div className="flex items-center justify-between gap-3">
-                        <h3 className="font-heading text-lg font-medium tracking-tight sm:text-xl">
-                          {screen.title}
-                        </h3>
-                        <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                          Screen
-                        </span>
-                      </div>
-                      <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-                        {screen.blurb}
-                      </p>
                     </div>
                   </Link>
                 ))}

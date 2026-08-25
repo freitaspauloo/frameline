@@ -38,6 +38,7 @@ export default function ScreensIndexPage() {
               <Link
                 className="group block transition-colors hover:bg-muted/40"
                 href={`/screens/${screen.slug}`}
+                aria-label={screen.title}
               >
                 <div className="relative aspect-[16/9] overflow-hidden bg-[#140810]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -52,19 +53,6 @@ export default function ScreensIndexPage() {
                       className="absolute inset-0 bg-[#d600bf] mix-blend-color"
                     />
                   ) : null}
-                </div>
-                <div className="space-y-2 border-t border-border p-6 sm:p-8">
-                  <div className="flex items-center justify-between gap-3">
-                    <h2 className="font-heading text-lg font-medium tracking-tight sm:text-xl">
-                      {screen.title}
-                    </h2>
-                    <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                      {screen.priceLabel}
-                    </span>
-                  </div>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {screen.blurb}
-                  </p>
                 </div>
               </Link>
             </MarketingRuledCell>
