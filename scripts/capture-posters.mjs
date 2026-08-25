@@ -23,6 +23,12 @@ const SETTLE_MS = 4000;
 
 const CHROME_CANDIDATES = [
   process.env.CHROME_PATH,
+  process.platform === "win32"
+    ? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+    : null,
+  process.platform === "win32"
+    ? "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
+    : null,
   "/opt/google/chrome/chrome",
   "/usr/bin/google-chrome-stable",
   "/usr/bin/chromium",
