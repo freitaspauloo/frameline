@@ -9,8 +9,57 @@ const SCREEN = {
 /**
  * Storefront catalog — Reticle landing pages.
  * Layout slugs and old product slugs stay as aliases.
+ *
+ * Order: newest screens first (prepend new entries at the top).
  */
 export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
+  {
+    ...SCREEN,
+    slug: "softwave",
+    title: "Softwave Hero",
+    description:
+      "Vintage desktop hero — bliss hill video, pixel headline, glass pill nav, and analog-warmth copy.",
+    blurb: "Bliss hill · pixel headline · glass pills",
+    poster: "/screens/softwave/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "softwave-features",
+    title: "Softwave Feature Cards",
+    description:
+      "Four-up ML ops cards — hover captions, drifting art, and Geist Pixel titles on a light canvas.",
+    blurb: "Four cards · hover captions · drifting art",
+    poster: "/screens/softwave-features/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "bridge-dither",
+    title: "Bridge Dither",
+    description:
+      "Warm bridge dither art hero — interactive canvas, progressive blur edges, and GSAP headline reveal.",
+    blurb: "Bridge dither · progressive blur · clip headline",
+    poster: "/screens/bridge-dither/poster.png",
+    aliases: ["oasis-hero"],
+  },
+  {
+    ...SCREEN,
+    slug: "mexin-hero",
+    title: "Mexin Hero",
+    description:
+      "Floating pill nav hero — light canvas, magenta color-blend over abstract art, fab wordmarks.",
+    blurb: "Pill nav · magenta blend · fab logos",
+    poster: "/screens/mexin-hero/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "miracle-login",
+    title: "Miracle Login",
+    description:
+      "Split-panel sign-in — magenta-tinted cover art, Reticle chrome, and GSAP panel entrance.",
+    blurb: "Split panel · magenta art · sign-in form",
+    poster: "/screens/miracle-login/poster.png",
+    aliases: ["reticle-login"],
+  },
   {
     ...SCREEN,
     slug: "dark-pill-hero",
@@ -130,53 +179,6 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     blurb: "ASCII art · magenta blend · cursor decay",
     poster: "/screens/ascii-hero/poster.webp",
     aliases: ["axion-hero", "reticle-ascii-hero"],
-  },
-  {
-    ...SCREEN,
-    slug: "softwave",
-    title: "Softwave Hero",
-    description:
-      "Vintage desktop hero — bliss hill video, pixel headline, glass pill nav, and analog-warmth copy.",
-    blurb: "Bliss hill · pixel headline · glass pills",
-    poster: "/screens/softwave/poster.png",
-  },
-  {
-    ...SCREEN,
-    slug: "softwave-features",
-    title: "Softwave Feature Cards",
-    description:
-      "Four-up ML ops cards — hover captions, drifting art, and Geist Pixel titles on a light canvas.",
-    blurb: "Four cards · hover captions · drifting art",
-    poster: "/screens/softwave-features/poster.png",
-  },
-  {
-    ...SCREEN,
-    slug: "bridge-dither",
-    title: "Bridge Dither",
-    description:
-      "Warm bridge dither art hero — interactive canvas, progressive blur edges, and GSAP headline reveal.",
-    blurb: "Bridge dither · progressive blur · clip headline",
-    poster: "/screens/bridge-dither/poster.png",
-    aliases: ["oasis-hero"],
-  },
-  {
-    ...SCREEN,
-    slug: "mexin-hero",
-    title: "Mexin Hero",
-    description:
-      "Floating pill nav hero — light canvas, magenta color-blend over abstract art, fab wordmarks.",
-    blurb: "Pill nav · magenta blend · fab logos",
-    poster: "/screens/mexin-hero/poster.png",
-  },
-  {
-    ...SCREEN,
-    slug: "miracle-login",
-    title: "Miracle Login",
-    description:
-      "Split-panel sign-in — magenta-tinted cover art, Reticle chrome, and GSAP panel entrance.",
-    blurb: "Split panel · magenta art · sign-in form",
-    poster: "/screens/miracle-login/poster.png",
-    aliases: ["reticle-login"],
   },
 ];
 

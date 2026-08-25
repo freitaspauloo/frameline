@@ -1,0 +1,13 @@
+---
+description: New storefront assets appear first in catalog arrays
+alwaysApply: true
+---
+
+# Catalog order
+
+When adding new items to a public storefront catalog, **prepend at the top** of the array (newest first).
+
+- **Screens:** `src/screens/catalog.ts` → `SCREENS_CATALOG`
+- **Materials:** `src/materials/catalog.ts` → `MATERIALS_CATALOG`
+
+Homepage grids, rotation strips, and `/screens` / `/materials` listings use array order as display order. Never append new shipped assets to the bottom.
