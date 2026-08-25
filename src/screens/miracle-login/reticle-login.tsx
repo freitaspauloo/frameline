@@ -9,6 +9,7 @@ import type { CSSProperties } from "react";
 import { useReducedMotion } from "@/components/motion/use-reduced-motion";
 import { cn } from "@/lib/utils";
 import { ReticleMark } from "@/screens/reticle-mark";
+import { ScreenStage } from "@/screens/stage";
 
 export const RETICLE_LOGIN_ART = "/screens/miracle-login/cover.png";
 
@@ -17,7 +18,13 @@ export const RETICLE_MAGENTA = "#D600BF";
 /**
  * Reticle sign-in — split panel, magenta-tinted art, GSAP entrance.
  */
-export function ReticleLoginPage({ className }: { className?: string }) {
+export function ReticleLoginPage({
+  className,
+  embed = false,
+}: {
+  className?: string;
+  embed?: boolean;
+}) {
   const scope = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
   const [artReady, setArtReady] = useState(false);
@@ -151,15 +158,15 @@ export function ReticleLoginPage({ className }: { className?: string }) {
   );
 
   return (
-    <section
-      ref={scope}
-      className={cn(
-        GeistSans.className,
-        "flex min-h-dvh w-full bg-[#10121c] font-normal text-white antialiased",
-        className,
-      )}
-    >
-      <div className="relative flex min-h-dvh w-full items-stretch overflow-hidden bg-[#10121c]">
+    <ScreenStage embed={embed} background="#10121c" className={className}>
+      <section
+        ref={scope}
+        className={cn(
+          GeistSans.className,
+          "flex h-full w-full bg-[#10121c] font-normal text-white antialiased",
+        )}
+      >
+      <div className="relative flex h-full w-full items-stretch overflow-hidden bg-[#10121c]">
         {/* Left — form */}
         <div className="relative flex min-h-0 w-full min-w-0 flex-1 flex-col md:w-1/2 md:flex-none lg:w-1/2">
           <div className="rl-brand flex shrink-0 justify-center bg-black pt-8 sm:pt-10 lg:pt-[62px]">
@@ -279,7 +286,8 @@ export function ReticleLoginPage({ className }: { className?: string }) {
           </div>
         </div>
       </div>
-    </section>
+      </section>
+    </ScreenStage>
   );
 }
 

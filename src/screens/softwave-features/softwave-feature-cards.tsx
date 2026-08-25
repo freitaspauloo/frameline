@@ -7,6 +7,7 @@ import { useRef } from "react";
 
 import { useHoverCapable } from "@/hooks/use-hover-capable";
 import { useReducedMotion } from "@/components/motion/use-reduced-motion";
+import { ScreenStage } from "@/screens/stage";
 import { cn } from "@/lib/utils";
 
 import {
@@ -324,8 +325,14 @@ function FeatureCard({
   );
 }
 
-/** Softwave feature cards — dev preview only, not wired into Frameline catalog. */
-export function SoftwaveFeatureCards({ className }: { className?: string }) {
+/** Softwave feature cards — four-up grid on a 1920×1080 stage. */
+export function SoftwaveFeatureCards({
+  className,
+  embed = false,
+}: {
+  className?: string;
+  embed?: boolean;
+}) {
   const gridRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
 
@@ -344,15 +351,17 @@ export function SoftwaveFeatureCards({ className }: { className?: string }) {
   );
 
   return (
-    <section
-      className={cn(styles.root, GeistSans.className, className)}
-      aria-label="Softwave features"
-    >
-      <div ref={gridRef} className={styles.grid} data-swfc-grid>
-        {SOFTWAVE_FEATURE_CARDS.map((card, index) => (
-          <FeatureCard key={card.number} card={card} index={index} />
-        ))}
-      </div>
-    </section>
+    <ScreenStage embed={embed} background="#050608" className={className}>
+      <section
+        className={cn(styles.root, GeistSans.className)}
+        aria-label="Softwave features"
+      >
+        <div ref={gridRef} className={styles.grid} data-swfc-grid>
+          {SOFTWAVE_FEATURE_CARDS.map((card, index) => (
+            <FeatureCard key={card.number} card={card} index={index} />
+          ))}
+        </div>
+      </section>
+    </ScreenStage>
   );
 }

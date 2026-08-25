@@ -60,7 +60,7 @@
 .mx-hero-skeleton .mx-skel-root {
   position: relative;
   display: flex;
-  min-height: 100dvh;
+  min-height: 100%;
   width: 100%;
   flex-direction: column;
   overflow: hidden;

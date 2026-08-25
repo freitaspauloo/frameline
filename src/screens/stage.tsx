@@ -6,13 +6,17 @@ import { cn } from "@/lib/utils";
 
 import styles from "./stage.module.css";
 
+/** Canonical storefront plate — posters and catalog thumbs are always 16:9. */
+export const SCREEN_STAGE_WIDTH = 1920;
+export const SCREEN_STAGE_HEIGHT = 1080;
+
 export function ScreenStage({
   background,
   children,
   className,
   embed = false,
-  height = 1080,
-  width = 1920,
+  height = SCREEN_STAGE_HEIGHT,
+  width = SCREEN_STAGE_WIDTH,
 }: {
   background?: string;
   children: ReactNode;

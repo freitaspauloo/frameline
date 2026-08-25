@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import { GeistSans } from "geist/font/sans";
 
 import { cn } from "@/lib/utils";
+import { ScreenStage } from "@/screens/stage";
 
 import "./reticle-login-skeleton.css";
 
@@ -26,18 +27,24 @@ function Bone({
   );
 }
 
-export function ReticleLoginSkeleton({ className }: { className?: string }) {
+export function ReticleLoginSkeleton({
+  className,
+  embed = false,
+}: {
+  className?: string;
+  embed?: boolean;
+}) {
   return (
-    <section
-      className={cn(
-        GeistSans.className,
-        "fl-reticle-login-skeleton flex min-h-dvh w-full bg-[#10121c] font-normal text-white antialiased",
-        className,
-      )}
-      aria-busy="true"
-      aria-label="Loading Reticle sign in"
-    >
-      <div className="relative flex min-h-dvh w-full items-stretch overflow-hidden">
+    <ScreenStage embed={embed} background="#10121c" className={className}>
+      <section
+        className={cn(
+          GeistSans.className,
+          "fl-reticle-login-skeleton flex h-full w-full bg-[#10121c] font-normal text-white antialiased",
+        )}
+        aria-busy="true"
+        aria-label="Loading Reticle sign in"
+      >
+      <div className="relative flex h-full w-full items-stretch overflow-hidden">
         {/* Left — form bones */}
         <div className="relative flex min-h-0 w-full min-w-0 flex-1 flex-col md:w-1/2 md:flex-none lg:w-1/2">
           <div className="flex shrink-0 justify-center pt-8 sm:pt-10 lg:pt-[62px]">
@@ -84,6 +91,7 @@ export function ReticleLoginSkeleton({ className }: { className?: string }) {
           </div>
         </div>
       </div>
-    </section>
+      </section>
+    </ScreenStage>
   );
 }

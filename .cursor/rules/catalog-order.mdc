@@ -11,3 +11,13 @@ When adding new items to a public storefront catalog, **prepend at the top** of 
 - **Materials:** `src/materials/catalog.ts` → `MATERIALS_CATALOG`
 
 Homepage grids, rotation strips, and `/screens` / `/materials` listings use array order as display order. Never append new shipped assets to the bottom.
+
+## Poster aspect (16:9)
+
+Catalog thumbnails and screen posters are **always 1920×1080 (16:9)**.
+
+- **Stage plate:** `SCREEN_STAGE_WIDTH` / `SCREEN_STAGE_HEIGHT` in `src/screens/stage.tsx`
+- **Capture:** `pnpm posters` → `scripts/capture-posters.mjs` (never resize viewport away from 16:9)
+- **Display:** catalog tiles use `aspect-[16/9]` + `object-cover` — posters must match or content gets cropped
+- **New screens:** render inside `ScreenStage` (or fixed 1920×1080 layout). Avoid `100dvh` on the root when `embed` — use `h-full min-h-0` so detail previews and posters match the plate
+- After shipping, run `pnpm posters [slug...]` and commit the PNGs under `public/screens/<slug>/poster.png`

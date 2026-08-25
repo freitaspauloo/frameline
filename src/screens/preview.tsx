@@ -59,13 +59,13 @@ export function ScreenLivePreview({
     case "softwave":
       return <Softwave className="h-full w-full" embed={embed} />;
     case "softwave-features":
-      return <SoftwaveFeatureCards className="h-full w-full" />;
+      return <SoftwaveFeatureCards className="h-full w-full" embed={embed} />;
     case "bridge-dither":
-      return <BridgeDither className="h-full w-full" />;
+      return <BridgeDither className="h-full w-full" embed={embed} />;
     case "mexin-hero":
-      return <MexinHero className="h-full w-full" />;
+      return <MexinHero className="h-full w-full" embed={embed} />;
     case "miracle-login":
-      return <ReticleLoginPage className="h-full w-full" />;
+      return <ReticleLoginPage className="h-full w-full" embed={embed} />;
     case "yield-skeleton":
       return <YieldSkeleton embed={embed} />;
     case "features-skeleton":
@@ -79,13 +79,13 @@ export function ScreenLivePreview({
     case "softwave-skeleton":
       return <SoftwaveSkeleton className="h-full w-full" embed={embed} />;
     case "softwave-features-skeleton":
-      return <SoftwaveFeatureCardsSkeleton className="h-full w-full" />;
+      return <SoftwaveFeatureCardsSkeleton className="h-full w-full" embed={embed} />;
     case "bridge-dither-skeleton":
-      return <BridgeDitherSkeleton className="h-full w-full" />;
+      return <BridgeDitherSkeleton className="h-full w-full" embed={embed} />;
     case "mexin-hero-skeleton":
-      return <MexinHeroSkeleton className="h-full w-full" />;
+      return <MexinHeroSkeleton className="h-full w-full" embed={embed} />;
     case "miracle-login-skeleton":
-      return <ReticleLoginSkeleton className="h-full w-full" />;
+      return <ReticleLoginSkeleton className="h-full w-full" embed={embed} />;
     default:
       return <div className="absolute inset-0 bg-muted" />;
   }

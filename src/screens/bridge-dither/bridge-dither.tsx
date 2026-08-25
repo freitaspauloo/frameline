@@ -8,6 +8,7 @@ import { GeistPixelSquare } from "geist/font/pixel";
 
 import { useReducedMotion } from "@/components/motion/use-reduced-motion";
 import { ReticleMark } from "@/screens/reticle-mark";
+import { ScreenStage } from "@/screens/stage";
 import { cn } from "@/lib/utils";
 
 import { DitherField } from "./dither-field";
@@ -65,7 +66,7 @@ export type BridgeDitherProps = {
 };
 
 /** Bridge Dither — warm dither art hero with progressive blur edges and GSAP entrance. */
-export function BridgeDither({ className }: BridgeDitherProps) {
+export function BridgeDither({ className, embed = false }: BridgeDitherProps) {
   const scope = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
   const [artReady, setArtReady] = useState(false);
@@ -144,14 +145,14 @@ export function BridgeDither({ className }: BridgeDitherProps) {
   );
 
   return (
-    <section
-      ref={scope}
-      className={cn(
-        inter.className,
-        "relative h-dvh min-h-dvh w-full overflow-hidden bg-white text-zinc-950 antialiased",
-        className,
-      )}
-    >
+    <ScreenStage embed={embed} background="#ffffff" className={className}>
+      <section
+        ref={scope}
+        className={cn(
+          inter.className,
+          "relative h-full w-full overflow-hidden bg-white text-zinc-950 antialiased",
+        )}
+      >
         <div className="oasis-dither absolute inset-0 z-0">
           <DitherField
             src={BRIDGE_SRC}
@@ -162,7 +163,7 @@ export function BridgeDither({ className }: BridgeDitherProps) {
           />
         </div>
 
-        <div className="pointer-events-none absolute inset-0 z-10 flex min-h-dvh w-full flex-col">
+        <div className="pointer-events-none absolute inset-0 z-10 flex h-full w-full flex-col">
           <ProgressiveBlurEdge
             edge="top"
             className="h-[min(68vh,34rem)] sm:h-[min(62vh,36rem)] lg:h-[min(58vh,40rem)]"
@@ -235,6 +236,7 @@ export function BridgeDither({ className }: BridgeDitherProps) {
             </h1>
         </div>
       </div>
-    </section>
+      </section>
+    </ScreenStage>
   );
 }

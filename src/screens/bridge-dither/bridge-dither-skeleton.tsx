@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import { Inter } from "next/font/google";
 
 import { cn } from "@/lib/utils";
+import { ScreenStage } from "@/screens/stage";
 
 import { NAV_LINKS } from "./constants";
 import "./bridge-dither-skeleton.css";
@@ -32,17 +33,23 @@ function Bone({
   );
 }
 
-export function BridgeDitherSkeleton({ className }: { className?: string }) {
+export function BridgeDitherSkeleton({
+  className,
+  embed = false,
+}: {
+  className?: string;
+  embed?: boolean;
+}) {
   return (
-    <section
-      className={cn(
-        inter.className,
-        "fl-oasis-skeleton relative h-dvh min-h-dvh w-full overflow-hidden bg-white text-zinc-950 antialiased",
-        className,
-      )}
-      aria-busy="true"
-      aria-label="Loading Reticle hero"
-    >
+    <ScreenStage embed={embed} background="#ffffff" className={className}>
+      <section
+        className={cn(
+          inter.className,
+          "fl-oasis-skeleton relative h-full w-full overflow-hidden bg-white text-zinc-950 antialiased",
+        )}
+        aria-busy="true"
+        aria-label="Loading Reticle hero"
+      >
       <div className="dither-skel" aria-hidden>
         <div className="dither-skel-grid" />
         <div className="dither-skel-sweep" />
@@ -51,7 +58,7 @@ export function BridgeDitherSkeleton({ className }: { className?: string }) {
       <div className="fade-top" aria-hidden />
       <div className="fade-bottom" aria-hidden />
 
-      <div className="relative z-10 flex min-h-dvh w-full flex-col">
+      <div className="relative z-10 flex h-full w-full flex-col">
         <header className="relative z-20 px-4 py-4 sm:px-8 sm:py-5 lg:px-10 lg:py-6">
           <div className="mx-auto flex w-full max-w-[1180px] items-center justify-between gap-3 sm:gap-4">
             <div className="flex min-w-0 items-center gap-4 sm:gap-6 md:gap-8">
@@ -88,6 +95,7 @@ export function BridgeDitherSkeleton({ className }: { className?: string }) {
           </div>
         </div>
       </div>
-    </section>
+      </section>
+    </ScreenStage>
   );
 }

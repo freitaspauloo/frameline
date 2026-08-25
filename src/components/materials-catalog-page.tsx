@@ -221,7 +221,7 @@ export function MaterialsCatalogPage({
                   className="group block transition-colors hover:bg-muted/40"
                   href={`/materials/${screen.slug}`}
                 >
-                  <div className="relative aspect-[16/10] overflow-hidden bg-[#140810]">
+                  <div className="relative aspect-[16/9] overflow-hidden bg-[#140810]">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       alt=""

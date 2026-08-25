@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import type { CSSProperties } from "react";
 
 import { cn } from "@/lib/utils";
+import { ScreenStage } from "@/screens/stage";
 
 import "./mexin-hero-skeleton.css";
 
@@ -22,9 +23,16 @@ function Bone({
   );
 }
 
-export function MexinHeroSkeleton({ className }: { className?: string }) {
+export function MexinHeroSkeleton({
+  className,
+  embed = false,
+}: {
+  className?: string;
+  embed?: boolean;
+}) {
   return (
-    <div className={cn("mx-hero-skeleton", GeistSans.className, className)}>
+    <ScreenStage embed={embed} background="#f7f4f1" className={className}>
+      <div className={cn("mx-hero-skeleton h-full w-full", GeistSans.className)}>
       <div
         className="mx-skel-root"
         aria-busy="true"
@@ -66,6 +74,7 @@ export function MexinHeroSkeleton({ className }: { className?: string }) {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </ScreenStage>
   );
 }

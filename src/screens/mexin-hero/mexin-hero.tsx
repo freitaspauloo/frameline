@@ -6,6 +6,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { ReticleMark } from "@/screens/reticle-mark";
+import { ScreenStage } from "@/screens/stage";
 
 const HERO_BG = "/screens/mexin-hero/hero-bg.png";
 const HERO_BG_FALLBACK = "/screens/mexin-hero/hero-bg.png";
@@ -19,7 +20,13 @@ const RETICLE_MAGENTA = "#D600BF";
 /**
  * Reticle floating nav hero — light canvas, pill nav, magenta color-blend over abstract art.
  */
-export function MexinHero({ className }: { className?: string }) {
+export function MexinHero({
+  className,
+  embed = false,
+}: {
+  className?: string;
+  embed?: boolean;
+}) {
   const rootRef = useRef<HTMLElement>(null);
   const [bgSrc, setBgSrc] = useState(HERO_BG);
 
@@ -60,14 +67,14 @@ export function MexinHero({ className }: { className?: string }) {
   }, []);
 
   return (
-    <section
-      ref={rootRef}
-      className={cn(
-        GeistSans.className,
-        "relative flex min-h-dvh w-full flex-col overflow-hidden bg-[#f7f4f1] text-[#1a1a1a] antialiased",
-        className,
-      )}
-    >
+    <ScreenStage embed={embed} background="#f7f4f1" className={className}>
+      <section
+        ref={rootRef}
+        className={cn(
+          GeistSans.className,
+          "relative flex h-full w-full flex-col overflow-hidden bg-[#f7f4f1] text-[#1a1a1a] antialiased",
+        )}
+      >
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         {/* eslint-disable-next-line @next/next/no-img-element -- remote marketing hero art */}
         <img
@@ -219,7 +226,8 @@ export function MexinHero({ className }: { className?: string }) {
           `,
         }}
       />
-    </section>
+      </section>
+    </ScreenStage>
   );
 }
 

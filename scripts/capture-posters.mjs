@@ -4,11 +4,11 @@
  *   pnpm dev                     # in another shell
  *   pnpm posters [slug...]
  *
- * Each screen draws on its own ScreenStage, so the viewport is resized to that
- * stage's natural size (scale 1) and only the stage element is shot. Entrances
- * are GSAP timelines, so the shot waits for them to finish in real time.
+ * Posters are always 1920×1080 (16:9). The viewport stays locked to that size;
+ * ScreenStage scales each screen plate to fit. Do not resize the viewport to
+ * non–16:9 stage dimensions — catalog tiles assume 16:9 and use object-cover.
  */
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -17,6 +17,10 @@ import { chromium } from "playwright-core";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const port = process.env.PORT ?? "3000";
 const baseUrl = process.env.POSTER_BASE_URL ?? `http://localhost:${port}`;
+
+/** Catalog poster plate — must match SCREEN_STAGE_WIDTH/HEIGHT in stage.tsx. */
+const POSTER_WIDTH = 1920;
+const POSTER_HEIGHT = 1080;
 
 /** Longest screen entrance is ~1.5s; leave headroom for shader first paint. */
 const SETTLE_MS = 4000;
@@ -45,7 +49,13 @@ const POSTER_DIRS = {
 };
 
 const DEFAULT_SLUGS = [
+  "softwave",
+  "softwave-features",
+  "bridge-dither",
+  "mexin-hero",
+  "miracle-login",
   "dark-pill-hero",
+  "ascii-hero",
   "orb",
   "feature-cards",
   "insights",
@@ -56,12 +66,6 @@ const DEFAULT_SLUGS = [
   "spaceman-moon",
   "light-rays",
   "prompt-bar",
-  "ascii-hero",
-  "softwave",
-  "softwave-features",
-  "bridge-dither",
-  "mexin-hero",
-  "miracle-login",
 ];
 
 function resolveChrome() {
@@ -74,13 +78,18 @@ function resolveChrome() {
   return found;
 }
 
+function readPngSize(filePath) {
+  const buf = readFileSync(filePath);
+  return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
+}
+
 async function capture(browser, slug) {
   const dir = POSTER_DIRS[slug] ?? slug;
   const out = join(root, "public", "screens", dir, "poster.png");
   mkdirSync(dirname(out), { recursive: true });
 
   const page = await browser.newPage({
-    viewport: { width: 1920, height: 1080 },
+    viewport: { width: POSTER_WIDTH, height: POSTER_HEIGHT },
     deviceScaleFactor: 1,
   });
 
@@ -90,30 +99,20 @@ async function capture(browser, slug) {
       timeout: 60_000,
     });
 
-    const stage = page.locator(".stage").first();
-    const staged = await stage
-      .waitFor({ state: "visible", timeout: 10_000 })
-      .then(() => true)
-      .catch(() => false);
-
-    if (staged) {
-      // A stage is a fixed-size plate scaled to fit; match it so scale is 1:1.
-      const size = await stage.evaluate((el) => ({
-        width: el.offsetWidth,
-        height: el.offsetHeight,
-      }));
-      await page.setViewportSize(size);
-    }
-
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(SETTLE_MS);
 
-    // The viewport now matches the stage exactly, and screens without a stage
-    // (spaceman-moon) fill it — so shoot the page and skip Playwright's
-    // element-stability wait, which never settles on looping screens.
+    // Always shoot the locked 16:9 viewport — never match a taller stage plate.
     await page.screenshot({ path: out, animations: "allow" });
   } finally {
     await page.close();
+  }
+
+  const { width, height } = readPngSize(out);
+  if (width !== POSTER_WIDTH || height !== POSTER_HEIGHT) {
+    throw new Error(
+      `${slug}: expected ${POSTER_WIDTH}×${POSTER_HEIGHT}, got ${width}×${height}`,
+    );
   }
 
   return { out, dir };
