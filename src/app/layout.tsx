@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Instrument_Serif, Inter, Syne } from "next/font/google";
-import { GeistPixelCircle, GeistPixelSquare } from "geist/font/pixel";
+import { GeistPixelCircle, GeistPixelLine, GeistPixelSquare } from "geist/font/pixel";
 import { Analytics } from "@/components/analytics";
 import { SiteAnalyticsBoundary } from "@/components/site-analytics-boundary";
 import { CopiesQuotaProvider } from "@/components/copies-quota-widget";
@@ -76,6 +76,7 @@ export default function RootLayout({
         syne.variable,
         GeistPixelSquare.variable,
         GeistPixelCircle.variable,
+        GeistPixelLine.variable,
         "font-sans",
       )}
       lang="en"

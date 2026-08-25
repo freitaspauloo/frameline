@@ -1,0 +1,552 @@
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("/fonts/manrope-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:global(html.softwave-active),
+:global(body.softwave-active) {
+  width: 100%;
+  height: auto;
+  min-height: 100%;
+  overflow: auto;
+  overflow-x: hidden;
+  background: #4a8fd4;
+}
+
+.root {
+  --sw-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --sw-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --sw-radius: 0;
+  --sw-blue: #5475b8;
+  --sw-blue-hover: #3d5f9e;
+  --sw-lift: -2px;
+  --sw-shadow: 0 10px 28px rgba(16, 36, 72, 0.22);
+  --sw-shadow-soft: 0 6px 18px rgba(16, 36, 72, 0.14);
+  position: relative;
+  display: flex;
+  min-height: 100dvh;
+  width: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  background: #4a8fd4;
+  color: #fff;
+  font-family: "Manrope", var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-synthesis: none;
+}
+
+.rootEmbed {
+  min-height: 100%;
+  height: 100%;
+}
+
+.root a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.media {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.heroFrame {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 150%;
+  min-width: 100%;
+  height: 130%;
+  min-height: 100%;
+  transform: translateX(-50%);
+  transform-origin: center bottom;
+  overflow: hidden;
+}
+
+.heroStage {
+  position: absolute;
+  inset: 0;
+  transform-origin: center bottom;
+}
+
+.heroPoster,
+.heroVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+}
+
+.heroVideo {
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 1s var(--sw-ease-out);
+}
+
+.heroVideoReady {
+  opacity: 1;
+}
+
+.shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.14) 50%,
+    transparent 62%
+  );
+  background-size: 220% 100%;
+  mix-blend-mode: soft-light;
+  opacity: 0.55;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.08) 0%,
+    transparent 35%,
+    rgba(0, 0, 0, 0.12) 100%
+  );
+}
+
+.header {
+  position: relative;
+  z-index: 30;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 24px 0;
+}
+
+.navBar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  border-radius: var(--sw-radius);
+  padding: 6px 6px 6px 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.2) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  transition: opacity 0.25s var(--sw-ease-out);
+}
+
+.mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-geist-pixel-circle), "Geist Pixel Circle", system-ui, sans-serif;
+  font-size: 25px;
+  line-height: 1;
+  transform: rotate(90deg);
+  transition: transform 0.35s var(--sw-ease-out);
+}
+
+.navLinks {
+  display: none;
+  align-items: center;
+  gap: 24px;
+}
+
+.navLink {
+  display: inline-block;
+  font-size: 13px;
+  letter-spacing: -0.04em;
+  opacity: 0.82;
+  padding: 4px 2px;
+}
+
+.navLinkClip {
+  display: block;
+  overflow: hidden;
+  height: 1.35em;
+}
+
+.navLinkStack {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+}
+
+.navLinkLine {
+  display: block;
+  line-height: 1.35;
+  height: 1.35em;
+}
+
+.navEnd {
+  display: flex;
+  align-items: center;
+}
+
+.glassBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--sw-radius);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  transition:
+    transform 0.22s var(--sw-ease-out),
+    background-color 0.22s var(--sw-ease-out),
+    border-color 0.22s var(--sw-ease-out),
+    box-shadow 0.22s var(--sw-ease-out),
+    color 0.22s var(--sw-ease-out);
+}
+
+.glassBtn:active,
+.actions .btnPrimary:active,
+.pinChip:active,
+.mobileChip:active {
+  transform: translateY(0);
+}
+
+.copy {
+  position: relative;
+  z-index: 20;
+  margin-inline: auto;
+  display: flex;
+  width: 100%;
+  max-width: 64rem;
+  flex-direction: column;
+  align-items: center;
+  padding: calc(80px + 10vh) 32px 0;
+  text-align: center;
+  perspective: 900px;
+}
+
+.headline {
+  margin: 0;
+  max-width: 990px;
+  font-family: var(--font-geist-pixel-line), "Geist Pixel Line", system-ui, sans-serif;
+  font-size: clamp(2.2rem, 4.62vw, 3.575rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 0.32em;
+  row-gap: 0.1em;
+}
+
+.textWordMask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.1em;
+}
+
+.headlineWord {
+  display: inline-block;
+  transform-origin: 50% 100%;
+  will-change: transform, opacity, filter;
+}
+
+.lede {
+  margin: 15px 0 0;
+  max-width: 680px;
+  font-size: 17.6px;
+  line-height: 150%;
+  letter-spacing: -0.04em;
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 0.28em;
+  row-gap: 0.08em;
+}
+
+.ledeWord {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+}
+
+.actions {
+  position: relative;
+  z-index: 20;
+  margin-top: 26px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+}
+
+.btnGhost {
+  composes: glassBtn;
+  padding: 11px 22px;
+  font-size: 14px;
+  font-family: var(--font-heading), "Geist", system-ui, sans-serif;
+}
+
+.actions .btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border-radius: var(--sw-radius);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #fff;
+  padding: 11px 22px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--sw-blue);
+  font-family: var(--font-heading), "Geist", system-ui, sans-serif;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.65) inset;
+  transition:
+    transform 0.22s var(--sw-ease-out),
+    background-color 0.22s var(--sw-ease-out),
+    border-color 0.22s var(--sw-ease-out),
+    color 0.22s var(--sw-ease-out),
+    box-shadow 0.22s var(--sw-ease-out);
+}
+
+.actions .btnPrimary svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  transition: transform 0.22s var(--sw-ease-out);
+}
+
+.trusted {
+  position: relative;
+  z-index: 20;
+  margin-top: 82px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.trustedLabel {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.logos {
+  margin: 12px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+}
+
+.logos svg {
+  flex-shrink: 0;
+  opacity: 0.55;
+}
+
+.pins {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: none;
+}
+
+.pin {
+  pointer-events: auto;
+  position: absolute;
+  bottom: 8%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform-origin: bottom center;
+  will-change: transform;
+}
+
+.pinTall {
+  height: 28%;
+}
+
+.pinShort {
+  height: 15%;
+}
+
+.pinChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  border-radius: var(--sw-radius);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 10px 15px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.pinChip svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.pinLine {
+  width: 1px;
+  flex: 1;
+  transform-origin: top center;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.25), transparent);
+}
+
+.mobileChips {
+  position: relative;
+  z-index: 10;
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px 16px 32px;
+}
+
+.mobileChip {
+  composes: pinChip;
+  padding: 8px 12px;
+  font-size: 11.5px;
+}
+
+.motionToggleWrap {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  z-index: 25;
+  transform: translateX(-50%);
+  pointer-events: auto;
+}
+
+.motionToggle {
+  composes: pinChip;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.motionToggle svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.motionPaused .shimmer {
+  animation: none !important;
+}
+
+@keyframes sw-shimmer {
+  0% { background-position: 120% 0; }
+  100% { background-position: -120% 0; }
+}
+
+.motionReady .shimmer {
+  animation: sw-shimmer 8s ease-in-out 1.2s infinite;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .brand:hover {
+    opacity: 0.82;
+  }
+
+  .brand:hover .mark {
+    transform: rotate(90deg) scale(1.08);
+  }
+
+  .glassBtn:hover,
+  .btnGhost:hover {
+    transform: translateY(var(--sw-lift));
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.42);
+    box-shadow: var(--sw-shadow-soft);
+  }
+
+  .actions .btnPrimary:hover {
+    transform: translateY(var(--sw-lift));
+    background: #f4f7ff;
+    border-color: rgba(255, 255, 255, 0.65);
+    color: var(--sw-blue-hover);
+    box-shadow: var(--sw-shadow);
+  }
+
+  .actions .btnPrimary:hover svg {
+    transform: translate(2px, -2px);
+  }
+}
+
+.glassBtn:focus-visible,
+.btnGhost:focus-visible,
+.actions .btnPrimary:focus-visible,
+.navLink:focus-visible,
+.brand:focus-visible,
+.pinChip:focus-visible,
+.mobileChip:focus-visible,
+.motionToggle:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.88);
+  outline-offset: 2px;
+}
+
+@media (min-width: 768px) {
+  .navLinks {
+    display: flex;
+  }
+
+  .pins {
+    display: block;
+  }
+
+  .mobileChips {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .motionToggleWrap {
+    bottom: 96px;
+  }
+}
+
+@media (max-height: 820px) {
+  .pinTall {
+    height: 22%;
+  }
+
+  .pinShort {
+    height: 12%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motionReady .shimmer {
+    animation: none !important;
+  }
+}
