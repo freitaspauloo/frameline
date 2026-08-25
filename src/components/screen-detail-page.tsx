@@ -311,7 +311,14 @@ export function ScreenDetailPage({
       </MarketingSection>
 
       <MarketingSection className="border-t-0">
-        <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#140810]">
+        <div
+          className={cn(
+            "relative w-full overflow-hidden bg-[#140810]",
+            entry.slug === "softwave"
+              ? "h-[min(100dvh,1100px)] min-h-[640px]"
+              : "aspect-[16/9]",
+          )}
+        >
           <ScreenLivePreview embed slug={entry.slug} />
         </div>
       </MarketingSection>

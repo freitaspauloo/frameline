@@ -5,7 +5,6 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
 import { useReducedMotion } from "@/components/motion/use-reduced-motion";
-import { ScreenStage } from "@/screens/stage";
 import styles from "./softwave.module.css";
 
 const HERO_POSTER = "/screens/softwave/hero.png";
@@ -749,16 +748,17 @@ export function Softwave({ className, embed = false }: SoftwaveProps) {
   );
 
   return (
-    <ScreenStage embed={embed} background="#4a8fd4" className={className}>
-      <section
-        ref={rootRef}
-        id="top"
-        className={cn(
-          styles.root,
-          motionReady && styles.motionReady,
-          !motionPlaying && styles.motionPaused,
-        )}
-      >
+    <section
+      ref={rootRef}
+      id="top"
+      className={cn(
+        styles.root,
+        embed && styles.rootEmbed,
+        motionReady && styles.motionReady,
+        !motionPlaying && styles.motionPaused,
+        className,
+      )}
+    >
       <div className={styles.media} aria-hidden>
         <div className={styles.heroFrame}>
           <div className={styles.heroStage} data-sw-bg>
@@ -943,7 +943,6 @@ export function Softwave({ className, embed = false }: SoftwaveProps) {
           </button>
         </div>
       ) : null}
-      </section>
-    </ScreenStage>
+    </section>
   );
 }
