@@ -29,7 +29,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { recordInstallIntent } from "@/lib/install-intent";
 import { getDemoSession, type ClientSessionUser } from "@/lib/auth-client";
 import { isFirebaseClientConfigured } from "@/lib/firebase-client";
 import { cn } from "@/lib/utils";
@@ -219,12 +218,6 @@ export function ScreenDetailPage({
       }
 
       await navigator.clipboard.writeText(data.text);
-      recordInstallIntent({
-        slug: entry.slug,
-        source: "screen-detail",
-        path,
-        copyId: data.copyId,
-      });
       setCopied(path);
       window.setTimeout(() => setCopied(null), 1600);
       await refreshAccess();

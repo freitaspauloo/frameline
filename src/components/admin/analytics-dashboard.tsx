@@ -12,6 +12,7 @@ import {
   RiUserAddLine,
 } from "@remixicon/react";
 
+import { AdminAssetThumb } from "@/components/admin-asset-thumb";
 import { AdminLink } from "@/components/admin-nav";
 import { AnalyticsAreaChart } from "@/components/admin/analytics-charts";
 import { percent } from "@/components/admin-metrics";
@@ -41,11 +42,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import type { AssetCatalogMeta } from "@/lib/asset-catalog";
 import type { EventRecord } from "@/lib/events";
 import type {
   FunnelSummary,
   SignupSummary,
   TrafficSummary,
+  UsageBySlugRow,
 } from "@/lib/metrics";
 
 const AGENT_GROUP_LABEL: Record<string, string> = {
@@ -90,23 +93,14 @@ type AgentRow = {
   count: number;
 };
 
-type UsageRow = {
-  slug: string;
-  views: number;
-  copies: number;
-  blocked: number;
-  registryFetches: number;
-  assetFetches: number;
-  installs: number;
-};
-
 export type AnalyticsDashboardProps = {
   traffic: TrafficSummary;
   signups: SignupSummary;
   funnel: FunnelSummary;
-  usage: UsageRow[];
+  usage: UsageBySlugRow[];
   agents: AgentRow[];
   recent: EventRecord[];
+  assetMeta: Record<string, AssetCatalogMeta>;
 };
 
 function MetricCard({
@@ -121,18 +115,24 @@ function MetricCard({
   hint?: string;
 }) {
   return (
-    <Card size="sm">
-      <CardHeader className="border-b border-border/60">
-        <CardDescription className="flex items-center gap-2">
-          <Icon />
+    <Card className="border-relay-border bg-relay-canvas/40 shadow-none" size="sm">
+      <CardHeader className="border-b border-relay-border/80">
+        <CardDescription className="flex items-center gap-2 text-relay-secondary">
+          <Icon className="text-relay-blue" />
           {label}
         </CardDescription>
-        <CardAction>
-          <Badge variant="secondary">{hint ?? "30d"}</Badge>
-        </CardAction>
+        {hint ? (
+          <CardAction>
+            <Badge className="bg-relay-blue-tint text-relay-blue-deep" variant="secondary">
+              {hint}
+            </Badge>
+          </CardAction>
+        ) : null}
       </CardHeader>
       <CardContent>
-        <p className="font-mono text-3xl tabular-nums tracking-tight">{value}</p>
+        <p className="font-mono text-3xl tabular-nums tracking-tight text-relay-ink">
+          {value}
+        </p>
       </CardContent>
     </Card>
   );
@@ -147,7 +147,7 @@ function RankedList({
 }) {
   if (rows.length === 0) {
     return (
-      <Empty className="border border-dashed py-8">
+      <Empty className="border border-dashed border-relay-border py-8">
         <EmptyHeader>
           <EmptyTitle>No rows yet</EmptyTitle>
           <EmptyDescription>{empty}</EmptyDescription>
@@ -166,18 +166,18 @@ function RankedList({
           <>
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">{row.label}</p>
+                <p className="truncate text-sm font-medium text-relay-ink">{row.label}</p>
                 {row.sublabel ? (
-                  <p className="mt-0.5 truncate font-mono text-[11px] text-muted-foreground">
+                  <p className="mt-0.5 truncate font-mono text-[11px] text-relay-secondary">
                     {row.sublabel}
                   </p>
                 ) : null}
               </div>
-              <span className="shrink-0 font-mono text-sm tabular-nums text-muted-foreground">
+              <span className="shrink-0 font-mono text-sm tabular-nums text-relay-secondary">
                 {row.value}
               </span>
             </div>
-            <Progress value={pct} />
+            <Progress className="bg-relay-muted [&>[data-slot=progress-indicator]]:bg-relay-blue" value={pct} />
           </>
         );
 
@@ -190,6 +190,88 @@ function RankedList({
             ) : (
               inner
             )}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function MostUsedAssets({
+  usage,
+  assetMeta,
+}: {
+  usage: UsageBySlugRow[];
+  assetMeta: Record<string, AssetCatalogMeta>;
+}) {
+  const top = usage.slice(0, 6);
+  if (top.length === 0) {
+    return (
+      <Empty className="border border-dashed border-relay-border">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <RiFileCopyLine />
+          </EmptyMedia>
+          <EmptyTitle>No asset activity yet</EmptyTitle>
+          <EmptyDescription>
+            Views, copies, and installs will rank materials and screens here.
+          </EmptyDescription>
+        </EmptyHeader>
+      </Empty>
+    );
+  }
+
+  const maxUses = Math.max(...top.map((row) => row.uses), 1);
+
+  return (
+    <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {top.map((row, index) => {
+        const meta = assetMeta[row.slug];
+        const title = meta?.title ?? row.slug;
+        const pct = Math.round((row.uses / maxUses) * 100);
+
+        return (
+          <li key={row.slug}>
+            <AdminLink
+              className="group flex h-full gap-4 border border-relay-border bg-relay-canvas/30 p-3 transition-colors hover:border-relay-blue/40 hover:bg-relay-blue-tint/30"
+              href={`/admin/assets/${row.slug}`}
+            >
+              {meta ? (
+                <AdminAssetThumb href={meta.href} meta={meta} size="lg" />
+              ) : (
+                <div className="aspect-[16/10] w-28 shrink-0 border border-relay-border bg-relay-muted" />
+              )}
+              <div className="flex min-w-0 flex-1 flex-col justify-between gap-3">
+                <div>
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="line-clamp-2 font-heading text-sm leading-snug text-relay-ink group-hover:text-relay-blue-deep">
+                      {title}
+                    </p>
+                    <span className="shrink-0 font-mono text-[10px] tabular-nums text-relay-tertiary">
+                      #{index + 1}
+                    </span>
+                  </div>
+                  <p className="mt-1 font-mono text-[11px] text-relay-secondary">
+                    {row.slug}
+                    {meta ? (
+                      <span className="ml-2 text-relay-tertiary">· {meta.kind}</span>
+                    ) : null}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-baseline justify-between gap-2 font-mono text-[11px]">
+                    <span className="text-relay-secondary">
+                      {row.uses} uses · {row.views} views
+                    </span>
+                    <span className="tabular-nums text-relay-ink">{pct}%</span>
+                  </div>
+                  <Progress
+                    className="h-1 bg-relay-muted [&>[data-slot=progress-indicator]]:bg-relay-blue"
+                    value={pct}
+                  />
+                </div>
+              </div>
+            </AdminLink>
           </li>
         );
       })}
@@ -216,6 +298,7 @@ export function AnalyticsDashboard({
   usage,
   agents,
   recent,
+  assetMeta,
 }: AnalyticsDashboardProps) {
   const agentTotal = agents.reduce((sum, row) => sum + row.count, 0);
   const automated = agents
@@ -224,19 +307,21 @@ export function AnalyticsDashboard({
 
   return (
     <div className="flex flex-col gap-8">
-      <header className="flex flex-col gap-3">
-        <Badge variant="secondary">Analytics</Badge>
+      <header className="flex flex-col gap-3 border-b border-relay-border pb-6">
+        <Badge className="w-fit bg-relay-blue-tint text-relay-blue-deep" variant="secondary">
+          Analytics
+        </Badge>
         <div className="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <h1 className="font-instrument text-3xl tracking-tight text-foreground md:text-4xl">
+            <h1 className="font-instrument text-3xl tracking-tight text-relay-ink md:text-4xl">
               Usage & attribution
             </h1>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            <p className="mt-2 text-sm leading-relaxed text-relay-secondary">
               Visits, signups, copies, and downstream fetches — matched back to
               the material or screen that started the journey.
             </p>
           </div>
-          <Badge variant="outline" className="w-fit">
+          <Badge className="w-fit border-relay-border text-relay-secondary" variant="outline">
             Live · last 30 days
           </Badge>
         </div>
@@ -253,7 +338,7 @@ export function AnalyticsDashboard({
           hint={`${signups.last30} in 30d`}
           icon={RiUserAddLine}
           label="Signups"
-          value={signups.total}
+          value={signups.last30}
         />
         <MetricCard
           hint={`${funnel.blocked} paywalled`}
@@ -262,30 +347,44 @@ export function AnalyticsDashboard({
           value={funnel.copies}
         />
         <MetricCard
-          hint="signup → paid"
+          hint={`${signups.total} all time`}
           icon={RiArrowRightUpLine}
           label="Conversion"
           value={percent(signups.paidConversion)}
         />
       </div>
 
+      <Card className="border-relay-border bg-relay-canvas/20 shadow-none">
+        <CardHeader className="border-b border-relay-border/80">
+          <CardTitle className="font-heading text-relay-ink">Most used assets</CardTitle>
+          <CardDescription>
+            Ranked by copies and installs in the last 30 days.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <MostUsedAssets assetMeta={assetMeta} usage={usage} />
+        </CardContent>
+      </Card>
+
       <div className="grid gap-6 xl:grid-cols-3">
-        <Card className="xl:col-span-2">
-          <CardHeader className="border-b border-border/60">
-            <CardTitle>Site traffic</CardTitle>
+        <Card className="border-relay-border bg-relay-canvas/20 shadow-none xl:col-span-2">
+          <CardHeader className="border-b border-relay-border/80">
+            <CardTitle className="font-heading text-relay-ink">Site traffic</CardTitle>
             <CardDescription>
               Unique visitors and page views over the last 30 days.
             </CardDescription>
             <CardAction>
-              <Badge variant="secondary">{traffic.clicks} clicks</Badge>
+              <Badge className="bg-relay-blue-tint text-relay-blue-deep" variant="secondary">
+                {traffic.clicks} clicks
+              </Badge>
             </CardAction>
           </CardHeader>
           <CardContent className="flex flex-col gap-6">
             <AnalyticsAreaChart points={traffic.viewsSeries} />
-            <Separator />
+            <Separator className="bg-relay-border" />
             <div className="grid gap-8 md:grid-cols-2">
               <div className="flex flex-col gap-4">
-                <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                <p className="text-[0.625rem] font-semibold tracking-widest text-relay-secondary uppercase">
                   Top pages
                 </p>
                 <RankedList
@@ -297,7 +396,7 @@ export function AnalyticsDashboard({
                 />
               </div>
               <div className="flex flex-col gap-4">
-                <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                <p className="text-[0.625rem] font-semibold tracking-widest text-relay-secondary uppercase">
                   Top clicks
                 </p>
                 <RankedList
@@ -313,9 +412,9 @@ export function AnalyticsDashboard({
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="border-b border-border/60">
-            <CardTitle>Signups</CardTitle>
+        <Card className="border-relay-border bg-relay-canvas/20 shadow-none">
+          <CardHeader className="border-b border-relay-border/80">
+            <CardTitle className="font-heading text-relay-ink">Signups</CardTitle>
             <CardDescription>New accounts per day.</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-6">
@@ -325,9 +424,9 @@ export function AnalyticsDashboard({
             />
             {signups.byAuthMethod.length > 0 ? (
               <>
-                <Separator />
+                <Separator className="bg-relay-border" />
                 <div className="flex flex-col gap-4">
-                  <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                  <p className="text-[0.625rem] font-semibold tracking-widest text-relay-secondary uppercase">
                     By auth method
                   </p>
                   <RankedList
@@ -340,7 +439,7 @@ export function AnalyticsDashboard({
                 </div>
               </>
             ) : (
-              <Empty className="border border-dashed py-6">
+              <Empty className="border border-dashed border-relay-border py-6">
                 <EmptyHeader>
                   <EmptyMedia variant="icon">
                     <RiUserAddLine />
@@ -357,15 +456,15 @@ export function AnalyticsDashboard({
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader className="border-b border-border/60">
-            <CardTitle>Copy → use funnel</CardTitle>
+        <Card className="border-relay-border bg-relay-canvas/20 shadow-none">
+          <CardHeader className="border-b border-relay-border/80">
+            <CardTitle className="font-heading text-relay-ink">Copy → use funnel</CardTitle>
             <CardDescription>
               A copy counts as used when its manifest or hosted media is fetched
               later — proof the payload was pasted somewhere.
             </CardDescription>
             <CardAction>
-              <Badge>{percent(funnel.useRate)} used</Badge>
+              <Badge className="bg-relay-blue text-white">{percent(funnel.useRate)} used</Badge>
             </CardAction>
           </CardHeader>
           <CardContent>
@@ -390,30 +489,30 @@ export function AnalyticsDashboard({
                 },
               ].map((stat) => (
                 <div
-                  className="flex flex-col gap-2 border border-border/60 bg-muted/20 p-4"
+                  className="flex flex-col gap-2 border border-relay-border/80 bg-relay-panel/50 p-4"
                   key={stat.label}
                 >
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <stat.icon />
+                  <div className="flex items-center gap-2 text-relay-secondary">
+                    <stat.icon className="text-relay-blue" />
                     <span className="text-[0.625rem] font-semibold tracking-widest uppercase">
                       {stat.label}
                     </span>
                   </div>
-                  <p className="font-mono text-2xl tabular-nums">{stat.value}</p>
+                  <p className="font-mono text-2xl tabular-nums text-relay-ink">{stat.value}</p>
                 </div>
               ))}
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="border-b border-border/60">
-            <CardTitle>Fetches by agent / IDE</CardTitle>
+        <Card className="border-relay-border bg-relay-canvas/20 shadow-none">
+          <CardHeader className="border-b border-relay-border/80">
+            <CardTitle className="font-heading text-relay-ink">Fetches by agent / IDE</CardTitle>
             <CardDescription>
               Classified from User-Agent when code is resolved.
             </CardDescription>
             <CardAction>
-              <Badge variant="secondary">
+              <Badge className="bg-relay-blue-tint text-relay-blue-deep" variant="secondary">
                 {agentTotal
                   ? `${percent(automated / agentTotal)} agents & IDEs`
                   : "waiting"}
@@ -433,17 +532,16 @@ export function AnalyticsDashboard({
         </Card>
       </div>
 
-      <Card>
-        <CardHeader className="border-b border-border/60">
-          <CardTitle>Assets</CardTitle>
+      <Card className="border-relay-border bg-relay-canvas/20 shadow-none">
+        <CardHeader className="border-b border-relay-border/80">
+          <CardTitle className="font-heading text-relay-ink">All assets</CardTitle>
           <CardDescription>
-            Views, copies, paywall hits, and downstream usage per material or
-            screen.
+            Full breakdown of views, copies, paywall hits, and downstream usage.
           </CardDescription>
         </CardHeader>
         <CardContent className="px-0 pb-0">
           {usage.length === 0 ? (
-            <Empty className="mx-(--card-spacing) mb-(--card-spacing) border border-dashed">
+            <Empty className="mx-(--card-spacing) mb-(--card-spacing) border border-dashed border-relay-border">
               <EmptyHeader>
                 <EmptyMedia variant="icon">
                   <RiFileCopyLine />
@@ -458,64 +556,86 @@ export function AnalyticsDashboard({
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Slug</TableHead>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="w-16" />
+                  <TableHead>Asset</TableHead>
+                  <TableHead className="text-right">Uses</TableHead>
                   <TableHead className="text-right">Views</TableHead>
                   <TableHead className="text-right">Copies</TableHead>
                   <TableHead className="text-right">Blocked</TableHead>
                   <TableHead className="text-right">Registry</TableHead>
                   <TableHead className="text-right">Assets</TableHead>
-                  <TableHead className="text-right">Installs</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {usage.map((row) => (
-                  <TableRow key={row.slug}>
-                    <TableCell className="font-medium">
-                      <AdminLink
-                        className="text-foreground underline-offset-4 hover:underline"
-                        href={`/admin/assets/${row.slug}`}
-                      >
-                        {row.slug}
-                      </AdminLink>
-                    </TableCell>
-                    <TableCell className="text-right font-mono tabular-nums">
-                      {row.views}
-                    </TableCell>
-                    <TableCell className="text-right font-mono tabular-nums">
-                      {row.copies}
-                    </TableCell>
-                    <TableCell className="text-right font-mono tabular-nums">
-                      {row.blocked}
-                    </TableCell>
-                    <TableCell className="text-right font-mono tabular-nums">
-                      {row.registryFetches}
-                    </TableCell>
-                    <TableCell className="text-right font-mono tabular-nums">
-                      {row.assetFetches}
-                    </TableCell>
-                    <TableCell className="text-right font-mono tabular-nums">
-                      {row.installs}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {usage.map((row) => {
+                  const meta = assetMeta[row.slug];
+                  return (
+                    <TableRow key={row.slug}>
+                      <TableCell className="py-3">
+                        {meta ? (
+                          <AdminAssetThumb
+                            href={`/admin/assets/${row.slug}`}
+                            meta={meta}
+                            size="sm"
+                          />
+                        ) : (
+                          <div className="aspect-[16/10] w-14 border border-relay-border bg-relay-muted" />
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex min-w-0 flex-col gap-0.5">
+                          <AdminLink
+                            className="truncate font-medium text-relay-ink underline-offset-4 hover:text-relay-blue hover:underline"
+                            href={`/admin/assets/${row.slug}`}
+                          >
+                            {meta?.title ?? row.slug}
+                          </AdminLink>
+                          <span className="truncate font-mono text-[11px] text-relay-secondary">
+                            {row.slug}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right font-mono tabular-nums text-relay-ink">
+                        {row.uses}
+                      </TableCell>
+                      <TableCell className="text-right font-mono tabular-nums">
+                        {row.views}
+                      </TableCell>
+                      <TableCell className="text-right font-mono tabular-nums">
+                        {row.copies}
+                      </TableCell>
+                      <TableCell className="text-right font-mono tabular-nums">
+                        {row.blocked}
+                      </TableCell>
+                      <TableCell className="text-right font-mono tabular-nums">
+                        {row.registryFetches}
+                      </TableCell>
+                      <TableCell className="text-right font-mono tabular-nums">
+                        {row.assetFetches}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           )}
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader className="border-b border-border/60">
-          <CardTitle>Recent activity</CardTitle>
+      <Card className="border-relay-border bg-relay-canvas/20 shadow-none">
+        <CardHeader className="border-b border-relay-border/80">
+          <CardTitle className="font-heading text-relay-ink">Recent activity</CardTitle>
           <CardDescription>Newest events across the stream.</CardDescription>
           <CardAction>
-            <Badge variant="outline">{recent.length} shown</Badge>
+            <Badge className="border-relay-border text-relay-secondary" variant="outline">
+              {recent.length} shown
+            </Badge>
           </CardAction>
         </CardHeader>
         <CardContent className="px-0 pb-0">
           {recent.length === 0 ? (
-            <Empty className="mx-(--card-spacing) mb-(--card-spacing) border border-dashed">
+            <Empty className="mx-(--card-spacing) mb-(--card-spacing) border border-dashed border-relay-border">
               <EmptyHeader>
                 <EmptyTitle>No events yet</EmptyTitle>
                 <EmptyDescription>
@@ -524,7 +644,7 @@ export function AnalyticsDashboard({
               </EmptyHeader>
             </Empty>
           ) : (
-            <ul className="divide-y divide-border">
+            <ul className="divide-y divide-relay-border">
               {recent.map((event) => (
                 <li
                   className="flex flex-col gap-3 px-(--card-spacing) py-4 sm:flex-row sm:items-center sm:justify-between"
@@ -536,20 +656,22 @@ export function AnalyticsDashboard({
                         {event.name.replaceAll("_", " ")}
                       </Badge>
                       {event.slug ? (
-                        <Badge variant="outline">{event.slug}</Badge>
+                        <Badge className="border-relay-border" variant="outline">
+                          {event.slug}
+                        </Badge>
                       ) : null}
                       {event.agentKind && event.agentKind !== "unknown" ? (
                         <Badge variant="ghost">via {event.agentKind}</Badge>
                       ) : null}
                     </div>
                     {event.copyId ? (
-                      <p className="font-mono text-[11px] text-muted-foreground">
+                      <p className="font-mono text-[11px] text-relay-secondary">
                         copy {event.copyId.slice(0, 16)}…
                       </p>
                     ) : null}
                   </div>
                   <time
-                    className="shrink-0 font-mono text-[11px] tabular-nums text-muted-foreground"
+                    className="shrink-0 font-mono text-[11px] tabular-nums text-relay-secondary"
                     dateTime={event.createdAt}
                   >
                     {formatTimestamp(event.createdAt)}

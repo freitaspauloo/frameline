@@ -11,6 +11,12 @@ import { countUsers, readUsers } from "@/lib/users";
  * are identical whether the instance is on Postgres or the `.data` fallback.
  */
 
+export const ANALYTICS_WINDOW_DAYS = 30;
+
+export function analyticsSince(days = ANALYTICS_WINDOW_DAYS): Date {
+  return new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+}
+
 export type RevenueSummary = {
   grossCents: number;
   refundedCents: number;
@@ -193,18 +199,20 @@ export async function funnelSummary(since?: Date): Promise<FunnelSummary> {
   };
 }
 
-/** Copies, paywall hits, views, and downstream usage per material or screen. Newest-first by copy count. */
-export async function usageBySlug(since?: Date): Promise<
-  Array<{
-    slug: string;
-    views: number;
-    copies: number;
-    blocked: number;
-    registryFetches: number;
-    assetFetches: number;
-    installs: number;
-  }>
-> {
+export type UsageBySlugRow = {
+  slug: string;
+  views: number;
+  copies: number;
+  blocked: number;
+  registryFetches: number;
+  assetFetches: number;
+  installs: number;
+  /** Best single engagement signal — copies for screens, installs for materials. */
+  uses: number;
+};
+
+/** Copies, paywall hits, views, and downstream usage per material or screen. */
+export async function usageBySlug(since?: Date): Promise<UsageBySlugRow[]> {
   const events = await readEvents({
     names: [
       "material_view",
@@ -251,13 +259,19 @@ export async function usageBySlug(since?: Date): Promise<
     rows.set(event.slug, row);
   }
 
-  return [...rows.values()].sort(
-    (a, b) =>
-      b.copies - a.copies ||
-      b.blocked - a.blocked ||
-      b.registryFetches - a.registryFetches ||
-      a.slug.localeCompare(b.slug),
-  );
+  return [...rows.values()]
+    .map((row) => ({
+      ...row,
+      uses: Math.max(row.copies, row.installs),
+    }))
+    .sort(
+      (a, b) =>
+        b.uses - a.uses ||
+        b.views - a.views ||
+        b.blocked - a.blocked ||
+        b.registryFetches - a.registryFetches ||
+        a.slug.localeCompare(b.slug),
+    );
 }
 
 /** Which agents and IDEs are pulling Frameline code. */

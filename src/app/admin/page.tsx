@@ -17,7 +17,6 @@ import {
   revenueSummary,
   signupSummary,
   trafficSummary,
-  usageBySlug,
 } from "@/lib/metrics";
 import {
   MATERIALS_CATALOG,
@@ -63,7 +62,7 @@ export default async function AdminDashboardPage() {
   const freeCount = MATERIALS_CATALOG.filter((m) => m.tier === "free").length;
   const paidCount = materialCount - freeCount;
 
-  const [orders, waitlistCount, inboxCount, revenue, signups, funnel, usage, traffic] =
+  const [orders, waitlistCount, inboxCount, revenue, signups, funnel, traffic] =
     await Promise.all([
       readDemoOrders(),
       readWaitlistCount(),
@@ -71,7 +70,6 @@ export default async function AdminDashboardPage() {
       revenueSummary(),
       signupSummary(),
       funnelSummary(),
-      usageBySlug(),
       trafficSummary(),
     ]);
 
@@ -94,24 +92,6 @@ export default async function AdminDashboardPage() {
     { label: "Waitlist", value: waitlistCount },
   ];
 
-  const catalogStats: Stat[] = [
-    { label: "Materials", value: materialCount, href: "/admin/materials" },
-    {
-      label: "Collections",
-      value: collectionCount,
-      href: "/admin/collections",
-    },
-    { label: "Orders", value: orders.length, href: "/admin/orders" },
-    { label: "Inbox", value: inboxCount, href: "/admin/inbox" },
-  ];
-
-  const topAssets = usage.slice(0, 6).map((row) => ({
-    label: row.slug,
-    value: row.copies,
-    sublabel: `${row.copies} copies · ${row.views} views · ${row.registryFetches + row.assetFetches} fetches`,
-    href: `/admin/assets/${row.slug}`,
-  }));
-
   return (
     <div className="space-y-8">
       <div>
@@ -120,8 +100,8 @@ export default async function AdminDashboardPage() {
         </p>
         <h1 className="mt-2 text-2xl font-medium tracking-tight">Overview</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Signups, revenue, and asset usage from Postgres when configured (else
-          local <span className="font-mono">.data/</span>). Full breakdowns in{" "}
+          Revenue, catalog, and high-level counts. Usage charts, funnels, and
+          asset breakdowns live in{" "}
           <AdminLink
             className="text-foreground underline underline-offset-4"
             href="/admin/analytics"
@@ -201,45 +181,20 @@ export default async function AdminDashboardPage() {
         </div>
       </Panel>
 
-      <Panel
-        description="A copy counts as used once the manifest URL or hosted media inside it is fetched — that is, the payload was pasted somewhere and something resolved it."
-        meta={
-          <p className="font-mono text-sm tabular-nums text-foreground">
-            {percent(funnel.useRate)} used
-          </p>
-        }
-        title="Copy → use funnel"
-      >
+      <Panel title="Catalog">
         <StatGrid
           columns={4}
           stats={[
-            { label: "Copies", value: funnel.copies },
-            { label: "Paywalled", value: funnel.blocked },
+            { label: "Materials", value: materialCount, href: "/admin/materials" },
             {
-              label: "Used",
-              value: funnel.copiesUsed,
-              hint: percent(funnel.useRate),
+              label: "Collections",
+              value: collectionCount,
+              href: "/admin/collections",
             },
-            {
-              label: "Median to use",
-              value:
-                funnel.medianSecondsToUse === null
-                  ? "—"
-                  : `${funnel.medianSecondsToUse}s`,
-            },
+            { label: "Orders", value: orders.length, href: "/admin/orders" },
+            { label: "Inbox", value: inboxCount, href: "/admin/inbox" },
           ]}
         />
-      </Panel>
-
-      <Panel
-        description="Copies plus downstream registry and asset fetches per material or screen."
-        title="Top assets"
-      >
-        <BarList empty="No asset activity yet." rows={topAssets} />
-      </Panel>
-
-      <Panel title="Catalog">
-        <StatGrid columns={4} stats={catalogStats} />
       </Panel>
 
       <div className="border-t border-border pt-6 text-sm text-muted-foreground">

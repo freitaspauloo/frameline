@@ -14,7 +14,7 @@ import type { SeriesPoint } from "@/lib/metrics";
 const chartConfig = {
   value: {
     label: "Events",
-    color: "var(--foreground)",
+    color: "var(--relay-blue)",
   },
 } satisfies ChartConfig;
 

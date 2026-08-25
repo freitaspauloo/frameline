@@ -104,16 +104,35 @@ export async function POST(request: Request) {
       ? copyIdRaw.trim().slice(0, 64)
       : undefined;
 
+  const email = await getDemoEmail();
+  const anonId = readAnonId(request);
+  const isMaterial = Boolean(getMaterial(slug));
+
   await recordEvent({
     name: "install_intent",
-    email: await getDemoEmail(),
-    anonId: readAnonId(request),
+    email,
+    anonId,
     slug,
     copyId,
     source,
     request,
     props: { path: installPath },
   });
+
+  // Materials copy client-side — this beacon is the only server record. Mirror
+  // a `copy` event so funnel and ranking match screens.
+  if (isMaterial) {
+    await recordEvent({
+      name: "copy",
+      email,
+      anonId,
+      slug,
+      copyId,
+      source,
+      request,
+      props: { path: installPath, via: "install_beacon" },
+    });
+  }
 
   return NextResponse.json({ ok: true });
 }
