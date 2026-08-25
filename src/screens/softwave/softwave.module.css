@@ -28,7 +28,8 @@
   --sw-shadow-soft: 0 6px 18px rgba(16, 36, 72, 0.14);
   position: relative;
   display: flex;
-  min-height: 100dvh;
+  height: 100%;
+  min-height: 100%;
   width: 100%;
   flex-direction: column;
   overflow: hidden;
@@ -37,11 +38,6 @@
   font-family: "Manrope", var(--font-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   font-synthesis: none;
-}
-
-.rootEmbed {
-  min-height: 100%;
-  height: 100%;
 }
 
 .root a {

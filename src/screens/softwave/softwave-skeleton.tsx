@@ -3,6 +3,7 @@
 import { useEffect, type CSSProperties } from "react";
 
 import { cn } from "@/lib/utils";
+import { ScreenStage } from "@/screens/stage";
 
 import "./softwave-skeleton.css";
 
@@ -39,15 +40,12 @@ export function SoftwaveSkeleton({
   }, []);
 
   return (
-    <div
-      className={cn(
-        "fl-softwave-skeleton",
-        embed && "fl-softwave-skeleton-embed",
-        className,
-      )}
-      aria-busy="true"
-      aria-label="Loading Softwave hero"
-    >
+    <ScreenStage embed={embed} background="#8a939e" className={className}>
+      <div
+        className="fl-softwave-skeleton"
+        aria-busy="true"
+        aria-label="Loading Softwave hero"
+      >
       <div className="sw-skel-bg" aria-hidden>
         <div className="sw-skel-bg-scrim" />
       </div>
@@ -79,6 +77,7 @@ export function SoftwaveSkeleton({
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </ScreenStage>
   );
 }

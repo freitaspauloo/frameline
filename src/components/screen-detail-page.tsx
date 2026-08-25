@@ -311,7 +311,7 @@ export function ScreenDetailPage({
       </MarketingSection>
 
       <MarketingSection className="border-t-0">
-        <div className="relative h-[min(100dvh,1100px)] min-h-[640px] w-full overflow-hidden bg-[#140810]">
+        <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#140810]">
           <ScreenLivePreview embed slug={entry.slug} />
         </div>
       </MarketingSection>
