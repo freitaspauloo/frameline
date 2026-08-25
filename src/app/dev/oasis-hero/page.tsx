@@ -1,5 +1,5 @@
-import { OasisSecurityHero } from "./oasis-hero";
+import { redirect } from "next/navigation";
 
-export default function OasisHeroPage() {
-  return <OasisSecurityHero />;
+export default function OasisHeroRedirect() {
+  redirect("/dev/bridge-dither");
 }

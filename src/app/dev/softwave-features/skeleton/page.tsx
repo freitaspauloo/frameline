@@ -1,5 +1,5 @@
-import { SoftwaveFeatureCardsSkeleton } from "../softwave-feature-cards-skeleton";
+import { SoftwaveFeatureCardsSkeleton } from "@/screens/softwave-features";
 
-export default function DevSoftwaveFeaturesSkeletonPage() {
+export default function SoftwaveFeatureCardsSkeletonPage() {
   return <SoftwaveFeatureCardsSkeleton />;
 }

@@ -1,5 +1,5 @@
-import { ReticleLoginSkeleton } from "../reticle-login-skeleton";
+import { ReticleLoginSkeleton } from "@/screens/miracle-login";
 
-export default function ReticleLoginSkeletonPage() {
+export default function MiracleLoginSkeletonPage() {
   return <ReticleLoginSkeleton />;
 }

@@ -1,0 +1,106 @@
+/* Reticle login skeleton — scoped, do not Tailwind-rewrite */
+.fl-reticle-login-skeleton {
+  color: inherit;
+}
+
+.fl-reticle-login-skeleton .bone {
+  --bone-base: rgba(255, 255, 255, 0.12);
+  --bone-shine: rgba(255, 255, 255, 0.55);
+  --bone-accent: rgba(214, 0, 191, 0.35);
+  position: relative;
+  overflow: hidden;
+  border-radius: 5px;
+  background: var(--bone-base);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  animation: rl-skel-pulse 1.8s ease-in-out infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+.fl-reticle-login-skeleton .bone-line {
+  --bone-base: rgba(255, 255, 255, 0.18);
+  min-height: 1px;
+  border: none;
+}
+
+.fl-reticle-login-skeleton .bone::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  translate: -100% 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--bone-accent) 42%,
+    var(--bone-shine) 50%,
+    var(--bone-accent) 58%,
+    transparent 100%
+  );
+  animation: rl-skel-sweep 1.8s ease-in-out infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes rl-skel-pulse {
+  0%,
+  100% {
+    opacity: 0.72;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes rl-skel-sweep {
+  0% {
+    translate: -100% 0;
+  }
+  100% {
+    translate: 100% 0;
+  }
+}
+
+.fl-reticle-login-skeleton .rl-skel-art {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: linear-gradient(145deg, #3d0e2e 0%, #6a1a58 38%, #2a061c 72%, #120810 100%);
+}
+
+.fl-reticle-login-skeleton .rl-skel-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.12) 48%,
+    rgba(214, 0, 191, 0.22) 52%,
+    transparent 70%
+  );
+  background-size: 220% 100%;
+  animation: rl-skel-art-shimmer 2.4s linear infinite;
+}
+
+.fl-reticle-login-skeleton .rl-skel-tint {
+  position: absolute;
+  inset: 0;
+  background: #d600bf;
+  mix-blend-mode: color;
+  opacity: 0.72;
+}
+
+@keyframes rl-skel-art-shimmer {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -20% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fl-reticle-login-skeleton .bone,
+  .fl-reticle-login-skeleton .bone::after,
+  .fl-reticle-login-skeleton .rl-skel-art::after {
+    animation: none;
+  }
+}

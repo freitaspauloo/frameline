@@ -1,5 +1,5 @@
-import { SoftwaveFeatureCards } from "./softwave-feature-cards";
+import { SoftwaveFeatureCards } from "@/screens/softwave-features";
 
-export default function DevSoftwaveFeaturesPage() {
+export default function SoftwaveFeatureCardsPage() {
   return <SoftwaveFeatureCards />;
 }

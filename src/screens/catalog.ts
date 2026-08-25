@@ -131,6 +131,53 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     poster: "/screens/ascii-hero/poster.webp",
     aliases: ["axion-hero", "reticle-ascii-hero"],
   },
+  {
+    ...SCREEN,
+    slug: "softwave",
+    title: "Softwave Hero",
+    description:
+      "Vintage desktop hero — bliss hill video, pixel headline, glass pill nav, and analog-warmth copy.",
+    blurb: "Bliss hill · pixel headline · glass pills",
+    poster: "/screens/softwave/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "softwave-features",
+    title: "Softwave Feature Cards",
+    description:
+      "Four-up ML ops cards — hover captions, drifting art, and Geist Pixel titles on a light canvas.",
+    blurb: "Four cards · hover captions · drifting art",
+    poster: "/screens/softwave-features/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "bridge-dither",
+    title: "Bridge Dither",
+    description:
+      "Warm bridge dither art hero — interactive canvas, progressive blur edges, and GSAP headline reveal.",
+    blurb: "Bridge dither · progressive blur · clip headline",
+    poster: "/screens/bridge-dither/poster.png",
+    aliases: ["oasis-hero"],
+  },
+  {
+    ...SCREEN,
+    slug: "mexin-hero",
+    title: "Mexin Hero",
+    description:
+      "Floating pill nav hero — light canvas, magenta color-blend over abstract art, fab wordmarks.",
+    blurb: "Pill nav · magenta blend · fab logos",
+    poster: "/screens/mexin-hero/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "miracle-login",
+    title: "Miracle Login",
+    description:
+      "Split-panel sign-in — magenta-tinted cover art, Reticle chrome, and GSAP panel entrance.",
+    blurb: "Split panel · magenta art · sign-in form",
+    poster: "/screens/miracle-login/poster.png",
+    aliases: ["reticle-login"],
+  },
 ];
 
 /** Still copyable, not listed in the public layout catalog. */
@@ -179,6 +226,51 @@ export const HIDDEN_SCREENS: ScreenCatalogEntry[] = [
       "Loading skeleton for Dark Pill Nav Hero — dark shimmer bones over nav, headline, CTAs, and fab logos.",
     blurb: "Hero loading state · void canvas · magenta tint",
     poster: "/screens/dark-pill-hero-skeleton/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "softwave-skeleton",
+    title: "Softwave Skeleton",
+    description:
+      "Loading skeleton for Softwave Hero — shimmer bones over bliss hill, nav pills, and pixel headline.",
+    blurb: "Hero loading state · bliss hill · pixel bones",
+    poster: "/screens/softwave/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "softwave-features-skeleton",
+    title: "Softwave Features Skeleton",
+    description:
+      "Loading skeleton for Softwave Feature Cards — four card bones with title and caption placeholders.",
+    blurb: "Feature-card loading state · four-up grid",
+    poster: "/screens/softwave-features/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "bridge-dither-skeleton",
+    title: "Bridge Dither Skeleton",
+    description:
+      "Loading skeleton for Bridge Dither — shimmer bones over dither field, nav, and headline.",
+    blurb: "Hero loading state · dither grid · clip bones",
+    poster: "/screens/bridge-dither/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "mexin-hero-skeleton",
+    title: "Mexin Hero Skeleton",
+    description:
+      "Loading skeleton for Mexin Hero — shimmer bones over nav, headline, CTAs, and fab logos.",
+    blurb: "Hero loading state · pill nav · fab bones",
+    poster: "/screens/mexin-hero/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "miracle-login-skeleton",
+    title: "Miracle Login Skeleton",
+    description:
+      "Loading skeleton for Miracle Login — split panel bones over cover art and sign-in form.",
+    blurb: "Auth loading state · split panel · form bones",
+    poster: "/screens/miracle-login/poster.png",
   },
 ];
 

@@ -132,7 +132,7 @@ export function runCatalogSmoke() {
     }
   }
 
-  assert(SCREENS_CATALOG.length === 12, `Expected 12 screens, got ${SCREENS_CATALOG.length}`);
+  assert(SCREENS_CATALOG.length === 17, `Expected 17 screens, got ${SCREENS_CATALOG.length}`);
   const screenTitles = SCREENS_CATALOG.map((s) => s.title);
   for (const title of [
     "Dark Pill Nav Hero",
@@ -147,6 +147,11 @@ export function runCatalogSmoke() {
     "Always-on Wafer Inspection",
     "Defect Assistant Hero",
     "ASCII Yield Hero",
+    "Softwave Hero",
+    "Softwave Feature Cards",
+    "Bridge Dither",
+    "Mexin Hero",
+    "Miracle Login",
   ]) {
     assert(screenTitles.includes(title), `Missing layout screen title: ${title}`);
   }

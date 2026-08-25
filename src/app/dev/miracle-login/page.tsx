@@ -1,5 +1,5 @@
-import { ReticleLoginPage } from "./reticle-login";
+import { ReticleLoginPage } from "@/screens/miracle-login";
 
-export default function ReticleLoginDevPage() {
+export default function MiracleLoginPage() {
   return <ReticleLoginPage />;
 }

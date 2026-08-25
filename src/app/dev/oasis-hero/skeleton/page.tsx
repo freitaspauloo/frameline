@@ -1,5 +1,5 @@
-import { OasisHeroSkeleton } from "../oasis-hero-skeleton";
+import { redirect } from "next/navigation";
 
-export default function OasisHeroSkeletonPage() {
-  return <OasisHeroSkeleton />;
+export default function OasisHeroSkeletonRedirect() {
+  redirect("/dev/bridge-dither/skeleton");
 }

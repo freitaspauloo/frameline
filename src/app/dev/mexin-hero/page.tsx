@@ -1,4 +1,4 @@
-import { MexinHero } from "./mexin-hero";
+import { MexinHero } from "@/screens/mexin-hero";
 
 export default function MexinHeroPage() {
   return <MexinHero />;

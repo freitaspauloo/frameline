@@ -1,0 +1,222 @@
+.mx-hero-skeleton {
+  color: inherit;
+}
+
+.mx-hero-skeleton .bone {
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  background: rgba(16, 18, 28, 0.16);
+  border: 1px solid rgba(16, 18, 28, 0.08);
+  animation: mx-skel-pulse 1.8s ease-in-out infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+.mx-hero-skeleton .mx-skel-nav .bone {
+  background: rgba(16, 18, 28, 0.12);
+  border-color: rgba(16, 18, 28, 0.07);
+}
+
+.mx-hero-skeleton .mx-skel-body .bone,
+.mx-hero-skeleton .mx-skel-logos .bone {
+  background: rgba(16, 18, 28, 0.2);
+  border-color: rgba(16, 18, 28, 0.1);
+}
+
+.mx-hero-skeleton .bone::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  translate: -100% 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.72),
+    transparent
+  );
+  animation: mx-skel-sweep 1.8s ease-in-out infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes mx-skel-pulse {
+  0%,
+  100% {
+    opacity: 0.82;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes mx-skel-sweep {
+  0% {
+    translate: -100% 0;
+  }
+  100% {
+    translate: 100% 0;
+  }
+}
+
+.mx-hero-skeleton .mx-skel-root {
+  position: relative;
+  display: flex;
+  min-height: 100dvh;
+  width: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  background: #f7f4f1;
+}
+
+.mx-hero-skeleton .mx-skel-bg {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+}
+
+.mx-hero-skeleton .mx-skel-bg-art {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, #e8dce6 0%, #f3ebe8 42%, #ddd0e4 100%);
+}
+
+.mx-hero-skeleton .mx-skel-bg-tint {
+  position: absolute;
+  inset: 0;
+  background: #d600bf;
+  mix-blend-mode: color;
+  opacity: 0.65;
+}
+
+.mx-hero-skeleton .mx-skel-bg-blur {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(5px);
+}
+
+.mx-hero-skeleton .mx-skel-bg-fade {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 48%;
+  max-width: 32rem;
+  background: linear-gradient(
+    to right,
+    rgba(247, 244, 241, 0.85),
+    rgba(247, 244, 241, 0.35),
+    transparent
+  );
+}
+
+.mx-hero-skeleton .mx-skel-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  padding: 1rem 1.25rem 0;
+}
+
+.mx-hero-skeleton .mx-skel-nav {
+  display: flex;
+  width: 100%;
+  max-width: 1347px;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 40px;
+  background: #fff;
+  padding: 5px 10px 5px 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.mx-hero-skeleton .bone-brand {
+  width: 108px;
+  height: 28px;
+  border-radius: 8px;
+}
+
+.mx-hero-skeleton .mx-skel-nav-links {
+  display: none;
+  gap: 28px;
+}
+
+.mx-hero-skeleton .bone-nav-link {
+  width: 72px;
+  height: 14px;
+  border-radius: 4px;
+}
+
+.mx-hero-skeleton .bone-nav-cta {
+  width: 148px;
+  height: 38px;
+  border-radius: 40px;
+}
+
+.mx-hero-skeleton .mx-skel-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 7rem 1.25rem 2rem;
+}
+
+.mx-hero-skeleton .bone-badge {
+  width: 196px;
+  height: 30px;
+  border-radius: 5px;
+}
+
+.mx-hero-skeleton .bone-headline {
+  margin-top: 20px;
+  width: min(914px, 100%);
+  height: clamp(120px, 18vw, 138px);
+  border-radius: 10px;
+}
+
+.mx-hero-skeleton .mx-skel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.mx-hero-skeleton .bone-cta {
+  width: 168px;
+  height: 44px;
+  border-radius: 40px;
+}
+
+.mx-hero-skeleton .bone-link {
+  width: 112px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.mx-hero-skeleton .mx-skel-logos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 18px;
+  margin-top: 40px;
+  padding-block: 10px;
+}
+
+.mx-hero-skeleton .bone-logo {
+  width: 64px;
+  height: 18px;
+  border-radius: 4px;
+}
+
+@media (min-width: 768px) {
+  .mx-hero-skeleton .mx-skel-nav-links {
+    display: flex;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mx-hero-skeleton .bone,
+  .mx-hero-skeleton .bone::after {
+    animation: none;
+  }
+}

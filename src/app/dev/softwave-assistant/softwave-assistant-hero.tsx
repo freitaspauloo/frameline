@@ -9,7 +9,7 @@ import { GeistPixelSquare } from "geist/font/pixel";
 import { useReducedMotion } from "@/components/motion/use-reduced-motion";
 import { cn } from "@/lib/utils";
 
-import { DitherField } from "../oasis-hero/dither-field";
+import { DitherField } from "@/screens/bridge-dither/dither-field";
 import {
   BACKER_LOGOS,
   COMPOSE_PLACEHOLDER,

@@ -50,6 +50,12 @@ const DEFAULT_SLUGS = [
   "spaceman-moon",
   "light-rays",
   "prompt-bar",
+  "ascii-hero",
+  "softwave",
+  "softwave-features",
+  "bridge-dither",
+  "mexin-hero",
+  "miracle-login",
 ];
 
 function resolveChrome() {

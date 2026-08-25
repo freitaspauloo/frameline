@@ -105,6 +105,69 @@ local paths under public/.`,
     prompt: DARK_PILL_HERO_PROMPT,
     note: `Hero wave art from Paper reference; magenta color blend overlay in-component. Alias: klyro-hero.`,
   },
+  "ascii-hero": {
+    files: [
+      "src/screens/ascii-hero/ascii-hero.tsx",
+      "src/screens/ascii-hero/ascii-hero-skeleton.tsx",
+      "src/screens/ascii-hero/ascii-hero-skeleton.css",
+      "src/screens/reticle-mark.tsx",
+    ],
+    prompt: `Build the ASCII Yield Hero — dark ASCII art field, magenta color blend, @ deterioration cursor, GSAP headline reveal, fab marquee.`,
+    note: "Alias: axion-hero, reticle-ascii-hero.",
+  },
+  softwave: {
+    files: [
+      "src/screens/softwave/softwave.tsx",
+      "src/screens/softwave/softwave.module.css",
+      "src/screens/softwave/softwave-skeleton.tsx",
+      "src/screens/softwave/softwave-skeleton.css",
+    ],
+    prompt: `Build the Softwave Hero — vintage desktop hero with bliss hill video, pixel headline, glass pill nav, and analog-warmth copy.`,
+    note: "Hero video and poster are served from Frameline under /screens/softwave/.",
+  },
+  "softwave-features": {
+    files: [
+      "src/screens/softwave-features/softwave-feature-cards.tsx",
+      "src/screens/softwave-features/softwave-feature-cards.module.css",
+      "src/screens/softwave-features/softwave-feature-cards-skeleton.tsx",
+      "src/screens/softwave-features/softwave-feature-cards-skeleton.css",
+      "src/screens/softwave-features/constants.ts",
+    ],
+    prompt: `Build Softwave Feature Cards — four-up ML ops cards with hover captions, drifting art, and Geist Pixel titles.`,
+    note: "Card art PNGs are served from Frameline under /screens/softwave-features/.",
+  },
+  "bridge-dither": {
+    files: [
+      "src/screens/bridge-dither/bridge-dither.tsx",
+      "src/screens/bridge-dither/bridge-dither-skeleton.tsx",
+      "src/screens/bridge-dither/bridge-dither-skeleton.css",
+      "src/screens/bridge-dither/dither-field.tsx",
+      "src/screens/bridge-dither/constants.ts",
+      "src/screens/reticle-mark.tsx",
+    ],
+    prompt: `Build the Bridge Dither Hero — warm bridge dither art, interactive canvas, progressive blur edges, GSAP headline clip reveal.`,
+    note: "Bridge art PNG is served from Frameline. Alias: oasis-hero.",
+  },
+  "mexin-hero": {
+    files: [
+      "src/screens/mexin-hero/mexin-hero.tsx",
+      "src/screens/mexin-hero/mexin-hero-skeleton.tsx",
+      "src/screens/mexin-hero/mexin-hero-skeleton.css",
+      "src/screens/reticle-mark.tsx",
+    ],
+    prompt: `Build the Mexin Hero — floating pill nav, light canvas, magenta color-blend over abstract art, fab wordmarks.`,
+    note: "Hero background PNG is served from Frameline under /screens/mexin-hero/.",
+  },
+  "miracle-login": {
+    files: [
+      "src/screens/miracle-login/reticle-login.tsx",
+      "src/screens/miracle-login/reticle-login-skeleton.tsx",
+      "src/screens/miracle-login/reticle-login-skeleton.css",
+      "src/screens/reticle-mark.tsx",
+    ],
+    prompt: `Build the Miracle Login screen — split-panel sign-in with magenta-tinted cover art and GSAP panel entrance.`,
+    note: "Cover art PNG is served from Frameline. Alias: reticle-login.",
+  },
   "yield-skeleton": {
     files: [
       "src/screens/yield-skeleton/yield-skeleton.tsx",
@@ -136,6 +199,54 @@ local paths under public/.`,
     ],
     prompt: `Build the loading skeleton for "Dark Pill Nav Hero": same void canvas, shimmer bones for segmented nav, headline, CTAs, and fab logos. Scoped CSS.`,
     note: "Pairs with Dark Pill Nav Hero.",
+  },
+  "softwave-skeleton": {
+    files: [
+      "src/screens/softwave/softwave-skeleton.tsx",
+      "src/screens/softwave/softwave-skeleton.css",
+    ],
+    prompt: `Build the loading skeleton for Softwave Hero: shimmer bones over bliss hill, nav pills, and pixel headline.`,
+    note: "Pairs with Softwave Hero.",
+  },
+  "softwave-features-skeleton": {
+    files: [
+      "src/screens/softwave-features/softwave-feature-cards-skeleton.tsx",
+      "src/screens/softwave-features/softwave-feature-cards-skeleton.css",
+    ],
+    prompt: `Build the loading skeleton for Softwave Feature Cards: four card bones with title and caption placeholders.`,
+    note: "Pairs with Softwave Feature Cards.",
+  },
+  "bridge-dither-skeleton": {
+    files: [
+      "src/screens/bridge-dither/bridge-dither-skeleton.tsx",
+      "src/screens/bridge-dither/bridge-dither-skeleton.css",
+    ],
+    prompt: `Build the loading skeleton for Bridge Dither: shimmer bones over dither field, nav, and headline.`,
+    note: "Pairs with Bridge Dither.",
+  },
+  "mexin-hero-skeleton": {
+    files: [
+      "src/screens/mexin-hero/mexin-hero-skeleton.tsx",
+      "src/screens/mexin-hero/mexin-hero-skeleton.css",
+    ],
+    prompt: `Build the loading skeleton for Mexin Hero: shimmer bones over nav, headline, CTAs, and fab logos.`,
+    note: "Pairs with Mexin Hero.",
+  },
+  "miracle-login-skeleton": {
+    files: [
+      "src/screens/miracle-login/reticle-login-skeleton.tsx",
+      "src/screens/miracle-login/reticle-login-skeleton.css",
+    ],
+    prompt: `Build the loading skeleton for Miracle Login: split panel bones over cover art and sign-in form.`,
+    note: "Pairs with Miracle Login.",
+  },
+  "ascii-hero-skeleton": {
+    files: [
+      "src/screens/ascii-hero/ascii-hero-skeleton.tsx",
+      "src/screens/ascii-hero/ascii-hero-skeleton.css",
+    ],
+    prompt: `Build the loading skeleton for "ASCII Yield Hero": dark shimmer bones over nav, headline, CTAs, and fab marquee. Scoped CSS.`,
+    note: "Pairs with ASCII Yield Hero.",
   },
 };
 
