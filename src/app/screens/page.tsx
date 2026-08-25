@@ -10,6 +10,7 @@ import {
   MarketingSection,
   MarketingShell,
 } from "@/components/marketing-shell";
+import { screenPosterNeedsMagentaTint } from "@/screens/poster-tint";
 import { listScreens } from "@/screens/catalog";
 
 export const metadata: Metadata = {
@@ -45,7 +46,7 @@ export default function ScreensIndexPage() {
                     className="absolute inset-0 size-full object-cover opacity-90"
                     src={screen.poster}
                   />
-                  {screen.slug === "spaceman-moon" ? (
+                  {screenPosterNeedsMagentaTint(screen.slug) ? (
                     <div
                       aria-hidden
                       className="absolute inset-0 bg-[#d600bf] mix-blend-color"

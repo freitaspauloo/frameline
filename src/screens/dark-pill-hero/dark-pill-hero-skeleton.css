@@ -1,0 +1,302 @@
+/* Scoped from Reticle — do not Tailwind-rewrite */
+.fl-dark-pill-skeleton {
+  color: inherit;
+}
+
+.fl-dark-pill-skeleton .bone {
+  --bone: rgba(255, 255, 255, 0.14);
+  --shine: rgba(255, 255, 255, 0.22);
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--bone);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  animation: dph-skel-pulse 1.8s ease-in-out infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+.fl-dark-pill-skeleton .bone::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  translate: -100% 0;
+  background: linear-gradient(
+    105deg,
+    transparent 24%,
+    var(--shine) 46%,
+    rgba(214, 0, 191, 0.28) 50%,
+    var(--shine) 54%,
+    transparent 76%
+  );
+  animation: dph-skel-sweep 1.8s linear infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes dph-skel-pulse {
+  0%,
+  100% {
+    opacity: 0.62;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+@keyframes dph-skel-sweep {
+  0% {
+    translate: -100% 0;
+  }
+  100% {
+    translate: 100% 0;
+  }
+}
+
+.fl-dark-pill-skeleton .dph-skel-root {
+  position: relative;
+  display: flex;
+  min-height: 100%;
+  width: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  background: #010003;
+}
+
+.fl-dark-pill-skeleton .dph-skel-root.dph-skel-embed {
+  min-height: 100%;
+  height: 100%;
+}
+
+.fl-dark-pill-skeleton .dph-skel-bg {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+}
+
+.fl-dark-pill-skeleton .dph-skel-bg-art {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    165deg,
+    #0a0610 0%,
+    #180820 28%,
+    #3a1458 55%,
+    #120818 100%
+  );
+}
+
+.fl-dark-pill-skeleton .dph-skel-bg-tint {
+  position: absolute;
+  inset: 0;
+  background: #d600bf;
+  mix-blend-mode: color;
+  opacity: 1;
+}
+
+.fl-dark-pill-skeleton .dph-skel-bg-fade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(1, 0, 3, 0.88) 0%, transparent 48%);
+}
+
+.fl-dark-pill-skeleton .dph-skel-header {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+}
+
+@media (min-width: 640px) {
+  .fl-dark-pill-skeleton .dph-skel-header {
+    padding-inline: 40px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .fl-dark-pill-skeleton .dph-skel-header {
+    padding-inline: 60px;
+  }
+}
+
+.fl-dark-pill-skeleton .dph-skel-brand-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fl-dark-pill-skeleton .bone-brand-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+}
+
+.fl-dark-pill-skeleton .bone-brand-name {
+  width: 72px;
+  height: 22px;
+  border-radius: 999px;
+}
+
+.fl-dark-pill-skeleton .dph-skel-nav-pills {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 15px;
+  background: rgba(26, 25, 28, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+@media (min-width: 768px) {
+  .fl-dark-pill-skeleton .dph-skel-nav-pills {
+    display: flex;
+  }
+}
+
+.fl-dark-pill-skeleton .bone-nav-pill {
+  width: 88px;
+  height: 38px;
+  border-radius: 12px;
+}
+
+.fl-dark-pill-skeleton .dph-skel-nav-ctas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fl-dark-pill-skeleton .bone-nav-login {
+  display: none;
+  width: 84px;
+  height: 48px;
+  border-radius: 15px;
+}
+
+@media (min-width: 640px) {
+  .fl-dark-pill-skeleton .bone-nav-login {
+    display: block;
+  }
+}
+
+.fl-dark-pill-skeleton .bone-nav-cta {
+  width: 112px;
+  height: 40px;
+  border-radius: 15px;
+}
+
+@media (min-width: 640px) {
+  .fl-dark-pill-skeleton .bone-nav-cta {
+    width: 128px;
+    height: 48px;
+  }
+}
+
+.fl-dark-pill-skeleton .dph-skel-body {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 32px 24px 40px;
+}
+
+@media (min-width: 640px) {
+  .fl-dark-pill-skeleton .dph-skel-body {
+    padding: 40px 40px 48px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .fl-dark-pill-skeleton .dph-skel-body {
+    padding: 40px 50px 56px;
+  }
+}
+
+.fl-dark-pill-skeleton .bone-headline {
+  width: min(100%, 680px);
+  height: clamp(88px, 14vw, 120px);
+  border-radius: 10px;
+}
+
+.fl-dark-pill-skeleton .bone-copy {
+  margin-top: 20px;
+  width: min(100%, 420px);
+  height: 14px;
+  border-radius: 999px;
+}
+
+.fl-dark-pill-skeleton .bone-copy-2 {
+  margin-top: 10px;
+  width: min(88%, 360px);
+  height: 14px;
+  border-radius: 999px;
+}
+
+.fl-dark-pill-skeleton .bone-copy-3 {
+  margin-top: 10px;
+  width: min(72%, 280px);
+  height: 14px;
+  border-radius: 999px;
+}
+
+.fl-dark-pill-skeleton .dph-skel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.fl-dark-pill-skeleton .bone-cta-ghost {
+  width: 118px;
+  height: 53px;
+  border-radius: 15px;
+}
+
+.fl-dark-pill-skeleton .bone-cta-primary {
+  width: 168px;
+  height: 53px;
+  border-radius: 15px;
+}
+
+.fl-dark-pill-skeleton .dph-skel-trust {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 48px;
+}
+
+@media (min-width: 640px) {
+  .fl-dark-pill-skeleton .dph-skel-trust {
+    flex-direction: row;
+    align-items: center;
+    gap: 40px;
+    padding-top: 64px;
+  }
+}
+
+.fl-dark-pill-skeleton .bone-trust-label {
+  width: 120px;
+  height: 36px;
+  border-radius: 8px;
+}
+
+.fl-dark-pill-skeleton .dph-skel-logos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px 32px;
+}
+
+.fl-dark-pill-skeleton .bone-logo {
+  width: 72px;
+  height: 22px;
+  border-radius: 999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fl-dark-pill-skeleton .bone,
+  .fl-dark-pill-skeleton .bone::after {
+    animation: none;
+  }
+}

@@ -1,5 +1,6 @@
 import { registryUrl, rewriteAssetReferences } from "@/lib/registry-urls";
 import { getScreenBySlug } from "@/screens/catalog";
+import { DARK_PILL_HERO_PROMPT } from "@/screens/dark-pill-hero/copy";
 import { SPACEMAN_MOON_PROMPT } from "@/screens/spaceman-moon/copy";
 
 const FILES: Record<string, { files: string[]; prompt: string; note: string }> = {
@@ -94,6 +95,16 @@ const FILES: Record<string, { files: string[]; prompt: string; note: string }> =
 so this renders as-is. To self-host, download them and swap the URLs back to
 local paths under public/.`,
   },
+  "dark-pill-hero": {
+    files: [
+      "src/screens/dark-pill-hero/dark-pill-hero.tsx",
+      "src/screens/dark-pill-hero/dark-pill-hero-skeleton.tsx",
+      "src/screens/dark-pill-hero/dark-pill-hero-skeleton.css",
+      "src/screens/reticle-mark.tsx",
+    ],
+    prompt: DARK_PILL_HERO_PROMPT,
+    note: `Hero wave art from Paper reference; magenta color blend overlay in-component. Alias: klyro-hero.`,
+  },
   "yield-skeleton": {
     files: [
       "src/screens/yield-skeleton/yield-skeleton.tsx",
@@ -117,6 +128,14 @@ local paths under public/.`,
     ],
     prompt: `Build the loading skeleton for "Yield Insights": white 1920×1200 list bones, metric card bones, highlight bar. Scoped CSS.`,
     note: "Pairs with Yield Insights.",
+  },
+  "dark-pill-hero-skeleton": {
+    files: [
+      "src/screens/dark-pill-hero/dark-pill-hero-skeleton.tsx",
+      "src/screens/dark-pill-hero/dark-pill-hero-skeleton.css",
+    ],
+    prompt: `Build the loading skeleton for "Dark Pill Nav Hero": same void canvas, shimmer bones for segmented nav, headline, CTAs, and fab logos. Scoped CSS.`,
+    note: "Pairs with Dark Pill Nav Hero.",
   },
 };
 

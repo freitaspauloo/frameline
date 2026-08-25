@@ -7,10 +7,20 @@ const SCREEN = {
 };
 
 /**
- * Storefront catalog — the ten Reticle landing pages.
+ * Storefront catalog — Reticle landing pages.
  * Layout slugs and old product slugs stay as aliases.
  */
 export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
+  {
+    ...SCREEN,
+    slug: "dark-pill-hero",
+    title: "Dark Pill Nav Hero",
+    description:
+      "Void canvas hero — cinematic wave art, segmented pill nav, yield lockup, fab wordmarks.",
+    blurb: "Pill nav · wave art · magenta blend",
+    poster: "/screens/dark-pill-hero/poster.png",
+    aliases: ["klyro-hero"],
+  },
   {
     ...SCREEN,
     slug: "orb",
@@ -111,6 +121,16 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     poster: "/screens/prompt-bar/poster.webp",
     aliases: ["incredible"],
   },
+  {
+    ...SCREEN,
+    slug: "ascii-hero",
+    title: "ASCII Yield Hero",
+    description:
+      "Dark ASCII art hero — magenta color blend, @ deterioration cursor, GSAP entrance, fab marquee.",
+    blurb: "ASCII art · magenta blend · cursor decay",
+    poster: "/screens/ascii-hero/poster.webp",
+    aliases: ["axion-hero", "reticle-ascii-hero"],
+  },
 ];
 
 /** Still copyable, not listed in the public layout catalog. */
@@ -141,6 +161,24 @@ export const HIDDEN_SCREENS: ScreenCatalogEntry[] = [
       "Loading skeleton for Yield Inspection Dashboard — list rows, metric cards, and highlight bar.",
     blurb: "Insights loading state · list + metrics",
     poster: "/screens/insights-skeleton/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "ascii-hero-skeleton",
+    title: "ASCII Yield Skeleton",
+    description:
+      "Loading skeleton for ASCII Yield Hero — dark shimmer bones over nav, headline, CTAs, and fab marquee.",
+    blurb: "Hero loading state · ASCII field · magenta tint",
+    poster: "/screens/ascii-hero-skeleton/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "dark-pill-hero-skeleton",
+    title: "Dark Pill Nav Skeleton",
+    description:
+      "Loading skeleton for Dark Pill Nav Hero — dark shimmer bones over nav, headline, CTAs, and fab logos.",
+    blurb: "Hero loading state · void canvas · magenta tint",
+    poster: "/screens/dark-pill-hero-skeleton/poster.png",
   },
 ];
 

@@ -27,6 +27,7 @@ import {
 import { getMaterialThumbnailSrc } from "@/materials/thumbnails";
 import { buildMaterialsHref, parseSmartQuery } from "@/lib/catalog-query";
 import { listScreens } from "@/screens/catalog";
+import { screenPosterNeedsMagentaTint } from "@/screens/poster-tint";
 import type { ScreenCatalogEntry } from "@/screens/types";
 
 const SELECT =
@@ -229,7 +230,7 @@ export function MaterialsCatalogPage({
                         getMaterialThumbnailSrc(screen.slug) ?? screen.poster
                       }
                     />
-                    {screen.slug === "spaceman-moon" ? (
+                    {screenPosterNeedsMagentaTint(screen.slug) ? (
                       <div
                         aria-hidden
                         className="absolute inset-0 bg-[#d600bf] mix-blend-color"

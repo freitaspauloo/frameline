@@ -39,6 +39,7 @@ const POSTER_DIRS = {
 };
 
 const DEFAULT_SLUGS = [
+  "dark-pill-hero",
   "orb",
   "feature-cards",
   "insights",

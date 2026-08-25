@@ -14,7 +14,13 @@ export const RETICLE_MARK_LINES = Array.from({ length: 24 }, (_, i) => {
   };
 });
 
-export function ReticleMark({ className }: { className?: string }) {
+export function ReticleMark({
+  className,
+  color = "#D600BF",
+}: {
+  className?: string;
+  color?: string;
+}) {
   const lines = RETICLE_MARK_LINES;
 
   return (
@@ -27,7 +33,7 @@ export function ReticleMark({ className }: { className?: string }) {
       {lines.map((line, i) => (
         <line
           key={i}
-          stroke="#D600BF"
+          stroke={color}
           strokeLinecap="round"
           strokeWidth="2.2"
           x1={line.x1}

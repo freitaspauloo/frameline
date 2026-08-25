@@ -56,12 +56,19 @@ export function LogoWall({
               aria-hidden={mirrored || undefined}
               className="flex shrink-0 items-center border-r border-border px-6 py-3 sm:px-10 sm:py-4"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                alt={mirrored ? "" : `${logo.name} logo`}
-                className="h-5 w-auto max-w-[7.5rem] object-contain object-center brightness-0 opacity-45 transition-opacity duration-500 hover:opacity-80 sm:h-6 sm:max-w-[8.5rem]"
-                src={logo.src}
-              />
+              <span className="flex h-8 w-[6.75rem] items-center justify-center sm:h-9 sm:w-[7.5rem]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  alt={mirrored ? "" : `${logo.name} logo`}
+                  className="max-h-5 max-w-full object-contain object-center brightness-0 opacity-45 transition-opacity duration-500 hover:opacity-80 sm:max-h-6"
+                  src={logo.src}
+                  style={
+                    logo.scale === 1
+                      ? undefined
+                      : { transform: `scale(${logo.scale})` }
+                  }
+                />
+              </span>
             </span>
           )),
         )}

@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 
 import { useMarqueeLoop } from "@/components/motion/use-marquee-loop";
+import { screenPosterNeedsMagentaTint } from "@/screens/poster-tint";
 import type { ScreenCatalogEntry } from "@/screens/types";
 import { cn } from "@/lib/utils";
 
@@ -40,7 +41,7 @@ function Tile({
           className="absolute inset-0 size-full object-cover"
           src={entry.poster}
         />
-        {entry.slug === "spaceman-moon" ? (
+        {screenPosterNeedsMagentaTint(entry.slug) ? (
           <div
             aria-hidden
             className="absolute inset-0 bg-[#d600bf] mix-blend-color"

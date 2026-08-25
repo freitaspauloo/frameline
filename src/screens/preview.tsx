@@ -11,6 +11,8 @@ import { FeatureRail } from "@/screens/layouts/feature-rail";
 import { LightRays } from "@/screens/layouts/light-rays";
 import { MagentaLandscape } from "@/screens/layouts/magenta-landscape";
 import { PromptBar } from "@/screens/layouts/prompt-bar";
+import { ReticleAsciiHero, ReticleAsciiHeroSkeleton } from "@/screens/ascii-hero";
+import { DarkPillHero, DarkPillHeroSkeleton } from "@/screens/dark-pill-hero";
 import { SpacemanMoon } from "@/screens/spaceman-moon";
 import { YieldSkeleton } from "@/screens/yield-skeleton";
 import { getScreenBySlug } from "@/screens/catalog";
@@ -45,12 +47,20 @@ export function ScreenLivePreview({
       return <LightRays embed={embed} />;
     case "prompt-bar":
       return <PromptBar embed={embed} />;
+    case "ascii-hero":
+      return <ReticleAsciiHero className="h-full w-full" embed={embed} />;
+    case "dark-pill-hero":
+      return <DarkPillHero className="h-full w-full" embed={embed} />;
     case "yield-skeleton":
       return <YieldSkeleton embed={embed} />;
     case "features-skeleton":
       return <FeaturesSkeleton embed={embed} />;
     case "insights-skeleton":
       return <InsightsSkeletonScreen embed={embed} />;
+    case "ascii-hero-skeleton":
+      return <ReticleAsciiHeroSkeleton className="h-full w-full" embed={embed} />;
+    case "dark-pill-hero-skeleton":
+      return <DarkPillHeroSkeleton className="h-full w-full" embed={embed} />;
     default:
       return <div className="absolute inset-0 bg-muted" />;
   }

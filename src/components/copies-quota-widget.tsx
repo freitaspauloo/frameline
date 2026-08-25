@@ -1,12 +1,19 @@
 "use client";
 
 import * as React from "react";
+import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
 
 import { LogoMark } from "@/components/relay-ui";
 import { cn } from "@/lib/utils";
 
 const DEFAULT_LABEL = "1 free copy per week";
+
+/** Frameline storefront only — hide on dev previews, capture, marketing, etc. */
+function shouldShowQuotaChip(pathname: string | null): boolean {
+  if (!pathname) return false;
+  return pathname === "/screens" || pathname.startsWith("/screens/");
+}
 
 type CopiesQuotaContextValue = {
   label: string;
@@ -52,20 +59,22 @@ export function CopiesQuotaProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
   const [label, setLabel] = React.useState(DEFAULT_LABEL);
   const [mounted, setMounted] = React.useState(false);
   const value = React.useMemo(() => ({ label, setLabel }), [label]);
+  const showChip = shouldShowQuotaChip(pathname);
 
   React.useEffect(() => {
     setMounted(true);
   }, []);
 
-  const chip = <CopiesQuotaChip label={label} />;
+  const chip = showChip ? <CopiesQuotaChip label={label} /> : null;
 
   return (
     <CopiesQuotaContext.Provider value={value}>
       {children}
-      {mounted ? createPortal(chip, document.body) : chip}
+      {chip && (mounted ? createPortal(chip, document.body) : chip)}
     </CopiesQuotaContext.Provider>
   );
 }

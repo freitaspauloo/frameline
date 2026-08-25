@@ -36,6 +36,7 @@ import { WordMask } from "@/components/motion/word-mask";
 import { Button } from "@/components/ui/button";
 import { getV1LaunchCatalog } from "@/materials";
 import { listScreens } from "@/screens/catalog";
+import { screenPosterNeedsMagentaTint } from "@/screens/poster-tint";
 import { cn } from "@/lib/utils";
 
 import { CLIENT_LOGOS } from "@/lib/client-logos";
@@ -258,7 +259,7 @@ export function FramelineHomePageV2() {
                         className="absolute inset-0 size-full object-cover"
                         src={screen.poster}
                       />
-                      {screen.slug === "spaceman-moon" ? (
+                      {screenPosterNeedsMagentaTint(screen.slug) ? (
                         <div
                           aria-hidden
                           className="absolute inset-0 bg-[#d600bf] mix-blend-color"
