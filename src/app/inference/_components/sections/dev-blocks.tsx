@@ -105,6 +105,7 @@ import {
   MOCK_CODE_TSX,
   MOCK_ENV_VARS,
   MOCK_FILE_TREE,
+  MOCK_SANDBOX_LOG,
   MOCK_STACK_TRACE,
   MOCK_TERMINAL_OUTPUT,
 } from "../../_lib/mock-data";
@@ -230,7 +231,7 @@ export function DevBlocks() {
                 </SandboxTabsBar>
                 <SandboxTabContent className="p-4" value="logs">
                   <pre className="overflow-x-auto font-mono text-muted-foreground text-xs">
-                    {MOCK_TERMINAL_OUTPUT}
+                    {MOCK_SANDBOX_LOG}
                   </pre>
                 </SandboxTabContent>
                 <SandboxTabContent className="p-4" value="files">

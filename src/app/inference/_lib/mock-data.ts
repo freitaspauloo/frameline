@@ -294,6 +294,14 @@ export const MOCK_TERMINAL_OUTPUT = `$ pnpm posters hero-dither
 \u001b[33m!\u001b[0m 2 screens still missing a poster
 \u001b[32m✓\u001b[0m done in 4.1s`;
 
+/** Same run, without the ANSI escapes, for panes that render plain text. */
+export const MOCK_SANDBOX_LOG = `$ pnpm posters hero-dither
+› launching chromium (1920×1080)
+› navigating to /screens/hero-dither?embed=1
+✓ captured public/screens/hero-dither/poster.png
+! 2 screens still missing a poster
+✓ done in 4.1s`;
+
 export const MOCK_CONSOLE_LOGS = [
   {
     level: "log" as const,
