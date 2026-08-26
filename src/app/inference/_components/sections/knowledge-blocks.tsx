@@ -63,7 +63,8 @@ import {
 } from "../../_lib/mock-data";
 import { KitBlock, KitSection } from "../kit-block";
 
-const CITED_HOSTS = MOCK_SOURCES.map((source) => new URL(source.href).host);
+/** The trigger parses each entry with `new URL`, so it wants full hrefs. */
+const CITED_URLS = MOCK_SOURCES.map((source) => source.href);
 
 export function KnowledgeBlocks() {
   return (
@@ -100,7 +101,7 @@ export function KnowledgeBlocks() {
             <InlineCitation>
               <InlineCitationText> </InlineCitationText>
               <InlineCitationCard>
-                <InlineCitationCardTrigger sources={CITED_HOSTS} />
+                <InlineCitationCardTrigger sources={CITED_URLS} />
                 <InlineCitationCardBody>
                   <InlineCitationCarousel>
                     <InlineCitationCarouselHeader>
