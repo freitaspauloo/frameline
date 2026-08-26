@@ -43,12 +43,13 @@ export async function GET(request: NextRequest) {
       owned,
       signedIn: Boolean(email),
       promptRequiresSignIn: !email,
+      copyRequiresSignIn: !email,
       copiesLeftThisWeek: left,
       freeRemainingToday: left,
       message: owned
         ? null
         : !email
-          ? "Sign in to copy the prompt. Copy code includes 1 free copy per week."
+          ? "Sign in to copy the prompt or code."
           : left === 0
             ? "You’ve used this week’s free copy. $9/mo or $49/y unlocks unlimited prompt + code."
             : "1 free copy this week. Then $9/mo or $49/y for unlimited.",

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { getDemoEmail } from "@/lib/auth";
 import { recordEvent } from "@/lib/events";
 import { fulfillDemoOrder } from "@/lib/fulfillment";
 import {
@@ -55,11 +56,25 @@ export async function POST(request: Request) {
     );
   }
 
-  const email = body.email?.trim().toLowerCase();
-  if (!email || !email.includes("@")) {
+  const sessionEmail = await getDemoEmail();
+  if (!sessionEmail) {
+    return NextResponse.json(
+      { ok: false, error: "Sign in before checkout." },
+      { status: 401 },
+    );
+  }
+
+  const email = (body.email?.trim().toLowerCase() || sessionEmail).trim();
+  if (!email.includes("@")) {
     return NextResponse.json(
       { ok: false, error: "A valid email is required" },
       { status: 400 },
+    );
+  }
+  if (email !== sessionEmail) {
+    return NextResponse.json(
+      { ok: false, error: "Email must match your signed-in account." },
+      { status: 403 },
     );
   }
 

@@ -1,7 +1,6 @@
 import Link from "next/link";
 
-import { AdminMaterialEditForm } from "@/components/admin-material-edit-form";
-import { AdminMaterialThumb } from "@/components/admin-material-thumb";
+import { AdminMaterialsTable } from "@/components/admin-materials-table";
 import {
   getResolvedCatalog,
   readCatalogOverrides,
@@ -9,9 +8,14 @@ import {
 
 export default async function AdminMaterialsPage() {
   const [catalog, overrides] = await Promise.all([
-    getResolvedCatalog({ all: true }),
+    getResolvedCatalog({ includeDrafts: true }),
     readCatalogOverrides(),
   ]);
+
+  const rows = catalog.map((entry) => ({
+    entry,
+    status: overrides[entry.slug]?.status ?? ("published" as const),
+  }));
 
   return (
     <div className="space-y-8">
@@ -21,9 +25,19 @@ export default async function AdminMaterialsPage() {
         </p>
         <h1 className="mt-2 text-2xl font-medium tracking-tight">Catalog</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Edit title, description, and tier via demo overrides in{" "}
-          <span className="font-mono">.data/catalog-overrides.json</span> —
-          source catalog stays untouched. Card stills live in the{" "}
+          Storefront materials — same set and order as{" "}
+          <Link
+            className="underline underline-offset-4 hover:text-foreground"
+            href="/materials"
+          >
+            /materials
+          </Link>{" "}
+          and the homepage. Edit title, description, tier, and status via demo
+          overrides in{" "}
+          <span className="font-mono">.data/catalog-overrides.json</span>.
+          Reorder writes to{" "}
+          <span className="font-mono">.data/catalog-order.json</span>. Card
+          stills live in the{" "}
           <Link
             className="underline underline-offset-4 hover:text-foreground"
             href="/studio/thumbnails"
@@ -34,80 +48,10 @@ export default async function AdminMaterialsPage() {
         </p>
       </div>
 
-      <div className="overflow-x-auto border border-border">
-        <table className="w-full min-w-[42rem] text-left text-sm">
-          <thead className="border-b border-border bg-muted/40">
-            <tr>
-              <th className="w-24 px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Preview
-              </th>
-              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Title
-              </th>
-              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Slug
-              </th>
-              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Type
-              </th>
-              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Tier
-              </th>
-              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Status
-              </th>
-              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Storefront
-              </th>
-              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Edit
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {catalog.map((item) => {
-              const status = overrides[item.slug]?.status ?? "published";
-              return (
-                <tr
-                  className="border-b border-border align-middle last:border-b-0"
-                  key={item.slug}
-                >
-                  <td className="px-3 py-2.5">
-                    <AdminMaterialThumb
-                      entry={item}
-                      href={`/materials/${item.slug}`}
-                    />
-                  </td>
-                  <td className="px-3 py-2.5 font-medium">{item.title}</td>
-                  <td className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground">
-                    {item.slug}
-                  </td>
-                  <td className="px-3 py-2.5 font-mono text-[11px]">
-                    {item.type}
-                  </td>
-                  <td className="px-3 py-2.5 font-mono text-[11px]">
-                    {item.tier}
-                  </td>
-                  <td className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground">
-                    {status}
-                  </td>
-                  <td className="px-3 py-2.5">
-                    <Link
-                      className="underline underline-offset-4 hover:text-muted-foreground"
-                      href={`/materials/${item.slug}`}
-                    >
-                      View
-                    </Link>
-                  </td>
-                  <td className="px-3 py-2.5">
-                    <AdminMaterialEditForm entry={item} status={status} />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <AdminMaterialsTable
+        rows={rows}
+        slugs={catalog.map((entry) => entry.slug)}
+      />
     </div>
   );
 }

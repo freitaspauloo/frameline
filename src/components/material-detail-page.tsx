@@ -6,6 +6,11 @@ import { notFound } from "next/navigation";
 import { RiArrowLeftLine } from "@remixicon/react";
 
 import { MarketingFooter } from "@/components/marketing-footer";
+import {
+  DemoEmailSignInForm,
+  FirebaseSignInForm,
+  type AuthSessionUser,
+} from "@/components/firebase-sign-in-form";
 import { MaterialViewBeacon } from "@/components/site-analytics";
 import { MarketingNavbar } from "@/components/marketing-navbar";
 import {
@@ -15,7 +20,16 @@ import {
   marketingPad,
 } from "@/components/marketing-shell";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
+import { getDemoSession } from "@/lib/auth-client";
+import { isFirebaseClientConfigured } from "@/lib/firebase-client";
 import { recordInstallIntent } from "@/lib/install-intent";
 import { getLicensePlan } from "@/lib/license-plans";
 import { installCommand } from "@/lib/registry-urls";
@@ -236,6 +250,13 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
   const [copiedCli, setCopiedCli] = React.useState(false);
   const [copiedShare, setCopiedShare] = React.useState(false);
   const [paused, setPaused] = React.useState(false);
+  const [user, setUser] = React.useState<AuthSessionUser | null>(null);
+  const [authOpen, setAuthOpen] = React.useState(false);
+  const [authIntent, setAuthIntent] = React.useState<"jsx" | "cli" | null>(
+    null,
+  );
+  const emailRef = React.useRef<string | null>(null);
+  const firebaseReady = isFirebaseClientConfigured();
   /** Explicit reduced-motion toggle → CSS shell fallback (separate from Pause). */
   const [reducedMotion, setReducedMotion] = React.useState(false);
   const urlSyncReady = React.useRef(false);
@@ -248,7 +269,12 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
   const forceStaticPreview = paused || reducedMotion;
 
   React.useEffect(() => {
-    // Allow one frame so initial URL write doesn't fight hydration.
+    const session = getDemoSession();
+    setUser(session);
+    emailRef.current = session?.email ?? null;
+  }, []);
+
+  React.useEffect(() => {
     const id = window.setTimeout(() => {
       urlSyncReady.current = true;
     }, 0);
@@ -287,7 +313,26 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
     window.history.replaceState(null, "", window.location.pathname);
   }
 
+  function openAuthGate(intent: "jsx" | "cli") {
+    setAuthIntent(intent);
+    setAuthOpen(true);
+  }
+
+  function onAuthSuccess(next: AuthSessionUser) {
+    setUser(next);
+    emailRef.current = next.email;
+    setAuthOpen(false);
+    const intent = authIntent;
+    setAuthIntent(null);
+    if (intent === "jsx") void copySnippet();
+    if (intent === "cli") void copyCli();
+  }
+
   async function copySnippet() {
+    if (!user?.email && !emailRef.current) {
+      openAuthGate("jsx");
+      return;
+    }
     await navigator.clipboard.writeText(snippet);
     recordInstallIntent({
       slug,
@@ -299,6 +344,10 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
   }
 
   async function copyCli() {
+    if (!user?.email && !emailRef.current) {
+      openAuthGate("cli");
+      return;
+    }
     await navigator.clipboard.writeText(cliSnippet);
     recordInstallIntent({
       slug,
@@ -526,7 +575,8 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
                   className="border border-border bg-muted/30 px-3 py-2 font-mono text-[11px] leading-relaxed text-foreground"
                   data-install-speed="under-60s"
                 >
-                  Install under 60s — CLI or copy-paste, no account required.
+                  Install under 60s — sign in, then CLI or copy-paste into your
+                  repo.
                 </p>
 
                 <div className="space-y-2">
@@ -544,7 +594,11 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
                       variant="outline"
                       onClick={copyCli}
                     >
-                      {copiedCli ? "Copied" : "Copy"}
+                      {copiedCli
+                        ? "Copied"
+                        : user?.email || emailRef.current
+                          ? "Copy"
+                          : "Sign in · Copy"}
                     </Button>
                   </div>
                 </div>
@@ -580,10 +634,14 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
                   variant="outline"
                   onClick={copySnippet}
                 >
-                  {copied ? "Copied JSX" : "Copy JSX"}
+                  {copied
+                    ? "Copied JSX"
+                    : user?.email || emailRef.current
+                      ? "Copy JSX"
+                      : "Sign in · Copy JSX"}
                 </Button>
                 <p className="pt-1 text-sm leading-relaxed text-muted-foreground">
-                  Free — no account required. Source lands in your repo.{" "}
+                  Free to install — sign in to copy source into your repo.{" "}
                   <Link
                     className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
                     href={`/docs/installation?material=${entry.slug}`}
@@ -699,6 +757,23 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
         </div>
       </MarketingSection>
       <MarketingFooter />
+
+      <Dialog open={authOpen} onOpenChange={setAuthOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Sign in to copy</DialogTitle>
+            <DialogDescription>
+              Create a free account or sign in — then you can copy the CLI
+              command or JSX for {entry.title}.
+            </DialogDescription>
+          </DialogHeader>
+          {firebaseReady ? (
+            <FirebaseSignInForm onSuccess={onAuthSuccess} />
+          ) : (
+            <DemoEmailSignInForm onSuccess={onAuthSuccess} />
+          )}
+        </DialogContent>
+      </Dialog>
     </MarketingShell>
   );
 }

@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
 
     const { id: anonId, minted: mintAnon } = resolveAnonId(request);
 
-    if (copyPath === "prompt" && !email) {
+    if (!email) {
       await recordEvent({
         name: "copy_blocked",
         email: null,
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
       const res = NextResponse.json({
         ok: false,
         reason: "auth" as const,
-        message: "Create an account or sign in to copy the prompt.",
+        message: "Create an account or sign in to copy.",
       });
       if (mintAnon) attachAnonCookie(res, anonId);
       return res;

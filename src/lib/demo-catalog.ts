@@ -3,6 +3,7 @@ import path from "node:path";
 
 import {
   MATERIALS_CATALOG,
+  V1_LAUNCH_MATERIAL_SLUGS,
   applyCatalogOverride,
   filterV1LaunchCatalog,
   isV1LaunchMaterial,
@@ -13,10 +14,13 @@ import {
 export type ResolvedCatalogOptions = {
   /** Include full catalog (admin). Default: lean V1 public set only. */
   all?: boolean;
+  /** Include draft items (admin storefront view). Default: hidden on public routes. */
+  includeDrafts?: boolean;
 };
 
 const DATA_DIR = path.join(process.cwd(), ".data");
 const OVERRIDES_PATH = path.join(DATA_DIR, "catalog-overrides.json");
+const ORDER_PATH = path.join(DATA_DIR, "catalog-order.json");
 
 export type CatalogOverridesFile = Record<string, CatalogMaterialOverride>;
 
@@ -33,6 +37,50 @@ async function readJsonFile<T>(filePath: string, fallback: T): Promise<T> {
 async function writeJsonFile(filePath: string, data: unknown) {
   await mkdir(DATA_DIR, { recursive: true });
   await writeFile(filePath, `${JSON.stringify(data, null, 2)}\n`, "utf8");
+}
+
+/** Read storefront slug order from `.data/catalog-order.json`. */
+export async function readCatalogOrder(): Promise<string[] | null> {
+  const parsed = await readJsonFile<unknown>(ORDER_PATH, null);
+  if (!Array.isArray(parsed)) return null;
+  return parsed.filter((slug): slug is string => typeof slug === "string");
+}
+
+/** Persist storefront slug order (V1 launch set only). */
+export async function writeCatalogOrder(slugs: string[]): Promise<string[]> {
+  const allowed = new Set<string>(V1_LAUNCH_MATERIAL_SLUGS);
+  const seen = new Set<string>();
+  const next: string[] = [];
+
+  for (const slug of slugs) {
+    if (!allowed.has(slug) || seen.has(slug)) continue;
+    seen.add(slug);
+    next.push(slug);
+  }
+
+  for (const slug of V1_LAUNCH_MATERIAL_SLUGS) {
+    if (!seen.has(slug)) next.push(slug);
+  }
+
+  await writeJsonFile(ORDER_PATH, next);
+  return next;
+}
+
+function sortByCatalogOrder<T extends { slug: string }>(
+  entries: readonly T[],
+  orderSlugs: string[] | null,
+): T[] {
+  if (!orderSlugs?.length) {
+    return filterV1LaunchCatalog(entries);
+  }
+
+  const order = new Map(orderSlugs.map((slug, index) => [slug, index]));
+  return entries
+    .filter((entry) => order.has(entry.slug))
+    .slice()
+    .sort(
+      (a, b) => (order.get(a.slug) ?? 99) - (order.get(b.slug) ?? 99),
+    );
 }
 
 /** Read draft metadata overrides from `.data/catalog-overrides.json`. */
@@ -84,13 +132,20 @@ export async function writeCatalogOverride(
 export async function getResolvedCatalog(
   options: ResolvedCatalogOptions = {},
 ): Promise<MaterialCatalogEntry[]> {
-  const overrides = await readCatalogOverrides();
+  const [overrides, orderSlugs] = await Promise.all([
+    readCatalogOverrides(),
+    readCatalogOrder(),
+  ]);
   const resolved = MATERIALS_CATALOG.map((entry) =>
     applyCatalogOverride(entry, overrides[entry.slug]),
   );
   if (options.all) return resolved;
 
-  return filterV1LaunchCatalog(resolved).filter((entry) => {
+  const ordered = sortByCatalogOrder(resolved, orderSlugs);
+
+  if (options.includeDrafts) return ordered;
+
+  return ordered.filter((entry) => {
     const status = overrides[entry.slug]?.status ?? "published";
     return status !== "draft";
   });

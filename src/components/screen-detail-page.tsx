@@ -63,7 +63,9 @@ export function ScreenDetailPage({
   );
   const [payOpen, setPayOpen] = React.useState(false);
   const [authOpen, setAuthOpen] = React.useState(false);
-  const [authIntent, setAuthIntent] = React.useState<"prompt" | null>(null);
+  const [authIntent, setAuthIntent] = React.useState<"prompt" | "code" | null>(
+    null,
+  );
   const emailRef = React.useRef(email);
   const firebaseReady = isFirebaseClientConfigured();
 
@@ -145,8 +147,8 @@ export function ScreenDetailPage({
     setPayOpen(true);
   }
 
-  function openAuthGate() {
-    setAuthIntent("prompt");
+  function openAuthGate(intent: "prompt" | "code") {
+    setAuthIntent(intent);
     setAuthOpen(true);
   }
 
@@ -159,15 +161,14 @@ export function ScreenDetailPage({
     emailRef.current = next.email;
     setAuthOpen(false);
     void refreshAccess();
-    if (authIntent === "prompt") {
-      setAuthIntent(null);
-      void copyPath("prompt");
-    }
+    const intent = authIntent;
+    setAuthIntent(null);
+    if (intent) void copyPath(intent);
   }
 
   async function copyPath(path: "prompt" | "code") {
-    if (path === "prompt" && !user?.email && !emailRef.current) {
-      openAuthGate();
+    if (!user?.email && !emailRef.current) {
+      openAuthGate(path);
       return;
     }
     setBusy(path);
@@ -200,8 +201,8 @@ export function ScreenDetailPage({
       }
 
       if (data.reason === "auth") {
-        openAuthGate();
-        setBanner(data.message ?? "Sign in to copy the prompt.");
+        setBanner(data.message ?? "Sign in to copy.");
+        openAuthGate(path);
         return;
       }
 
@@ -267,7 +268,7 @@ export function ScreenDetailPage({
                   onClick={() =>
                     user?.email || emailRef.current
                       ? void copyPath("prompt")
-                      : openAuthGate()
+                      : openAuthGate("prompt")
                   }
                 >
                   {copied === "prompt" ? (
@@ -288,7 +289,11 @@ export function ScreenDetailPage({
                   disabled={busy !== null}
                   size="sm"
                   type="button"
-                  onClick={() => void copyPath("code")}
+                  onClick={() =>
+                    user?.email || emailRef.current
+                      ? void copyPath("code")
+                      : openAuthGate("code")
+                  }
                 >
                   {copied === "code" ? (
                     <RiCheckLine data-icon="inline-start" />
@@ -299,7 +304,9 @@ export function ScreenDetailPage({
                     ? "Copied"
                     : busy === "code"
                       ? "Copying…"
-                      : "Copy code"}
+                      : user?.email || emailRef.current
+                        ? "Copy code"
+                        : "Sign in · Copy code"}
                 </Button>
               </div>
             </div>
@@ -384,10 +391,11 @@ export function ScreenDetailPage({
       <Dialog open={authOpen} onOpenChange={setAuthOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Sign in to copy the prompt</DialogTitle>
+            <DialogTitle>Sign in to copy</DialogTitle>
             <DialogDescription>
-              Create a free account or sign in — then you can copy the AI prompt
-              for {entry.title}. Your weekly free copy applies after sign-in.
+              Create a free account or sign in — then you can copy the prompt or
+              code for {entry.title}. Your weekly free copy applies after
+              sign-in.
             </DialogDescription>
           </DialogHeader>
           {firebaseReady ? (

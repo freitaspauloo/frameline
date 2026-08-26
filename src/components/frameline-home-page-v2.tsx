@@ -34,14 +34,12 @@ import {
 } from "@/components/motion/reveal";
 import { WordMask } from "@/components/motion/word-mask";
 import { Button } from "@/components/ui/button";
-import { getV1LaunchCatalog } from "@/materials";
+import type { MaterialCatalogEntry } from "@/materials";
 import { listScreens } from "@/screens/catalog";
 import { screenPosterNeedsMagentaTint } from "@/screens/poster-tint";
 import { cn } from "@/lib/utils";
 
 import { CLIENT_LOGOS } from "@/lib/client-logos";
-
-const PUBLIC_CATALOG = getV1LaunchCatalog();
 
 const FAQ_ITEMS = [
   {
@@ -50,7 +48,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What’s free vs paid?",
-    a: "Materials install free. Each screen includes 1 free copy per week. After that, $9/mo, $49/y, or $150 lifetime unlocks unlimited Copy prompt + Copy code for that screen.",
+    a: "Materials and screens are free to browse. Sign in to copy — CLI, JSX, prompt, or code. Each screen includes 1 free copy per week; after that, $9/mo, $49/y, or $150 lifetime unlocks unlimited copies for that screen.",
   },
   {
     q: "What do Copy prompt and Copy code give me?",
@@ -157,7 +155,11 @@ function SectionIntro({
   );
 }
 
-export function FramelineHomePageV2() {
+export function FramelineHomePageV2({
+  catalog,
+}: {
+  catalog: MaterialCatalogEntry[];
+}) {
   return (
     <FramelineLenis>
       <FramelineReveal>
@@ -347,8 +349,8 @@ export function FramelineHomePageV2() {
                     className="pointer-events-none relative aspect-[16/10] overflow-hidden bg-foreground lg:aspect-auto lg:min-h-[20rem]"
                     data-reveal
                   >
-                    {PUBLIC_CATALOG[0] ? (
-                      <MaterialPreview entry={PUBLIC_CATALOG[0]} />
+                    {catalog[0] ? (
+                      <MaterialPreview entry={catalog[0]} />
                     ) : null}
                   </div>
                 }
