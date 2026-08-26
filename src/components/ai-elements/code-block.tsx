@@ -383,13 +383,10 @@ export const CodeBlockContent = ({
   // Memoized raw tokens for immediate display
   const rawTokens = useMemo(() => createRawTokens(code), [code]);
 
-  // Synchronous cache lookup — avoids setState in effect for cached results
-  const syncTokens = useMemo(
-    () => highlightCode(code, language) ?? rawTokens,
-    [code, language, rawTokens]
-  );
-
-  // Async highlighting result (populated after shiki loads)
+  // Highlighted result, adopted only after mount. The shiki token cache is
+  // module-scoped, so a synchronous cache read during render is warm on the
+  // server and cold in the browser, which breaks hydration — the first paint
+  // has to be raw tokens on both sides.
   const [asyncTokens, setAsyncTokens] = useState<TokenizedCode | null>(null);
   const asyncKeyRef = useRef({ code, language });
 
@@ -405,18 +402,23 @@ export const CodeBlockContent = ({
   useEffect(() => {
     let cancelled = false;
 
-    highlightCode(code, language, (result) => {
+    // Returns non-null on a cache hit, in which case the callback never fires.
+    const cached = highlightCode(code, language, (result) => {
       if (!cancelled) {
         setAsyncTokens(result);
       }
     });
+
+    if (cached && !cancelled) {
+      setAsyncTokens(cached);
+    }
 
     return () => {
       cancelled = true;
     };
   }, [code, language]);
 
-  const tokenized = asyncTokens ?? syncTokens;
+  const tokenized = asyncTokens ?? rawTokens;
 
   return (
     <div className="relative overflow-auto">

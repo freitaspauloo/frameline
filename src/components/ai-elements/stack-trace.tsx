@@ -216,10 +216,20 @@ export const StackTraceHeader = memo(
 
     return (
       <Collapsible onOpenChange={setIsOpen} open={isOpen}>
-        <CollapsibleTrigger {...props} render={<div className={cn(
-                          "flex w-full cursor-pointer items-center gap-3 p-3 text-left transition-colors hover:bg-muted/50",
-                          className
-                        )} />}>{children}</CollapsibleTrigger>
+        <CollapsibleTrigger
+          nativeButton={false}
+          {...props}
+          render={
+            <div
+              className={cn(
+                "flex w-full cursor-pointer items-center gap-3 p-3 text-left transition-colors hover:bg-muted/50",
+                className
+              )}
+            />
+          }
+        >
+          {children}
+        </CollapsibleTrigger>
       </Collapsible>
     );
   }

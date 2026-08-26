@@ -175,7 +175,7 @@ export function ComposerBlocks() {
           <div className="flex flex-col gap-3">
             <ModelSelector onOpenChange={setPickerOpen} open={pickerOpen}>
               <ModelSelectorTrigger
-                render={<Button variant="outline" />}
+                render={<Button className="w-fit" variant="outline" />}
               >
                 {selected?.name ?? "Pick a model"}
               </ModelSelectorTrigger>

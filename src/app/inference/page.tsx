@@ -13,7 +13,7 @@ export default function InferencePage() {
       <InferenceHeader />
 
       <section
-        className="h-[calc(100svh-3.25rem)] min-h-[40rem] border-border border-b"
+        className="h-[calc(100svh-3.25rem)] min-h-[40rem] scroll-mt-[3.25rem] border-border border-b"
         id="workspace"
       >
         <InferenceWorkspace />

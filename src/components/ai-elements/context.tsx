@@ -113,16 +113,20 @@ export const ContextTrigger = ({ children, ...props }: ContextTriggerProps) => {
   }).format(usedPercent);
 
   return (
-    <HoverCardTrigger>
-      {children ?? (
+    <HoverCardTrigger
+      render={
         <Button type="button" variant="ghost" {...props}>
-          <span className="font-medium text-muted-foreground">
-            {renderedPercent}
-          </span>
-          <ContextIcon />
+          {children ?? (
+            <>
+              <span className="font-medium text-muted-foreground">
+                {renderedPercent}
+              </span>
+              <ContextIcon />
+            </>
+          )}
         </Button>
-      )}
-    </HoverCardTrigger>
+      }
+    />
   );
 };
 

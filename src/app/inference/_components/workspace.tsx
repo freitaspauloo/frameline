@@ -562,7 +562,9 @@ export function InferenceWorkspace() {
             </Badge>
           </header>
 
-          <MessageScrollerProvider autoScroll defaultScrollPosition="end">
+          {/* Opens on the top of the seeded session so the reasoning, task and
+              tool blocks are the first thing you see. */}
+          <MessageScrollerProvider autoScroll defaultScrollPosition="start">
             <MessageScroller className="min-h-0 flex-1">
               <MessageScrollerViewport>
                 <MessageScrollerContent className="mx-auto w-full max-w-3xl gap-6 px-4 py-6">
