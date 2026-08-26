@@ -18,10 +18,7 @@ import {
   signupSummary,
   trafficSummary,
 } from "@/lib/metrics";
-import {
-  MATERIALS_CATALOG,
-  MATERIALS_COLLECTIONS,
-} from "@/materials";
+import { MATERIALS_CATALOG } from "@/materials";
 
 async function readWaitlistCount(): Promise<number> {
   if (hasDatabaseUrl()) {
@@ -58,7 +55,6 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
   const materialCount = MATERIALS_CATALOG.length;
-  const collectionCount = MATERIALS_COLLECTIONS.length;
   const freeCount = MATERIALS_CATALOG.filter((m) => m.tier === "free").length;
   const paidCount = materialCount - freeCount;
 
@@ -75,7 +71,7 @@ export default async function AdminDashboardPage() {
 
   const stats: Stat[] = [
     { label: "Visits", value: traffic.pageViews, hint: `${traffic.uniqueVisitors} unique` },
-    { label: "Signups", value: signups.total, href: "/admin/analytics" },
+    { label: "Signups", value: signups.total, href: "/admin/signups" },
     {
       label: "MRR",
       value: formatCents(revenue.mrrCents),
@@ -187,9 +183,9 @@ export default async function AdminDashboardPage() {
           stats={[
             { label: "Materials", value: materialCount, href: "/admin/materials" },
             {
-              label: "Collections",
-              value: collectionCount,
-              href: "/admin/collections",
+              label: "Signups",
+              value: signups.total,
+              href: "/admin/signups",
             },
             { label: "Orders", value: orders.length, href: "/admin/orders" },
             { label: "Inbox", value: inboxCount, href: "/admin/inbox" },

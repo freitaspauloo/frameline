@@ -334,12 +334,14 @@ export function AnalyticsDashboard({
           label="Page views"
           value={traffic.pageViews}
         />
-        <MetricCard
-          hint={`${signups.last30} in 30d`}
-          icon={RiUserAddLine}
-          label="Signups"
-          value={signups.last30}
-        />
+        <AdminLink className="block transition-opacity hover:opacity-80" href="/admin/signups">
+          <MetricCard
+            hint={`${signups.last30} in 30d`}
+            icon={RiUserAddLine}
+            label="Signups"
+            value={signups.last30}
+          />
+        </AdminLink>
         <MetricCard
           hint={`${funnel.blocked} paywalled`}
           icon={RiFileCopyLine}
@@ -416,6 +418,14 @@ export function AnalyticsDashboard({
           <CardHeader className="border-b border-relay-border/80">
             <CardTitle className="font-heading text-relay-ink">Signups</CardTitle>
             <CardDescription>New accounts per day.</CardDescription>
+            <CardAction>
+              <AdminLink
+                className="text-[0.625rem] font-semibold tracking-widest text-relay-blue uppercase underline-offset-4 hover:underline"
+                href="/admin/signups"
+              >
+                All accounts
+              </AdminLink>
+            </CardAction>
           </CardHeader>
           <CardContent className="flex flex-col gap-6">
             <AnalyticsAreaChart
