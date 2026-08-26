@@ -3,6 +3,15 @@
 @import "shadcn/tailwind.css";
 @import "tw-shimmer";
 
+/* Streamdown emits its utility classes from prebuilt JS, so Tailwind has to
+   scan the package to generate them. Used by the AI Elements message and
+   reasoning blocks (/inference). */
+@source "../../node_modules/streamdown/dist/*.js";
+@source "../../node_modules/@streamdown/code/dist/*.js";
+@source "../../node_modules/@streamdown/math/dist/*.js";
+@source "../../node_modules/@streamdown/mermaid/dist/*.js";
+@source "../../node_modules/@streamdown/cjk/dist/*.js";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
