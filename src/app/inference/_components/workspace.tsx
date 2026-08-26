@@ -125,6 +125,12 @@ import {
   MOCK_USER_PROMPT,
 } from "../_lib/mock-data";
 
+/** Base UI's Select.Value renders the raw value unless the Root maps it. */
+const MODEL_ITEMS = MOCK_MODELS.map((entry) => ({
+  label: entry.name,
+  value: entry.id,
+}));
+
 const STREAM_TICK_MS = 24;
 const STREAM_CHUNK = 6;
 const SUBMIT_DELAY_MS = 260;
@@ -627,6 +633,7 @@ export function InferenceWorkspace() {
                         <RiAttachment2 className="size-4" />
                       </PromptInputButton>
                       <PromptInputSelect
+                        items={MODEL_ITEMS}
                         onValueChange={handleModelChange}
                         value={model}
                       >
