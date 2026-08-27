@@ -35,9 +35,36 @@ const STORE_KEYS = {
   order: "catalog-order",
 } as const;
 
+let catalogStoreReady: Promise<void> | null = null;
+
+/** Create CatalogStore on first use so production works without a manual db:push. */
+async function ensureCatalogStoreTable(): Promise<void> {
+  if (!hasDatabaseUrl()) return;
+
+  if (!catalogStoreReady) {
+    catalogStoreReady = (async () => {
+      const prisma = getPrisma();
+      await prisma.$executeRawUnsafe(`
+        CREATE TABLE IF NOT EXISTS "CatalogStore" (
+          "key" TEXT NOT NULL,
+          "data" JSONB NOT NULL,
+          "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          CONSTRAINT "CatalogStore_pkey" PRIMARY KEY ("key")
+        );
+      `);
+    })().catch((err) => {
+      catalogStoreReady = null;
+      throw err;
+    });
+  }
+
+  await catalogStoreReady;
+}
+
 async function readStoreJson<T>(storeKey: string, filePath: string, fallback: T): Promise<T> {
   if (hasDatabaseUrl()) {
     try {
+      await ensureCatalogStoreTable();
       const prisma = getPrisma();
       const row = await prisma.catalogStore.findUnique({ where: { key: storeKey } });
       if (row?.data !== undefined && row.data !== null) {
@@ -56,6 +83,7 @@ async function writeStoreJson(storeKey: string, filePath: string, data: unknown)
 
   if (hasDatabaseUrl()) {
     try {
+      await ensureCatalogStoreTable();
       const prisma = getPrisma();
       await prisma.catalogStore.upsert({
         where: { key: storeKey },
