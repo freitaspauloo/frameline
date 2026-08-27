@@ -18,14 +18,16 @@ import type { MaterialCatalogEntry } from "@/materials";
 type Row = {
   entry: MaterialCatalogEntry;
   status: "draft" | "published";
+  onStorefront: boolean;
 };
 
 type Props = {
   rows: Row[];
-  slugs: string[];
+  /** V1 storefront slugs — reorder arrows only apply to this subset. */
+  storefrontSlugs: string[];
 };
 
-export function AdminMaterialsTable({ rows, slugs }: Props) {
+export function AdminMaterialsTable({ rows, storefrontSlugs }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [editSlug, setEditSlug] = useState<string | null>(null);
@@ -46,11 +48,11 @@ export function AdminMaterialsTable({ rows, slugs }: Props) {
   }
 
   function move(slug: string, direction: -1 | 1) {
-    const index = slugs.indexOf(slug);
+    const index = storefrontSlugs.indexOf(slug);
     if (index < 0) return;
     const target = index + direction;
-    if (target < 0 || target >= slugs.length) return;
-    const next = [...slugs];
+    if (target < 0 || target >= storefrontSlugs.length) return;
+    const next = [...storefrontSlugs];
     [next[index], next[target]] = [next[target], next[index]];
     persistOrder(next);
   }
@@ -102,40 +104,54 @@ export function AdminMaterialsTable({ rows, slugs }: Props) {
             </tr>
           </thead>
           <tbody>
-            {rows.map((row, index) => {
-              const { entry, status } = row;
+            {rows.map((row) => {
+              const { entry, status, onStorefront } = row;
               const isDraft = status === "draft";
+              const storefrontIndex = storefrontSlugs.indexOf(entry.slug);
               return (
                 <tr
                   className="border-b border-border align-middle last:border-b-0"
                   key={entry.slug}
                 >
                   <td className="px-2 py-2.5">
-                    <div className="flex flex-col items-center gap-0.5">
-                      <button
-                        aria-label={`Move ${entry.title} up`}
-                        className="flex size-6 items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
-                        disabled={pending || index === 0}
-                        onClick={() => move(entry.slug, -1)}
-                        type="button"
-                      >
-                        <RiArrowUpSLine className="size-4" />
-                      </button>
-                      <button
-                        aria-label={`Move ${entry.title} down`}
-                        className="flex size-6 items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
-                        disabled={pending || index === rows.length - 1}
-                        onClick={() => move(entry.slug, 1)}
-                        type="button"
-                      >
-                        <RiArrowDownSLine className="size-4" />
-                      </button>
-                    </div>
+                    {onStorefront ? (
+                      <div className="flex flex-col items-center gap-0.5">
+                        <button
+                          aria-label={`Move ${entry.title} up`}
+                          className="flex size-6 items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                          disabled={pending || storefrontIndex === 0}
+                          onClick={() => move(entry.slug, -1)}
+                          type="button"
+                        >
+                          <RiArrowUpSLine className="size-4" />
+                        </button>
+                        <button
+                          aria-label={`Move ${entry.title} down`}
+                          className="flex size-6 items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                          disabled={
+                            pending ||
+                            storefrontIndex === storefrontSlugs.length - 1
+                          }
+                          onClick={() => move(entry.slug, 1)}
+                          type="button"
+                        >
+                          <RiArrowDownSLine className="size-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="block text-center font-mono text-[10px] text-muted-foreground">
+                        —
+                      </span>
+                    )}
                   </td>
                   <td className="px-3 py-2.5">
                     <AdminMaterialThumb
                       entry={entry}
-                      href={`/materials/${entry.slug}`}
+                      href={
+                        onStorefront && !isDraft
+                          ? `/materials/${entry.slug}`
+                          : undefined
+                      }
                     />
                   </td>
                   <td className="px-3 py-2.5 font-medium">{entry.title}</td>
@@ -152,8 +168,10 @@ export function AdminMaterialsTable({ rows, slugs }: Props) {
                     {status}
                   </td>
                   <td className="px-3 py-2.5">
-                    {isDraft ? (
-                      <span className="text-muted-foreground">Hidden</span>
+                    {isDraft || !onStorefront ? (
+                      <span className="text-muted-foreground">
+                        {isDraft ? "Hidden" : "Not on storefront"}
+                      </span>
                     ) : (
                       <Link
                         className="underline underline-offset-4 hover:text-muted-foreground"
