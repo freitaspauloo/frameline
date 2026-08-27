@@ -10,6 +10,8 @@ import {
   RiSettings3Line,
   RiTerminalBoxLine,
 } from "@remixicon/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import {
   Attachment,
@@ -68,9 +70,9 @@ const INFSH_NAV: NavItem[] = [
     href: "#",
     icon: RiRobot2Line,
     items: [
-      { href: "#conversation", title: "Conversation" },
-      { href: "#composer", title: "Composers" },
-      { href: "#agents", title: "Agents & tools" },
+      { href: "/inference/conversation", title: "Conversation" },
+      { href: "/inference/composers", title: "Composers" },
+      { href: "/inference/agents", title: "Agents & tools" },
     ],
     title: "Kit",
   },
@@ -78,15 +80,17 @@ const INFSH_NAV: NavItem[] = [
     href: "#",
     icon: RiTerminalBoxLine,
     items: [
-      { href: "#dev", title: "Code & shells" },
-      { href: "#knowledge", title: "Sources" },
+      { href: "/inference/code", title: "Code & shells" },
+      { href: "/inference/sources", title: "Sources" },
     ],
     title: "Signals",
   },
-  { href: "#primitives", icon: RiSettings3Line, title: "Primitives" },
+  { href: "/inference/primitives", icon: RiSettings3Line, title: "Primitives" },
 ];
 
 export function PrimitiveBlocks() {
+  const pathname = usePathname();
+
   return (
     <KitSection
       description="The June 2026 shadcn chat components — bubbles, markers, attachments, the virtualised message scroller — plus the two zero-dependency blocks pulled from the inference.sh registry."
@@ -269,9 +273,10 @@ export function PrimitiveBlocks() {
           title="inference.sh · sidebar-light"
         >
           <SidebarLight
+            LinkComponent={Link}
             className="max-w-xs"
             items={INFSH_NAV}
-            pathname="#primitives"
+            pathname={pathname}
           />
         </KitBlock>
 
