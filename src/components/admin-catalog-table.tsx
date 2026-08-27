@@ -19,15 +19,21 @@ type Props = {
   rows: AdminCatalogRow[];
   /** V1 material slugs on the storefront — reorder arrows only apply here. */
   storefrontMaterialSlugs: string[];
+  canWrite?: boolean;
 };
 
 type BulkAction = "draft" | "published" | "delete" | "reset";
 
-export function AdminCatalogTable({ rows, storefrontMaterialSlugs }: Props) {
+export function AdminCatalogTable({
+  rows,
+  storefrontMaterialSlugs,
+  canWrite = true,
+}: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [editSlug, setEditSlug] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(() => new Set());
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const editRow = rows.find((row) => row.slug === editSlug);
   const allSlugs = useMemo(() => rows.map((row) => row.slug), [rows]);
@@ -49,15 +55,46 @@ export function AdminCatalogTable({ rows, storefrontMaterialSlugs }: Props) {
     });
   }
 
+  async function postCatalog(
+    url: string,
+    body: Record<string, unknown>,
+  ): Promise<{ ok: boolean; error?: string }> {
+    if (!canWrite) {
+      return {
+        ok: false,
+        error: "Sign in with an admin email to save changes.",
+      };
+    }
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const data = (await res.json()) as { ok?: boolean; error?: string };
+    if (!res.ok || !data.ok) {
+      return {
+        ok: false,
+        error:
+          data.error ??
+          (res.status === 401
+            ? "Unauthorized — sign in with an admin email."
+            : "Request failed"),
+      };
+    }
+    return { ok: true };
+  }
+
   function persistOrder(nextSlugs: string[]) {
+    setActionError(null);
     startTransition(async () => {
-      const res = await fetch("/api/admin/materials/order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slugs: nextSlugs }),
+      const result = await postCatalog("/api/admin/materials/order", {
+        slugs: nextSlugs,
       });
-      const data = (await res.json()) as { ok?: boolean };
-      if (!res.ok || !data.ok) return;
+      if (!result.ok) {
+        setActionError(result.error ?? "Reorder failed");
+        return;
+      }
       router.refresh();
     });
   }
@@ -90,34 +127,40 @@ export function AdminCatalogTable({ rows, storefrontMaterialSlugs }: Props) {
       if (!ok) return;
     }
 
+    setActionError(null);
     startTransition(async () => {
-      const res = await fetch("/api/admin/catalog/bulk", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action, slugs }),
+      const result = await postCatalog("/api/admin/catalog/bulk", {
+        action,
+        slugs,
       });
-      const data = (await res.json()) as { ok?: boolean };
-      if (!res.ok || !data.ok) return;
+      if (!result.ok) {
+        setActionError(result.error ?? "Bulk action failed");
+        return;
+      }
       setSelected(new Set());
       router.refresh();
     });
   }
 
   function setStatus(slug: string, status: "draft" | "published") {
+    setActionError(null);
     startTransition(async () => {
-      const res = await fetch("/api/admin/materials", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug, status }),
-      });
-      const data = (await res.json()) as { ok?: boolean };
-      if (!res.ok || !data.ok) return;
+      const result = await postCatalog("/api/admin/materials", { slug, status });
+      if (!result.ok) {
+        setActionError(result.error ?? "Status update failed");
+        return;
+      }
       router.refresh();
     });
   }
 
   return (
     <>
+      {actionError ? (
+        <p className="border border-red-600/30 bg-red-500/10 px-3 py-2 text-sm text-red-800 dark:text-red-100" role="alert">
+          {actionError}
+        </p>
+      ) : null}
       {someSelected ? (
         <div className="flex flex-wrap items-center gap-3 border border-border bg-muted/30 px-3 py-2.5">
           <p className="font-mono text-[11px] text-muted-foreground">
@@ -125,7 +168,7 @@ export function AdminCatalogTable({ rows, storefrontMaterialSlugs }: Props) {
           </p>
           <button
             className="border border-border px-2.5 py-1 text-[0.625rem] font-semibold tracking-widest uppercase disabled:opacity-50"
-            disabled={pending}
+            disabled={pending || !canWrite}
             onClick={() => runBulk("published")}
             type="button"
           >
@@ -133,7 +176,7 @@ export function AdminCatalogTable({ rows, storefrontMaterialSlugs }: Props) {
           </button>
           <button
             className="border border-border px-2.5 py-1 text-[0.625rem] font-semibold tracking-widest uppercase disabled:opacity-50"
-            disabled={pending}
+            disabled={pending || !canWrite}
             onClick={() => runBulk("draft")}
             type="button"
           >
@@ -141,7 +184,7 @@ export function AdminCatalogTable({ rows, storefrontMaterialSlugs }: Props) {
           </button>
           <button
             className="border border-red-600/40 px-2.5 py-1 text-[0.625rem] font-semibold tracking-widest text-red-700 uppercase disabled:opacity-50"
-            disabled={pending}
+            disabled={pending || !canWrite}
             onClick={() => runBulk("delete")}
             type="button"
           >
@@ -149,7 +192,7 @@ export function AdminCatalogTable({ rows, storefrontMaterialSlugs }: Props) {
           </button>
           <button
             className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase hover:text-foreground disabled:opacity-50"
-            disabled={pending}
+            disabled={pending || !canWrite}
             onClick={() => runBulk("reset")}
             type="button"
           >
@@ -318,7 +361,7 @@ export function AdminCatalogTable({ rows, storefrontMaterialSlugs }: Props) {
                         <DropdownMenuTrigger
                           aria-label={`Actions for ${row.title}`}
                           className="inline-flex size-8 items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-50"
-                          disabled={pending}
+                          disabled={pending || !canWrite}
                         >
                           <RiMoreLine className="size-4" />
                         </DropdownMenuTrigger>

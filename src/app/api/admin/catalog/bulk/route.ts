@@ -62,6 +62,12 @@ export async function POST(request: Request) {
 
     const status = actionRaw === "delete" ? "draft" : actionRaw;
     const count = await writeCatalogOverridesBulk(slugs, { status });
+    if (count === 0) {
+      return NextResponse.json(
+        { ok: false, error: "No matching catalog slugs" },
+        { status: 404 },
+      );
+    }
     return NextResponse.json({ ok: true, count, action: actionRaw });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Write failed";

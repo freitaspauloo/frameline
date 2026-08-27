@@ -252,3 +252,10 @@ model EmailCapture {
   @@unique([email, source])
   @@index([createdAt])
 }
+
+/// JSON blobs for storefront catalog overrides and order (see src/lib/demo-catalog.ts).
+model CatalogStore {
+  key       String   @id
+  data      Json
+  updatedAt DateTime @updatedAt
+}

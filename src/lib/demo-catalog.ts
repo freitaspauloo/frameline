@@ -1,6 +1,8 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
+import { getPrisma, hasDatabaseUrl } from "@/lib/db";
+
 import {
   MATERIALS_CATALOG,
   V1_LAUNCH_MATERIAL_SLUGS,
@@ -27,6 +29,58 @@ export type ResolvedCatalogOptions = {
 const DATA_DIR = path.join(process.cwd(), ".data");
 const OVERRIDES_PATH = path.join(DATA_DIR, "catalog-overrides.json");
 const ORDER_PATH = path.join(DATA_DIR, "catalog-order.json");
+
+const STORE_KEYS = {
+  overrides: "catalog-overrides",
+  order: "catalog-order",
+} as const;
+
+async function readStoreJson<T>(storeKey: string, filePath: string, fallback: T): Promise<T> {
+  if (hasDatabaseUrl()) {
+    try {
+      const prisma = getPrisma();
+      const row = await prisma.catalogStore.findUnique({ where: { key: storeKey } });
+      if (row?.data !== undefined && row.data !== null) {
+        return row.data as T;
+      }
+    } catch {
+      // Fall through to file fallback when DB is unavailable mid-request.
+    }
+  }
+
+  return readJsonFile<T>(filePath, fallback);
+}
+
+async function writeStoreJson(storeKey: string, filePath: string, data: unknown): Promise<void> {
+  let dbError: unknown;
+
+  if (hasDatabaseUrl()) {
+    try {
+      const prisma = getPrisma();
+      await prisma.catalogStore.upsert({
+        where: { key: storeKey },
+        create: { key: storeKey, data: data as object },
+        update: { data: data as object },
+      });
+      return;
+    } catch (err) {
+      dbError = err;
+    }
+  }
+
+  try {
+    await writeJsonFile(filePath, data);
+    return;
+  } catch (err) {
+    const message =
+      dbError instanceof Error
+        ? dbError.message
+        : err instanceof Error
+          ? err.message
+          : "Catalog store write failed";
+    throw new Error(message);
+  }
+}
 
 export type CatalogOverridesFile = Record<string, CatalogMaterialOverride>;
 
@@ -82,9 +136,9 @@ async function writeJsonFile(filePath: string, data: unknown) {
   await writeFile(filePath, `${JSON.stringify(data, null, 2)}\n`, "utf8");
 }
 
-/** Read storefront slug order from `.data/catalog-order.json`. */
+/** Read storefront slug order from catalog store. */
 export async function readCatalogOrder(): Promise<string[] | null> {
-  const parsed = await readJsonFile<unknown>(ORDER_PATH, null);
+  const parsed = await readStoreJson<unknown>(STORE_KEYS.order, ORDER_PATH, null);
   if (!Array.isArray(parsed)) return null;
   return parsed.filter((slug): slug is string => typeof slug === "string");
 }
@@ -105,7 +159,7 @@ export async function writeCatalogOrder(slugs: string[]): Promise<string[]> {
     if (!seen.has(slug)) next.push(slug);
   }
 
-  await writeJsonFile(ORDER_PATH, next);
+  await writeStoreJson(STORE_KEYS.order, ORDER_PATH, next);
   return next;
 }
 
@@ -126,9 +180,9 @@ function sortByCatalogOrder<T extends { slug: string }>(
     );
 }
 
-/** Read draft metadata overrides from `.data/catalog-overrides.json`. */
+/** Read draft metadata overrides from catalog store. */
 export async function readCatalogOverrides(): Promise<CatalogOverridesFile> {
-  const parsed = await readJsonFile<unknown>(OVERRIDES_PATH, {});
+  const parsed = await readStoreJson<unknown>(STORE_KEYS.overrides, OVERRIDES_PATH, {});
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
     return {};
   }
@@ -166,7 +220,7 @@ export async function writeCatalogOverride(
     all[slug] = next;
   }
 
-  await writeJsonFile(OVERRIDES_PATH, all);
+  await writeStoreJson(STORE_KEYS.overrides, OVERRIDES_PATH, all);
   return next;
 }
 
@@ -197,7 +251,7 @@ export async function writeCatalogOverridesBulk(
     updated += 1;
   }
 
-  await writeJsonFile(OVERRIDES_PATH, all);
+  await writeStoreJson(STORE_KEYS.overrides, OVERRIDES_PATH, all);
   return updated;
 }
 
@@ -212,7 +266,7 @@ export async function removeCatalogOverrides(slugs: string[]): Promise<number> {
     removed += 1;
   }
 
-  await writeJsonFile(OVERRIDES_PATH, all);
+  await writeStoreJson(STORE_KEYS.overrides, OVERRIDES_PATH, all);
   return removed;
 }
 
