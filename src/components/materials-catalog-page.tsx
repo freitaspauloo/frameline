@@ -26,7 +26,6 @@ import {
 } from "@/materials";
 import { getMaterialThumbnailSrc } from "@/materials/thumbnails";
 import { buildMaterialsHref, parseSmartQuery } from "@/lib/catalog-query";
-import { listScreens } from "@/screens/catalog";
 import { screenPosterNeedsMagentaTint } from "@/screens/poster-tint";
 import type { ScreenCatalogEntry } from "@/screens/types";
 
@@ -38,6 +37,7 @@ export function MaterialsCatalogPage({
   qFilter,
   contextFilter,
   catalog = getV1LaunchCatalog(),
+  screens = [],
 }: {
   typeFilter?: string;
   qFilter?: string;
@@ -46,6 +46,8 @@ export function MaterialsCatalogPage({
   sortFilter?: string;
   /** Resolved catalog (demo overrides merged). Defaults to source catalog. */
   catalog?: MaterialCatalogEntry[];
+  /** Resolved storefront screens (demo overrides merged). */
+  screens?: ScreenCatalogEntry[];
 }) {
   const router = useRouter();
   const [, startTransition] = useTransition();
@@ -86,9 +88,9 @@ export function MaterialsCatalogPage({
     return list;
   }, [catalog, activeType, activeContext, activeQ]);
 
-  const screens = useMemo(() => {
+  const filteredScreens = useMemo(() => {
     if (activeType || activeContext) return [] as ScreenCatalogEntry[];
-    let list = listScreens();
+    let list = screens;
     if (activeQ) {
       const needle = activeQ.toLowerCase();
       list = list.filter((screen) => {
@@ -99,7 +101,7 @@ export function MaterialsCatalogPage({
       });
     }
     return list;
-  }, [activeType, activeContext, activeQ]);
+  }, [screens, activeType, activeContext, activeQ]);
 
   const typeMeta = MATERIAL_TYPES.find((t) => t.type === activeType);
 
@@ -128,8 +130,8 @@ export function MaterialsCatalogPage({
         <MarketingPageHeader
           action={
             <p className="font-mono text-[11px] text-muted-foreground">
-              {screens.length + entries.length}{" "}
-              {screens.length + entries.length === 1 ? "item" : "items"}
+              {filteredScreens.length + entries.length}{" "}
+              {filteredScreens.length + entries.length === 1 ? "item" : "items"}
             </p>
           }
           description={
@@ -197,7 +199,7 @@ export function MaterialsCatalogPage({
           </form>
         </MarketingPageHeader>
 
-        {screens.length === 0 && entries.length === 0 ? (
+        {filteredScreens.length === 0 && entries.length === 0 ? (
           <div className="border-b border-border px-6 py-16 text-center sm:px-8 lg:px-12">
             <p className="text-sm text-muted-foreground">
               No materials match these filters.
@@ -211,7 +213,7 @@ export function MaterialsCatalogPage({
           </div>
         ) : (
           <MarketingRuledGrid>
-            {screens.map((screen) => (
+            {filteredScreens.map((screen) => (
               <MarketingRuledCell
                 key={screen.slug}
                 className="p-0 sm:p-0 lg:p-0"

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { MaterialDetailPage } from "@/components/material-detail-page";
 import { ScreenDetailPage } from "@/components/screen-detail-page";
-import { getResolvedMaterial } from "@/lib/demo-catalog";
+import { getResolvedMaterial, getResolvedScreen } from "@/lib/demo-catalog";
 import { getLicensePlan } from "@/lib/license-plans";
 import {
   getV1LaunchCatalog,
@@ -31,7 +31,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const screen = getScreenBySlug(slug);
+  const screen = await getResolvedScreen(slug);
   if (screen) {
     return {
       title: screen.title,
@@ -70,7 +70,7 @@ export default async function MaterialPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { slug } = await params;
-  const screen = getScreenBySlug(slug);
+  const screen = await getResolvedScreen(slug);
   const initialParams = await searchParams;
 
   if (screen) {

@@ -35,8 +35,8 @@ import {
 import { WordMask } from "@/components/motion/word-mask";
 import { Button } from "@/components/ui/button";
 import type { MaterialCatalogEntry } from "@/materials";
-import { listScreens } from "@/screens/catalog";
 import { screenPosterNeedsMagentaTint } from "@/screens/poster-tint";
+import type { ScreenCatalogEntry } from "@/screens/types";
 import { cn } from "@/lib/utils";
 
 import { CLIENT_LOGOS } from "@/lib/client-logos";
@@ -157,8 +157,10 @@ function SectionIntro({
 
 export function FramelineHomePageV2({
   catalog,
+  screens,
 }: {
   catalog: MaterialCatalogEntry[];
+  screens: ScreenCatalogEntry[];
 }) {
   return (
     <FramelineLenis>
@@ -247,7 +249,7 @@ export function FramelineHomePageV2({
                   "pt-10 pb-2 lg:pt-14",
                 )}
               >
-                {listScreens().map((screen) => (
+                {screens.map((screen) => (
                   <Link
                     key={screen.slug}
                     className="group block border border-border transition-colors hover:bg-muted/40"
@@ -300,7 +302,7 @@ export function FramelineHomePageV2({
           <MarketingSection id="rotation">
             <InkRule />
             <SectionBand label="In rotation">
-              <MaterialStrip entries={listScreens()} />
+              <MaterialStrip entries={screens} />
             </SectionBand>
           </MarketingSection>
 

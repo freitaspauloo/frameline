@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { MaterialsCatalogPage } from "@/components/materials-catalog-page";
-import { getResolvedCatalog } from "@/lib/demo-catalog";
+import { getResolvedCatalog, getResolvedScreens } from "@/lib/demo-catalog";
 
 export const metadata: Metadata = {
   title: "Materials",
@@ -21,10 +21,14 @@ export default async function MaterialsPage({
   }>;
 }) {
   const { type, q, context, tier, sort } = await searchParams;
-  const catalog = await getResolvedCatalog();
+  const [catalog, screens] = await Promise.all([
+    getResolvedCatalog(),
+    getResolvedScreens(),
+  ]);
   return (
     <MaterialsCatalogPage
       catalog={catalog}
+      screens={screens}
       contextFilter={context}
       qFilter={q}
       sortFilter={sort}

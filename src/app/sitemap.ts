@@ -1,16 +1,17 @@
 import type { MetadataRoute } from "next";
 
 import { DOCS_NAV } from "@/components/docs-shell";
-import {
-  getV1LaunchCatalog,
-  MATERIAL_USE_CONTEXTS,
-} from "@/materials";
-import { listScreens } from "@/screens/catalog";
+import { getResolvedCatalog, getResolvedScreens } from "@/lib/demo-catalog";
+import { MATERIAL_USE_CONTEXTS } from "@/materials";
 
 const BASE = "https://frameline.ai";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
+  const [materialsCatalog, screensCatalog] = await Promise.all([
+    getResolvedCatalog(),
+    getResolvedScreens(),
+  ]);
 
   const staticRoutes: MetadataRoute.Sitemap = [
     "",
@@ -37,15 +38,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
           : 0.7,
   }));
 
-  const materials: MetadataRoute.Sitemap = getV1LaunchCatalog().map((m) => ({
+  const materials: MetadataRoute.Sitemap = materialsCatalog.map((m) => ({
     url: `${BASE}/materials/${m.slug}`,
     lastModified: now,
     changeFrequency: "weekly",
-    // Free installables surface higher; paid detail pages stay discoverable.
     priority: m.tier === "free" ? 0.85 : 0.8,
   }));
 
-  const screens: MetadataRoute.Sitemap = listScreens().map((screen) => ({
+  const screens: MetadataRoute.Sitemap = screensCatalog.map((screen) => ({
     url: `${BASE}/materials/${screen.slug}`,
     lastModified: now,
     changeFrequency: "weekly",

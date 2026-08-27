@@ -10,6 +10,12 @@ import {
   type CatalogMaterialOverride,
   type MaterialCatalogEntry,
 } from "@/materials";
+import {
+  getScreenBySlug,
+  listAllScreenEntries,
+  SCREENS_CATALOG,
+} from "@/screens/catalog";
+import type { ScreenCatalogEntry } from "@/screens/types";
 
 export type ResolvedCatalogOptions = {
   /** Include full catalog (admin). Default: lean V1 public set only. */
@@ -23,6 +29,43 @@ const OVERRIDES_PATH = path.join(DATA_DIR, "catalog-overrides.json");
 const ORDER_PATH = path.join(DATA_DIR, "catalog-order.json");
 
 export type CatalogOverridesFile = Record<string, CatalogMaterialOverride>;
+
+export type AdminCatalogKind = "screen" | "material";
+
+export type AdminCatalogRow = {
+  kind: AdminCatalogKind;
+  slug: string;
+  title: string;
+  description: string;
+  typeLabel: string;
+  tier: string;
+  status: "draft" | "published";
+  onStorefront: boolean;
+  poster?: string;
+  material?: MaterialCatalogEntry;
+  screen?: ScreenCatalogEntry;
+};
+
+function applyScreenCatalogOverride(
+  entry: ScreenCatalogEntry,
+  override?: CatalogMaterialOverride | null,
+): ScreenCatalogEntry {
+  if (!override) return entry;
+  return {
+    ...entry,
+    ...(override.title !== undefined ? { title: override.title } : {}),
+    ...(override.description !== undefined
+      ? { description: override.description }
+      : {}),
+  };
+}
+
+function isKnownCatalogSlug(slug: string): boolean {
+  return (
+    MATERIALS_CATALOG.some((entry) => entry.slug === slug) ||
+    listAllScreenEntries().some((entry) => entry.slug === slug)
+  );
+}
 
 async function readJsonFile<T>(filePath: string, fallback: T): Promise<T> {
   try {
@@ -97,9 +140,8 @@ export async function writeCatalogOverride(
   slug: string,
   patch: CatalogMaterialOverride,
 ): Promise<CatalogMaterialOverride> {
-  const base = MATERIALS_CATALOG.find((m) => m.slug === slug);
-  if (!base) {
-    throw new Error(`Unknown material slug: ${slug}`);
+  if (!isKnownCatalogSlug(slug)) {
+    throw new Error(`Unknown catalog slug: ${slug}`);
   }
 
   const all = await readCatalogOverrides();
@@ -126,6 +168,171 @@ export async function writeCatalogOverride(
 
   await writeJsonFile(OVERRIDES_PATH, all);
   return next;
+}
+
+/** Apply the same override patch to many slugs (bulk draft / publish / hide). */
+export async function writeCatalogOverridesBulk(
+  slugs: string[],
+  patch: CatalogMaterialOverride,
+): Promise<number> {
+  const all = await readCatalogOverrides();
+  let updated = 0;
+
+  for (const slug of slugs) {
+    if (!isKnownCatalogSlug(slug)) continue;
+    const prev = all[slug] ?? {};
+    const next: CatalogMaterialOverride = { ...prev, ...patch };
+
+    for (const key of Object.keys(next) as (keyof CatalogMaterialOverride)[]) {
+      if (next[key] === undefined || next[key] === "") {
+        delete next[key];
+      }
+    }
+
+    if (Object.keys(next).length === 0) {
+      delete all[slug];
+    } else {
+      all[slug] = next;
+    }
+    updated += 1;
+  }
+
+  await writeJsonFile(OVERRIDES_PATH, all);
+  return updated;
+}
+
+/** Remove all overrides for slugs (reset to source catalog defaults). */
+export async function removeCatalogOverrides(slugs: string[]): Promise<number> {
+  const all = await readCatalogOverrides();
+  let removed = 0;
+
+  for (const slug of slugs) {
+    if (!all[slug]) continue;
+    delete all[slug];
+    removed += 1;
+  }
+
+  await writeJsonFile(OVERRIDES_PATH, all);
+  return removed;
+}
+
+/** Public storefront screens with demo overrides applied. */
+export async function getResolvedScreens(
+  options: ResolvedCatalogOptions = {},
+): Promise<ScreenCatalogEntry[]> {
+  const overrides = await readCatalogOverrides();
+  const source = options.all ? listAllScreenEntries() : SCREENS_CATALOG;
+  const resolved = source.map((entry) =>
+    applyScreenCatalogOverride(entry, overrides[entry.slug]),
+  );
+
+  if (options.includeDrafts) return resolved;
+
+  return resolved.filter((entry) => {
+    const status = overrides[entry.slug]?.status ?? "published";
+    return status !== "draft";
+  });
+}
+
+/** Single screen with overrides; hidden when draft on public routes. */
+export async function getResolvedScreen(
+  slug: string,
+  options: ResolvedCatalogOptions = {},
+): Promise<ScreenCatalogEntry | undefined> {
+  const base = getScreenBySlug(slug);
+  if (!base) return undefined;
+
+  const overrides = await readCatalogOverrides();
+  const status = overrides[base.slug]?.status ?? "published";
+  const isPublic = SCREENS_CATALOG.some((entry) => entry.slug === base.slug);
+
+  if (!options.all && !options.includeDrafts && status === "draft") {
+    return undefined;
+  }
+  if (!options.all && !isPublic && !options.includeDrafts) {
+    return undefined;
+  }
+
+  return applyScreenCatalogOverride(base, overrides[base.slug]);
+}
+
+/** Status for admin table (override status or published). */
+export async function getAssetPublishStatus(
+  slug: string,
+): Promise<"draft" | "published"> {
+  const overrides = await readCatalogOverrides();
+  return overrides[slug]?.status ?? "published";
+}
+
+/** Unified admin rows: storefront (screens + materials) first, then back catalog. */
+export async function getAdminCatalogRows(): Promise<AdminCatalogRow[]> {
+  const [
+    overrides,
+    storefrontMaterials,
+    allMaterials,
+    storefrontScreens,
+    allScreens,
+  ] = await Promise.all([
+    readCatalogOverrides(),
+    getResolvedCatalog({ includeDrafts: true }),
+    getResolvedCatalog({ all: true, includeDrafts: true }),
+    getResolvedScreens({ includeDrafts: true }),
+    getResolvedScreens({ all: true, includeDrafts: true }),
+  ]);
+
+  const storefrontMaterialSlugs = new Set(
+    storefrontMaterials.map((entry) => entry.slug),
+  );
+  const storefrontScreenSlugs = new Set(
+    SCREENS_CATALOG.map((entry) => entry.slug),
+  );
+
+  const toMaterialRow = (
+    entry: MaterialCatalogEntry,
+    onStorefront: boolean,
+  ): AdminCatalogRow => ({
+    kind: "material",
+    slug: entry.slug,
+    title: entry.title,
+    description: entry.description,
+    typeLabel: entry.type,
+    tier: entry.tier,
+    status: overrides[entry.slug]?.status ?? "published",
+    onStorefront,
+    material: entry,
+  });
+
+  const toScreenRow = (
+    entry: ScreenCatalogEntry,
+    onStorefront: boolean,
+  ): AdminCatalogRow => ({
+    kind: "screen",
+    slug: entry.slug,
+    title: entry.title,
+    description: entry.description,
+    typeLabel: "screen",
+    tier: entry.tier,
+    status: overrides[entry.slug]?.status ?? "published",
+    onStorefront,
+    poster: entry.poster,
+    screen: entry,
+  });
+
+  const storefrontRows: AdminCatalogRow[] = [
+    ...storefrontScreens.map((entry) => toScreenRow(entry, true)),
+    ...storefrontMaterials.map((entry) => toMaterialRow(entry, true)),
+  ];
+
+  const backCatalogRows: AdminCatalogRow[] = [
+    ...allScreens
+      .filter((entry) => !storefrontScreenSlugs.has(entry.slug))
+      .map((entry) => toScreenRow(entry, false)),
+    ...allMaterials
+      .filter((entry) => !storefrontMaterialSlugs.has(entry.slug))
+      .map((entry) => toMaterialRow(entry, false)),
+  ];
+
+  return [...storefrontRows, ...backCatalogRows];
 }
 
 /** Source catalog with demo overrides applied. Public routes get V1 set only. */
@@ -166,10 +373,9 @@ export async function getResolvedMaterial(
   return applyCatalogOverride(base, overrides[slug]);
 }
 
-/** Status for admin table (override status or published). */
+/** @deprecated Use getAssetPublishStatus */
 export async function getMaterialPublishStatus(
   slug: string,
 ): Promise<"draft" | "published"> {
-  const overrides = await readCatalogOverrides();
-  return overrides[slug]?.status ?? "published";
+  return getAssetPublishStatus(slug);
 }

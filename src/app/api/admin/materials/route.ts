@@ -3,9 +3,11 @@ import { NextResponse } from "next/server";
 import { isAdminEmail, resolveDemoUser } from "@/lib/auth";
 import {
   getResolvedMaterial,
+  getResolvedScreen,
   writeCatalogOverride,
 } from "@/lib/demo-catalog";
 import { MATERIALS_CATALOG, type MaterialTier } from "@/materials";
+import { listAllScreenEntries } from "@/screens/catalog";
 
 const TIERS: MaterialTier[] = ["free", "personal", "team"];
 const STATUSES = ["draft", "published"] as const;
@@ -69,7 +71,10 @@ export async function POST(request: Request) {
   }
   const slug = slugRaw.trim();
 
-  if (!MATERIALS_CATALOG.some((m) => m.slug === slug)) {
+  if (
+    !MATERIALS_CATALOG.some((m) => m.slug === slug) &&
+    !listAllScreenEntries().some((s) => s.slug === slug)
+  ) {
     return NextResponse.json({ ok: false, error: "Unknown slug" }, { status: 404 });
   }
 
@@ -108,8 +113,9 @@ export async function POST(request: Request) {
 
   try {
     const override = await writeCatalogOverride(slug, patch);
-    const material = await getResolvedMaterial(slug);
-    return NextResponse.json({ ok: true, override, material });
+    const material = await getResolvedMaterial(slug, { all: true, includeDrafts: true });
+    const screen = await getResolvedScreen(slug, { all: true, includeDrafts: true });
+    return NextResponse.json({ ok: true, override, material, screen });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Write failed";
     return NextResponse.json({ ok: false, error: message }, { status: 500 });
