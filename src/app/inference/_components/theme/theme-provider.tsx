@@ -13,6 +13,7 @@ import { decodePreset, encodePreset, generateRandomPreset } from "shadcn/preset"
 
 import {
   INFERENCE_DEFAULT_PRESET,
+  themesForBaseColor,
   type InferencePresetConfig,
   type InferencePresetField,
 } from "@/app/inference/_lib/preset-config";
@@ -28,6 +29,7 @@ interface InferenceThemeContextValue {
   presetCode: string;
   createUrl: string;
   applyCommand: string;
+  themeVars: ReturnType<typeof resolveInferenceThemeVars>;
   themeStyle: ReturnType<typeof varsToStyle>;
   setField: <K extends InferencePresetField>(
     field: K,
@@ -81,6 +83,16 @@ export function InferenceThemeProvider({ children }: { children: ReactNode }) {
           next.chartColor = value as InferencePresetConfig["chartColor"];
         }
 
+        if (field === "baseColor") {
+          const allowed = themesForBaseColor(
+            value as InferencePresetConfig["baseColor"],
+          );
+          if (!allowed.some((option) => option.value === next.theme)) {
+            next.theme = value as InferencePresetConfig["theme"];
+            next.chartColor = value as InferencePresetConfig["chartColor"];
+          }
+        }
+
         return next;
       });
     },
@@ -108,10 +120,11 @@ export function InferenceThemeProvider({ children }: { children: ReactNode }) {
     () => `pnpm dlx shadcn@latest apply --preset ${presetCode} -y`,
     [presetCode],
   );
-  const themeStyle = useMemo(
-    () => varsToStyle(resolveInferenceThemeVars(config)),
+  const themeVars = useMemo(
+    () => resolveInferenceThemeVars(config),
     [config],
   );
+  const themeStyle = useMemo(() => varsToStyle(themeVars), [themeVars]);
 
   const value = useMemo(
     () => ({
@@ -123,6 +136,7 @@ export function InferenceThemeProvider({ children }: { children: ReactNode }) {
       setField,
       shuffle,
       themeStyle,
+      themeVars,
     }),
     [
       applyCommand,
@@ -133,6 +147,7 @@ export function InferenceThemeProvider({ children }: { children: ReactNode }) {
       setField,
       shuffle,
       themeStyle,
+      themeVars,
     ],
   );
 

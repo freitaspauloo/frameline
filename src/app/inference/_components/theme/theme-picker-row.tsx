@@ -6,6 +6,7 @@ import {
   RiSparklingLine,
 } from "@remixicon/react";
 import type { ComponentType } from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -43,10 +44,11 @@ export function ThemePickerRow({
   swatch?: string;
   icon?: ComponentType<{ className?: string }>;
 }) {
+  const [open, setOpen] = useState(false);
   const selected = options.find((option) => option.value === value);
 
   return (
-    <Popover>
+    <Popover onOpenChange={setOpen} open={open}>
       <PopoverTrigger
         className={cn(
           "flex w-full items-center gap-3 rounded-xl border border-border/80 bg-card/70 px-3 py-2.5 text-left transition-colors hover:bg-muted/40",
@@ -75,7 +77,10 @@ export function ThemePickerRow({
               {options.map((option) => (
                 <CommandItem
                   key={option.value}
-                  onSelect={() => onChange(option.value)}
+                  onSelect={() => {
+                    onChange(option.value);
+                    setOpen(false);
+                  }}
                   value={option.label}
                 >
                   <span className="flex-1">{option.label}</span>
@@ -127,7 +132,7 @@ export function ThemePanelActions({
           Shuffle
         </Button>
       </div>
-      <Button className="w-full" onClick={copyCommand} size="sm">
+      <Button className="w-full" onClick={copyCommand} size="sm" variant="default">
         Get code
       </Button>
     </div>

@@ -3,9 +3,9 @@ import type { ReactNode } from "react";
 
 import "streamdown/styles.css";
 
-import { InferenceDarkScope } from "./_components/dark-scope";
 import { InferenceShell } from "./_components/inference-shell";
 import { InferenceThemeProvider } from "./_components/theme/theme-provider";
+import { InferenceThemeScope } from "./_components/theme/theme-scope";
 
 export const metadata: Metadata = {
   description:
@@ -20,9 +20,12 @@ export default function InferenceLayout({
   children: ReactNode;
 }) {
   return (
-    <div className="dark min-h-svh bg-background text-foreground">
-      <InferenceDarkScope />
+    <div
+      className="min-h-svh bg-background text-foreground"
+      data-inference-theme
+    >
       <InferenceThemeProvider>
+        <InferenceThemeScope />
         <InferenceShell>{children}</InferenceShell>
       </InferenceThemeProvider>
     </div>

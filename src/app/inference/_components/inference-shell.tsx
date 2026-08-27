@@ -3,10 +3,8 @@
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 
-import { useInferenceTheme } from "@/app/inference/_components/theme/theme-provider";
 import {
   InferenceThemePanel,
-  InferenceThemePanelMobile,
 } from "@/app/inference/_components/theme/theme-panel";
 import { cn } from "@/lib/utils";
 
@@ -15,12 +13,11 @@ import { InferenceNav } from "./inference-nav";
 
 export function InferenceShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { themeStyle } = useInferenceTheme();
   const isWorkspace =
     pathname === "/inference/workspace" || pathname === "/inference";
 
   return (
-    <div className="flex min-h-svh" style={themeStyle}>
+    <div className="flex min-h-svh">
       <aside className="hidden w-52 shrink-0 border-border border-r md:block">
         <div className="border-border border-b px-4 py-5">
           <p className="font-medium text-sm">Inference</p>
