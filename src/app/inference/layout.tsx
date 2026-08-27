@@ -5,6 +5,7 @@ import "streamdown/styles.css";
 
 import { InferenceDarkScope } from "./_components/dark-scope";
 import { InferenceShell } from "./_components/inference-shell";
+import { InferenceThemeProvider } from "./_components/theme/theme-provider";
 
 export const metadata: Metadata = {
   description:
@@ -21,7 +22,9 @@ export default function InferenceLayout({
   return (
     <div className="dark min-h-svh bg-background text-foreground">
       <InferenceDarkScope />
-      <InferenceShell>{children}</InferenceShell>
+      <InferenceThemeProvider>
+        <InferenceShell>{children}</InferenceShell>
+      </InferenceThemeProvider>
     </div>
   );
 }

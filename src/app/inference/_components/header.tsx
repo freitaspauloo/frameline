@@ -1,5 +1,6 @@
 import { RiFlashlightLine } from "@remixicon/react";
 
+import { InferenceThemePanelMobile } from "@/app/inference/_components/theme/theme-panel";
 import { Badge } from "@/components/ui/badge";
 
 export function InferenceHeader() {
@@ -21,6 +22,7 @@ export function InferenceHeader() {
           Forked shadcn / AI Elements blocks for the next product. Static mock
           state, no model calls. Not a Frameline surface.
         </p>
+        <InferenceThemePanelMobile />
       </div>
     </header>
   );
