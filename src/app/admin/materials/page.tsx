@@ -18,7 +18,9 @@ export default async function AdminMaterialsPage() {
     getResolvedCatalog({ includeDrafts: true }),
   ]);
 
-  const storefrontCount = rows.filter((row) => row.onStorefront).length;
+  const storefrontCount = rows.filter(
+    (row) => row.onStorefront && row.status !== "draft",
+  ).length;
   const screenCount = SCREENS_CATALOG.length;
   const materialCount = MATERIALS_CATALOG.length;
   const hiddenScreenCount =
@@ -34,7 +36,7 @@ export default async function AdminMaterialsPage() {
           Storefront & back catalog
         </h1>
         <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
-          Top {storefrontCount} rows match the public{" "}
+          {storefrontCount} live storefront rows match the public{" "}
           <Link
             className="underline underline-offset-4 hover:text-foreground"
             href="/materials"
@@ -42,13 +44,10 @@ export default async function AdminMaterialsPage() {
             /materials
           </Link>{" "}
           grid and homepage: {screenCount} screens +{" "}
-          {storefrontMaterials.length} launch materials ({materialCount}{" "}
-          shader materials and {hiddenScreenCount} hidden screens in the back
-          catalog). Select rows for bulk draft, publish, or delete (hide from
-          storefront). Edits persist in{" "}
-          <span className="font-mono">.data/catalog-overrides.json</span>.
-          Material reorder only affects the launch set (
-          <span className="font-mono">.data/catalog-order.json</span>).
+          {storefrontMaterials.length} launch materials. Hidden drafts and the
+          back catalog ({materialCount - storefrontMaterials.length} extra
+          materials, {hiddenScreenCount} skeleton screens) sit in a collapsible
+          below the main table.
         </p>
         {!canWrite ? (
           <p className="mt-3 border border-amber-600/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-950 dark:text-amber-100">

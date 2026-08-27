@@ -2,11 +2,20 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Fragment, useMemo, useState, useTransition } from "react";
-import { RiArrowDownSLine, RiArrowUpSLine, RiMoreLine } from "@remixicon/react";
+import { useMemo, useState, useTransition } from "react";
+import {
+  RiArrowDownSLine,
+  RiArrowUpSLine,
+  RiMoreLine,
+} from "@remixicon/react";
 
 import { AdminCatalogEditDialog } from "@/components/admin-catalog-edit-form";
 import { AdminCatalogThumb } from "@/components/admin-catalog-thumb";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { AdminCatalogRow } from "@/lib/demo-catalog";
+import { cn } from "@/lib/utils";
 
 type Props = {
   rows: AdminCatalogRow[];
@@ -23,6 +33,10 @@ type Props = {
 };
 
 type BulkAction = "draft" | "published" | "delete" | "reset";
+
+function isLiveStorefrontRow(row: AdminCatalogRow) {
+  return row.onStorefront && row.status !== "draft";
+}
 
 export function AdminCatalogTable({
   rows,
@@ -34,16 +48,30 @@ export function AdminCatalogTable({
   const [editSlug, setEditSlug] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(() => new Set());
   const [actionError, setActionError] = useState<string | null>(null);
+  const [hiddenOpen, setHiddenOpen] = useState(false);
+
+  const storefrontRows = useMemo(
+    () => rows.filter(isLiveStorefrontRow),
+    [rows],
+  );
+  const hiddenRows = useMemo(
+    () => rows.filter((row) => !isLiveStorefrontRow(row)),
+    [rows],
+  );
 
   const editRow = rows.find((row) => row.slug === editSlug);
-  const allSlugs = useMemo(() => rows.map((row) => row.slug), [rows]);
-  const allSelected = rows.length > 0 && selected.size === rows.length;
   const someSelected = selected.size > 0;
 
-  const storefrontCount = rows.filter((row) => row.onStorefront).length;
-
-  function toggleAll() {
-    setSelected(allSelected ? new Set() : new Set(allSlugs));
+  function toggleSection(slugs: string[], allSelected: boolean) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (allSelected) {
+        for (const slug of slugs) next.delete(slug);
+      } else {
+        for (const slug of slugs) next.add(slug);
+      }
+      return next;
+    });
   }
 
   function toggleSlug(slug: string) {
@@ -154,10 +182,211 @@ export function AdminCatalogTable({
     });
   }
 
+  function renderTable(sectionRows: AdminCatalogRow[]) {
+    const sectionSlugs = sectionRows.map((row) => row.slug);
+    const allSectionSelected =
+      sectionRows.length > 0 &&
+      sectionSlugs.every((slug) => selected.has(slug));
+    const someSectionSelected = sectionSlugs.some((slug) => selected.has(slug));
+
+    return (
+      <div className="overflow-x-auto border border-border">
+        <table className="w-full min-w-[48rem] text-left text-sm">
+          <thead className="border-b border-border bg-muted/40">
+            <tr>
+              <th className="w-10 px-2 py-2">
+                <input
+                  aria-label="Select all in section"
+                  checked={allSectionSelected}
+                  className="size-3.5 accent-foreground"
+                  onChange={() =>
+                    toggleSection(sectionSlugs, allSectionSelected)
+                  }
+                  ref={(el) => {
+                    if (el) {
+                      el.indeterminate =
+                        someSectionSelected && !allSectionSelected;
+                    }
+                  }}
+                  type="checkbox"
+                />
+              </th>
+              <th className="w-16 px-2 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                Order
+              </th>
+              <th className="w-24 px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                Preview
+              </th>
+              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                Title
+              </th>
+              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                Slug
+              </th>
+              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                Kind
+              </th>
+              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                Tier
+              </th>
+              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                Status
+              </th>
+              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                Storefront
+              </th>
+              <th className="w-12 px-2 py-2" />
+            </tr>
+          </thead>
+          <tbody>
+            {sectionRows.map((row) => {
+              const isDraft = row.status === "draft";
+              const isStorefrontMaterial =
+                row.kind === "material" && row.onStorefront;
+              const materialOrderIndex = isStorefrontMaterial
+                ? storefrontMaterialSlugs.indexOf(row.slug)
+                : -1;
+
+              return (
+                <tr
+                  className="border-b border-border align-middle last:border-b-0"
+                  key={row.slug}
+                >
+                  <td className="px-2 py-2.5">
+                    <input
+                      aria-label={`Select ${row.title}`}
+                      checked={selected.has(row.slug)}
+                      className="size-3.5 accent-foreground"
+                      onChange={() => toggleSlug(row.slug)}
+                      type="checkbox"
+                    />
+                  </td>
+                  <td className="px-2 py-2.5">
+                    {isStorefrontMaterial && !isDraft ? (
+                      <div className="flex flex-col items-center gap-0.5">
+                        <button
+                          aria-label={`Move ${row.title} up`}
+                          className="flex size-6 items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                          disabled={pending || materialOrderIndex === 0}
+                          onClick={() => move(row.slug, -1)}
+                          type="button"
+                        >
+                          <RiArrowUpSLine className="size-4" />
+                        </button>
+                        <button
+                          aria-label={`Move ${row.title} down`}
+                          className="flex size-6 items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
+                          disabled={
+                            pending ||
+                            materialOrderIndex ===
+                              storefrontMaterialSlugs.length - 1
+                          }
+                          onClick={() => move(row.slug, 1)}
+                          type="button"
+                        >
+                          <RiArrowDownSLine className="size-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="block text-center font-mono text-[10px] text-muted-foreground">
+                        —
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-3 py-2.5">
+                    <AdminCatalogThumb
+                      fallbackColors={row.material?.fallbackColors}
+                      href={
+                        row.onStorefront && !isDraft
+                          ? `/materials/${row.slug}`
+                          : undefined
+                      }
+                      poster={row.poster}
+                      slug={row.slug}
+                      title={row.title}
+                    />
+                  </td>
+                  <td className="px-3 py-2.5 font-medium">{row.title}</td>
+                  <td className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground">
+                    {row.slug}
+                  </td>
+                  <td className="px-3 py-2.5 font-mono text-[11px]">
+                    {row.typeLabel}
+                  </td>
+                  <td className="px-3 py-2.5 font-mono text-[11px]">
+                    {row.tier}
+                  </td>
+                  <td className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground">
+                    {row.status}
+                  </td>
+                  <td className="px-3 py-2.5">
+                    {isDraft || !row.onStorefront ? (
+                      <span className="text-muted-foreground">
+                        {isDraft ? "Hidden" : "Not on storefront"}
+                      </span>
+                    ) : (
+                      <Link
+                        className="underline underline-offset-4 hover:text-muted-foreground"
+                        href={`/materials/${row.slug}`}
+                      >
+                        View
+                      </Link>
+                    )}
+                  </td>
+                  <td className="px-2 py-2.5 text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        aria-label={`Actions for ${row.title}`}
+                        className="inline-flex size-8 items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-50"
+                        disabled={pending || !canWrite}
+                      >
+                        <RiMoreLine className="size-4" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" side="bottom">
+                        <DropdownMenuItem onClick={() => setEditSlug(row.slug)}>
+                          Edit
+                        </DropdownMenuItem>
+                        {!isDraft ? (
+                          <DropdownMenuItem
+                            onClick={() => setStatus(row.slug, "draft")}
+                          >
+                            Draft
+                          </DropdownMenuItem>
+                        ) : null}
+                        {isDraft ? (
+                          <DropdownMenuItem
+                            onClick={() => setStatus(row.slug, "published")}
+                          >
+                            Publish
+                          </DropdownMenuItem>
+                        ) : null}
+                        <DropdownMenuItem
+                          onClick={() => runBulk("delete", [row.slug])}
+                        >
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  const hiddenDraftCount = hiddenRows.filter((row) => row.status === "draft").length;
+  const hiddenBackCount = hiddenRows.length - hiddenDraftCount;
+
   return (
     <>
       {actionError ? (
-        <p className="border border-red-600/30 bg-red-500/10 px-3 py-2 text-sm text-red-800 dark:text-red-100" role="alert">
+        <p
+          className="border border-red-600/30 bg-red-500/10 px-3 py-2 text-sm text-red-800 dark:text-red-100"
+          role="alert"
+        >
           {actionError}
         </p>
       ) : null}
@@ -208,195 +437,36 @@ export function AdminCatalogTable({
         </div>
       ) : null}
 
-      <div className="overflow-x-auto border border-border">
-        <table className="w-full min-w-[48rem] text-left text-sm">
-          <thead className="border-b border-border bg-muted/40">
-            <tr>
-              <th className="w-10 px-2 py-2">
-                <input
-                  aria-label="Select all"
-                  checked={allSelected}
-                  className="size-3.5 accent-foreground"
-                  onChange={toggleAll}
-                  ref={(el) => {
-                    if (el) el.indeterminate = someSelected && !allSelected;
-                  }}
-                  type="checkbox"
-                />
-              </th>
-              <th className="w-16 px-2 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Order
-              </th>
-              <th className="w-24 px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Preview
-              </th>
-              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Title
-              </th>
-              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Slug
-              </th>
-              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Kind
-              </th>
-              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Tier
-              </th>
-              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Status
-              </th>
-              <th className="px-3 py-2 text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
-                Storefront
-              </th>
-              <th className="w-12 px-2 py-2" />
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, index) => {
-              const isDraft = row.status === "draft";
-              const isStorefrontMaterial =
-                row.kind === "material" && row.onStorefront;
-              const materialOrderIndex = isStorefrontMaterial
-                ? storefrontMaterialSlugs.indexOf(row.slug)
-                : -1;
-              const showStorefrontDivider =
-                index === storefrontCount && storefrontCount < rows.length;
+      <div className="space-y-3">
+        {renderTable(storefrontRows)}
 
-              return (
-                <Fragment key={row.slug}>
-                  {showStorefrontDivider ? (
-                    <tr className="border-b border-border bg-muted/20">
-                      <td
-                        className="px-3 py-2 font-mono text-[10px] text-muted-foreground uppercase"
-                        colSpan={10}
-                      >
-                        Back catalog — not on public storefront grid
-                      </td>
-                    </tr>
-                  ) : null}
-                  <tr className="border-b border-border align-middle last:border-b-0">
-                    <td className="px-2 py-2.5">
-                      <input
-                        aria-label={`Select ${row.title}`}
-                        checked={selected.has(row.slug)}
-                        className="size-3.5 accent-foreground"
-                        onChange={() => toggleSlug(row.slug)}
-                        type="checkbox"
-                      />
-                    </td>
-                    <td className="px-2 py-2.5">
-                      {isStorefrontMaterial ? (
-                        <div className="flex flex-col items-center gap-0.5">
-                          <button
-                            aria-label={`Move ${row.title} up`}
-                            className="flex size-6 items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
-                            disabled={pending || materialOrderIndex === 0}
-                            onClick={() => move(row.slug, -1)}
-                            type="button"
-                          >
-                            <RiArrowUpSLine className="size-4" />
-                          </button>
-                          <button
-                            aria-label={`Move ${row.title} down`}
-                            className="flex size-6 items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30"
-                            disabled={
-                              pending ||
-                              materialOrderIndex ===
-                                storefrontMaterialSlugs.length - 1
-                            }
-                            onClick={() => move(row.slug, 1)}
-                            type="button"
-                          >
-                            <RiArrowDownSLine className="size-4" />
-                          </button>
-                        </div>
-                      ) : (
-                        <span className="block text-center font-mono text-[10px] text-muted-foreground">
-                          —
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-3 py-2.5">
-                      <AdminCatalogThumb
-                        fallbackColors={row.material?.fallbackColors}
-                        href={
-                          row.onStorefront && !isDraft
-                            ? `/materials/${row.slug}`
-                            : undefined
-                        }
-                        poster={row.poster}
-                        slug={row.slug}
-                        title={row.title}
-                      />
-                    </td>
-                    <td className="px-3 py-2.5 font-medium">{row.title}</td>
-                    <td className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground">
-                      {row.slug}
-                    </td>
-                    <td className="px-3 py-2.5 font-mono text-[11px]">
-                      {row.typeLabel}
-                    </td>
-                    <td className="px-3 py-2.5 font-mono text-[11px]">
-                      {row.tier}
-                    </td>
-                    <td className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground">
-                      {row.status}
-                    </td>
-                    <td className="px-3 py-2.5">
-                      {isDraft || !row.onStorefront ? (
-                        <span className="text-muted-foreground">
-                          {isDraft ? "Hidden" : "Not on storefront"}
-                        </span>
-                      ) : (
-                        <Link
-                          className="underline underline-offset-4 hover:text-muted-foreground"
-                          href={`/materials/${row.slug}`}
-                        >
-                          View
-                        </Link>
-                      )}
-                    </td>
-                    <td className="px-2 py-2.5 text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger
-                          aria-label={`Actions for ${row.title}`}
-                          className="inline-flex size-8 items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-50"
-                          disabled={pending || !canWrite}
-                        >
-                          <RiMoreLine className="size-4" />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" side="bottom">
-                          <DropdownMenuItem onClick={() => setEditSlug(row.slug)}>
-                            Edit
-                          </DropdownMenuItem>
-                          {!isDraft ? (
-                            <DropdownMenuItem
-                              onClick={() => setStatus(row.slug, "draft")}
-                            >
-                              Draft
-                            </DropdownMenuItem>
-                          ) : null}
-                          {isDraft ? (
-                            <DropdownMenuItem
-                              onClick={() => setStatus(row.slug, "published")}
-                            >
-                              Publish
-                            </DropdownMenuItem>
-                          ) : null}
-                          <DropdownMenuItem
-                            onClick={() => runBulk("delete", [row.slug])}
-                          >
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </td>
-                  </tr>
-                </Fragment>
-              );
-            })}
-          </tbody>
-        </table>
+        {hiddenRows.length > 0 ? (
+          <Collapsible onOpenChange={setHiddenOpen} open={hiddenOpen}>
+            <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 border border-border bg-muted/20 px-3 py-2.5 text-left transition-colors hover:bg-muted/40">
+              <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+                Hidden & back catalog
+              </span>
+              <span className="flex items-center gap-2 font-mono text-[11px] text-muted-foreground">
+                {hiddenRows.length} items
+                {hiddenDraftCount > 0 ? (
+                  <span>· {hiddenDraftCount} hidden</span>
+                ) : null}
+                {hiddenBackCount > 0 ? (
+                  <span>· {hiddenBackCount} back catalog</span>
+                ) : null}
+                <RiArrowDownSLine
+                  className={cn(
+                    "size-4 shrink-0 transition-transform",
+                    hiddenOpen && "rotate-180",
+                  )}
+                />
+              </span>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="pt-3">
+              {renderTable(hiddenRows)}
+            </CollapsibleContent>
+          </Collapsible>
+        ) : null}
       </div>
 
       {editRow ? (
