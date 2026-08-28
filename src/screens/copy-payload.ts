@@ -158,6 +158,25 @@ local paths under public/.`,
     prompt: `Build the Mexin Hero — floating pill nav, light canvas, magenta color-blend over abstract art, fab wordmarks.`,
     note: "Hero background PNG is served from Frameline under /screens/mexin-hero/.",
   },
+  "miracle-login-cyan-skeleton": {
+    files: [
+      "src/screens/miracle-login/reticle-login-skeleton.tsx",
+      "src/screens/miracle-login/reticle-login-skeleton.css",
+    ],
+    prompt: `Build the loading skeleton for Miracle Login Cyan: split panel bones over cyan-tinted cover art and sign-in form. Scoped CSS.`,
+    note: "Pairs with Miracle Login Cyan.",
+  },
+  "miracle-login-cyan": {
+    files: [
+      "src/screens/miracle-login/reticle-login.tsx",
+      "src/screens/miracle-login/accents.ts",
+      "src/screens/miracle-login/reticle-login-skeleton.tsx",
+      "src/screens/miracle-login/reticle-login-skeleton.css",
+      "src/screens/reticle-mark.tsx",
+    ],
+    prompt: `Build the Miracle Login Cyan screen — split-panel sign-in with cyan-tinted cover art (color blend overlay) and GSAP panel entrance.`,
+    note: "Cyan variant of Miracle Login. Cover art PNG shared from /screens/miracle-login/. Alias: reticle-login-cyan.",
+  },
   "miracle-login": {
     files: [
       "src/screens/miracle-login/reticle-login.tsx",

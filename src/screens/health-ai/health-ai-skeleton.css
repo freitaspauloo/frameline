@@ -1,0 +1,334 @@
+.fl-health-ai-skeleton {
+  color: inherit;
+}
+
+.fl-health-ai-skeleton .ha-skel-bone {
+  --bone: rgba(0, 0, 0, 0.06);
+  --shine: rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bone);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  animation: ha-skel-pulse 1.85s ease-in-out infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+.fl-health-ai-skeleton .ha-skel-bone::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  translate: -100% 0;
+  background: linear-gradient(
+    105deg,
+    transparent 22%,
+    var(--shine) 44%,
+    rgba(74, 171, 235, 0.28) 50%,
+    var(--shine) 56%,
+    transparent 78%
+  );
+  animation: ha-skel-sweep 1.85s linear infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+.fl-health-ai-skeleton .ha-skel-bone--lime {
+  --bone: rgba(74, 171, 235, 0.18);
+  --shine: rgba(74, 171, 235, 0.42);
+  border-color: rgba(74, 171, 235, 0.32);
+}
+
+.fl-health-ai-skeleton .ha-skel-bone--block {
+  border-radius: 10px;
+}
+
+@keyframes ha-skel-pulse {
+  0%,
+  100% {
+    opacity: 0.58;
+  }
+  50% {
+    opacity: 0.92;
+  }
+}
+
+@keyframes ha-skel-sweep {
+  0% {
+    translate: -100% 0;
+  }
+  100% {
+    translate: 100% 0;
+  }
+}
+
+.fl-health-ai-skeleton .ha-skel-root {
+  position: relative;
+  display: flex;
+  min-height: 100%;
+  width: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  background: #eef6fc;
+}
+
+.fl-health-ai-skeleton .ha-skel-shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  padding: 1.5rem 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .fl-health-ai-skeleton .ha-skel-shell {
+    padding: 2rem;
+  }
+}
+
+.fl-health-ai-skeleton .ha-skel-nav {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .fl-health-ai-skeleton .ha-skel-nav {
+    margin-bottom: 1.5rem;
+  }
+}
+
+.fl-health-ai-skeleton .bone-brand {
+  width: 56px;
+  height: 15px;
+  border-radius: 4px;
+}
+
+@media (min-width: 640px) {
+  .fl-health-ai-skeleton .bone-brand {
+    width: 64px;
+    height: 17px;
+  }
+}
+
+.fl-health-ai-skeleton .ha-skel-nav-right {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+@media (min-width: 640px) {
+  .fl-health-ai-skeleton .ha-skel-nav-right {
+    gap: 0.75rem;
+  }
+}
+
+.fl-health-ai-skeleton .ha-skel-links {
+  display: none;
+  align-items: center;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .fl-health-ai-skeleton .ha-skel-links {
+    display: flex;
+    gap: 1.25rem;
+  }
+}
+
+.fl-health-ai-skeleton .ha-skel-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fl-health-ai-skeleton .bone-nav-link {
+  width: 52px;
+  height: 11px;
+  border-radius: 3px;
+}
+
+.fl-health-ai-skeleton .bone-nav-link--wide {
+  width: 64px;
+}
+
+.fl-health-ai-skeleton .bone-badge {
+  width: 24px;
+  height: 18px;
+  border-radius: 999px;
+}
+
+.fl-health-ai-skeleton .bone-account {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+}
+
+.fl-health-ai-skeleton .bone-join {
+  width: 72px;
+  height: 34px;
+}
+
+@media (min-width: 640px) {
+  .fl-health-ai-skeleton .bone-join {
+    width: 82px;
+    height: 38px;
+  }
+}
+
+.fl-health-ai-skeleton .ha-skel-hero {
+  position: relative;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+@media (min-width: 640px) {
+  .fl-health-ai-skeleton .ha-skel-hero {
+    border-radius: 24px;
+  }
+}
+
+.fl-health-ai-skeleton .ha-skel-hero-plate {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #e8e8ec;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.fl-health-ai-skeleton .ha-skel-hero-plate::before {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  background: linear-gradient(
+    118deg,
+    #ececf0 0%,
+    #f8f8fa 28%,
+    #e4e4ea 52%,
+    #fafafa 74%,
+    #ebebef 100%
+  );
+  background-size: 220% 220%;
+  animation: ha-skel-hero-drift 9s ease-in-out infinite alternate;
+}
+
+.fl-health-ai-skeleton .ha-skel-hero-plate::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 18%,
+    rgba(255, 255, 255, 0.7) 42%,
+    rgba(74, 171, 235, 0.12) 50%,
+    rgba(255, 255, 255, 0.7) 58%,
+    transparent 82%
+  );
+  translate: -120% 0;
+  animation: ha-skel-hero-sweep 2.4s ease-in-out infinite;
+}
+
+@keyframes ha-skel-hero-drift {
+  0% {
+    transform: scale(1.04) translate3d(-1.5%, 0, 0);
+    background-position: 0% 40%;
+  }
+  100% {
+    transform: scale(1.08) translate3d(1.5%, -1%, 0);
+    background-position: 100% 60%;
+  }
+}
+
+@keyframes ha-skel-hero-sweep {
+  0% {
+    translate: -120% 0;
+  }
+  100% {
+    translate: 120% 0;
+  }
+}
+
+.fl-health-ai-skeleton .ha-skel-lockup {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.fl-health-ai-skeleton .ha-skel-headline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.fl-health-ai-skeleton .ha-skel-headline .ha-skel-bone {
+  --bone: rgba(0, 0, 0, 0.05);
+  --shine: rgba(0, 0, 0, 0.09);
+  width: fit-content;
+  max-width: 100%;
+  border-radius: 6px;
+}
+
+.fl-health-ai-skeleton .bone-headline-1 {
+  width: min(100%, 390px);
+  height: clamp(28px, 4.2vw, 52px);
+}
+
+.fl-health-ai-skeleton .bone-headline-2 {
+  width: min(100%, 560px);
+  height: clamp(28px, 4.2vw, 52px);
+}
+
+.fl-health-ai-skeleton .ha-skel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 46ch;
+}
+
+.fl-health-ai-skeleton .ha-skel-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.fl-health-ai-skeleton .bone-copy {
+  height: 11px;
+  border-radius: 999px;
+}
+
+.fl-health-ai-skeleton .bone-copy-1 {
+  width: 100%;
+}
+
+.fl-health-ai-skeleton .bone-copy-2 {
+  width: 94%;
+}
+
+.fl-health-ai-skeleton .bone-copy-3 {
+  width: 78%;
+}
+
+.fl-health-ai-skeleton .bone-copy-4 {
+  width: 62%;
+}
+
+.fl-health-ai-skeleton .bone-cta {
+  width: 96px;
+  height: 40px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fl-health-ai-skeleton .ha-skel-bone,
+  .fl-health-ai-skeleton .ha-skel-bone::after,
+  .fl-health-ai-skeleton .ha-skel-hero-plate::before,
+  .fl-health-ai-skeleton .ha-skel-hero-plate::after {
+    animation: none;
+  }
+}

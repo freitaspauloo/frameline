@@ -1,0 +1,234 @@
+.fl-fifty-x-skeleton {
+  color: inherit;
+}
+
+.fl-fifty-x-skeleton .fx-skel-bone {
+  --bone: rgba(255, 255, 255, 0.1);
+  --shine: rgba(255, 255, 255, 0.2);
+  --bone-glow: rgba(53, 103, 255, 0.22);
+  position: relative;
+  overflow: hidden;
+  background: var(--bone);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  animation: fx-skel-pulse 1.85s ease-in-out infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+.fl-fifty-x-skeleton .fx-skel-bone::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  translate: -100% 0;
+  background: linear-gradient(
+    105deg,
+    transparent 22%,
+    var(--shine) 44%,
+    var(--bone-glow) 50%,
+    var(--shine) 56%,
+    transparent 78%
+  );
+  animation: fx-skel-sweep 1.85s linear infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+.fl-fifty-x-skeleton .fx-skel-bone--solid {
+  --bone: rgba(53, 103, 255, 0.18);
+  border-color: rgba(53, 103, 255, 0.24);
+}
+
+@keyframes fx-skel-pulse {
+  0%,
+  100% {
+    opacity: 0.58;
+  }
+  50% {
+    opacity: 0.92;
+  }
+}
+
+@keyframes fx-skel-sweep {
+  0% {
+    translate: -100% 0;
+  }
+  100% {
+    translate: 100% 0;
+  }
+}
+
+.fl-fifty-x-skeleton .fx-skel-bg-wrap {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.fl-fifty-x-skeleton .fx-skel-bg-plate {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 75vw;
+  height: 100vw;
+  transform-origin: 0 0;
+  transform: rotate(270deg);
+  background: linear-gradient(
+    135deg,
+    #0a1028 0%,
+    #142454 38%,
+    #3567ff 62%,
+    #0c1430 100%
+  );
+  background-size: 220% 220%;
+  animation: fx-skel-bg-drift 9s ease-in-out infinite alternate;
+}
+
+.fl-fifty-x-skeleton.h-full.min-h-0 .fx-skel-bg-plate {
+  top: 1080px;
+  width: 1080px;
+  height: 1440px;
+}
+
+@keyframes fx-skel-bg-drift {
+  0% {
+    background-position: 0% 40%;
+  }
+  100% {
+    background-position: 100% 60%;
+  }
+}
+
+.fl-fifty-x-skeleton .fx-skel-grain {
+  position: absolute;
+  inset: -50%;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 110px 110px;
+}
+
+.fl-fifty-x-skeleton .fx-skel-fade {
+  pointer-events: none;
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 45%;
+  background: linear-gradient(180deg, #000000 -0.01%, rgba(0, 0, 0, 0) 78.33%);
+}
+
+.fl-fifty-x-skeleton .fx-skel-pill {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.fl-fifty-x-skeleton .fx-skel-nav-brand {
+  width: 104px;
+  height: 35px;
+  border-radius: 999px;
+}
+
+.fl-fifty-x-skeleton .fx-skel-nav-login {
+  width: 84px;
+  height: 35px;
+  border-radius: 999px;
+}
+
+.fl-fifty-x-skeleton .fx-skel-nav-start {
+  width: 118px;
+  height: 35px;
+  border-radius: 999px;
+}
+
+.fl-fifty-x-skeleton .fx-skel-headline-text {
+  width: min(72vw, 320px);
+  height: 36px;
+  border-radius: 10px;
+}
+
+.fl-fifty-x-skeleton .fx-skel-headline-pill {
+  width: 148px;
+  height: 48px;
+  border-radius: 999px;
+}
+
+.fl-fifty-x-skeleton .fx-skel-subtitle {
+  width: min(88vw, 360px);
+  height: 18px;
+  border-radius: 999px;
+}
+
+.fl-fifty-x-skeleton .fx-skel-form {
+  width: min(100%, 760px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(24, 24, 24, 0.72);
+  padding: 24px 20px 18px 24px;
+  box-shadow:
+    inset 0 0 27px -12px rgba(53, 103, 255, 0.35),
+    3px 3px 14px rgba(53, 103, 255, 0.18);
+}
+
+.fl-fifty-x-skeleton .fx-skel-form-label {
+  width: min(78%, 280px);
+  height: 24px;
+  border-radius: 999px;
+}
+
+.fl-fifty-x-skeleton .fx-skel-chip-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+}
+
+.fl-fifty-x-skeleton .fx-skel-chip {
+  width: 136px;
+  height: 32px;
+  border-radius: 999px;
+}
+
+.fl-fifty-x-skeleton .fx-skel-chip-sm {
+  width: 88px;
+  height: 32px;
+  border-radius: 999px;
+}
+
+.fl-fifty-x-skeleton .fx-skel-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+}
+
+.fl-fifty-x-skeleton .fx-skel-icon-btn--send {
+  --bone: rgba(53, 103, 255, 0.22);
+  border-color: rgba(53, 103, 255, 0.32);
+}
+
+.fl-fifty-x-skeleton .fx-skel-template-title {
+  width: 196px;
+  height: 20px;
+  border-radius: 999px;
+}
+
+.fl-fifty-x-skeleton .fx-skel-template-sub {
+  width: 280px;
+  height: 14px;
+  border-radius: 999px;
+}
+
+.fl-fifty-x-skeleton .fx-skel-template-link {
+  width: 96px;
+  height: 20px;
+  border-radius: 999px;
+}
+
+.fl-fifty-x-skeleton .fx-skel-template-card {
+  height: 250px;
+  width: 100%;
+  border-radius: 32px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fl-fifty-x-skeleton .fx-skel-bone,
+  .fl-fifty-x-skeleton .fx-skel-bone::after,
+  .fl-fifty-x-skeleton .fx-skel-bg-plate {
+    animation: none;
+  }
+}

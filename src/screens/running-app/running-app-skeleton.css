@@ -1,0 +1,341 @@
+.fl-running-app-skeleton {
+  color: inherit;
+}
+
+.fl-running-app-skeleton .ra-skel-bone {
+  --bone: rgba(255, 255, 255, 0.1);
+  --shine: rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bone);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  animation: ra-skel-pulse 1.85s ease-in-out infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+.fl-running-app-skeleton .ra-skel-bone::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  translate: -100% 0;
+  background: linear-gradient(
+    105deg,
+    transparent 22%,
+    var(--shine) 44%,
+    rgba(212, 255, 0, 0.22) 50%,
+    var(--shine) 56%,
+    transparent 78%
+  );
+  animation: ra-skel-sweep 1.85s linear infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+.fl-running-app-skeleton .ra-skel-bone--lime {
+  --bone: rgba(212, 255, 0, 0.16);
+  --shine: rgba(212, 255, 0, 0.42);
+  border-color: rgba(212, 255, 0, 0.28);
+}
+
+.fl-running-app-skeleton .ra-skel-bone--block {
+  border-radius: 10px;
+}
+
+@keyframes ra-skel-pulse {
+  0%,
+  100% {
+    opacity: 0.58;
+  }
+  50% {
+    opacity: 0.92;
+  }
+}
+
+@keyframes ra-skel-sweep {
+  0% {
+    translate: -100% 0;
+  }
+  100% {
+    translate: 100% 0;
+  }
+}
+
+.fl-running-app-skeleton .ra-skel-root {
+  position: relative;
+  display: flex;
+  min-height: 100%;
+  width: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  background: #161618;
+}
+
+.fl-running-app-skeleton .ra-skel-shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  padding: 1.5rem 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .fl-running-app-skeleton .ra-skel-shell {
+    padding: 2rem;
+  }
+}
+
+.fl-running-app-skeleton .ra-skel-nav {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .fl-running-app-skeleton .ra-skel-nav {
+    margin-bottom: 1.5rem;
+  }
+}
+
+.fl-running-app-skeleton .bone-brand {
+  width: 56px;
+  height: 15px;
+  border-radius: 4px;
+}
+
+@media (min-width: 640px) {
+  .fl-running-app-skeleton .bone-brand {
+    width: 64px;
+    height: 17px;
+  }
+}
+
+.fl-running-app-skeleton .ra-skel-nav-right {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+@media (min-width: 640px) {
+  .fl-running-app-skeleton .ra-skel-nav-right {
+    gap: 0.75rem;
+  }
+}
+
+.fl-running-app-skeleton .ra-skel-links {
+  display: none;
+  align-items: center;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .fl-running-app-skeleton .ra-skel-links {
+    display: flex;
+    gap: 1.25rem;
+  }
+}
+
+.fl-running-app-skeleton .ra-skel-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fl-running-app-skeleton .bone-nav-link {
+  width: 52px;
+  height: 11px;
+  border-radius: 3px;
+}
+
+.fl-running-app-skeleton .bone-nav-link--wide {
+  width: 64px;
+}
+
+.fl-running-app-skeleton .bone-badge {
+  width: 24px;
+  height: 18px;
+  border-radius: 999px;
+}
+
+.fl-running-app-skeleton .bone-account {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+}
+
+.fl-running-app-skeleton .bone-join {
+  width: 72px;
+  height: 34px;
+}
+
+@media (min-width: 640px) {
+  .fl-running-app-skeleton .bone-join {
+    width: 82px;
+    height: 38px;
+  }
+}
+
+.fl-running-app-skeleton .ra-skel-hero {
+  position: relative;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+@media (min-width: 640px) {
+  .fl-running-app-skeleton .ra-skel-hero {
+    border-radius: 24px;
+  }
+}
+
+.fl-running-app-skeleton .ra-skel-hero-plate {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #1c1c20;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.fl-running-app-skeleton .ra-skel-hero-plate::before {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  background: linear-gradient(
+    118deg,
+    #141418 0%,
+    #25252c 28%,
+    #1a1a22 52%,
+    #303038 74%,
+    #16161c 100%
+  );
+  background-size: 220% 220%;
+  animation: ra-skel-hero-drift 9s ease-in-out infinite alternate;
+}
+
+.fl-running-app-skeleton .ra-skel-hero-plate::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 18%,
+    rgba(255, 255, 255, 0.06) 42%,
+    rgba(212, 255, 0, 0.08) 50%,
+    rgba(255, 255, 255, 0.06) 58%,
+    transparent 82%
+  );
+  translate: -120% 0;
+  animation: ra-skel-hero-sweep 2.4s ease-in-out infinite;
+}
+
+@keyframes ra-skel-hero-drift {
+  0% {
+    transform: scale(1.04) translate3d(-1.5%, 0, 0);
+    background-position: 0% 40%;
+  }
+  100% {
+    transform: scale(1.08) translate3d(1.5%, -1%, 0);
+    background-position: 100% 60%;
+  }
+}
+
+@keyframes ra-skel-hero-sweep {
+  0% {
+    translate: -120% 0;
+  }
+  100% {
+    translate: 120% 0;
+  }
+}
+
+.fl-running-app-skeleton .ra-skel-lockup {
+  display: grid;
+  flex-shrink: 0;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .fl-running-app-skeleton .ra-skel-lockup {
+    grid-template-columns: 1.15fr 0.85fr;
+    align-items: end;
+    gap: 4rem;
+  }
+}
+
+.fl-running-app-skeleton .ra-skel-headline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.fl-running-app-skeleton .ra-skel-headline .ra-skel-bone {
+  --bone: rgba(255, 255, 255, 0.08);
+  --shine: rgba(255, 255, 255, 0.16);
+  width: fit-content;
+  max-width: 100%;
+  border-radius: 6px;
+}
+
+.fl-running-app-skeleton .bone-headline-1 {
+  width: min(100%, 390px);
+  height: clamp(28px, 4.2vw, 52px);
+}
+
+.fl-running-app-skeleton .bone-headline-2 {
+  width: min(100%, 560px);
+  height: clamp(28px, 4.2vw, 52px);
+}
+
+.fl-running-app-skeleton .ra-skel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.fl-running-app-skeleton .ra-skel-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.fl-running-app-skeleton .bone-copy {
+  height: 11px;
+  border-radius: 999px;
+}
+
+.fl-running-app-skeleton .bone-copy-1 {
+  width: 100%;
+}
+
+.fl-running-app-skeleton .bone-copy-2 {
+  width: 94%;
+}
+
+.fl-running-app-skeleton .bone-copy-3 {
+  width: 78%;
+}
+
+.fl-running-app-skeleton .bone-copy-4 {
+  width: 62%;
+}
+
+.fl-running-app-skeleton .bone-cta {
+  width: 96px;
+  height: 40px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fl-running-app-skeleton .ra-skel-bone,
+  .fl-running-app-skeleton .ra-skel-bone::after,
+  .fl-running-app-skeleton .ra-skel-hero-plate::before,
+  .fl-running-app-skeleton .ra-skel-hero-plate::after {
+    animation: none;
+  }
+}

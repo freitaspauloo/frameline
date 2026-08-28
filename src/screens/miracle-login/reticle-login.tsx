@@ -4,27 +4,35 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { GeistSans } from "geist/font/sans";
-import type { CSSProperties } from "react";
 
 import { useReducedMotion } from "@/components/motion/use-reduced-motion";
 import { cn } from "@/lib/utils";
 import { ReticleMark } from "@/screens/reticle-mark";
 import { ScreenStage } from "@/screens/stage";
 
-export const RETICLE_LOGIN_ART = "/screens/miracle-login/cover.png";
+import {
+  RETICLE_LOGIN_CYAN,
+  RETICLE_LOGIN_MAGENTA,
+  type ReticleLoginAccent,
+} from "./accents";
 
-export const RETICLE_MAGENTA = "#D600BF";
+export const RETICLE_LOGIN_ART = "/screens/miracle-login/cover.png";
+export const RETICLE_MAGENTA = RETICLE_LOGIN_MAGENTA.hex;
+export const RETICLE_CYAN = RETICLE_LOGIN_CYAN.hex;
 
 /**
- * Reticle sign-in — split panel, magenta-tinted art, GSAP entrance.
+ * Reticle sign-in — split panel, color-blend cover art, GSAP entrance.
  */
 export function ReticleLoginPage({
+  accent = RETICLE_LOGIN_MAGENTA,
   className,
   embed = false,
 }: {
+  accent?: ReticleLoginAccent;
   className?: string;
   embed?: boolean;
 }) {
+  const isCyan = accent.hex === RETICLE_LOGIN_CYAN.hex;
   const scope = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
   const [artReady, setArtReady] = useState(false);
@@ -171,7 +179,10 @@ export function ReticleLoginPage({
         <div className="relative flex min-h-0 w-full min-w-0 flex-1 flex-col md:w-1/2 md:flex-none lg:w-1/2">
           <div className="rl-brand flex shrink-0 justify-center bg-black pt-8 sm:pt-10 lg:pt-[62px]">
             <div className="flex items-center gap-2">
-              <ReticleMark className="rl-brand-mark size-6 sm:size-[26px]" />
+              <ReticleMark
+                className="rl-brand-mark size-6 sm:size-[26px]"
+                color={accent.hex}
+              />
               <span className="rl-brand-name text-[16px] font-normal tracking-[-0.03em] text-white sm:text-[17px]">
                 Reticle
               </span>
@@ -196,7 +207,14 @@ export function ReticleLoginPage({
                   e.preventDefault();
                 }}
               >
-                <div className="rl-form-shell flex h-12 items-center rounded-[5px] border border-[rgba(214,0,191,0.22)] bg-[#0a0b12] p-1 pl-4">
+                <div
+                  className={cn(
+                    "rl-form-shell flex h-12 items-center rounded-[5px] bg-[#0a0b12] p-1 pl-4",
+                    isCyan
+                      ? "border border-[rgba(0,200,255,0.22)]"
+                      : "border border-[rgba(214,0,191,0.22)]",
+                  )}
+                >
                   <div className="rl-form-input min-w-0 flex-1 overflow-hidden">
                     <input
                       type="email"
@@ -208,7 +226,12 @@ export function ReticleLoginPage({
                   </div>
                   <button
                     type="submit"
-                    className="rl-form-submit inline-flex h-10 shrink-0 items-center justify-center rounded-[5px] bg-white px-5 text-[13px] font-normal text-[#10121c] transition-colors hover:bg-[#D600BF] hover:text-white"
+                    className={cn(
+                      "rl-form-submit inline-flex h-10 shrink-0 items-center justify-center rounded-[5px] bg-white px-5 text-[13px] font-normal text-[#10121c] transition-colors",
+                      isCyan
+                        ? "hover:bg-[#00C8FF] hover:text-[#10121c]"
+                        : "hover:bg-[#D600BF] hover:text-white",
+                    )}
                   >
                     Continue
                   </button>
@@ -218,7 +241,12 @@ export function ReticleLoginPage({
                   Need fab access?{" "}
                   <a
                     href="#request"
-                    className="font-normal text-white underline underline-offset-[3px] transition-colors hover:text-[#D600BF]"
+                    className={cn(
+                      "font-normal underline underline-offset-[3px] transition-colors",
+                      isCyan
+                        ? "text-[#00C8FF] hover:text-[#66E0FF]"
+                        : "text-white hover:text-[#D600BF]",
+                    )}
                   >
                     Request onboarding
                   </a>
@@ -236,14 +264,24 @@ export function ReticleLoginPage({
               <div className="space-y-2.5">
                 <button
                   type="button"
-                  className="rl-social-btn inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-[5px] border border-[rgba(214,0,191,0.22)] bg-[#0a0b12] text-[13.5px] font-normal text-white/70 transition-colors hover:border-[rgba(214,0,191,0.35)]"
+                  className={cn(
+                    "rl-social-btn inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-[5px] bg-[#0a0b12] text-[13.5px] font-normal text-white/70 transition-colors",
+                    isCyan
+                      ? "border border-[rgba(0,200,255,0.22)] hover:border-[rgba(0,200,255,0.35)]"
+                      : "border border-[rgba(214,0,191,0.22)] hover:border-[rgba(214,0,191,0.35)]",
+                  )}
                 >
                   <GoogleMark />
                   Continue with Google
                 </button>
                 <button
                   type="button"
-                  className="rl-social-btn inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-[5px] border border-[rgba(214,0,191,0.22)] bg-[#0a0b12] text-[13.5px] font-normal text-white/70 transition-colors hover:border-[rgba(214,0,191,0.35)]"
+                  className={cn(
+                    "rl-social-btn inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-[5px] bg-[#0a0b12] text-[13.5px] font-normal text-white/70 transition-colors",
+                    isCyan
+                      ? "border border-[rgba(0,200,255,0.22)] hover:border-[rgba(0,200,255,0.35)]"
+                      : "border border-[rgba(214,0,191,0.22)] hover:border-[rgba(214,0,191,0.35)]",
+                  )}
                 >
                   <SsoMark />
                   Continue with SSO
@@ -268,7 +306,7 @@ export function ReticleLoginPage({
           </div>
         </div>
 
-        {/* Right — art with magenta color blend */}
+        {/* Right — art with accent color blend */}
         <div className="rl-art-panel relative hidden w-1/2 shrink-0 box-border self-stretch bg-black pt-2.5 pr-2.5 pb-2.5 md:block lg:pt-[15px] lg:pr-[15px] lg:pb-[15px]">
           <div className="rl-art-frame relative h-full w-full overflow-hidden rounded-[5px]">
             {/* eslint-disable-next-line @next/next/no-img-element -- fit-to-panel without next/image fill crop */}
@@ -280,7 +318,7 @@ export function ReticleLoginPage({
             />
             <div
               className="rl-art-tint pointer-events-none absolute inset-0 rounded-[5px]"
-              style={{ background: RETICLE_MAGENTA, mixBlendMode: "color" }}
+              style={{ background: accent.hex, mixBlendMode: "color" }}
               aria-hidden
             />
           </div>
@@ -288,6 +326,19 @@ export function ReticleLoginPage({
       </div>
       </section>
     </ScreenStage>
+  );
+}
+
+/** Cyan-accent variant — separate catalog entry from Miracle Login (magenta). */
+export function ReticleLoginCyanPage({
+  className,
+  embed = false,
+}: {
+  className?: string;
+  embed?: boolean;
+}) {
+  return (
+    <ReticleLoginPage accent={RETICLE_LOGIN_CYAN} className={className} embed={embed} />
   );
 }
 

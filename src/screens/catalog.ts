@@ -15,6 +15,25 @@ const SCREEN = {
 export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
   {
     ...SCREEN,
+    slug: "miracle-login-cyan-skeleton",
+    title: "Miracle Login Cyan Skeleton",
+    description:
+      "Loading skeleton for Miracle Login Cyan — split panel bones with cyan-tinted cover art shimmer.",
+    blurb: "Auth loading state · cyan tint · form bones",
+    poster: "/screens/miracle-login-cyan/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "miracle-login-cyan",
+    title: "Miracle Login Cyan",
+    description:
+      "Split-panel sign-in — cyan-tinted cover art, Reticle chrome, and GSAP panel entrance.",
+    blurb: "Split panel · cyan art · sign-in form",
+    poster: "/screens/miracle-login-cyan/poster.png",
+    aliases: ["reticle-login-cyan"],
+  },
+  {
+    ...SCREEN,
     slug: "softwave",
     title: "Softwave Hero",
     description:

@@ -53,6 +53,7 @@ const DEFAULT_SLUGS = [
   "softwave-features",
   "bridge-dither",
   "mexin-hero",
+  "miracle-login-cyan",
   "miracle-login",
   "dark-pill-hero",
   "ascii-hero",

@@ -100,7 +100,39 @@
 @media (prefers-reduced-motion: reduce) {
   .fl-reticle-login-skeleton .bone,
   .fl-reticle-login-skeleton .bone::after,
-  .fl-reticle-login-skeleton .rl-skel-art::after {
+  .fl-reticle-login-skeleton .rl-skel-art::after,
+  .fl-reticle-login-skeleton .rl-skel-art-panel,
+  .fl-reticle-login-skeleton .rl-skel-art-frame,
+  .fl-reticle-login-skeleton .rl-skel-brand,
+  .fl-reticle-login-skeleton .rl-skel-content,
+  .fl-reticle-login-skeleton .rl-skel-footer,
+  .fl-reticle-login-skeleton .rl-skel-bone {
     animation: none;
+    opacity: 1;
+    transform: none;
+    clip-path: none;
   }
+}
+
+/* Cyan variant — pairs with Miracle Login Cyan */
+.fl-reticle-login-skeleton--cyan .bone {
+  --bone-accent: rgba(0, 200, 255, 0.35);
+}
+
+.fl-reticle-login-skeleton--cyan .rl-skel-art {
+  background: linear-gradient(145deg, #0e2a3d 0%, #1a4a6a 38%, #061a2a 72%, #081012 100%);
+}
+
+.fl-reticle-login-skeleton--cyan .rl-skel-art::after {
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.12) 48%,
+    rgba(0, 200, 255, 0.22) 52%,
+    transparent 70%
+  );
+}
+
+.fl-reticle-login-skeleton--cyan .rl-skel-tint {
+  background: #00c8ff;
 }

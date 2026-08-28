@@ -15,7 +15,7 @@ import { ReticleAsciiHero, ReticleAsciiHeroSkeleton } from "@/screens/ascii-hero
 import { BridgeDither, BridgeDitherSkeleton } from "@/screens/bridge-dither";
 import { DarkPillHero, DarkPillHeroSkeleton } from "@/screens/dark-pill-hero";
 import { MexinHero, MexinHeroSkeleton } from "@/screens/mexin-hero";
-import { ReticleLoginPage, ReticleLoginSkeleton } from "@/screens/miracle-login";
+import { ReticleLoginPage, ReticleLoginCyanPage, ReticleLoginSkeleton, ReticleLoginCyanSkeleton } from "@/screens/miracle-login";
 import { Softwave, SoftwaveSkeleton } from "@/screens/softwave";
 import { SoftwaveFeatureCards, SoftwaveFeatureCardsSkeleton } from "@/screens/softwave-features";
 import { SpacemanMoon } from "@/screens/spaceman-moon";
@@ -66,6 +66,8 @@ export function ScreenLivePreview({
       return <MexinHero className="h-full w-full" embed={embed} />;
     case "miracle-login":
       return <ReticleLoginPage className="h-full w-full" embed={embed} />;
+    case "miracle-login-cyan":
+      return <ReticleLoginCyanPage className="h-full w-full" embed={embed} />;
     case "yield-skeleton":
       return <YieldSkeleton embed={embed} />;
     case "features-skeleton":
@@ -84,6 +86,8 @@ export function ScreenLivePreview({
       return <BridgeDitherSkeleton className="h-full w-full" embed={embed} />;
     case "mexin-hero-skeleton":
       return <MexinHeroSkeleton className="h-full w-full" embed={embed} />;
+    case "miracle-login-cyan-skeleton":
+      return <ReticleLoginCyanSkeleton className="h-full w-full" embed={embed} />;
     case "miracle-login-skeleton":
       return <ReticleLoginSkeleton className="h-full w-full" embed={embed} />;
     default:
