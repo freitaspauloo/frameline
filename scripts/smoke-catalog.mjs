@@ -132,7 +132,7 @@ export function runCatalogSmoke() {
     }
   }
 
-  assert(SCREENS_CATALOG.length === 17, `Expected 17 screens, got ${SCREENS_CATALOG.length}`);
+  assert(SCREENS_CATALOG.length === 31, `Expected 31 screens, got ${SCREENS_CATALOG.length}`);
   const screenTitles = SCREENS_CATALOG.map((s) => s.title);
   for (const title of [
     "Dark Pill Nav Hero",
