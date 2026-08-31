@@ -10,3 +10,5 @@ allowBuilds:
   protobufjs: false
 minimumReleaseAgeExclude:
   - ai@7.0.16
+overrides:
+  jose: 4.15.9
