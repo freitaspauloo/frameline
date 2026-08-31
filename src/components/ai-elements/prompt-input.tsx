@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use client";
 
 import {
@@ -409,6 +408,11 @@ export const usePromptInputReferencedSources = () => {
   return ctx;
 };
 
+/** Base UI menu items hand back a synthetic event wrapper, not a native Event. */
+type MenuItemSelectEvent = Parameters<
+  NonNullable<ComponentProps<typeof DropdownMenuItem>["onSelect"]>
+>[0];
+
 export type PromptInputActionAddAttachmentsProps = ComponentProps<
   typeof DropdownMenuItem
 > & {
@@ -421,9 +425,13 @@ export const PromptInputActionAddAttachments = ({
 }: PromptInputActionAddAttachmentsProps) => {
   const attachments = usePromptInputAttachments();
 
-  const handleSelect = useCallback(() => {
-    attachments.openFileDialog();
-  }, [attachments]);
+  const handleSelect = useCallback(
+    (e: MenuItemSelectEvent) => {
+      e.preventDefault();
+      attachments.openFileDialog();
+    },
+    [attachments]
+  );
 
   return (
     <DropdownMenuItem {...props} onSelect={handleSelect}>
@@ -446,11 +454,7 @@ export const PromptInputActionAddScreenshot = ({
   const attachments = usePromptInputAttachments();
 
   const handleSelect = useCallback(
-    async (
-      event: Parameters<
-        NonNullable<ComponentProps<typeof DropdownMenuItem>["onSelect"]>
-      >[0]
-    ) => {
+    async (event: MenuItemSelectEvent) => {
       onSelect?.(event);
       if (event.defaultPrevented) {
         return;
@@ -1156,7 +1160,7 @@ export const PromptInputButton = ({
 
   return (
     <Tooltip>
-      <TooltipTrigger>{button}</TooltipTrigger>
+      <TooltipTrigger render={button} />
       <TooltipContent side={side}>
         {tooltipContent}
         {shortcut && (
@@ -1233,7 +1237,9 @@ export const PromptInputSubmit = ({
   }
 
   const handleClick = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
+    (
+      e: Parameters<NonNullable<ComponentProps<typeof InputGroupButton>["onClick"]>>[0]
+    ) => {
       if (isGenerating && onStop) {
         e.preventDefault();
         onStop();
@@ -1314,12 +1320,8 @@ export const PromptInputSelectValue = ({
 
 export type PromptInputHoverCardProps = ComponentProps<typeof HoverCard>;
 
-export const PromptInputHoverCard = ({
-  openDelay = 0,
-  closeDelay = 0,
-  ...props
-}: PromptInputHoverCardProps) => (
-  <HoverCard closeDelay={closeDelay} openDelay={openDelay} {...props} />
+export const PromptInputHoverCard = (props: PromptInputHoverCardProps) => (
+  <HoverCard {...props} />
 );
 
 export type PromptInputHoverCardTriggerProps = ComponentProps<
