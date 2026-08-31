@@ -1,15 +1,17 @@
 "use client";
 
-import { FlutedGlass } from "@paper-design/shaders-react";
+import { FlutedGlass, type PaperShaderElement } from "@paper-design/shaders-react";
 import gsap from "gsap";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 
 import { cn } from "@/lib/utils";
 import { ScreenStage } from "@/screens/stage";
 
-const HERO_POSTER = "/screens/health-ai/hero.png";
+const HERO_VIDEO = "/screens/health-ai/hero.mp4";
+/** Garden loop first frame — bootstrap FlutedGlass until the video texture is ready. */
+const HERO_GLASS_IMAGE = "/screens/health-ai/hero-garden-poster.jpg";
 
 /** Paper FlutedGlass — lines / prism preset from the design panel */
 const HERO_GLASS = {
@@ -55,6 +57,8 @@ export type HealthAiHeroProps = {
   embed?: boolean;
   /** Dev / live pages — skip 16:9 letterboxing and fill the viewport. */
   fillViewport?: boolean;
+  /** Poster capture — keep the garden plate static (headless video is unreliable). */
+  staticHero?: boolean;
 };
 
 /**
@@ -64,6 +68,7 @@ export function HealthAiHero({
   className,
   embed = false,
   fillViewport = false,
+  staticHero = false,
 }: HealthAiHeroProps) {
   const rootRef = useRef<HTMLElement>(null);
 
@@ -434,7 +439,7 @@ export function HealthAiHero({
               data-ha-hero
               className="relative isolate h-[min(84vh,800px)] w-full shrink-0 overflow-hidden rounded-[20px] sm:h-[min(88vh,880px)] sm:rounded-[24px] [transform:translateZ(0)]"
             >
-            <HeroVideo />
+            <HeroVideo staticHero={staticHero} />
 
             <div
               data-ha-body-block
@@ -630,7 +635,78 @@ export function HealthAiHero({
   );
 }
 
-function HeroVideo() {
+function HeroVideo({ staticHero = false }: { staticHero?: boolean }) {
+  const glassHostRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useLayoutEffect(() => {
+    if (staticHero) return;
+
+    const video = videoRef.current;
+    if (!video) return;
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let started = false;
+
+    const startPlayback = () => {
+      if (started) return;
+      started = true;
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      if (reduced) {
+        video.pause();
+        return;
+      }
+      void video.play().catch(() => {});
+    };
+
+    video.addEventListener("loadeddata", startPlayback);
+    if (video.readyState >= 2) startPlayback();
+
+    return () => {
+      video.removeEventListener("loadeddata", startPlayback);
+    };
+  }, [staticHero]);
+
+  useEffect(() => {
+    if (staticHero) return;
+
+    const video = videoRef.current;
+    const host = glassHostRef.current;
+    if (!video || !host) return;
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
+
+    let mount: PaperShaderElement["paperShaderMount"];
+    let mountReady = false;
+    let poll = 0;
+
+    const sync = () => {
+      if (!mountReady || !mount || !video) return;
+      syncVideoToFlutedGlass(mount, video);
+    };
+
+    const waitForMount = () => {
+      const el = host.firstElementChild as PaperShaderElement | null;
+      mount = el?.paperShaderMount;
+      if (mount) {
+        mountReady = true;
+        gsap.ticker.add(sync);
+        return;
+      }
+      poll = window.requestAnimationFrame(waitForMount);
+    };
+
+    waitForMount();
+
+    return () => {
+      window.cancelAnimationFrame(poll);
+      gsap.ticker.remove(sync);
+    };
+  }, [staticHero]);
+
   return (
     <div
       data-ha-video-plate
@@ -638,17 +714,70 @@ function HeroVideo() {
       style={{ backgroundColor: CANVAS }}
       aria-hidden
     >
-      <FlutedGlass
-        {...HERO_GLASS}
-        image={HERO_POSTER}
-        style={{
-          width: "100%",
-          height: "100%",
-          background: "transparent",
-        }}
-      />
+      {staticHero ? null : (
+        <video
+          ref={videoRef}
+          src={HERO_VIDEO}
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className="pointer-events-none absolute h-px w-px opacity-0"
+          aria-hidden
+        />
+      )}
+      <div ref={glassHostRef} className="absolute inset-0">
+        <FlutedGlass
+          {...HERO_GLASS}
+          image={HERO_GLASS_IMAGE}
+          style={{
+            width: "100%",
+            height: "100%",
+            background: "transparent",
+          }}
+        />
+      </div>
     </div>
   );
+}
+
+type FlutedGlassMount = NonNullable<PaperShaderElement["paperShaderMount"]>;
+
+function syncVideoToFlutedGlass(mount: FlutedGlassMount, video: HTMLVideoElement) {
+  if (
+    video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA ||
+    video.videoWidth <= 0 ||
+    video.videoHeight <= 0
+  ) {
+    return;
+  }
+
+  const uniformName = "u_image";
+  const texture = mount.textures.get(uniformName);
+  if (!texture) return;
+
+  const { gl } = mount;
+  const textureUnit = mount.textureUnitMap.get(uniformName) ?? 0;
+  const program = (mount as FlutedGlassMount & { program: WebGLProgram | null }).program;
+  if (!program) return;
+
+  gl.useProgram(program);
+  gl.activeTexture(gl.TEXTURE0 + textureUnit);
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+  // FlutedGlass mounts u_image with mipmaps — refresh the chain after video uploads.
+  gl.generateMipmap(gl.TEXTURE_2D);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+  const imageLoc = mount.uniformLocations[uniformName];
+  const aspectLoc = mount.uniformLocations[`${uniformName}AspectRatio`];
+  if (imageLoc) gl.uniform1i(imageLoc, textureUnit);
+  if (aspectLoc) gl.uniform1f(aspectLoc, video.videoWidth / video.videoHeight);
+
+  mount.render(performance.now());
 }
 
 function splitTextIntoWords(node: HTMLElement | null) {
