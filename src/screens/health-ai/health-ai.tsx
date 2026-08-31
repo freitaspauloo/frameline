@@ -4,12 +4,11 @@ import { FlutedGlass } from "@paper-design/shaders-react";
 import gsap from "gsap";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 
 import { cn } from "@/lib/utils";
 import { ScreenStage } from "@/screens/stage";
 
-const HERO_VIDEO = "/screens/health-ai/hero.mp4";
 const HERO_POSTER = "/screens/health-ai/hero.png";
 
 /** Paper FlutedGlass — lines / prism preset from the design panel */
@@ -56,8 +55,6 @@ export type HealthAiHeroProps = {
   embed?: boolean;
   /** Dev / live pages — skip 16:9 letterboxing and fill the viewport. */
   fillViewport?: boolean;
-  /** Poster capture — keep hero.png in FlutedGlass, skip video → WebGL sync. */
-  staticHero?: boolean;
 };
 
 /**
@@ -67,7 +64,6 @@ export function HealthAiHero({
   className,
   embed = false,
   fillViewport = false,
-  staticHero = false,
 }: HealthAiHeroProps) {
   const rootRef = useRef<HTMLElement>(null);
 
@@ -438,7 +434,7 @@ export function HealthAiHero({
               data-ha-hero
               className="relative isolate h-[min(84vh,800px)] w-full shrink-0 overflow-hidden rounded-[20px] sm:h-[min(88vh,880px)] sm:rounded-[24px] [transform:translateZ(0)]"
             >
-            <HeroVideo staticHero={staticHero} />
+            <HeroVideo />
 
             <div
               data-ha-body-block
@@ -634,162 +630,25 @@ export function HealthAiHero({
   );
 }
 
-function HeroVideo({ staticHero = false }: { staticHero?: boolean }) {
-  const rootRef = useRef<HTMLDivElement>(null);
-  const glassHostRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const videoReadyRef = useRef(false);
-
-  useLayoutEffect(() => {
-    if (staticHero) return;
-
-    const video = videoRef.current;
-    if (!video) return;
-
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let started = false;
-
-    const startPlayback = () => {
-      if (started) return;
-      started = true;
-
-      video.playbackRate = 1;
-      video.loop = true;
-      video.currentTime = 0;
-
-      if (reduced) {
-        video.pause();
-        return;
-      }
-
-      void video.play().catch(() => {});
-    };
-
-    const markReady = () => {
-      if (video.currentTime > 0.05 && video.videoWidth > 0) {
-        videoReadyRef.current = true;
-      }
-    };
-
-    video.addEventListener("loadeddata", startPlayback);
-    video.addEventListener("playing", markReady);
-    video.addEventListener("timeupdate", markReady);
-    if (video.readyState >= 2) startPlayback();
-
-    return () => {
-      video.removeEventListener("loadeddata", startPlayback);
-      video.removeEventListener("playing", markReady);
-      video.removeEventListener("timeupdate", markReady);
-      videoReadyRef.current = false;
-    };
-  }, [staticHero]);
-
-  useEffect(() => {
-    if (staticHero) return;
-
-    const video = videoRef.current;
-    const host = glassHostRef.current;
-    if (!video || !host) return;
-
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) return;
-
-    let raf = 0;
-
-    const tick = () => {
-      if (videoReadyRef.current) {
-        syncVideoToFlutedGlass(host, video);
-      }
-      raf = requestAnimationFrame(tick);
-    };
-
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [staticHero]);
-
+function HeroVideo() {
   return (
     <div
-      ref={rootRef}
       data-ha-video-plate
       className="absolute inset-0 overflow-hidden [transform:translateZ(0)]"
       style={{ backgroundColor: CANVAS }}
       aria-hidden
     >
-      {staticHero ? null : (
-        <video
-          ref={videoRef}
-          src={HERO_VIDEO}
-          crossOrigin="anonymous"
-          muted
-          loop
-          playsInline
-          preload="auto"
-          poster={HERO_POSTER}
-          className="pointer-events-none absolute h-px w-px opacity-0"
-          aria-hidden
-        />
-      )}
-      <div ref={glassHostRef} className="absolute inset-0">
-        <FlutedGlass
-          {...HERO_GLASS}
-          image={HERO_POSTER}
-          style={{
-            width: "100%",
-            height: "100%",
-            background: "transparent",
-          }}
-        />
-      </div>
+      <FlutedGlass
+        {...HERO_GLASS}
+        image={HERO_POSTER}
+        style={{
+          width: "100%",
+          height: "100%",
+          background: "transparent",
+        }}
+      />
     </div>
   );
-}
-
-type ShaderMountInternals = {
-  gl: WebGLRenderingContext;
-  textures: Map<string, WebGLTexture>;
-  textureUnitMap: Map<string, number>;
-  uniformLocations: Record<string, WebGLUniformLocation | null>;
-  render: (time: number) => void;
-};
-
-function syncVideoToFlutedGlass(host: HTMLElement, video: HTMLVideoElement) {
-  const mountEl = host.firstElementChild as HTMLElement & {
-    paperShaderMount?: ShaderMountInternals;
-  };
-  const mount = mountEl?.paperShaderMount;
-  if (
-    !mount?.gl ||
-    video.paused ||
-    video.ended ||
-    video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA ||
-    video.currentTime <= 0.05 ||
-    video.videoWidth <= 0 ||
-    video.videoHeight <= 0
-  ) {
-    return;
-  }
-
-  const uniformName = "u_image";
-  const texture = mount.textures.get(uniformName);
-  if (!texture) return;
-
-  const { gl } = mount;
-  const textureUnit = mount.textureUnitMap.get(uniformName) ?? 0;
-
-  gl.activeTexture(gl.TEXTURE0 + textureUnit);
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  try {
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
-  } catch {
-    return;
-  }
-
-  const aspectLocation = mount.uniformLocations[`${uniformName}AspectRatio`];
-  if (aspectLocation) {
-    gl.uniform1f(aspectLocation, video.videoWidth / video.videoHeight);
-  }
-
-  mount.render(performance.now());
 }
 
 function splitTextIntoWords(node: HTMLElement | null) {

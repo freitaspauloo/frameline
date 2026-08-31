@@ -49,13 +49,7 @@ export function ScreenLivePreview({
     case "health-ai-skeleton":
       return <HealthAiSkeleton className="h-full w-full" embed={embed} />;
     case "health-ai":
-      return (
-        <HealthAiHero
-          className="h-full w-full"
-          embed={embed}
-          staticHero={posterCapture}
-        />
-      );
+      return <HealthAiHero className="h-full w-full" embed={embed} />;
     case "forgeai-pink-skeleton":
       return <ForgeAiPinkSkeleton className="h-full w-full" embed={embed} />;
     case "forgeai-lime-skeleton":
