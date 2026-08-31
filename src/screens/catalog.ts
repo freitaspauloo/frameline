@@ -29,7 +29,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "AI health companion landing — light sky-blue canvas, hero video with fluted glass, GSAP morph intro, floating pill nav.",
     blurb: "Hero video · fluted glass · GSAP intro",
-    poster: "/screens/health-ai/poster.png",
+    poster: "/screens/health-ai/poster.png?v=20260831",
     aliases: ["pulse"],
   },
   {

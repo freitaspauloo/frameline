@@ -10,8 +10,8 @@ import { cn } from "@/lib/utils";
 import { ScreenStage } from "@/screens/stage";
 
 const HERO_VIDEO = "/screens/health-ai/hero.mp4";
-/** Garden loop first frame — bootstrap FlutedGlass until the video texture is ready. */
-const HERO_GLASS_IMAGE = "/screens/health-ai/hero-garden-poster.jpg";
+/** Garden loop first frame — lives at hero.png so production static paths stay stable. */
+const HERO_GLASS_IMAGE = "/screens/health-ai/hero.png";
 
 /** Paper FlutedGlass — lines / prism preset from the design panel */
 const HERO_GLASS = {
