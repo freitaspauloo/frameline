@@ -17,6 +17,7 @@ import {
   listAllScreenEntries,
   SCREENS_CATALOG,
 } from "@/screens/catalog";
+import { isPriorityStorefrontScreen } from "@/screens/storefront-priority";
 import type { ScreenCatalogEntry } from "@/screens/types";
 
 export type ResolvedCatalogOptions = {
@@ -311,6 +312,7 @@ export async function getResolvedScreens(
   if (options.includeDrafts) return resolved;
 
   return resolved.filter((entry) => {
+    if (isPriorityStorefrontScreen(entry.slug)) return true;
     const status = overrides[entry.slug]?.status ?? "published";
     return status !== "draft";
   });
@@ -328,7 +330,12 @@ export async function getResolvedScreen(
   const status = overrides[base.slug]?.status ?? "published";
   const isPublic = SCREENS_CATALOG.some((entry) => entry.slug === base.slug);
 
-  if (!options.all && !options.includeDrafts && status === "draft") {
+  if (
+    !options.all &&
+    !options.includeDrafts &&
+    status === "draft" &&
+    !isPriorityStorefrontScreen(base.slug)
+  ) {
     return undefined;
   }
   if (!options.all && !isPublic && !options.includeDrafts) {
