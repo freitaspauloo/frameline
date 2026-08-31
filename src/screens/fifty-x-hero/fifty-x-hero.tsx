@@ -9,15 +9,28 @@ import { useReducedMotion } from "@/components/motion/use-reduced-motion";
 import { cn } from "@/lib/utils";
 import { ScreenStage } from "@/screens/stage";
 
+import {
+  FORGEAI_STAGE_HEIGHT,
+  FORGEAI_STAGE_WIDTH,
+} from "./forgeai-stage";
+
+import {
+  FORGEAI_BLUE,
+  FORGEAI_LIME,
+  FORGEAI_PINK,
+  forgeAiAccentStyle,
+  type ForgeAiAccent,
+} from "./accents";
 import "./fifty-x-hero.css";
 
-const HERO_BG = "/screens/fifty-x-hero/hero-bg.png";
-const HERO_BG_VIDEO = "/screens/fifty-x-hero/hero-bg.mp4";
+const HERO_BG = "/screens/forgeai/hero-bg.png";
+const HERO_BG_VIDEO = "/screens/forgeai/hero-bg.mp4";
 const HERO_BG_REMOTE =
   "https://app.paper.design/file-assets/01M08YKZXH384A258MHEFVW6GK/01M124TG2C4Q2CMVNA23RGEAMT.png";
 
-const BRAND_BLUE = "#1500BF";
 const BRAND_NAME = "FORGE.AI";
+
+const DEFAULT_ACCENT = FORGEAI_BLUE;
 
 /** Frameline screen posters as template previews (Paper card row) */
 const TEMPLATE_PREVIEWS = [
@@ -27,11 +40,12 @@ const TEMPLATE_PREVIEWS = [
   { slug: "dark-pill-hero", title: "Dark Pill Hero", poster: "/screens/dark-pill-hero/poster.png" },
 ] as const;
 
-/** ~15% of Paper card height (250px) visible above the fold */
-const TEMPLATE_CARD_PEEK_PX = 38;
+function templateTrayStyle(): CSSProperties {
+  return { height: "var(--fx-template-card-h)" };
+}
 
 /** Paper Q9-0 — view-all chevron uses same glyph rotated 90deg (QU-0 / QV-0) */
-const PAPER_ARROW_UP_SVG = "/screens/fifty-x-hero/arrow-up.svg";
+const PAPER_ARROW_UP_SVG = "/screens/forgeai/arrow-up.svg";
 const PAPER_CHEVRON_POINTS =
   "18.875 11.375 18.875 12 18.25 12 18.25 12.625 17.625 12.625 17.625 12 17 12 17 11.375 16.375 11.375 16.375 10.75 15.75 10.75 15.75 10.125 15.125 10.125 15.125 9.5 14.5 9.5 14.5 8.875 13.875 8.875 13.875 8.25 13.25 8.25 13.25 7.625 12.625 7.625 12.625 18.875 11.375 18.875 11.375 7.625 10.75 7.625 10.75 8.25 10.125 8.25 10.125 8.875 9.5 8.875 9.5 9.5 8.875 9.5 8.875 10.125 8.25 10.125 8.25 10.75 7.625 10.75 7.625 11.375 7 11.375 7 12 6.375 12 6.375 12.625 5.75 12.625 5.75 12 5.125 12 5.125 11.375 5.75 11.375 5.75 10.75 6.375 10.75 6.375 10.125 7 10.125 7 9.5 7.625 9.5 7.625 8.875 8.25 8.875 8.25 8.25 8.875 8.25 8.875 7.625 9.5 7.625 9.5 7 10.125 7 10.125 6.375 10.75 6.375 10.75 5.75 11.375 5.75 11.375 5.125 12.625 5.125 12.625 5.75 13.25 5.75 13.25 6.375 13.875 6.375 13.875 7 14.5 7 14.5 7.625 15.125 7.625 15.125 8.25 15.75 8.25 15.75 8.875 16.375 8.875 16.375 9.5 17 9.5 17 10.125 17.625 10.125 17.625 10.75 18.25 10.75 18.25 11.375 18.875 11.375";
 
@@ -86,13 +100,18 @@ const ATTACHMENT_OPTIONS: { id: AttachmentAction; label: string }[] = [
 export type FiftyXHeroProps = {
   className?: string;
   embed?: boolean;
+  accent?: ForgeAiAccent;
 };
 
 /**
  * forge.ai landing hero — from Paper frame NA-0.
  * Blue gradient field, prompt input, template rail.
  */
-export function FiftyXHero({ className, embed = false }: FiftyXHeroProps) {
+export function FiftyXHero({
+  className,
+  embed = false,
+  accent = DEFAULT_ACCENT,
+}: FiftyXHeroProps) {
   const scope = useRef<HTMLElement>(null);
   const bgVideoRef = useRef<HTMLVideoElement>(null);
   const reduced = useReducedMotion();
@@ -281,9 +300,13 @@ export function FiftyXHero({ className, embed = false }: FiftyXHeroProps) {
       className={cn(
         GeistMono.className,
         "fl-fifty-x-hero relative flex w-full flex-col overflow-x-clip bg-[#000105] font-light text-white antialiased [font-synthesis:none]",
-        embed ? "h-full min-h-0" : "min-h-dvh",
+        embed
+          ? "fl-fifty-x-hero--stage h-full min-h-0 overflow-hidden"
+          : "min-h-[max(1080px,100dvh)]",
+        accent.id !== "blue" && `fl-fifty-x-hero--${accent.id}`,
         className,
       )}
+      style={forgeAiAccentStyle(accent)}
     >
       <div className="fx-bg-wrap" aria-hidden>
         {useVideoBg ? (
@@ -313,6 +336,13 @@ export function FiftyXHero({ className, embed = false }: FiftyXHeroProps) {
             }}
           />
         )}
+        {accent.tint ? (
+          <div
+            className="fx-bg-tint"
+            style={{ backgroundColor: accent.tint }}
+            aria-hidden
+          />
+        ) : null}
         <div className="fx-bg-grain" aria-hidden />
       </div>
 
@@ -325,7 +355,10 @@ export function FiftyXHero({ className, embed = false }: FiftyXHeroProps) {
         aria-hidden
       />
 
-      <header className="fx-nav relative z-10 mx-auto flex w-full max-w-[1342px] items-center justify-between px-6 pt-[42px] sm:px-10">
+      <header
+        className="fx-nav relative z-10 mx-auto flex w-full max-w-[1342px] shrink-0 items-center justify-between px-6 sm:px-10"
+        style={{ paddingTop: "var(--fx-nav-pt)" }}
+      >
         <div className="fx-pill fx-pill--brand fx-pill--ghost flex h-[35px] items-center rounded-full border border-white px-4">
           <span className="text-lg leading-[22px] text-white">{BRAND_NAME}</span>
         </div>
@@ -333,21 +366,21 @@ export function FiftyXHero({ className, embed = false }: FiftyXHeroProps) {
           <a
             href="#login"
             className="fx-nav-btn fx-pill fx-pill--login flex h-[35px] items-center rounded-full px-4 text-lg uppercase leading-[22px]"
-            style={{ backgroundColor: BRAND_BLUE }}
+            style={{ backgroundColor: accent.brand }}
           >
             log in
           </a>
           <a
             href="#start"
             className="fx-nav-btn fx-pill fx-pill--start flex h-[35px] items-center rounded-full bg-white px-4 text-lg uppercase leading-[22px]"
-            style={{ color: BRAND_BLUE }}
+            style={{ color: accent.brand }}
           >
             get started
           </a>
         </div>
       </header>
 
-      <main className="relative z-10 mx-auto flex w-full max-w-[1342px] flex-1 flex-col items-center justify-center px-6 sm:px-10">
+      <main className="relative z-10 mx-auto flex w-full min-h-0 max-w-[1342px] flex-1 flex-col items-center justify-center px-6 sm:px-10">
         <div className="flex w-full flex-col items-center">
           <div className="flex flex-col items-center gap-[21px]">
             <div className="fx-headline-row flex flex-wrap items-center justify-center gap-x-1 overflow-visible py-1">
@@ -364,7 +397,8 @@ export function FiftyXHero({ className, embed = false }: FiftyXHeroProps) {
           </div>
 
           <form
-            className="fx-form relative mt-10 flex w-full max-w-[760px] flex-col gap-8 rounded-2xl border border-white/20 bg-[#181818] py-6 pl-6 pr-5 pb-[18px] shadow-[inset_0_0_27px_-12px_#3567ffb8,3px_3px_14px_#3567ff4d,0_0_12px_#0000000a]"
+            className="fx-form relative flex w-full max-w-[760px] flex-col gap-8 rounded-2xl border border-white/20 bg-[#181818] py-6 pl-6 pr-5 pb-[18px]"
+            style={{ marginTop: "var(--fx-form-mt)" }}
             onSubmit={(event) => event.preventDefault()}
           >
           <PromptTypewriterLabel />
@@ -393,13 +427,15 @@ export function FiftyXHero({ className, embed = false }: FiftyXHeroProps) {
         </div>
       </main>
 
-      <section
-        className={cn(
-          "fx-templates z-10 mx-auto w-full max-w-[1342px] px-6 sm:px-10",
-          embed ? "absolute inset-x-0 bottom-0" : "mt-auto",
-        )}
-      >
-        <div className="flex flex-col gap-[33px] overflow-clip rounded-t-[32px] bg-[#262626] px-[37px] pt-[33px] pb-0">
+      <section className="fx-templates z-10 mx-auto mt-auto w-full max-w-[1342px] shrink-0 px-6 sm:px-10">
+        <div
+          className="fx-template-tray flex flex-col overflow-clip rounded-t-[32px] bg-[#262626] px-[37px]"
+          style={{
+            gap: "var(--fx-template-tray-gap)",
+            paddingTop: "var(--fx-template-tray-pt)",
+            paddingBottom: "var(--fx-template-tray-pb)",
+          }}
+        >
           <div className="fx-template-head flex items-start justify-between gap-2 self-stretch">
             <div className="relative h-14 flex-1">
               <h2 className="absolute left-0 top-0 uppercase text-xl leading-6">
@@ -417,16 +453,14 @@ export function FiftyXHero({ className, embed = false }: FiftyXHeroProps) {
               <ChevronIcon className="fx-chevron" />
             </a>
           </div>
-          <div
-            className="fx-template-cards overflow-hidden"
-            style={{ height: TEMPLATE_CARD_PEEK_PX }}
-          >
-            <div className="grid grid-cols-2 gap-[33px] lg:grid-cols-4">
+          <div className="fx-template-cards overflow-hidden" style={templateTrayStyle()}>
+            <div className="grid grid-cols-4 gap-[33px]">
               {TEMPLATE_PREVIEWS.map((template) => (
                 <a
                   key={template.slug}
                   href={`/screens/${template.slug}`}
-                  className="fx-template-card relative block h-[250px] w-full overflow-clip rounded-[32px] border-0"
+                  className="fx-template-card relative block w-full overflow-clip rounded-[32px] border-0"
+                  style={{ height: "var(--fx-template-card-h)" }}
                   aria-label={template.title}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element -- catalog poster plate */}
@@ -447,7 +481,14 @@ export function FiftyXHero({ className, embed = false }: FiftyXHeroProps) {
 
   if (embed) {
     return (
-      <ScreenStage embed background="#000105" className={className}>
+      <ScreenStage
+        embed
+        fit="width"
+        background="#000105"
+        className={className}
+        width={FORGEAI_STAGE_WIDTH}
+        height={FORGEAI_STAGE_HEIGHT}
+      >
         {shell}
       </ScreenStage>
     );
@@ -544,9 +585,9 @@ function ChevronIcon({ className }: { className?: string }) {
 
 function AttachmentOptionIcon({ action }: { action: AttachmentAction }) {
   const icons: Record<AttachmentAction, string> = {
-    image: "/screens/fifty-x-hero/attach-image.svg",
-    file: "/screens/fifty-x-hero/attach-file.svg",
-    photo: "/screens/fifty-x-hero/attach-camera.svg",
+    image: "/screens/forgeai/attach-image.svg",
+    file: "/screens/forgeai/attach-file.svg",
+    photo: "/screens/forgeai/attach-camera.svg",
   };
 
   return (
@@ -710,9 +751,9 @@ function useChipDropdown() {
 
 function ModelProviderIcon({ provider }: { provider: ModelProvider }) {
   const logos: Record<ModelProvider, string> = {
-    claude: "/screens/fifty-x-hero/claude-symbol.svg",
-    openai: "/screens/fifty-x-hero/openai.svg",
-    google: "/screens/fifty-x-hero/gemini.svg",
+    claude: "/screens/forgeai/claude-symbol.svg",
+    openai: "/screens/forgeai/openai.svg",
+    google: "/screens/forgeai/gemini.svg",
   };
 
   return (
@@ -731,9 +772,9 @@ function ModelProviderIcon({ provider }: { provider: ModelProvider }) {
 
 function AppPlatformIcon({ platform }: { platform: AppPlatform }) {
   const logos: Record<AppPlatform, string> = {
-    ios: "/screens/fifty-x-hero/apple.svg",
-    android: "/screens/fifty-x-hero/robot.svg",
-    web: "/screens/fifty-x-hero/web.svg",
+    ios: "/screens/forgeai/apple.svg",
+    android: "/screens/forgeai/robot.svg",
+    web: "/screens/forgeai/web.svg",
   };
 
   return (
@@ -886,4 +927,14 @@ function AppSelectDropdown() {
       ) : null}
     </div>
   );
+}
+
+/** Pink color-blend variant — separate catalog entry from default blue FORGE.AI. */
+export function ForgeAiPinkHero(props: Omit<FiftyXHeroProps, "accent">) {
+  return <FiftyXHero {...props} accent={FORGEAI_PINK} />;
+}
+
+/** Lime color-blend variant — separate catalog entry from default blue FORGE.AI. */
+export function ForgeAiLimeHero(props: Omit<FiftyXHeroProps, "accent">) {
+  return <FiftyXHero {...props} accent={FORGEAI_LIME} />;
 }

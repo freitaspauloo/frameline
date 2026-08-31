@@ -6,9 +6,20 @@ import type { CSSProperties } from "react";
 import { cn } from "@/lib/utils";
 import { ScreenStage } from "@/screens/stage";
 
+import {
+  FORGEAI_STAGE_HEIGHT,
+  FORGEAI_STAGE_WIDTH,
+} from "./forgeai-stage";
+import {
+  FORGEAI_BLUE,
+  FORGEAI_LIME,
+  FORGEAI_PINK,
+  forgeAiAccentStyle,
+  type ForgeAiAccent,
+} from "./accents";
 import "./fifty-x-hero-skeleton.css";
 
-const TEMPLATE_CARD_PEEK_PX = 38;
+const DEFAULT_ACCENT = FORGEAI_BLUE;
 
 function Bone({
   className,
@@ -30,29 +41,44 @@ function Bone({
 export type FiftyXHeroSkeletonProps = {
   className?: string;
   embed?: boolean;
+  accent?: ForgeAiAccent;
 };
 
 /** Loading skeleton for the FORGE.AI hero — mirrors nav, prompt card, template rail. */
-export function FiftyXHeroSkeleton({ className, embed = false }: FiftyXHeroSkeletonProps) {
+export function FiftyXHeroSkeleton({
+  className,
+  embed = false,
+  accent = DEFAULT_ACCENT,
+}: FiftyXHeroSkeletonProps) {
   const shell = (
     <section
       className={cn(
         GeistMono.className,
         "fl-fifty-x-skeleton relative flex w-full flex-col overflow-x-clip bg-[#000105] font-light text-white antialiased [font-synthesis:none]",
-        embed ? "h-full min-h-0" : "min-h-dvh",
+        accent.id !== "blue" && `fl-fifty-x-skeleton--${accent.id}`,
+        embed
+          ? "fl-fifty-x-skeleton--stage h-full min-h-0 overflow-hidden"
+          : "min-h-[max(1080px,100dvh)]",
         className,
       )}
+      style={forgeAiAccentStyle(accent)}
       aria-busy="true"
       aria-label="Loading hero"
     >
       <div className="fx-skel-bg-wrap" aria-hidden>
         <div className="fx-skel-bg-plate" />
+        {accent.tint ? (
+          <div className="fx-skel-bg-tint" style={{ backgroundColor: accent.tint }} />
+        ) : null}
         <div className="fx-skel-grain" />
       </div>
 
       <div className="fx-skel-fade" aria-hidden />
 
-      <header className="relative z-10 mx-auto flex w-full max-w-[1342px] items-center justify-between px-6 pt-[42px] sm:px-10">
+      <header
+        className="relative z-10 mx-auto flex w-full max-w-[1342px] shrink-0 items-center justify-between px-6 sm:px-10"
+        style={{ paddingTop: "var(--fx-nav-pt)" }}
+      >
         <Bone className="fx-skel-nav-brand fx-skel-pill" delay={0} />
         <div className="flex h-[42px] items-center gap-4 sm:gap-6">
           <Bone className="fx-skel-nav-login fx-skel-bone--solid" delay={60} solid />
@@ -60,7 +86,7 @@ export function FiftyXHeroSkeleton({ className, embed = false }: FiftyXHeroSkele
         </div>
       </header>
 
-      <main className="relative z-10 mx-auto flex w-full max-w-[1342px] flex-1 flex-col items-center justify-center px-6 sm:px-10">
+      <main className="relative z-10 mx-auto flex w-full min-h-0 max-w-[1342px] flex-1 flex-col items-center justify-center px-6 sm:px-10">
         <div className="flex w-full flex-col items-center">
           <div className="flex flex-col items-center gap-[21px]">
             <div className="flex flex-wrap items-center justify-center gap-x-1 gap-y-2 py-1">
@@ -70,7 +96,10 @@ export function FiftyXHeroSkeleton({ className, embed = false }: FiftyXHeroSkele
             <Bone className="fx-skel-subtitle" delay={200} />
           </div>
 
-          <div className="fx-skel-form relative mt-10 flex w-full flex-col gap-8">
+          <div
+            className="fx-skel-form relative flex w-full flex-col gap-8"
+            style={{ marginTop: "var(--fx-form-mt)" }}
+          >
             <Bone className="fx-skel-form-label" delay={240} />
             <div className="flex h-9 w-full shrink-0 items-center gap-2.5">
               <Bone className="fx-skel-chip-circle" delay={280} />
@@ -84,13 +113,15 @@ export function FiftyXHeroSkeleton({ className, embed = false }: FiftyXHeroSkele
         </div>
       </main>
 
-      <section
-        className={cn(
-          "relative z-10 mx-auto w-full max-w-[1342px] px-6 sm:px-10",
-          embed ? "absolute inset-x-0 bottom-0" : "mt-auto",
-        )}
-      >
-        <div className="flex flex-col gap-[33px] overflow-clip rounded-t-[32px] bg-[#262626] px-[37px] pt-[33px] pb-0">
+      <section className="relative z-10 mx-auto mt-auto w-full max-w-[1342px] shrink-0 px-6 sm:px-10">
+        <div
+          className="flex flex-col overflow-clip rounded-t-[32px] bg-[#262626] px-[37px]"
+          style={{
+            gap: "var(--fx-template-tray-gap)",
+            paddingTop: "var(--fx-template-tray-pt)",
+            paddingBottom: "var(--fx-template-tray-pb)",
+          }}
+        >
           <div className="flex items-start justify-between gap-2 self-stretch">
             <div className="relative flex h-14 flex-1 flex-col gap-2">
               <Bone className="fx-skel-template-title" delay={430} />
@@ -98,12 +129,12 @@ export function FiftyXHeroSkeleton({ className, embed = false }: FiftyXHeroSkele
             </div>
             <Bone className="fx-skel-template-link" delay={490} />
           </div>
-          <div className="overflow-hidden" style={{ height: TEMPLATE_CARD_PEEK_PX }}>
-            <div className="grid grid-cols-2 gap-[33px] lg:grid-cols-4">
+          <div className="overflow-hidden" style={{ height: "var(--fx-template-card-h)" }}>
+            <div className="grid grid-cols-4 gap-[33px]">
               <Bone className="fx-skel-template-card" delay={520} />
               <Bone className="fx-skel-template-card" delay={550} />
-              <Bone className="fx-skel-template-card hidden lg:block" delay={580} />
-              <Bone className="fx-skel-template-card hidden lg:block" delay={610} />
+              <Bone className="fx-skel-template-card" delay={580} />
+              <Bone className="fx-skel-template-card" delay={610} />
             </div>
           </div>
         </div>
@@ -113,11 +144,26 @@ export function FiftyXHeroSkeleton({ className, embed = false }: FiftyXHeroSkele
 
   if (embed) {
     return (
-      <ScreenStage embed background="#000105" className={className}>
+      <ScreenStage
+        embed
+        fit="width"
+        background="#000105"
+        className={className}
+        width={FORGEAI_STAGE_WIDTH}
+        height={FORGEAI_STAGE_HEIGHT}
+      >
         {shell}
       </ScreenStage>
     );
   }
 
   return shell;
+}
+
+export function ForgeAiPinkSkeleton(props: Omit<FiftyXHeroSkeletonProps, "accent">) {
+  return <FiftyXHeroSkeleton {...props} accent={FORGEAI_PINK} />;
+}
+
+export function ForgeAiLimeSkeleton(props: Omit<FiftyXHeroSkeletonProps, "accent">) {
+  return <FiftyXHeroSkeleton {...props} accent={FORGEAI_LIME} />;
 }

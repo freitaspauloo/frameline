@@ -16,6 +16,7 @@ import { BridgeDither, BridgeDitherSkeleton } from "@/screens/bridge-dither";
 import { DarkPillHero, DarkPillHeroSkeleton } from "@/screens/dark-pill-hero";
 import { MexinHero, MexinHeroSkeleton } from "@/screens/mexin-hero";
 import { ReticleLoginPage, ReticleLoginCyanPage, ReticleLoginSkeleton, ReticleLoginCyanSkeleton } from "@/screens/miracle-login";
+import { FiftyXHero, FiftyXHeroSkeleton, ForgeAiLimeHero, ForgeAiLimeSkeleton, ForgeAiPinkHero, ForgeAiPinkSkeleton } from "@/screens/fifty-x-hero";
 import { Softwave, SoftwaveSkeleton } from "@/screens/softwave";
 import { SoftwaveFeatureCards, SoftwaveFeatureCardsSkeleton } from "@/screens/softwave-features";
 import { SpacemanMoon } from "@/screens/spaceman-moon";
@@ -32,6 +33,18 @@ export function ScreenLivePreview({
   const canonical = getScreenBySlug(slug)?.slug ?? slug;
 
   switch (canonical) {
+    case "forgeai-pink-skeleton":
+      return <ForgeAiPinkSkeleton className="h-full w-full" embed={embed} />;
+    case "forgeai-lime-skeleton":
+      return <ForgeAiLimeSkeleton className="h-full w-full" embed={embed} />;
+    case "forgeai-pink":
+      return <ForgeAiPinkHero className="h-full w-full" embed={embed} />;
+    case "forgeai-lime":
+      return <ForgeAiLimeHero className="h-full w-full" embed={embed} />;
+    case "forgeai":
+      return <FiftyXHero className="h-full w-full" embed={embed} />;
+    case "forgeai-skeleton":
+      return <FiftyXHeroSkeleton className="h-full w-full" embed={embed} />;
     case "orb":
       return <BuiltForYield embed={embed} />;
     case "feature-cards":

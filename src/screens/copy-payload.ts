@@ -115,6 +115,65 @@ local paths under public/.`,
     prompt: `Build the ASCII Yield Hero — dark ASCII art field, magenta color blend, @ deterioration cursor, GSAP headline reveal, fab marquee.`,
     note: "Alias: axion-hero, reticle-ascii-hero.",
   },
+  "forgeai-lime-skeleton": {
+    files: [
+      "src/screens/fifty-x-hero/fifty-x-hero-skeleton.tsx",
+      "src/screens/fifty-x-hero/fifty-x-hero-skeleton.css",
+      "src/screens/fifty-x-hero/accents.ts",
+    ],
+    prompt: `Build the loading skeleton for FORGE.AI Lime: lime-tinted shimmer bones over nav, prompt card, model chips, and template rail. Uses ForgeAiLimeSkeleton wrapper.`,
+    note: "Pairs with FORGE.AI Hero Lime.",
+  },
+  "forgeai-pink-skeleton": {
+    files: [
+      "src/screens/fifty-x-hero/fifty-x-hero-skeleton.tsx",
+      "src/screens/fifty-x-hero/fifty-x-hero-skeleton.css",
+      "src/screens/fifty-x-hero/accents.ts",
+    ],
+    prompt: `Build the loading skeleton for FORGE.AI Pink: magenta-tinted shimmer bones over nav, prompt card, model chips, and template rail. Uses ForgeAiPinkSkeleton wrapper.`,
+    note: "Pairs with FORGE.AI Hero Pink.",
+  },
+  "forgeai-lime": {
+    files: [
+      "src/screens/fifty-x-hero/fifty-x-hero.tsx",
+      "src/screens/fifty-x-hero/fifty-x-hero.css",
+      "src/screens/fifty-x-hero/accents.ts",
+      "src/screens/fifty-x-hero/index.ts",
+    ],
+    prompt: `Build the FORGE.AI landing hero (lime variant) — same layout as forgeai with lime color-blend overlay and green accents on CTAs, form glow, and dropdown selection.`,
+    note: "Shares hero art from /screens/forgeai/. Uses ForgeAiLimeHero wrapper.",
+  },
+  "forgeai-pink": {
+    files: [
+      "src/screens/fifty-x-hero/fifty-x-hero.tsx",
+      "src/screens/fifty-x-hero/fifty-x-hero.css",
+      "src/screens/fifty-x-hero/accents.ts",
+      "src/screens/fifty-x-hero/index.ts",
+    ],
+    prompt: `Build the FORGE.AI landing hero (pink variant) — same layout as forgeai with pink color-blend overlay and magenta accents on CTAs, form glow, and dropdown selection.`,
+    note: "Shares hero art from /screens/forgeai/. Uses ForgeAiPinkHero wrapper.",
+  },
+  "forgeai-skeleton": {
+    files: [
+      "src/screens/fifty-x-hero/fifty-x-hero-skeleton.tsx",
+      "src/screens/fifty-x-hero/fifty-x-hero-skeleton.css",
+      "src/screens/fifty-x-hero/accents.ts",
+    ],
+    prompt: `Build the loading skeleton for FORGE.AI: blue-tinted shimmer bones over nav, prompt card, model chips, and template rail. Scoped CSS.`,
+    note: "Pairs with FORGE.AI Hero.",
+  },
+  "forgeai": {
+    files: [
+      "src/screens/fifty-x-hero/fifty-x-hero.tsx",
+      "src/screens/fifty-x-hero/fifty-x-hero.css",
+      "src/screens/fifty-x-hero/fifty-x-hero-skeleton.tsx",
+      "src/screens/fifty-x-hero/fifty-x-hero-skeleton.css",
+      "src/screens/fifty-x-hero/accents.ts",
+      "src/screens/fifty-x-hero/index.ts",
+    ],
+    prompt: `Build the FORGE.AI landing hero — blue gradient field, typewriter prompt, model/platform/attach dropdowns, template rail, GSAP entrance.`,
+    note: "Hero art and icons under /screens/forgeai/. Alias: fifty-x-hero.",
+  },
   softwave: {
     files: [
       "src/screens/softwave/softwave.tsx",

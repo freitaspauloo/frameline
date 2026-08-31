@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getScreenBySlug, listAllScreenEntries } from "@/screens/catalog";
+import { isForgeAiScreenSlug } from "@/screens/fifty-x-hero/forgeai-stage";
 import { ScreenLivePreview } from "@/screens/preview";
 
 /** Poster capture surface — the screen full-bleed, no storefront chrome. */
@@ -22,11 +23,15 @@ export default async function CaptureRoute({
   const entry = getScreenBySlug(slug);
   if (!entry) notFound();
 
+  const forgeai = isForgeAiScreenSlug(entry.slug);
+
   return (
     <>
       {/* Both are portaled to body, so they would otherwise land in the poster. */}
       <style>{`[data-frameline-quota], nextjs-portal { display: none !important; }`}</style>
-      <ScreenLivePreview embed={false} slug={entry.slug} />
+      <div className={forgeai ? "w-full bg-[#000105]" : undefined}>
+        <ScreenLivePreview embed={forgeai} slug={entry.slug} />
+      </div>
     </>
   );
 }

@@ -15,6 +15,7 @@ export function ScreenStage({
   children,
   className,
   embed = false,
+  fit = "contain",
   height = SCREEN_STAGE_HEIGHT,
   width = SCREEN_STAGE_WIDTH,
 }: {
@@ -22,6 +23,8 @@ export function ScreenStage({
   children: ReactNode;
   className?: string;
   embed?: boolean;
+  /** contain = letterbox; width = fill viewport width (Paper 1440×1080 heroes). */
+  fit?: "contain" | "width";
   height?: number;
   width?: number;
 }) {
@@ -33,24 +36,31 @@ export function ScreenStage({
     const stage = stageRef.current;
     if (!viewport || !stage) return;
 
-    const fit = () => {
+    const applyFit = () => {
       const box = embed ? viewport : document.documentElement;
       const sx = box.clientWidth / width;
       const sy = box.clientHeight / height;
-      const scale = Math.min(sx, sy);
+      const scale = fit === "width" ? sx : Math.min(sx, sy);
       stage.style.setProperty("--stage-scale", String(scale));
+      stage.style.transformOrigin = fit === "width" ? "top left" : "center center";
       stage.style.transform = `scale(${scale})`;
+
+      if (embed && fit === "width") {
+        viewport.style.height = `${height * scale}px`;
+      } else if (embed) {
+        viewport.style.height = "";
+      }
     };
 
-    fit();
-    const observer = embed ? new ResizeObserver(fit) : null;
+    applyFit();
+    const observer = embed ? new ResizeObserver(applyFit) : null;
     observer?.observe(viewport);
-    window.addEventListener("resize", fit);
+    window.addEventListener("resize", applyFit);
     return () => {
       observer?.disconnect();
-      window.removeEventListener("resize", fit);
+      window.removeEventListener("resize", applyFit);
     };
-  }, [embed, height, width]);
+  }, [embed, fit, height, width]);
 
   const stageStyle: CSSProperties = {
     width,
@@ -60,7 +70,12 @@ export function ScreenStage({
 
   return (
     <div
-      className={cn(styles.viewport, embed && styles.embed, className)}
+      className={cn(
+        styles.viewport,
+        embed && styles.embed,
+        embed && fit === "width" && styles.embedWidth,
+        className,
+      )}
       ref={viewportRef}
       style={background ? { background } : undefined}
     >

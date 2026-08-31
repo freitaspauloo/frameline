@@ -18,9 +18,29 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const port = process.env.PORT ?? "3000";
 const baseUrl = process.env.POSTER_BASE_URL ?? `http://localhost:${port}`;
 
-/** Catalog poster plate — must match SCREEN_STAGE_WIDTH/HEIGHT in stage.tsx. */
+/** Catalog poster plate — default 16:9; FORGE.AI uses Paper artboard 1440×1080. */
 const POSTER_WIDTH = 1920;
 const POSTER_HEIGHT = 1080;
+
+const FORGEAI_POSTER_WIDTH = 1440;
+const FORGEAI_POSTER_HEIGHT = 1080;
+
+const FORGEAI_SLUGS = new Set([
+  "forgeai",
+  "fifty-x-hero",
+  "forgeai-pink",
+  "forgeai-lime",
+  "forgeai-skeleton",
+  "forgeai-pink-skeleton",
+  "forgeai-lime-skeleton",
+]);
+
+function posterDimensions(slug) {
+  if (FORGEAI_SLUGS.has(slug)) {
+    return { width: FORGEAI_POSTER_WIDTH, height: FORGEAI_POSTER_HEIGHT };
+  }
+  return { width: POSTER_WIDTH, height: POSTER_HEIGHT };
+}
 
 /** Longest screen entrance is ~1.5s; leave headroom for shader first paint. */
 const SETTLE_MS = 4000;
@@ -49,6 +69,11 @@ const POSTER_DIRS = {
 };
 
 const DEFAULT_SLUGS = [
+  "forgeai-lime-skeleton",
+  "forgeai-pink-skeleton",
+  "forgeai-lime",
+  "forgeai-pink",
+  "forgeai",
   "softwave",
   "softwave-features",
   "bridge-dither",
@@ -89,8 +114,10 @@ async function capture(browser, slug) {
   const out = join(root, "public", "screens", dir, "poster.png");
   mkdirSync(dirname(out), { recursive: true });
 
+  const { width, height } = posterDimensions(slug);
+
   const page = await browser.newPage({
-    viewport: { width: POSTER_WIDTH, height: POSTER_HEIGHT },
+    viewport: { width, height },
     deviceScaleFactor: 1,
   });
 
@@ -109,10 +136,11 @@ async function capture(browser, slug) {
     await page.close();
   }
 
-  const { width, height } = readPngSize(out);
-  if (width !== POSTER_WIDTH || height !== POSTER_HEIGHT) {
+  const actual = readPngSize(out);
+  const expected = posterDimensions(slug);
+  if (actual.width !== expected.width || actual.height !== expected.height) {
     throw new Error(
-      `${slug}: expected ${POSTER_WIDTH}×${POSTER_HEIGHT}, got ${width}×${height}`,
+      `${slug}: expected ${expected.width}×${expected.height}, got ${actual.width}×${actual.height}`,
     );
   }
 

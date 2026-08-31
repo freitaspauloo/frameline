@@ -1,8 +1,33 @@
+.fl-fifty-x-hero {
+  --fx-brand: #1500bf;
+  --fx-accent: #3567ff;
+  --fx-accent-rgb: 53, 103, 255;
+  --fx-template-card-h: 250px;
+  --fx-template-tray-pt: 33px;
+  --fx-template-tray-gap: 33px;
+  --fx-template-tray-pb: 33px;
+  --fx-nav-pt: 42px;
+  --fx-form-mt: 2.5rem;
+}
+
+/* Embed stage — lock overflow; spacing uses default Paper vars at 1440×1080 */
+.fl-fifty-x-hero.fl-fifty-x-hero--stage {
+  overflow: hidden;
+}
+
 .fl-fifty-x-hero .fx-bg-wrap {
   position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
+}
+
+.fl-fifty-x-hero .fx-bg-tint {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: color;
+  opacity: 0.92;
 }
 
 .fl-fifty-x-hero .fx-bg-grain {
@@ -73,13 +98,13 @@
   image-rendering: crisp-edges;
 }
 
-/* Paper NE-0 — 1080×1440 plate anchored to bottom-left, rotate 270° from top-left */
+/* Paper NE-0 — standalone wide viewports (non-stage dev fallback) */
 .fl-fifty-x-hero .fx-bg-plate {
   position: absolute;
   left: 0;
   top: 100%;
-  width: 75vw;
-  height: 100vw;
+  width: 140vmax;
+  height: 140vmax;
   max-width: none;
   transform-origin: 0 0;
   transform: rotate(270deg);
@@ -157,6 +182,10 @@
   overflow: visible;
   isolation: isolate;
   transition: border-color 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow:
+    inset 0 0 27px -12px rgba(var(--fx-accent-rgb), 0.72),
+    3px 3px 14px rgba(var(--fx-accent-rgb), 0.3),
+    0 0 12px rgba(0, 0, 0, 0.04);
 }
 
 .fl-fifty-x-hero .fx-model-select.fx-dropdown-open,
@@ -191,9 +220,9 @@
   background-color: #1e1e1e;
   padding-bottom: 6px;
   box-shadow:
-    inset 0 0 24px -12px rgba(53, 103, 255, 0.35),
+    inset 0 0 24px -12px rgba(var(--fx-accent-rgb), 0.35),
     0 12px 32px rgba(0, 0, 0, 0.45),
-    0 0 0 1px rgba(53, 103, 255, 0.08);
+    0 0 0 1px rgba(var(--fx-accent-rgb), 0.08);
 }
 
 .fl-fifty-x-hero .fx-model-menu-label {
@@ -267,13 +296,13 @@
   height: 6px;
   flex-shrink: 0;
   border-radius: 999px;
-  background-color: #3567ff;
-  box-shadow: 0 0 8px rgba(53, 103, 255, 0.55);
+  background-color: var(--fx-accent);
+  box-shadow: 0 0 8px rgba(var(--fx-accent-rgb), 0.55);
 }
 
 .fl-fifty-x-hero .fx-model-option--selected {
   color: #ffffff;
-  background-color: rgba(53, 103, 255, 0.14);
+  background-color: rgba(var(--fx-accent-rgb), 0.14);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -283,7 +312,7 @@
   }
 
   .fl-fifty-x-hero .fx-model-option--selected:hover {
-    background-color: rgba(53, 103, 255, 0.2);
+    background-color: rgba(var(--fx-accent-rgb), 0.2);
   }
 }
 
@@ -298,8 +327,8 @@
   opacity: 0;
   transition: opacity 650ms cubic-bezier(0.22, 1, 0.36, 1);
   box-shadow:
-    inset 0 0 32px -10px rgba(53, 103, 255, 0.5),
-    0 0 28px -8px rgba(53, 103, 255, 0.16);
+    inset 0 0 32px -10px rgba(var(--fx-accent-rgb), 0.5),
+    0 0 28px -8px rgba(var(--fx-accent-rgb), 0.16);
 }
 
 .fl-fifty-x-hero .fx-form:has(.fx-dropdown-open)::after,
@@ -334,13 +363,13 @@
 
   .fl-fifty-x-hero .fx-pill--login:hover {
     background-color: #ffffff !important;
-    color: #1500bf !important;
+    color: var(--fx-brand) !important;
     filter: none;
     box-shadow: none;
   }
 
   .fl-fifty-x-hero .fx-pill--start:hover {
-    background-color: #1500bf !important;
+    background-color: var(--fx-brand) !important;
     color: #ffffff !important;
     box-shadow: none;
   }
@@ -364,9 +393,9 @@
   }
 
   .fl-fifty-x-hero .fx-icon-btn--send:hover {
-    background-color: #3567ff;
-    outline-color: #3567ff;
-    box-shadow: 0 6px 20px rgba(53, 103, 255, 0.45);
+    background-color: var(--fx-accent);
+    outline-color: var(--fx-accent);
+    box-shadow: 0 6px 20px rgba(var(--fx-accent-rgb), 0.45);
   }
 
   .fl-fifty-x-hero .fx-chip:hover {

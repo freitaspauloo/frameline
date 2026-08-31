@@ -15,6 +15,61 @@ const SCREEN = {
 export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
   {
     ...SCREEN,
+    slug: "forgeai-lime-skeleton",
+    title: "FORGE.AI Skeleton Lime",
+    description:
+      "Loading skeleton for FORGE.AI Lime — green-tinted shimmer bones over nav, prompt card, model chips, and template rail.",
+    blurb: "Lime loading state · prompt bar · template peek",
+    poster: "/screens/forgeai-lime-skeleton/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "forgeai-pink-skeleton",
+    title: "FORGE.AI Skeleton Pink",
+    description:
+      "Loading skeleton for FORGE.AI Pink — magenta-tinted shimmer bones over nav, prompt card, model chips, and template rail.",
+    blurb: "Pink loading state · prompt bar · template peek",
+    poster: "/screens/forgeai-pink-skeleton/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "forgeai-lime",
+    title: "FORGE.AI Hero Lime",
+    description:
+      "FORGE.AI builder hero with lime color-blend field — same prompt bar and template rail, green accents.",
+    blurb: "Lime blend · prompt bar · template rail",
+    poster: "/screens/forgeai-lime/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "forgeai-pink",
+    title: "FORGE.AI Hero Pink",
+    description:
+      "FORGE.AI builder hero with pink color-blend field — same prompt bar and template rail, magenta accents.",
+    blurb: "Pink blend · prompt bar · template rail",
+    poster: "/screens/forgeai-pink/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "forgeai-skeleton",
+    title: "FORGE.AI Skeleton",
+    description:
+      "Loading skeleton for FORGE.AI — blue-tinted shimmer bones over nav, prompt card, model chips, and template rail.",
+    blurb: "Hero loading state · prompt bar · template rail",
+    poster: "/screens/forgeai-skeleton/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "forgeai",
+    title: "FORGE.AI Hero",
+    description:
+      "AI builder landing hero — blue gradient field, typewriter prompt, model and platform dropdowns, template rail.",
+    blurb: "Prompt bar · model chips · template rail",
+    poster: "/screens/forgeai/poster.png",
+    aliases: ["fifty-x-hero"],
+  },
+  {
+    ...SCREEN,
     slug: "miracle-login-cyan-skeleton",
     title: "Miracle Login Cyan Skeleton",
     description:
