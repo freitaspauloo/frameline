@@ -31,10 +31,31 @@
   animation-delay: var(--delay, 0ms);
 }
 
-.fl-running-app-skeleton .ra-skel-bone--lime {
+.fl-running-app-skeleton .ra-skel-bone--accent {
   --bone: rgba(212, 255, 0, 0.16);
   --shine: rgba(212, 255, 0, 0.42);
   border-color: rgba(212, 255, 0, 0.28);
+}
+
+.fl-running-app-skeleton--mono .ra-skel-bone::after {
+  background: linear-gradient(
+    105deg,
+    transparent 22%,
+    var(--shine) 44%,
+    rgba(255, 255, 255, 0.24) 50%,
+    var(--shine) 56%,
+    transparent 78%
+  );
+}
+
+.fl-running-app-skeleton--mono .ra-skel-bone--accent {
+  --bone: rgba(255, 255, 255, 0.18);
+  --shine: rgba(255, 255, 255, 0.42);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.fl-running-app-skeleton--mono .ra-skel-hero-plate::before {
+  filter: grayscale(1) contrast(1.06);
 }
 
 .fl-running-app-skeleton .ra-skel-bone--block {

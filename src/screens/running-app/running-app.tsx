@@ -29,17 +29,23 @@ const APP_NAME = "Passo";
 
 const PILL_INK = "#f5f5f5";
 const BADGE_BG = "#161618";
-const INK = "#0a0a0a";
-const LIME = "#d4ff00";
 
 const CANVAS = "#161618";
 const SLIDE_COVER = 1.04;
+
+export type RunningAppVariant = "color" | "mono";
+
+const THEMES = {
+  color: { accent: "#d4ff00", accentInk: "#0a0a0a", grayscaleHero: false },
+  mono: { accent: "#ffffff", accentInk: "#0a0a0a", grayscaleHero: true },
+} as const;
 
 export type RunningAppHeroProps = {
   className?: string;
   embed?: boolean;
   /** Dev / live pages — skip 16:9 letterboxing and fill the viewport. */
   fillViewport?: boolean;
+  variant?: RunningAppVariant;
 };
 
 /**
@@ -49,7 +55,9 @@ export function RunningAppHero({
   className,
   embed = false,
   fillViewport = false,
+  variant = "color",
 }: RunningAppHeroProps) {
+  const { accent, accentInk, grayscaleHero } = THEMES[variant];
   const rootRef = useRef<HTMLElement>(null);
   const revealContentRef = useRef<(() => void) | null>(null);
 
@@ -183,6 +191,7 @@ export function RunningAppHero({
       ref={rootRef}
       className={cn(
         GeistMono.className,
+        variant === "mono" && "ra--mono",
         "relative flex h-full min-h-0 w-full flex-col overflow-hidden bg-[#161618] text-white antialiased uppercase",
         className,
       )}
@@ -239,8 +248,8 @@ export function RunningAppHero({
               <a
                 data-ra-nav-action
                 href="#join"
-                className="ra-btn ra-btn-lime inline-flex shrink-0 items-center gap-2 rounded-full border px-4 py-2.5 text-[11px] tracking-[0.05em] sm:px-5 sm:py-3 sm:text-[12px]"
-                style={{ backgroundColor: LIME, borderColor: LIME, color: INK }}
+                className="ra-btn ra-btn-accent inline-flex shrink-0 items-center gap-2 rounded-full border px-4 py-2.5 text-[11px] tracking-[0.05em] sm:px-5 sm:py-3 sm:text-[12px]"
+                style={{ backgroundColor: accent, borderColor: accent, color: accentInk }}
               >
                 <FlipLabel>Join</FlipLabel>
                 <SendIcon className="ra-btn-icon size-3.5 sm:size-4" />
@@ -252,7 +261,7 @@ export function RunningAppHero({
             data-ra-hero
             className="relative isolate min-h-0 flex-1 overflow-hidden rounded-[20px] sm:rounded-[24px] [transform:translateZ(0)]"
           >
-            <HeroSlideshow onIntroComplete={handleIntroComplete} />
+            <HeroSlideshow grayscale={grayscaleHero} onIntroComplete={handleIntroComplete} />
           </div>
 
           <div className="mt-6 grid shrink-0 gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-16">
@@ -297,8 +306,8 @@ export function RunningAppHero({
               <a
                 data-ra-bottom-cta
                 href="#join"
-                className="ra-btn ra-btn-lime inline-flex w-fit items-center gap-2.5 rounded-full border px-5 py-3 text-[11px] tracking-[0.1em] sm:text-[12px]"
-                style={{ backgroundColor: LIME, borderColor: LIME, color: INK }}
+                className="ra-btn ra-btn-accent inline-flex w-fit items-center gap-2.5 rounded-full border px-5 py-3 text-[11px] tracking-[0.1em] sm:text-[12px]"
+                style={{ backgroundColor: accent, borderColor: accent, color: accentInk }}
               >
                 <FlipLabel>Join</FlipLabel>
                 <SendIcon className="ra-btn-icon size-3.5 sm:size-4" />
@@ -329,7 +338,7 @@ export function RunningAppHero({
               }
               .ra-link .ra-flip-line:last-child,
               .ra-brand .ra-flip-line:last-child {
-                color: ${LIME};
+                color: ${accent};
               }
               .ra-badge {
                 transition:
@@ -357,27 +366,27 @@ export function RunningAppHero({
               @media (hover: hover) and (pointer: fine) {
                 .ra-link:hover .ra-flip-inner,
                 .ra-brand:hover .ra-flip-inner,
-                .ra-btn-lime:hover .ra-flip-inner {
+                .ra-btn-accent:hover .ra-flip-inner {
                   transform: translateY(-50%) rotateX(-8deg);
                 }
                 .ra-link:hover .ra-badge {
                   transform: scale(1.08);
-                  background-color: ${LIME} !important;
-                  color: ${INK} !important;
+                  background-color: ${accent} !important;
+                  color: ${accentInk} !important;
                 }
                 .ra-btn-account:hover {
                   transform: translateY(-1px);
-                  color: ${LIME};
+                  color: ${accent};
                 }
                 .ra-btn-account:hover .ra-btn-icon {
                   transform: scale(1.06);
                 }
-                .ra-btn-lime:hover {
+                .ra-btn-accent:hover {
                   transform: translateY(-2px);
                   background-color: transparent !important;
-                  color: ${LIME} !important;
+                  color: ${accent} !important;
                 }
-                .ra-btn-lime:hover .ra-btn-icon {
+                .ra-btn-accent:hover .ra-btn-icon {
                   transform: rotate(45deg) translate(2px, -2px) scale(1.08);
                 }
               }
@@ -390,7 +399,7 @@ export function RunningAppHero({
                 }
                 .ra-link:hover .ra-flip-inner,
                 .ra-brand:hover .ra-flip-inner,
-                .ra-btn-lime:hover .ra-flip-inner {
+                .ra-btn-accent:hover .ra-flip-inner {
                   transform: none;
                 }
               }
@@ -415,7 +424,19 @@ export function RunningAppHero({
   );
 }
 
-function HeroSlideshow({ onIntroComplete }: { onIntroComplete?: () => void }) {
+export function RunningAppHeroMono(
+  props: Omit<RunningAppHeroProps, "variant">,
+) {
+  return <RunningAppHero {...props} variant="mono" />;
+}
+
+function HeroSlideshow({
+  grayscale = false,
+  onIntroComplete,
+}: {
+  grayscale?: boolean;
+  onIntroComplete?: () => void;
+}) {
   const rootRef = useRef<HTMLDivElement>(null);
   const onIntroCompleteRef = useRef(onIntroComplete);
 
@@ -531,7 +552,10 @@ function HeroSlideshow({ onIntroComplete }: { onIntroComplete?: () => void }) {
           data-ra-slide
           src={src}
           alt=""
-          className="absolute -inset-px h-[calc(100%+2px)] w-[calc(100%+2px)] max-w-none object-cover object-center [backface-visibility:hidden]"
+          className={cn(
+            "absolute -inset-px h-[calc(100%+2px)] w-[calc(100%+2px)] max-w-none object-cover object-center [backface-visibility:hidden]",
+            grayscale && "grayscale contrast-[1.06]",
+          )}
           loading={i === 0 ? "eager" : "lazy"}
           decoding="async"
         />

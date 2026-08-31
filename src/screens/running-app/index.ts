@@ -1,4 +1,4 @@
-export { RunningAppHero } from "./running-app";
-export type { RunningAppHeroProps } from "./running-app";
-export { RunningAppSkeleton } from "./running-app-skeleton";
+export { RunningAppHero, RunningAppHeroMono } from "./running-app";
+export type { RunningAppHeroProps, RunningAppVariant } from "./running-app";
+export { RunningAppSkeleton, RunningAppSkeletonMono } from "./running-app-skeleton";
 export type { RunningAppSkeletonProps } from "./running-app-skeleton";

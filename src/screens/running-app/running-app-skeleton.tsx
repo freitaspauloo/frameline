@@ -13,24 +13,26 @@ import { ScreenStage } from "@/screens/stage";
 
 import "./running-app-skeleton.css";
 
+import type { RunningAppVariant } from "./running-app";
+
 const CANVAS = "#161618";
 
 function Bone({
   className = "",
   delay = 0,
-  lime = false,
+  accent = false,
   block = false,
 }: {
   className?: string;
   delay?: number;
-  lime?: boolean;
+  accent?: boolean;
   block?: boolean;
 }) {
   return (
     <div
       className={cn(
         "ra-skel-bone",
-        lime && "ra-skel-bone--lime",
+        accent && "ra-skel-bone--accent",
         block && "ra-skel-bone--block",
         className,
       )}
@@ -43,6 +45,7 @@ export type RunningAppSkeletonProps = {
   className?: string;
   embed?: boolean;
   fillViewport?: boolean;
+  variant?: RunningAppVariant;
 };
 
 /** Loading skeleton for the Passo hero — mirrors nav, image card, and bottom lockup. */
@@ -50,6 +53,7 @@ export function RunningAppSkeleton({
   className,
   embed = false,
   fillViewport = false,
+  variant = "color",
 }: RunningAppSkeletonProps) {
   const scope = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
@@ -158,6 +162,7 @@ export function RunningAppSkeleton({
       ref={scope}
       className={cn(
         "fl-running-app-skeleton",
+        variant === "mono" && "fl-running-app-skeleton--mono",
         GeistMono.className,
         "relative flex h-full min-h-0 w-full flex-col overflow-hidden uppercase antialiased",
         className,
@@ -193,7 +198,7 @@ export function RunningAppSkeleton({
                 <Bone className="bone-account" delay={140} />
               </div>
               <div className="ra-skel-nav-action">
-                <Bone className="bone-join" delay={180} lime />
+                <Bone className="bone-join" delay={180} accent />
               </div>
             </div>
           </header>
@@ -223,7 +228,7 @@ export function RunningAppSkeleton({
                 <Bone className="bone-copy bone-copy-4" delay={250} />
               </div>
               <div className="ra-skel-cta">
-                <Bone className="bone-cta" delay={280} lime />
+                <Bone className="bone-cta" delay={280} accent />
               </div>
             </div>
           </div>
@@ -245,4 +250,10 @@ export function RunningAppSkeleton({
       {page}
     </ScreenStage>
   );
+}
+
+export function RunningAppSkeletonMono(
+  props: Omit<RunningAppSkeletonProps, "variant">,
+) {
+  return <RunningAppSkeleton {...props} variant="mono" />;
 }
