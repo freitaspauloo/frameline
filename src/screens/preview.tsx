@@ -15,8 +15,10 @@ import { ReticleAsciiHero, ReticleAsciiHeroSkeleton } from "@/screens/ascii-hero
 import { BridgeDither, BridgeDitherSkeleton } from "@/screens/bridge-dither";
 import { DarkPillHero, DarkPillHeroSkeleton } from "@/screens/dark-pill-hero";
 import { MexinHero, MexinHeroSkeleton } from "@/screens/mexin-hero";
+import { RunningAppHero, RunningAppHeroMono, RunningAppSkeleton, RunningAppSkeletonMono } from "@/screens/running-app";
 import { ReticleLoginPage, ReticleLoginCyanPage, ReticleLoginSkeleton, ReticleLoginCyanSkeleton } from "@/screens/miracle-login";
 import { FiftyXHero, FiftyXHeroSkeleton, ForgeAiLimeHero, ForgeAiLimeSkeleton, ForgeAiPinkHero, ForgeAiPinkSkeleton } from "@/screens/fifty-x-hero";
+import { HealthAiHero, HealthAiSkeleton } from "@/screens/health-ai";
 import { Softwave, SoftwaveSkeleton } from "@/screens/softwave";
 import { SoftwaveFeatureCards, SoftwaveFeatureCardsSkeleton } from "@/screens/softwave-features";
 import { SpacemanMoon } from "@/screens/spaceman-moon";
@@ -33,6 +35,18 @@ export function ScreenLivePreview({
   const canonical = getScreenBySlug(slug)?.slug ?? slug;
 
   switch (canonical) {
+    case "passo-mono-skeleton":
+      return <RunningAppSkeletonMono className="h-full w-full" embed={embed} />;
+    case "passo-skeleton":
+      return <RunningAppSkeleton className="h-full w-full" embed={embed} />;
+    case "passo-mono":
+      return <RunningAppHeroMono className="h-full w-full" embed={embed} />;
+    case "passo":
+      return <RunningAppHero className="h-full w-full" embed={embed} />;
+    case "health-ai-skeleton":
+      return <HealthAiSkeleton className="h-full w-full" embed={embed} />;
+    case "health-ai":
+      return <HealthAiHero className="h-full w-full" embed={embed} />;
     case "forgeai-pink-skeleton":
       return <ForgeAiPinkSkeleton className="h-full w-full" embed={embed} />;
     case "forgeai-lime-skeleton":

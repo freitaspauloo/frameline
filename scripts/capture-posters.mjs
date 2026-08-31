@@ -69,6 +69,12 @@ const POSTER_DIRS = {
 };
 
 const DEFAULT_SLUGS = [
+  "health-ai-skeleton",
+  "health-ai",
+  "passo-mono-skeleton",
+  "passo-skeleton",
+  "passo-mono",
+  "passo",
   "forgeai-lime-skeleton",
   "forgeai-pink-skeleton",
   "forgeai-lime",

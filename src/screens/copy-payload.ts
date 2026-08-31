@@ -4,6 +4,25 @@ import { DARK_PILL_HERO_PROMPT } from "@/screens/dark-pill-hero/copy";
 import { SPACEMAN_MOON_PROMPT } from "@/screens/spaceman-moon/copy";
 
 const FILES: Record<string, { files: string[]; prompt: string; note: string }> = {
+  "health-ai-skeleton": {
+    files: [
+      "src/screens/health-ai/health-ai-skeleton.tsx",
+      "src/screens/health-ai/health-ai-skeleton.css",
+    ],
+    prompt: `Build the loading skeleton for Pulse: sky-blue shimmer bones over floating nav, hero video plate, headline lines, and body pill. Scoped CSS.`,
+    note: "Pairs with Pulse Hero.",
+  },
+  "health-ai": {
+    files: [
+      "src/screens/health-ai/health-ai.tsx",
+      "src/screens/health-ai/health-ai-skeleton.tsx",
+      "src/screens/health-ai/health-ai-skeleton.css",
+      "src/screens/stage.tsx",
+      "src/screens/stage.module.css",
+    ],
+    prompt: `Build the Pulse health AI landing — light sky-blue canvas, hero loop video with Paper FlutedGlass overlay, GSAP fullscreen-to-card morph, floating pill nav, headline clip reveal.`,
+    note: "Hero video and poster under /screens/health-ai/. Alias: pulse.",
+  },
   orb: {
     files: [
       "src/screens/built-for-yield/built-for-yield.tsx",
@@ -206,6 +225,46 @@ local paths under public/.`,
     ],
     prompt: `Build the Bridge Dither Hero — warm bridge dither art, interactive canvas, progressive blur edges, GSAP headline clip reveal.`,
     note: "Bridge art PNG is served from Frameline. Alias: oasis-hero.",
+  },
+  "passo-mono-skeleton": {
+    files: [
+      "src/screens/running-app/running-app-skeleton.tsx",
+      "src/screens/running-app/running-app-skeleton.css",
+      "src/screens/running-app/running-app.tsx",
+    ],
+    prompt: `Build the loading skeleton for Passo Mono — B&W hero plate shimmer, white accent bones, GSAP entrance over nav and lockup.`,
+    note: "Pairs with Passo Mono. Hero JPGs are shared from /screens/running-app/.",
+  },
+  "passo-skeleton": {
+    files: [
+      "src/screens/running-app/running-app-skeleton.tsx",
+      "src/screens/running-app/running-app-skeleton.css",
+      "src/screens/running-app/running-app.tsx",
+    ],
+    prompt: `Build the loading skeleton for Passo — shimmer bones over nav, hero card, headline lines, and Join CTA with GSAP entrance.`,
+    note: "Pairs with Passo hero. Hero JPGs are served from Frameline under /screens/running-app/.",
+  },
+  "passo-mono": {
+    files: [
+      "src/screens/running-app/running-app.tsx",
+      "src/screens/running-app/running-app-skeleton.tsx",
+      "src/screens/running-app/running-app-skeleton.css",
+      "src/screens/stage.tsx",
+      "src/screens/stage.module.css",
+    ],
+    prompt: `Build Passo Mono — running app homepage with B&W hero slideshow, white accents, flip nav labels, Geist Sans headline lockup.`,
+    note: "Hero JPGs are served from Frameline under /screens/running-app/. Variant of Passo.",
+  },
+  passo: {
+    files: [
+      "src/screens/running-app/running-app.tsx",
+      "src/screens/running-app/running-app-skeleton.tsx",
+      "src/screens/running-app/running-app-skeleton.css",
+      "src/screens/stage.tsx",
+      "src/screens/stage.module.css",
+    ],
+    prompt: `Build Passo — running app homepage with Paris night hero slideshow, lime accents, MWG-style flip nav, two-column lockup.`,
+    note: "Hero JPGs are served from Frameline under /screens/running-app/. Alias: running-app.",
   },
   "mexin-hero": {
     files: [
