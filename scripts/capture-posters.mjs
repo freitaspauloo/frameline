@@ -45,6 +45,12 @@ function posterDimensions(slug) {
 /** Longest screen entrance is ~1.5s; leave headroom for shader first paint. */
 const SETTLE_MS = 4000;
 
+/** Hero video + GSAP morph needs extra time for poster capture. */
+const SETTLE_MS_BY_SLUG = {
+  "health-ai": 8000,
+  "health-ai-skeleton": 5500,
+};
+
 const CHROME_CANDIDATES = [
   process.env.CHROME_PATH,
   process.platform === "win32"
@@ -71,10 +77,6 @@ const POSTER_DIRS = {
 const DEFAULT_SLUGS = [
   "health-ai-skeleton",
   "health-ai",
-  "passo-mono-skeleton",
-  "passo-skeleton",
-  "passo-mono",
-  "passo",
   "forgeai-lime-skeleton",
   "forgeai-pink-skeleton",
   "forgeai-lime",
@@ -134,7 +136,7 @@ async function capture(browser, slug) {
     });
 
     await page.evaluate(() => document.fonts.ready);
-    await page.waitForTimeout(SETTLE_MS);
+    await page.waitForTimeout(SETTLE_MS_BY_SLUG[slug] ?? SETTLE_MS);
 
     // Always shoot the locked 16:9 viewport — never match a taller stage plate.
     await page.screenshot({ path: out, animations: "allow" });

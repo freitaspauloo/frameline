@@ -20,7 +20,7 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     description:
       "Loading skeleton for Pulse — sky-blue shimmer bones over floating nav, hero video plate, headline, and body pill.",
     blurb: "Health loading state · hero plate · pill bones",
-    poster: "/screens/health-ai/poster.png",
+    poster: "/screens/health-ai-skeleton/poster.png",
   },
   {
     ...SCREEN,
@@ -31,43 +31,6 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     blurb: "Hero video · fluted glass · GSAP intro",
     poster: "/screens/health-ai/poster.png",
     aliases: ["pulse"],
-  },
-  {
-    ...SCREEN,
-    slug: "passo-mono-skeleton",
-    title: "Passo Skeleton Mono",
-    description:
-      "Loading skeleton for Passo Mono — B&W hero plate shimmer and white accent bones over nav and lockup.",
-    blurb: "Mono loading state · B&W plate · white accents",
-    poster: "/screens/passo-mono-skeleton/poster.png",
-  },
-  {
-    ...SCREEN,
-    slug: "passo-skeleton",
-    title: "Passo Skeleton",
-    description:
-      "Loading skeleton for Passo — shimmer bones over nav, hero card, headline, and Join CTA.",
-    blurb: "Loading state · hero card · two-column lockup",
-    poster: "/screens/passo-skeleton/poster.png",
-  },
-  {
-    ...SCREEN,
-    slug: "passo-mono",
-    title: "Passo Mono",
-    description:
-      "Passo running homepage in monochrome — B&W hero slideshow, white accents, Geist Sans headline.",
-    blurb: "B&W hero · white accents · dawn lockup",
-    poster: "/screens/passo-mono/poster.png",
-  },
-  {
-    ...SCREEN,
-    slug: "passo",
-    title: "Passo",
-    description:
-      "Running app homepage — Paris night hero slideshow, lime accents, flip nav, two-column lockup.",
-    blurb: "Hero slideshow · flip nav · lime Join CTA",
-    poster: "/screens/passo/poster.png",
-    aliases: ["running-app"],
   },
   {
     ...SCREEN,
