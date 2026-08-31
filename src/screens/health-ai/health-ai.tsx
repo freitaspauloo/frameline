@@ -741,9 +741,25 @@ function HeroVideo({ staticHero = false }: { staticHero?: boolean }) {
   );
 }
 
-type FlutedGlassMount = NonNullable<PaperShaderElement["paperShaderMount"]>;
+type FlutedGlassMountInternals = {
+  gl: WebGL2RenderingContext;
+  program: WebGLProgram | null;
+  textures: Map<string, WebGLTexture>;
+  textureUnitMap: Map<string, number>;
+  uniformLocations: Record<string, WebGLUniformLocation | null>;
+  render: (time: number) => void;
+};
 
-function syncVideoToFlutedGlass(mount: FlutedGlassMount, video: HTMLVideoElement) {
+function getFlutedGlassMount(
+  mount: NonNullable<PaperShaderElement["paperShaderMount"]>,
+): FlutedGlassMountInternals {
+  return mount as unknown as FlutedGlassMountInternals;
+}
+
+function syncVideoToFlutedGlass(
+  mount: NonNullable<PaperShaderElement["paperShaderMount"]>,
+  video: HTMLVideoElement,
+) {
   if (
     video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA ||
     video.videoWidth <= 0 ||
@@ -752,13 +768,14 @@ function syncVideoToFlutedGlass(mount: FlutedGlassMount, video: HTMLVideoElement
     return;
   }
 
+  const paper = getFlutedGlassMount(mount);
   const uniformName = "u_image";
-  const texture = mount.textures.get(uniformName);
+  const texture = paper.textures.get(uniformName);
   if (!texture) return;
 
-  const { gl } = mount;
-  const textureUnit = mount.textureUnitMap.get(uniformName) ?? 0;
-  const program = (mount as FlutedGlassMount & { program: WebGLProgram | null }).program;
+  const { gl } = paper;
+  const textureUnit = paper.textureUnitMap.get(uniformName) ?? 0;
+  const program = paper.program;
   if (!program) return;
 
   gl.useProgram(program);
@@ -772,12 +789,12 @@ function syncVideoToFlutedGlass(mount: FlutedGlassMount, video: HTMLVideoElement
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
-  const imageLoc = mount.uniformLocations[uniformName];
-  const aspectLoc = mount.uniformLocations[`${uniformName}AspectRatio`];
+  const imageLoc = paper.uniformLocations[uniformName];
+  const aspectLoc = paper.uniformLocations[`${uniformName}AspectRatio`];
   if (imageLoc) gl.uniform1i(imageLoc, textureUnit);
   if (aspectLoc) gl.uniform1f(aspectLoc, video.videoWidth / video.videoHeight);
 
-  mount.render(performance.now());
+  paper.render(performance.now());
 }
 
 function splitTextIntoWords(node: HTMLElement | null) {
