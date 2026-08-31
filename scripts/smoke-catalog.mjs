@@ -132,16 +132,28 @@ export function runCatalogSmoke() {
     }
   }
 
-  assert(SCREENS_CATALOG.length === 5, `Expected 5 screens, got ${SCREENS_CATALOG.length}`);
+  assert(SCREENS_CATALOG.length === 31, `Expected 31 screens, got ${SCREENS_CATALOG.length}`);
   const screenTitles = SCREENS_CATALOG.map((s) => s.title);
   for (const title of [
-    "Passo",
-    "Pulse Hero",
-    "FORGE.AI Hero Pink",
-    "FORGE.AI Hero",
-    "FORGE.AI Hero Lime",
+    "Dark Pill Nav Hero",
+    "Built for Yield Hero",
+    "Performance Feature Cards",
+    "Yield Inspection Dashboard",
+    "Magenta Landscape Hero",
+    "AI Inspection Interface",
+    "Protect Yield Features",
+    "Pixel Cube Hero",
+    "Space Explorer Hero",
+    "Always-on Wafer Inspection",
+    "Defect Assistant Hero",
+    "ASCII Yield Hero",
+    "Softwave Hero",
+    "Softwave Feature Cards",
+    "Bridge Dither",
+    "Mexin Hero",
+    "Miracle Login",
   ]) {
-    assert(screenTitles.includes(title), `Missing screen title: ${title}`);
+    assert(screenTitles.includes(title), `Missing layout screen title: ${title}`);
   }
 
   const smart = parseSmartQuery("Aurora dither HERO");

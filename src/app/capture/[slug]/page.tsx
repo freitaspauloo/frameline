@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { getScreenBySlug, listScreens } from "@/screens/catalog";
+import { getScreenBySlug, listAllScreenEntries } from "@/screens/catalog";
 import { isForgeAiScreenSlug } from "@/screens/fifty-x-hero/forgeai-stage";
 import { ScreenLivePreview } from "@/screens/preview";
 
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export function generateStaticParams() {
-  return listScreens().map((screen) => ({ slug: screen.slug }));
+  return listAllScreenEntries().map((screen) => ({ slug: screen.slug }));
 }
 
 export default async function CaptureRoute({

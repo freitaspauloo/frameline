@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { ScreenDetailPage } from "@/components/screen-detail-page";
-import { getScreenBySlug, listScreens } from "@/screens/catalog";
+import { getScreenBySlug, listAllScreenEntries } from "@/screens/catalog";
 
 export function generateStaticParams() {
-  return listScreens().flatMap((screen) => [
+  return listAllScreenEntries().flatMap((screen) => [
     { slug: screen.slug },
     ...(screen.aliases ?? []).map((alias) => ({ slug: alias })),
   ]);

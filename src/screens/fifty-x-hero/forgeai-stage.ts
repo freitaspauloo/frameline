@@ -7,6 +7,9 @@ export const FORGEAI_SCREEN_SLUGS = new Set([
   "fifty-x-hero",
   "forgeai-pink",
   "forgeai-lime",
+  "forgeai-skeleton",
+  "forgeai-pink-skeleton",
+  "forgeai-lime-skeleton",
 ]);
 
 export function isForgeAiScreenSlug(slug: string): boolean {
