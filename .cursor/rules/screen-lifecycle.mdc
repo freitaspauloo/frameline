@@ -1,0 +1,22 @@
+---
+description: Screen shipping lifecycle — dev, review, catalog. Skeletons never in storefront.
+globs: src/screens/**,src/app/dev/**,docs/SHIP-SCREEN.md,docs/SCREEN-LIFECYCLE.md
+alwaysApply: false
+---
+
+# Screen lifecycle
+
+Read `docs/SCREEN-LIFECYCLE.md` before shipping or catalog edits.
+
+## Three surfaces
+
+1. **Dev** — `/dev/<slug>` and `/dev/<slug>/skeleton` (WIP + skeleton). Never catalog.
+2. **Review** — `/live/<slug>`, `/capture/<slug>`. Notion review required before ship.
+3. **Shipped** — `/screens/<slug>` only. Prepend heroes to `SCREENS_CATALOG`.
+
+## Hard rules
+
+- **Never** add `*-skeleton` slugs to `SCREENS_CATALOG` or `preview.tsx` storefront cases.
+- Posters and `ScreenStage` must match artboard: **1920×1080** default, **1440×1080** FORGE.AI.
+- Keep asset files at original dimensions under `public/screens/<slug>/`.
+- Track reviews in Notion **Screen Ship Queue** (Frameline workspace).

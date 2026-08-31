@@ -1,61 +1,72 @@
 # Ship a screen to the Frameline catalog
 
-Checklist for publishing a new **screen** (Reticle landing page) to the storefront.
+**Read first:** [SCREEN-LIFECYCLE.md](./SCREEN-LIFECYCLE.md) — dev vs review vs shipped surfaces. Skeletons never go in the catalog.
+
+Checklist for publishing a **hero** to the storefront after review approval.
 
 ## 1. Build the screen module
 
-- Source lives under `src/screens/<module>/` (component, CSS, skeleton if any, `index.ts`).
-- Dev preview at `src/app/dev/<slug>/page.tsx` (+ optional `skeleton/page.tsx`).
-- Hero renders inside `ScreenStage` when `embed` — use `h-full min-h-0` on the root, not `100dvh`, so detail previews and posters match the 1920×1080 plate.
-- Static assets (video, PNG, SVG) go in `public/screens/<slug>/`.
+- Source under `src/screens/<module>/` (hero component, CSS, optional skeleton for copy bundle, `index.ts`).
+- **Dev WIP:** `src/app/dev/<slug>/page.tsx` with `fillViewport`.
+- **Dev skeleton:** `src/app/dev/<slug>/skeleton/page.tsx` — not listed in catalog.
+- Hero inside `ScreenStage` when `embed` — `h-full min-h-0` on root, not `100dvh`.
+- Assets in `public/screens/<slug>/` at **original artboard dimensions**.
 
-## 2. Wire the storefront
+### Plate sizes
+
+| Type | Size |
+|------|------|
+| Most heroes | 1920×1080 |
+| FORGE.AI family | 1440×1080 |
+
+## 2. Review (before catalog)
+
+| URL | Purpose |
+|-----|---------|
+| `/dev/<slug>` | Design iteration |
+| `/live/<slug>` | Full-bleed review (no storefront chrome) |
+| `/capture/<slug>` | Poster plate — must match shipped crop |
+
+Log the review in Notion **Screen Ship Queue** before shipping.
+
+## 3. Wire the storefront (hero only)
 
 | File | What to add |
 |------|-------------|
-| `src/screens/catalog.ts` | **Prepend** entries to `SCREENS_CATALOG` (newest first). Include skeleton as a separate slug if you ship one. Set `poster: "/screens/<slug>/poster.png"`. |
-| `src/screens/preview.tsx` | Import component; add `case "<slug>":` in `ScreenLivePreview` (use `className="h-full w-full"` + `embed={embed}` for heroes). |
-| `src/screens/copy-payload.ts` | Add file list + prompt for buyer copy/export (hero + skeleton slugs). |
+| `src/screens/catalog.ts` | **Prepend** hero to `SCREENS_CATALOG`. No skeleton slugs. `poster: "/screens/<slug>/poster.png"`. |
+| `src/screens/preview.tsx` | Hero `case` in `ScreenLivePreview` only. |
+| `src/screens/copy-payload.ts` | File list + prompt (skeleton source files OK in bundle, not as catalog slug). |
 
-Optional: add slug to `DEFAULT_SLUGS` in `scripts/capture-posters.mjs` for batch poster runs.
+Optional: hero slug in `DEFAULT_SLUGS` in `scripts/capture-posters.mjs`.
 
-## 3. Capture the poster
+## 4. Capture the poster
 
-Posters are **always 1920×1080 (16:9)** — catalog tiles use `aspect-[16/9]` + `object-cover`.
+Posters must match plate size exactly (see `posterDimensions()` in capture script).
 
 ```bash
-pnpm dev                    # another terminal, localhost:3000
-pnpm posters <slug>         # e.g. pnpm posters forgeai
+pnpm dev                    # another terminal
+pnpm posters <slug>
 ```
 
 - Writes `public/screens/<slug>/poster.png`.
-- Uses `/capture/<slug>` (no storefront chrome). Waits ~4s for GSAP/shaders to settle.
-- Requires Chrome (or set `CHROME_PATH`).
+- Waits for GSAP/shaders (8s for video heroes like `health-ai`).
+- Requires Chrome (`CHROME_PATH` on CI).
 
-**Tips for a good thumb:** let entrance animations finish; avoid open dropdowns; check `/capture/<slug>` in the browser before shooting.
+## 5. Verify
 
-Skeleton screens can share the hero poster (same `poster` path in catalog) or run `pnpm posters <skeleton-slug>` if you want a distinct thumb.
+- `/screens/<slug>` — detail + live preview
+- `/screens` — tile at **top** of grid
+- `/capture/<slug>` — full-bleed, no chrome
+- `/dev/<slug>/skeleton` — still works locally, **404** on `/screens/*-skeleton`
 
-## 4. Verify
+## 6. Commit
 
-- `/screens/<slug>` — detail page + live preview
-- `/screens` — tile appears at the **top** of the grid (catalog order)
-- `/capture/<slug>` — full-bleed plate, no chrome
+Include catalog, preview, copy-payload, hero source, assets + `poster.png`, dev routes. Update `scripts/smoke-catalog.mjs` screen count.
 
-## 5. Commit
-
-Include:
-
-- `src/screens/catalog.ts`, `preview.tsx`, `copy-payload.ts`
-- Screen source + `public/screens/<slug>/` (assets + `poster.png`)
-- Dev route under `src/app/dev/<slug>/` if new
-
-Do **not** commit `.next/` or local `.data/`.
+Do **not** commit skeleton catalog rows or skeleton posters to the storefront.
 
 ---
 
-**Accent variants:** add tokens in `src/screens/<module>/accents.ts`, wire CSS variables on the root, export thin wrappers (see `ForgeAiPinkHero` / `ForgeAiLimeHero`), and prepend separate catalog slugs. Reuse shared assets; capture one poster per slug.
+**Accent variants:** separate catalog slugs (`forgeai-pink`, `forgeai-lime`), shared assets under `public/screens/forgeai/`, one poster per shipped slug.
 
----
-
-**Example:** FORGE.AI hero → slug `forgeai`, assets in `public/screens/forgeai/`, dev at `/dev/forgeai`, **full-bleed preview at `/live/forgeai`**, catalog alias `fifty-x-hero`. Pink/lime variants → `forgeai-pink`, `forgeai-lime` (live at `/live/forgeai-pink`, `/live/forgeai-lime`).
+**Example:** Pulse → slug `health-ai`, dev `/dev/health-ai`, review `/live/health-ai`, alias `pulse`. Skeleton at `/dev/health-ai/skeleton` only.

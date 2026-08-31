@@ -30,9 +30,6 @@ const FORGEAI_SLUGS = new Set([
   "fifty-x-hero",
   "forgeai-pink",
   "forgeai-lime",
-  "forgeai-skeleton",
-  "forgeai-pink-skeleton",
-  "forgeai-lime-skeleton",
 ]);
 
 function posterDimensions(slug) {
@@ -48,7 +45,6 @@ const SETTLE_MS = 4000;
 /** Hero video + GSAP morph needs extra time for poster capture. */
 const SETTLE_MS_BY_SLUG = {
   "health-ai": 8000,
-  "health-ai-skeleton": 5500,
 };
 
 const CHROME_CANDIDATES = [
@@ -75,31 +71,11 @@ const POSTER_DIRS = {
 };
 
 const DEFAULT_SLUGS = [
-  "health-ai-skeleton",
+  "passo",
   "health-ai",
-  "forgeai-lime-skeleton",
-  "forgeai-pink-skeleton",
-  "forgeai-lime",
   "forgeai-pink",
   "forgeai",
-  "softwave",
-  "softwave-features",
-  "bridge-dither",
-  "mexin-hero",
-  "miracle-login-cyan",
-  "miracle-login",
-  "dark-pill-hero",
-  "ascii-hero",
-  "orb",
-  "feature-cards",
-  "insights",
-  "magenta-landscape",
-  "browser-frame",
-  "feature-rail",
-  "blueprint",
-  "spaceman-moon",
-  "light-rays",
-  "prompt-bar",
+  "forgeai-lime",
 ];
 
 function resolveChrome() {

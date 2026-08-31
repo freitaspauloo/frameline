@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { getScreenBySlug, listAllScreenEntries } from "@/screens/catalog";
+import { getScreenBySlug, listScreens } from "@/screens/catalog";
 import { ScreenLivePreview } from "@/screens/preview";
 
 /** Full-bleed live screen — no catalog chrome, navbar, or copy actions. */
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export function generateStaticParams() {
-  return listAllScreenEntries().flatMap((screen) => [
+  return listScreens().flatMap((screen) => [
     { slug: screen.slug },
     ...(screen.aliases ?? []).map((alias) => ({ slug: alias })),
   ]);
