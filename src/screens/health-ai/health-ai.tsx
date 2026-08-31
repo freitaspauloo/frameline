@@ -56,6 +56,8 @@ export type HealthAiHeroProps = {
   embed?: boolean;
   /** Dev / live pages — skip 16:9 letterboxing and fill the viewport. */
   fillViewport?: boolean;
+  /** Poster capture — keep hero.png in FlutedGlass, skip video → WebGL sync. */
+  staticHero?: boolean;
 };
 
 /**
@@ -65,6 +67,7 @@ export function HealthAiHero({
   className,
   embed = false,
   fillViewport = false,
+  staticHero = false,
 }: HealthAiHeroProps) {
   const rootRef = useRef<HTMLElement>(null);
 
@@ -435,7 +438,7 @@ export function HealthAiHero({
               data-ha-hero
               className="relative isolate h-[min(84vh,800px)] w-full shrink-0 overflow-hidden rounded-[20px] sm:h-[min(88vh,880px)] sm:rounded-[24px] [transform:translateZ(0)]"
             >
-            <HeroVideo />
+            <HeroVideo staticHero={staticHero} />
 
             <div
               data-ha-body-block
@@ -631,12 +634,15 @@ export function HealthAiHero({
   );
 }
 
-function HeroVideo() {
+function HeroVideo({ staticHero = false }: { staticHero?: boolean }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const glassHostRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const videoReadyRef = useRef(false);
 
   useLayoutEffect(() => {
+    if (staticHero) return;
+
     const video = videoRef.current;
     if (!video) return;
 
@@ -659,15 +665,28 @@ function HeroVideo() {
       void video.play().catch(() => {});
     };
 
+    const markReady = () => {
+      if (video.currentTime > 0.05 && video.videoWidth > 0) {
+        videoReadyRef.current = true;
+      }
+    };
+
     video.addEventListener("loadeddata", startPlayback);
+    video.addEventListener("playing", markReady);
+    video.addEventListener("timeupdate", markReady);
     if (video.readyState >= 2) startPlayback();
 
     return () => {
       video.removeEventListener("loadeddata", startPlayback);
+      video.removeEventListener("playing", markReady);
+      video.removeEventListener("timeupdate", markReady);
+      videoReadyRef.current = false;
     };
-  }, []);
+  }, [staticHero]);
 
   useEffect(() => {
+    if (staticHero) return;
+
     const video = videoRef.current;
     const host = glassHostRef.current;
     if (!video || !host) return;
@@ -678,13 +697,15 @@ function HeroVideo() {
     let raf = 0;
 
     const tick = () => {
-      syncVideoToFlutedGlass(host, video);
+      if (videoReadyRef.current) {
+        syncVideoToFlutedGlass(host, video);
+      }
       raf = requestAnimationFrame(tick);
     };
 
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [staticHero]);
 
   return (
     <div
@@ -694,16 +715,20 @@ function HeroVideo() {
       style={{ backgroundColor: CANVAS }}
       aria-hidden
     >
-      <video
-        ref={videoRef}
-        src={HERO_VIDEO}
-        muted
-        loop
-        playsInline
-        preload="auto"
-        className="pointer-events-none absolute h-px w-px opacity-0"
-        aria-hidden
-      />
+      {staticHero ? null : (
+        <video
+          ref={videoRef}
+          src={HERO_VIDEO}
+          crossOrigin="anonymous"
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster={HERO_POSTER}
+          className="pointer-events-none absolute h-px w-px opacity-0"
+          aria-hidden
+        />
+      )}
       <div ref={glassHostRef} className="absolute inset-0">
         <FlutedGlass
           {...HERO_GLASS}
@@ -732,7 +757,17 @@ function syncVideoToFlutedGlass(host: HTMLElement, video: HTMLVideoElement) {
     paperShaderMount?: ShaderMountInternals;
   };
   const mount = mountEl?.paperShaderMount;
-  if (!mount?.gl || video.readyState < 2 || video.videoWidth <= 0) return;
+  if (
+    !mount?.gl ||
+    video.paused ||
+    video.ended ||
+    video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA ||
+    video.currentTime <= 0.05 ||
+    video.videoWidth <= 0 ||
+    video.videoHeight <= 0
+  ) {
+    return;
+  }
 
   const uniformName = "u_image";
   const texture = mount.textures.get(uniformName);
@@ -743,7 +778,11 @@ function syncVideoToFlutedGlass(host: HTMLElement, video: HTMLVideoElement) {
 
   gl.activeTexture(gl.TEXTURE0 + textureUnit);
   gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+  try {
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+  } catch {
+    return;
+  }
 
   const aspectLocation = mount.uniformLocations[`${uniformName}AspectRatio`];
   if (aspectLocation) {

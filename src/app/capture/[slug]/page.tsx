@@ -30,7 +30,7 @@ export default async function CaptureRoute({
       {/* Both are portaled to body, so they would otherwise land in the poster. */}
       <style>{`[data-frameline-quota], nextjs-portal { display: none !important; }`}</style>
       <div className={forgeai ? "w-full bg-[#000105]" : undefined}>
-        <ScreenLivePreview embed={forgeai} slug={entry.slug} />
+        <ScreenLivePreview embed={forgeai} slug={entry.slug} posterCapture />
       </div>
     </>
   );

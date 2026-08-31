@@ -28,9 +28,12 @@ import { getScreenBySlug } from "@/screens/catalog";
 export function ScreenLivePreview({
   embed = true,
   slug,
+  posterCapture = false,
 }: {
   embed?: boolean;
   slug: string;
+  /** Headless poster capture — static assets where video → WebGL is unreliable. */
+  posterCapture?: boolean;
 }) {
   const canonical = getScreenBySlug(slug)?.slug ?? slug;
 
@@ -46,7 +49,13 @@ export function ScreenLivePreview({
     case "health-ai-skeleton":
       return <HealthAiSkeleton className="h-full w-full" embed={embed} />;
     case "health-ai":
-      return <HealthAiHero className="h-full w-full" embed={embed} />;
+      return (
+        <HealthAiHero
+          className="h-full w-full"
+          embed={embed}
+          staticHero={posterCapture}
+        />
+      );
     case "forgeai-pink-skeleton":
       return <ForgeAiPinkSkeleton className="h-full w-full" embed={embed} />;
     case "forgeai-lime-skeleton":

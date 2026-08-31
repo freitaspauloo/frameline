@@ -45,6 +45,16 @@ function posterDimensions(slug) {
 /** Longest screen entrance is ~1.5s; leave headroom for shader first paint. */
 const SETTLE_MS = 4000;
 
+/** Pulse hero uses FlutedGlass + optional video; allow shader image load. */
+const SETTLE_MS_BY_SLUG = {
+  "health-ai": 6000,
+  "health-ai-skeleton": 4500,
+};
+
+function settleMs(slug) {
+  return SETTLE_MS_BY_SLUG[slug] ?? SETTLE_MS;
+}
+
 const CHROME_CANDIDATES = [
   process.env.CHROME_PATH,
   process.platform === "win32"
@@ -134,7 +144,7 @@ async function capture(browser, slug) {
     });
 
     await page.evaluate(() => document.fonts.ready);
-    await page.waitForTimeout(SETTLE_MS);
+    await page.waitForTimeout(settleMs(slug));
 
     // Always shoot the locked 16:9 viewport — never match a taller stage plate.
     await page.screenshot({ path: out, animations: "allow" });
