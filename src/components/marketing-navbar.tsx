@@ -38,7 +38,7 @@ export function MarketingNavbar({
             {navLinks.map((link) => (
               <Link
                 key={link.href}
-                className="rounded-none px-2.5 py-1.5 text-[0.6875rem] font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:bg-muted hover:text-foreground"
+                className="rounded-none px-2.5 py-1.5 text-[0.75rem] font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:bg-muted hover:text-foreground"
                 href={link.href}
               >
                 {link.label}
@@ -49,7 +49,7 @@ export function MarketingNavbar({
           <details className="relative md:hidden">
             <summary
               aria-label="Open menu"
-              className="cursor-pointer list-none rounded-none px-2.5 py-1.5 text-[0.6875rem] font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:bg-muted hover:text-foreground [&::-webkit-details-marker]:hidden"
+              className="cursor-pointer list-none rounded-none px-2.5 py-1.5 text-[0.75rem] font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:bg-muted hover:text-foreground [&::-webkit-details-marker]:hidden"
             >
               Menu
             </summary>
@@ -60,14 +60,14 @@ export function MarketingNavbar({
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
-                  className="block px-4 py-2.5 text-[0.6875rem] font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:bg-muted hover:text-foreground"
+                  className="block px-4 py-2.5 text-[0.75rem] font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:bg-muted hover:text-foreground"
                   href={link.href}
                 >
                   {link.label}
                 </Link>
               ))}
               <Link
-                className="block border-t border-border px-4 py-2.5 text-[0.6875rem] font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:bg-muted hover:text-foreground sm:hidden"
+                className="block border-t border-border px-4 py-2.5 text-[0.75rem] font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:bg-muted hover:text-foreground sm:hidden"
                 href="/account/sign-in"
               >
                 Log in
