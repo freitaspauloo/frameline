@@ -1,6 +1,12 @@
-﻿import { SupportHeroPreviewNav } from "@/screens/support-hero/preview-nav";
+﻿import type { ReactNode } from "react";
 
-export default function DevSupportHeroLayout({ children }: LayoutProps<"/dev/support-hero">) {
+import { SupportHeroPreviewNav } from "@/screens/support-hero/preview-nav";
+
+export default function DevSupportHeroLayout({
+  children,
+}: Readonly<{
+  children: ReactNode;
+}>) {
   return (
     <>
       {children}
