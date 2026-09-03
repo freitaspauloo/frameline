@@ -1,4 +1,12 @@
-import { gsap, shouldRunMotion } from "@/lib/gsap-client"
+﻿import { gsap, shouldRunMotion } from "@/lib/gsap-client"
+
+/** Dev preview routes always animate so reviewers see the full GSAP timeline. */
+function shouldRunSupportHeroMotion() {
+  if (typeof window !== "undefined" && window.location.pathname.startsWith("/dev/support-hero")) {
+    return true
+  }
+  return shouldRunMotion()
+}
 
 const SOFT = "power3.out"
 const REVEAL_SELECTOR =
@@ -50,7 +58,7 @@ export function mountSupportHeroMotion(
   selectors: SupportHeroMotionSelectors,
   options?: SupportHeroMotionOptions,
 ) {
-  if (!shouldRunMotion()) {
+  if (!shouldRunSupportHeroMotion()) {
     revealFallback(root)
     return () => {}
   }
@@ -156,7 +164,7 @@ export function mountSupportHeroMotion(
 
 /** Continuous GSAP shimmer on skeleton bones after entrance. */
 export function mountSkeletonShimmer(root: HTMLElement) {
-  if (!shouldRunMotion()) return () => {}
+  if (!shouldRunSupportHeroMotion()) return () => {}
 
   const bones = gsap.utils.toArray<HTMLElement>(
     "[data-sh-skel-nav-bone], [data-sh-skel-content-bone], [data-sh-skel-dashboard]",
@@ -177,3 +185,4 @@ export function mountSkeletonShimmer(root: HTMLElement) {
 
   return () => ctx.revert()
 }
+

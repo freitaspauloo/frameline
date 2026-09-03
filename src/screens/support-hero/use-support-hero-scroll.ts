@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useEffect, useRef, useState, type RefObject } from "react"
 
@@ -61,7 +61,9 @@ export function useSupportHeroScroll(scopeRef: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const nav = scopeRef.current?.querySelector<HTMLElement>("[data-sh-nav]")
     if (!nav) return
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const devPreview =
+      typeof window !== "undefined" && window.location.pathname.startsWith("/dev/support-hero")
+    if (!devPreview && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       nav.style.maxWidth = navCompact ? "980px" : "1340px"
       return
     }
@@ -76,3 +78,4 @@ export function useSupportHeroScroll(scopeRef: RefObject<HTMLElement | null>) {
 
   return navCompact
 }
+
