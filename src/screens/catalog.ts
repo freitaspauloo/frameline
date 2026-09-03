@@ -15,6 +15,24 @@ const SCREEN = {
 export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
   {
     ...SCREEN,
+    slug: "support-hero-skeleton",
+    title: "Support Hero Skeleton",
+    description:
+      "Loading skeleton for Support — reticle pink color-blend plate, glass nav bones, headline, CTAs, and dashboard mock placeholder.",
+    blurb: "Pink tint · glass nav bones · dashboard bone",
+    poster: "/screens/support-hero-skeleton/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "support-hero",
+    title: "Support Hero",
+    description:
+      "Support product landing — reticle pink color-blend aurora, Geist type, floating glass nav that shrinks on scroll, GSAP entrance, dashboard mock.",
+    blurb: "Geist · pink blend · GSAP · dashboard mock",
+    poster: "/screens/support-hero/poster.png",
+  },
+  {
+    ...SCREEN,
     slug: "health-ai-skeleton",
     title: "Pulse Skeleton",
     description:
@@ -314,6 +332,15 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
 
 /** Still copyable, not listed in the public layout catalog. */
 export const HIDDEN_SCREENS: ScreenCatalogEntry[] = [
+  {
+    ...SCREEN,
+    slug: "picdrop-dashboard-skeleton",
+    title: "Picdrop Dashboard Skeleton",
+    description:
+      "Loading skeleton for Picdrop — sidebar bones, stat cards, gallery rails, feedback panel, and table rows with GSAP entrance and shimmer.",
+    blurb: "Dashboard loading state · GSAP · reticle pink accents",
+    poster: "/screens/picdrop-dashboard-skeleton/poster.png",
+  },
   {
     ...SCREEN,
     slug: "yield-skeleton",
