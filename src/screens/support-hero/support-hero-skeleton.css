@@ -1,0 +1,68 @@
+.fl-support-skeleton {
+  color: inherit;
+}
+
+.fl-support-skeleton .sh-skel-bone {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.fl-support-skeleton .sh-skel-bone--solid {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.fl-support-skeleton .sh-skel-bone--accent {
+  background: rgba(var(--sh-accent-rgb, 255, 77, 166), 0.14);
+  border-color: rgba(var(--sh-accent-rgb, 255, 77, 166), 0.28);
+}
+
+.fl-support-skeleton .sh-skel-bone::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  translate: -100% 0;
+  background: linear-gradient(
+    105deg,
+    transparent 22%,
+    rgba(255, 255, 255, 0.12) 44%,
+    rgba(var(--sh-accent-rgb, 255, 77, 166), 0.32) 50%,
+    rgba(255, 255, 255, 0.12) 56%,
+    transparent 78%
+  );
+  animation: sh-skel-sweep 1.8s linear infinite;
+  animation-delay: var(--delay, 0ms);
+  pointer-events: none;
+}
+
+@keyframes sh-skel-sweep {
+  0% {
+    translate: -100% 0;
+  }
+  100% {
+    translate: 100% 0;
+  }
+}
+
+.fl-support-skeleton .sh-skel-bg-art {
+  position: absolute;
+  inset: 0;
+  background: var(--sh-skeleton-bg, linear-gradient(145deg, #0a1620 0%, #101820 38%, #0d1420 100%));
+}
+
+.fl-support-skeleton .sh-skel-bg-tint {
+  position: absolute;
+  inset: 0;
+  background: var(--sh-tint, #d600bf);
+  mix-blend-mode: color;
+  opacity: 0.72;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fl-support-skeleton .sh-skel-bone::after {
+    animation: none;
+  }
+}
