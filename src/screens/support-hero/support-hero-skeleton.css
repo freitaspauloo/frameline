@@ -11,11 +11,18 @@
   border-radius: 8px;
   background: var(--bone);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  animation: sh-skel-pulse 1.8s ease-in-out infinite;
-  animation-delay: var(--delay, 0ms);
 }
 
-.fl-support-skeleton .bone::after {
+.fl-support-skeleton .sh-skel-bone--accent {
+  --bone: rgba(214, 0, 191, 0.22);
+  border-color: rgba(214, 0, 191, 0.35);
+}
+
+.fl-support-skeleton .sh-skel-bone--block {
+  width: 100%;
+}
+
+.fl-support-skeleton .sh-skel-bone::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -28,6 +35,14 @@
     var(--shine) 54%,
     transparent 76%
   );
+}
+
+.fl-support-skeleton.sh-skel-ready .sh-skel-bone {
+  animation: sh-skel-pulse 1.8s ease-in-out infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+.fl-support-skeleton.sh-skel-ready .sh-skel-bone::after {
   animation: sh-skel-sweep 1.8s linear infinite;
   animation-delay: var(--delay, 0ms);
 }
@@ -181,8 +196,20 @@
   border-radius: 10px;
 }
 
-.fl-support-skeleton .bone-headline {
+.fl-support-skeleton .sh-skel-headline {
+  margin-top: 0;
+  width: min(730px, 100%);
+}
+
+.fl-support-skeleton .sh-skel-headline .bone-headline {
+  margin-top: 0;
+}
+
+.fl-support-skeleton .sh-skel-copy {
   margin-top: 20px;
+}
+
+.fl-support-skeleton .bone-headline {
   width: min(730px, 100%);
   height: clamp(88px, 14vw, 140px);
   border-radius: 10px;
@@ -264,9 +291,13 @@
   }
 }
 
+.fl-support-skeleton .sh-skel-dash {
+  width: 100%;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .fl-support-skeleton .bone,
-  .fl-support-skeleton .bone::after {
+  .fl-support-skeleton .sh-skel-bone,
+  .fl-support-skeleton .sh-skel-bone::after {
     animation: none;
   }
 }

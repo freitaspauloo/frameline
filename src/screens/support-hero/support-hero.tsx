@@ -105,9 +105,19 @@ export function SupportHero({ className }: { className?: string }) {
             "[data-sh-nav]",
             "[data-sh-nav-item]",
             "[data-sh-enter]",
+            "[data-sh-headline]",
+            "[data-sh-cta]",
             "[data-sh-dash]",
           ],
-          { autoAlpha: 1, y: 0, scale: 1, filter: "blur(0px)", clearProps: "transform,filter" },
+          {
+            autoAlpha: 1,
+            x: 0,
+            y: 0,
+            scale: 1,
+            clipPath: "inset(0 0% 0 0)",
+            filter: "blur(0px)",
+            clearProps: "transform,filter,clipPath",
+          },
         );
         return;
       }
@@ -118,31 +128,61 @@ export function SupportHero({ className }: { className?: string }) {
         const blur = root.querySelector<HTMLElement>("[data-sh-blur]");
         const gradient = root.querySelector<HTMLElement>("[data-sh-gradient]");
         const nav = root.querySelector<HTMLElement>("[data-sh-nav]");
-        const navItems = gsap.utils.toArray<HTMLElement>("[data-sh-nav-item]", root);
+        const navLinks = gsap.utils.toArray<HTMLElement>("[data-sh-nav-link]", root);
+        const navBrand = root.querySelector<HTMLElement>("[data-sh-nav-brand]");
+        const navCta = root.querySelector<HTMLElement>("[data-sh-nav-cta]");
         const enters = gsap.utils.toArray<HTMLElement>("[data-sh-enter]", root);
+        const headline = root.querySelector<HTMLElement>("[data-sh-headline]");
+        const ctas = gsap.utils.toArray<HTMLElement>("[data-sh-cta]", root);
         const dash = root.querySelector<HTMLElement>("[data-sh-dash]");
 
-        gsap.set(bg, { autoAlpha: 0, scale: 1.05 });
+        gsap.set(bg, { autoAlpha: 0, scale: 1.06 });
         gsap.set(tint, { autoAlpha: 0 });
         gsap.set([blur, gradient], { autoAlpha: 0 });
-        gsap.set(nav, { autoAlpha: 0, y: 12 });
-        gsap.set(navItems, { autoAlpha: 0, y: 10 });
-        gsap.set(enters, { autoAlpha: 0, y: 18, filter: "blur(6px)" });
-        gsap.set(dash, { autoAlpha: 0, y: 36, scale: 0.98 });
+        gsap.set(nav, { autoAlpha: 0, y: -16, filter: "blur(6px)" });
+        gsap.set(navBrand, { autoAlpha: 0, x: -12 });
+        gsap.set(navLinks, { autoAlpha: 0, y: 8 });
+        gsap.set(navCta, { autoAlpha: 0, scale: 0.92, y: 6 });
+        gsap.set(enters, { autoAlpha: 0, y: 16, filter: "blur(4px)" });
+        gsap.set(headline, { clipPath: "inset(0 100% 0 0)", y: 20 });
+        gsap.set(ctas, { autoAlpha: 0, y: 14, scale: 0.96 });
+        gsap.set(dash, { autoAlpha: 0, y: 48, scale: 0.97, clipPath: "inset(18% 0 100% 0 round 15px)" });
 
         gsap
           .timeline({ defaults: { ease: "power3.out" } })
-          .to(bg, { autoAlpha: 1, scale: 1, duration: 1.2 }, 0)
-          .to(tint, { autoAlpha: 1, duration: 1.05 }, 0.08)
-          .to([blur, gradient], { autoAlpha: 1, duration: 0.85, stagger: 0.08 }, 0.12)
-          .to(nav, { autoAlpha: 1, y: 0, duration: 0.75 }, 0.1)
-          .to(navItems, { autoAlpha: 1, y: 0, duration: 0.65, stagger: 0.06 }, 0.18)
+          .to(bg, { autoAlpha: 1, scale: 1, duration: 1.25, ease: "expo.out" }, 0)
+          .to(tint, { autoAlpha: 1, duration: 1.1 }, 0.06)
+          .to([blur, gradient], { autoAlpha: 1, duration: 0.85, stagger: 0.07 }, 0.1)
+          .to(nav, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.82 }, 0.08)
+          .to(navBrand, { autoAlpha: 1, x: 0, duration: 0.62 }, 0.16)
+          .to(navLinks, { autoAlpha: 1, y: 0, duration: 0.48, stagger: 0.05, ease: "back.out(1.35)" }, 0.22)
+          .to(navCta, { autoAlpha: 1, scale: 1, y: 0, duration: 0.55, ease: "back.out(1.55)" }, 0.34)
+          .to(enters, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.72, stagger: 0.06 }, 0.3)
           .to(
-            enters,
-            { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.85, stagger: 0.08 },
-            0.28,
+            headline,
+            { clipPath: "inset(0 0% 0 0)", y: 0, duration: 1.05, ease: "power4.inOut" },
+            0.34,
           )
-          .to(dash, { autoAlpha: 1, y: 0, scale: 1, duration: 1.05 }, 0.52);
+          .to(
+            ctas,
+            { autoAlpha: 1, y: 0, scale: 1, duration: 0.58, stagger: 0.08, ease: "back.out(1.45)" },
+            0.52,
+          )
+          .to(
+            dash,
+            {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              clipPath: "inset(0% 0 0% 0 round 15px)",
+              duration: 1.1,
+              ease: "power4.inOut",
+            },
+            0.58,
+          )
+          .eventCallback("onComplete", () => {
+            gsap.set([headline, dash], { clearProps: "clipPath" });
+          });
       }, root);
 
       return () => ctx.revert();
@@ -191,7 +231,7 @@ export function SupportHero({ className }: { className?: string }) {
           data-compact={navCompact ? "true" : "false"}
         >
           <a
-            data-sh-nav-item
+            data-sh-nav-brand
             href="#top"
             className="shrink-0 px-2 text-[15px] font-semibold tracking-[-0.02em] text-white"
           >
@@ -202,7 +242,7 @@ export function SupportHero({ className }: { className?: string }) {
             {NAV_LINKS.map((label) => (
               <a
                 key={label}
-                data-sh-nav-item
+                data-sh-nav-link
                 href={`#${label.toLowerCase()}`}
                 className="support-link text-[13px] font-medium text-white/55 transition-colors"
               >
@@ -212,7 +252,7 @@ export function SupportHero({ className }: { className?: string }) {
           </div>
 
           <a
-            data-sh-nav-item
+            data-sh-nav-cta
             href="#start"
             className="support-btn inline-flex min-w-[84px] max-w-[480px] shrink-0 items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] px-5 py-2.5 text-[13px] font-semibold tracking-[-0.01em] text-white"
             style={{
@@ -242,7 +282,7 @@ export function SupportHero({ className }: { className?: string }) {
         </div>
 
         <h1
-          data-sh-enter
+          data-sh-headline
           className="mt-5 w-full max-w-[730px] text-[clamp(2.4rem,5.5vw,4.25rem)] font-medium capitalize leading-[1.03] tracking-[-0.06em] text-white [font-feature-settings:'dlig'_on] sm:text-[68px] sm:leading-[70px] sm:tracking-[-4.08px]"
         >
           The Intelligence Layer For Your Hardware
@@ -258,7 +298,7 @@ export function SupportHero({ className }: { className?: string }) {
 
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <a
-            data-sh-enter
+            data-sh-cta
             href="#install"
             className="support-btn inline-flex min-w-[84px] max-w-[480px] items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] px-5 py-2.5 text-[14px] font-semibold text-white"
             style={{
@@ -270,7 +310,7 @@ export function SupportHero({ className }: { className?: string }) {
             <ArrowUpRight className="size-3.5" />
           </a>
           <a
-            data-sh-enter
+            data-sh-cta
             href="#github"
             className="support-btn inline-flex min-w-[84px] max-w-[480px] items-center justify-center gap-2.5 rounded-[10px] border px-5 py-2.5 text-[14px] font-semibold text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12)] backdrop-blur-[15px]"
             style={{ borderColor: "rgba(214, 0, 191, 0.35)", backgroundColor: "rgba(214, 0, 191, 0.12)" }}
