@@ -1,0 +1,107 @@
+@import "./picdrop-themes.css";
+
+.picdrop-dashboard {
+  letter-spacing: -0.02em;
+}
+
+.picdrop-dashboard:not(.picdrop-dashboard--ready) [data-pd-animate] {
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.picdrop-dashboard .picdrop-search {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.picdrop-dashboard .picdrop-search:focus {
+  --tw-ring-color: color-mix(in srgb, var(--pd-accent) 30%, transparent);
+}
+
+.picdrop-dashboard .picdrop-storage-fill {
+  background: linear-gradient(90deg, var(--pd-accent-dark) 0%, var(--pd-accent) 52%, var(--pd-accent-light) 100%);
+}
+
+.picdrop-dashboard .picdrop-upgrade-btn {
+  background: linear-gradient(180deg, var(--pd-accent) 0%, var(--pd-accent-dark) 100%);
+  box-shadow:
+    0 2px 0 var(--pd-accent-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 0 20px var(--pd-accent-muted);
+}
+
+.picdrop-dashboard .picdrop-primary-btn {
+  background: linear-gradient(180deg, var(--pd-accent) 0%, var(--pd-accent-dark) 100%);
+  border-color: var(--pd-accent-dark);
+  box-shadow:
+    inset 0 2px 4px rgba(255, 255, 255, 0.18),
+    0 0 18px var(--pd-accent-muted);
+}
+
+.picdrop-dashboard .picdrop-check {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #fff;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 10px 10px;
+}
+
+.picdrop-dashboard .picdrop-check:checked {
+  background-color: #fff;
+  border-color: var(--pd-accent-border);
+}
+
+.picdrop-theme-pink .picdrop-check:checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2 6.2L4.8 9 10 3' stroke='%23FF4DA6' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.picdrop-theme-cyan .picdrop-check:checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2 6.2L4.8 9 10 3' stroke='%2306B6D4' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.picdrop-theme-lime .picdrop-check:checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2 6.2L4.8 9 10 3' stroke='%2384CC16' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.picdrop-dashboard .picdrop-sidebar-active {
+  background: var(--pd-accent-muted);
+  color: var(--pd-accent-dark);
+}
+
+.picdrop-dashboard .picdrop-accent-icon {
+  color: var(--pd-accent);
+}
+
+.picdrop-dashboard .picdrop-stat-icon {
+  border-color: var(--pd-accent-border);
+  color: var(--pd-accent);
+}
+
+.picdrop-dashboard .picdrop-status-sent {
+  background: var(--pd-accent-muted);
+  color: var(--pd-accent-dark);
+}
+
+.picdrop-dashboard .picdrop-tab-active {
+  background: var(--pd-accent-muted);
+  color: var(--pd-accent-dark);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .picdrop-dashboard .picdrop-upgrade-btn:hover,
+  .picdrop-dashboard .picdrop-primary-btn:hover {
+    filter: brightness(1.06) saturate(1.08);
+    box-shadow:
+      inset 0 2px 4px rgba(255, 255, 255, 0.22),
+      0 0 28px var(--pd-accent-glow);
+  }
+
+  .picdrop-dashboard .picdrop-link-accent:hover {
+    color: var(--pd-accent);
+  }
+}
