@@ -15,24 +15,6 @@ const SCREEN = {
 export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
   {
     ...SCREEN,
-    slug: "support-hero-skeleton",
-    title: "Support Hero Skeleton",
-    description:
-      "Loading skeleton for Support — reticle pink color-blend plate, glass nav bones, headline, CTAs, and dashboard mock placeholder.",
-    blurb: "Pink tint · glass nav bones · dashboard bone",
-    poster: "/screens/support-hero-skeleton/poster.png",
-  },
-  {
-    ...SCREEN,
-    slug: "support-hero",
-    title: "Support Hero",
-    description:
-      "Support product landing — reticle pink color-blend aurora, Geist type, floating glass nav that shrinks on scroll, GSAP entrance, dashboard mock.",
-    blurb: "Geist · pink blend · GSAP · dashboard mock",
-    poster: "/screens/support-hero/poster.png",
-  },
-  {
-    ...SCREEN,
     slug: "health-ai-skeleton",
     title: "Pulse Skeleton",
     description:
