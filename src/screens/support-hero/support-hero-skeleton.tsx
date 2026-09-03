@@ -9,6 +9,13 @@ import type { CSSProperties } from "react";
 import { useReducedMotion } from "@/components/motion/use-reduced-motion";
 import { cn } from "@/lib/utils";
 
+import {
+  addSupportTintEntranceToTimeline,
+  createSupportTintLoop,
+  initSupportTintEntrance,
+  querySupportTints,
+  setSupportTintsStatic,
+} from "./tint-motion";
 import "./support-hero-skeleton.css";
 
 function Bone({
@@ -49,7 +56,9 @@ export function SupportHeroSkeleton({ className }: { className?: string }) {
         gsap.set(
           [
             ".sh-skel-bg-art",
-            ".sh-skel-bg-tint",
+            "[data-sh-tint-pink]",
+            "[data-sh-tint-cyan]",
+            "[data-sh-tint-lime]",
             ".sh-skel-bg-blur",
             ".sh-skel-bg-fade",
             ".sh-skel-nav",
@@ -72,13 +81,17 @@ export function SupportHeroSkeleton({ className }: { className?: string }) {
             clearProps: "transform,filter,clipPath",
           },
         );
+        const tints = querySupportTints(root);
+        if (tints) setSupportTintsStatic(tints);
         setReady(true);
         return;
       }
 
-      const ctx = gsap.context(() => {
+      const ctx = gsap.context((context) => {
+        const tints = querySupportTints(root);
+
         gsap.set(".sh-skel-bg-art", { autoAlpha: 0, scale: 1.06 });
-        gsap.set(".sh-skel-bg-tint", { autoAlpha: 0 });
+        if (tints) initSupportTintEntrance(tints);
         gsap.set([".sh-skel-bg-blur", ".sh-skel-bg-fade"], { autoAlpha: 0 });
         gsap.set(".sh-skel-nav", { autoAlpha: 0, y: -16, filter: "blur(6px)" });
         gsap.set(".sh-skel-brand", { autoAlpha: 0, x: -12 });
@@ -95,11 +108,11 @@ export function SupportHeroSkeleton({ className }: { className?: string }) {
           clipPath: "inset(18% 0 100% 0 round 15px)",
         });
 
-        gsap
-          .timeline({ defaults: { ease: "power3.out" } })
-          .to(".sh-skel-bg-art", { autoAlpha: 1, scale: 1, duration: 1.25, ease: "expo.out" }, 0)
-          .to(".sh-skel-bg-tint", { autoAlpha: 1, duration: 1.1 }, 0.06)
-          .to([".sh-skel-bg-blur", ".sh-skel-bg-fade"], { autoAlpha: 1, duration: 0.85, stagger: 0.07 }, 0.1)
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+        tl.to(".sh-skel-bg-art", { autoAlpha: 1, scale: 1, duration: 1.25, ease: "expo.out" }, 0);
+        if (tints) addSupportTintEntranceToTimeline(tl, tints, 0.06);
+        tl.to([".sh-skel-bg-blur", ".sh-skel-bg-fade"], { autoAlpha: 1, duration: 0.85, stagger: 0.07 }, 0.1)
           .to(".sh-skel-nav", { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.82 }, 0.08)
           .to(".sh-skel-brand", { autoAlpha: 1, x: 0, duration: 0.62 }, 0.16)
           .to(
@@ -142,6 +155,7 @@ export function SupportHeroSkeleton({ className }: { className?: string }) {
           )
           .eventCallback("onComplete", () => {
             gsap.set([".sh-skel-headline .sh-skel-bone", ".sh-skel-dash"], { clearProps: "clipPath" });
+            if (tints) context.add(() => createSupportTintLoop(tints));
             setReady(true);
           });
       }, root);
@@ -166,7 +180,18 @@ export function SupportHeroSkeleton({ className }: { className?: string }) {
       <div className="sh-skel-root min-h-dvh">
         <div className="sh-skel-bg" aria-hidden>
           <div className="sh-skel-bg-art" />
-          <div className="sh-skel-bg-tint" />
+          <div
+            data-sh-tint-pink
+            className="sh-skel-bg-tint sh-skel-bg-tint-pink absolute inset-0"
+          />
+          <div
+            data-sh-tint-cyan
+            className="sh-skel-bg-tint sh-skel-bg-tint-cyan absolute inset-0"
+          />
+          <div
+            data-sh-tint-lime
+            className="sh-skel-bg-tint sh-skel-bg-tint-lime absolute inset-0"
+          />
           <div className="sh-skel-bg-blur" />
           <div className="sh-skel-bg-fade" />
         </div>

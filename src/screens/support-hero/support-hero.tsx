@@ -8,6 +8,15 @@ import { GeistSans } from "geist/font/sans";
 import { useReducedMotion } from "@/components/motion/use-reduced-motion";
 import { cn } from "@/lib/utils";
 
+import { SUPPORT_HERO_TINTS } from "./accents";
+import {
+  addSupportTintEntranceToTimeline,
+  createSupportTintLoop,
+  initSupportTintEntrance,
+  querySupportTints,
+  setSupportTintsStatic,
+} from "./tint-motion";
+
 const HERO_BG =
   "https://aruyghvpjdiiuiesaupw.supabase.co/storage/v1/object/public/support-hero/support%20bg.png";
 const DASHBOARD_UI =
@@ -15,7 +24,7 @@ const DASHBOARD_UI =
 
 const NAV_LINKS = ["Home", "Docs", "Pricing", "About", "GitHub"] as const;
 
-const RETICLE_MAGENTA = "#D600BF";
+const RETICLE_MAGENTA = SUPPORT_HERO_TINTS.pink;
 
 function readScrollY(node: HTMLElement | null, eventTarget?: EventTarget | null) {
   let y = window.scrollY || document.documentElement.scrollTop || 0;
@@ -99,7 +108,9 @@ export function SupportHero({ className }: { className?: string }) {
         gsap.set(
           [
             "[data-sh-bg]",
-            "[data-sh-tint]",
+            "[data-sh-tint-pink]",
+            "[data-sh-tint-cyan]",
+            "[data-sh-tint-lime]",
             "[data-sh-blur]",
             "[data-sh-gradient]",
             "[data-sh-nav]",
@@ -119,12 +130,14 @@ export function SupportHero({ className }: { className?: string }) {
             clearProps: "transform,filter,clipPath",
           },
         );
+        const tints = querySupportTints(root);
+        if (tints) setSupportTintsStatic(tints);
         return;
       }
 
-      const ctx = gsap.context(() => {
+      const ctx = gsap.context((context) => {
         const bg = root.querySelector<HTMLElement>("[data-sh-bg]");
-        const tint = root.querySelector<HTMLElement>("[data-sh-tint]");
+        const tints = querySupportTints(root);
         const blur = root.querySelector<HTMLElement>("[data-sh-blur]");
         const gradient = root.querySelector<HTMLElement>("[data-sh-gradient]");
         const nav = root.querySelector<HTMLElement>("[data-sh-nav]");
@@ -137,7 +150,7 @@ export function SupportHero({ className }: { className?: string }) {
         const dash = root.querySelector<HTMLElement>("[data-sh-dash]");
 
         gsap.set(bg, { autoAlpha: 0, scale: 1.06 });
-        gsap.set(tint, { autoAlpha: 0 });
+        if (tints) initSupportTintEntrance(tints);
         gsap.set([blur, gradient], { autoAlpha: 0 });
         gsap.set(nav, { autoAlpha: 0, y: -16, filter: "blur(6px)" });
         gsap.set(navBrand, { autoAlpha: 0, x: -12 });
@@ -148,11 +161,11 @@ export function SupportHero({ className }: { className?: string }) {
         gsap.set(ctas, { autoAlpha: 0, y: 14, scale: 0.96 });
         gsap.set(dash, { autoAlpha: 0, y: 48, scale: 0.97, clipPath: "inset(18% 0 100% 0 round 15px)" });
 
-        gsap
-          .timeline({ defaults: { ease: "power3.out" } })
-          .to(bg, { autoAlpha: 1, scale: 1, duration: 1.25, ease: "expo.out" }, 0)
-          .to(tint, { autoAlpha: 1, duration: 1.1 }, 0.06)
-          .to([blur, gradient], { autoAlpha: 1, duration: 0.85, stagger: 0.07 }, 0.1)
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+        tl.to(bg, { autoAlpha: 1, scale: 1, duration: 1.25, ease: "expo.out" }, 0);
+        if (tints) addSupportTintEntranceToTimeline(tl, tints, 0.06);
+        tl.to([blur, gradient], { autoAlpha: 1, duration: 0.85, stagger: 0.07 }, 0.1)
           .to(nav, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.82 }, 0.08)
           .to(navBrand, { autoAlpha: 1, x: 0, duration: 0.62 }, 0.16)
           .to(navLinks, { autoAlpha: 1, y: 0, duration: 0.48, stagger: 0.05, ease: "back.out(1.35)" }, 0.22)
@@ -182,6 +195,7 @@ export function SupportHero({ className }: { className?: string }) {
           )
           .eventCallback("onComplete", () => {
             gsap.set([headline, dash], { clearProps: "clipPath" });
+            if (tints) context.add(() => createSupportTintLoop(tints));
           });
       }, root);
 
@@ -209,9 +223,19 @@ export function SupportHero({ className }: { className?: string }) {
           className="absolute inset-0 h-full w-full object-cover object-center"
         />
         <div
-          data-sh-tint
+          data-sh-tint-pink
           className="absolute inset-0"
-          style={{ background: RETICLE_MAGENTA, mixBlendMode: "color" }}
+          style={{ background: SUPPORT_HERO_TINTS.pink, mixBlendMode: "color" }}
+        />
+        <div
+          data-sh-tint-cyan
+          className="absolute inset-0"
+          style={{ background: SUPPORT_HERO_TINTS.cyan, mixBlendMode: "color" }}
+        />
+        <div
+          data-sh-tint-lime
+          className="absolute inset-0"
+          style={{ background: SUPPORT_HERO_TINTS.lime, mixBlendMode: "color" }}
         />
         <div data-sh-blur className="absolute inset-0 backdrop-blur-[5px]" />
         <div

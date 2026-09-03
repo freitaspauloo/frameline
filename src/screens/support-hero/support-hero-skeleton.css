@@ -18,6 +18,16 @@
   border-color: rgba(214, 0, 191, 0.35);
 }
 
+.fl-support-skeleton .sh-skel-bone--cyan {
+  --bone: rgba(0, 200, 255, 0.2);
+  border-color: rgba(0, 200, 255, 0.32);
+}
+
+.fl-support-skeleton .sh-skel-bone--lime {
+  --bone: rgba(132, 204, 22, 0.2);
+  border-color: rgba(132, 204, 22, 0.32);
+}
+
 .fl-support-skeleton .sh-skel-bone--block {
   width: 100%;
 }
@@ -95,11 +105,20 @@
 }
 
 .fl-support-skeleton .sh-skel-bg-tint {
-  position: absolute;
-  inset: 0;
-  background: #d600bf;
   mix-blend-mode: color;
-  opacity: 1;
+  pointer-events: none;
+}
+
+.fl-support-skeleton .sh-skel-bg-tint-pink {
+  background: #d600bf;
+}
+
+.fl-support-skeleton .sh-skel-bg-tint-cyan {
+  background: #00c8ff;
+}
+
+.fl-support-skeleton .sh-skel-bg-tint-lime {
+  background: #84cc16;
 }
 
 .fl-support-skeleton .sh-skel-bg-blur {
