@@ -28,6 +28,13 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        source: "/dev/athera-hero/:path*",
+        headers: [
+          { key: "Cache-Control", value: "no-store, no-cache, must-revalidate" },
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
+      },
+      {
         source: "/dev/support-hero/:path*",
         headers: [
           { key: "Cache-Control", value: "no-store, no-cache, must-revalidate" },

@@ -1,0 +1,169 @@
+/* Shared accent tokens — overridden per data-theme */
+.athera-hero {
+  font-family: var(--font-sans, "Geist", system-ui, sans-serif);
+  letter-spacing: -0.02em;
+  -webkit-font-smoothing: antialiased;
+  --sh-accent-rgb: 255, 77, 166;
+  --sh-reticle: #ff4da6;
+  --sh-reticle-dark: #a8006b;
+  --sh-reticle-light: #ffb3d9;
+  --sh-reticle-muted: #ff4da61f;
+  --sh-reticle-border: #ff4da638;
+  --sh-reticle-glow: #ff4da659;
+  --sh-reticle-tint: #d600bf;
+}
+
+.athera-hero[data-theme="cyan"] {
+  --sh-accent-rgb: 34, 211, 238;
+  --sh-reticle: #22d3ee;
+  --sh-reticle-dark: #0891b2;
+  --sh-reticle-light: #a5f3fc;
+  --sh-reticle-muted: #22d3ee1f;
+  --sh-reticle-border: #22d3ee38;
+  --sh-reticle-glow: #22d3ee59;
+  --sh-reticle-tint: #06b6d4;
+}
+
+.athera-hero[data-theme="lime"] {
+  --sh-accent-rgb: 163, 230, 53;
+  --sh-reticle: #a3e635;
+  --sh-reticle-dark: #65a30d;
+  --sh-reticle-light: #d9f99d;
+  --sh-reticle-muted: #a3e6351f;
+  --sh-reticle-border: #a3e63538;
+  --sh-reticle-glow: #a3e63559;
+  --sh-reticle-tint: #84cc16;
+}
+
+[data-hero-preloader-ring] {
+  border-color: rgba(var(--sh-accent-rgb), 0.2);
+  border-top-color: var(--sh-reticle);
+  will-change: transform;
+}
+
+[data-hero-preloader-dot] {
+  background-color: var(--sh-reticle);
+  box-shadow: 0 0 24px rgba(var(--sh-accent-rgb), 0.55);
+}
+
+.athera-hero--ready [data-hero-preloader],
+.athera-skeleton--ready [data-hero-preloader] {
+  display: none;
+}
+
+.athera-accent-blend-stack {
+  pointer-events: none;
+  isolation: isolate;
+}
+
+.athera-accent-blend-stack .athera-accent-wash {
+  position: absolute;
+  inset: 0;
+  background: rgba(var(--sh-accent-rgb), 0.18);
+  mix-blend-mode: soft-light;
+}
+
+.athera-accent-blend-stack .athera-accent-blend {
+  position: absolute;
+  inset: 0;
+  background: var(--sh-reticle-tint);
+  mix-blend-mode: color;
+  opacity: 0.78;
+}
+
+.athera-accent-blend-stack .athera-accent-blur {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(3px);
+}
+
+.athera-accent-glow {
+  background: radial-gradient(
+    ellipse 70% 55% at 50% 45%,
+    rgba(var(--sh-accent-rgb), 0.28) 0%,
+    rgba(var(--sh-accent-rgb), 0.06) 50%,
+    transparent 75%
+  );
+  pointer-events: none;
+}
+
+.athera-border-accent {
+  border-color: var(--sh-reticle-border);
+}
+
+.athera-bg-accent-muted {
+  background-color: var(--sh-reticle-muted);
+}
+
+.athera-text-accent {
+  color: var(--sh-reticle);
+}
+
+.athera-text-accent-dark {
+  color: var(--sh-reticle-dark);
+}
+
+.athera-link-accent:hover {
+  color: var(--sh-reticle);
+}
+
+.athera-btn-primary {
+  border-color: color-mix(in srgb, var(--sh-reticle-light) 50%, transparent);
+  background: linear-gradient(180deg, var(--sh-reticle) 0%, var(--sh-reticle-dark) 100%);
+  box-shadow: 0 4px 20px var(--sh-reticle-glow);
+}
+
+.athera-btn-ghost {
+  border-color: var(--sh-reticle-border);
+  background-color: var(--sh-reticle-muted);
+  color: var(--sh-reticle-dark);
+}
+
+.athera-btn-ghost:hover {
+  background-color: color-mix(in srgb, var(--sh-reticle-muted) 80%, var(--sh-reticle) 20%);
+}
+
+.athera-ring-accent {
+  --tw-ring-color: var(--sh-reticle-border);
+}
+
+.athera-skel-bone {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  min-height: 4px;
+}
+
+.athera-skel-bone--solid {
+  background: rgba(0, 0, 0, 0.18);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.athera-skel-bone--accent {
+  background: rgba(var(--sh-accent-rgb), 0.25);
+  border-color: rgba(var(--sh-accent-rgb), 0.4);
+}
+
+.athera-skel-shimmer {
+  position: absolute;
+  inset: 0;
+  width: 45%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 42%,
+    rgba(var(--sh-accent-rgb), 0.5) 50%,
+    rgba(255, 255, 255, 0.55) 58%,
+    transparent 100%
+  );
+  pointer-events: none;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .athera-skel-shimmer {
+    opacity: 0.35;
+  }
+}

@@ -68,6 +68,7 @@ export function runPicdropDashboardMotion(root: HTMLElement) {
     onComplete: () => root.classList.add("picdrop-dashboard--ready"),
   })
 
+  // Phase 1 — sidebar shell + brand
   tl.to(sidebar, { autoAlpha: 1, x: 0, duration: 0.95 }, 0)
   if (brand) {
     tl.to(brand, { autoAlpha: 1, x: 0, duration: 0.7 }, 0.08)
@@ -79,20 +80,28 @@ export function runPicdropDashboardMotion(root: HTMLElement) {
     tl.to(storageFill, { scaleX: 1, duration: 1.2, ease: "power1.inOut" }, 0.32)
   }
 
+  // Phase 2 — main header + welcome
   tl.to(enters, { autoAlpha: 1, y: 0, duration: 0.95, stagger: { each: 0.14 } }, 0.2)
+
+  // Phase 3 — stats row
   tl.to(stats, { autoAlpha: 1, y: 0, duration: 0.9, stagger: { each: 0.08 } }, 0.42)
+
+  // Phase 4 — galleries
   tl.to(galleries, { autoAlpha: 1, y: 0, duration: 0.95, stagger: { each: 0.1 } }, 0.56)
 
+  // Phase 5 — feedback column
   if (feedbackPanel) {
     tl.to(feedbackPanel, { autoAlpha: 1, y: 0, duration: 0.9 }, 0.62)
   }
   tl.to(feedbackItems, { autoAlpha: 1, y: 0, duration: 0.75, stagger: { each: 0.045 } }, 0.7)
 
+  // Phase 6 — table block
   if (tableSection) {
     tl.to(tableSection, { autoAlpha: 1, y: 0, duration: 0.95 }, 0.76)
   }
   tl.to(rows, { autoAlpha: 1, y: 0, duration: 0.7, stagger: { each: 0.04 } }, 0.86)
 
+  // Accent pulse on CTAs + active nav icon
   tl.fromTo(
     root.querySelectorAll<HTMLElement>(".picdrop-accent-icon, .picdrop-primary-btn, .picdrop-upgrade-btn"),
     { scale: 1 },
@@ -139,6 +148,7 @@ export function runPicdropDashboardSkeletonMotion(root: HTMLElement) {
     .to(sections, { autoAlpha: 1, y: 0, duration: 0.9, stagger: { each: 0.16 } }, 0.24)
     .to(tableRows, { autoAlpha: 1, y: 0, duration: 0.7, stagger: { each: 0.035 } }, 0.42)
 
+  // Shimmer + accent pulse on key bones after entrance
   tl.call(() => {
     root.querySelectorAll<HTMLElement>(".pd-skel-bone--accent").forEach((bone, index) => {
       gsap.fromTo(

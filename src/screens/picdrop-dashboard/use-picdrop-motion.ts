@@ -28,7 +28,7 @@ function mountMotion(
 
   let ctx: gsap.Context | undefined
   let cancelled = false
-  let fallback: ReturnType<typeof window.setTimeout> | undefined
+  let fallback: number | undefined
 
   const clearFallback = () => {
     if (fallback !== undefined) {
@@ -50,6 +50,7 @@ function mountMotion(
     }
   }
 
+  // Double rAF so layout is settled before GSAP sets initial states
   const frame = requestAnimationFrame(() => {
     requestAnimationFrame(start)
   })

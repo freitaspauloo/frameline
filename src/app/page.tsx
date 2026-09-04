@@ -1,6 +1,13 @@
-import { SupportHero } from "@/screens/support-hero";
+import { FramelineHomePageV2 } from "@/components/frameline-home-page-v2";
+import { getResolvedCatalog, getResolvedScreens } from "@/lib/demo-catalog";
 
-/** Production homepage — Support product hero. */
-export default function Home() {
-  return <SupportHero />;
+export const dynamic = "force-dynamic";
+
+/** Production homepage — Phase-03 landing (formerly /v2). */
+export default async function Home() {
+  const [catalog, screens] = await Promise.all([
+    getResolvedCatalog(),
+    getResolvedScreens(),
+  ]);
+  return <FramelineHomePageV2 catalog={catalog} screens={screens} />;
 }

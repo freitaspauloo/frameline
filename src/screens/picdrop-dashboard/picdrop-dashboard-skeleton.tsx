@@ -57,7 +57,7 @@ export default function PicdropDashboardSkeleton({
         className,
       )}
       aria-busy="true"
-      aria-label="Loading Frameline dashboard"
+      aria-label="Loading Picdrop dashboard"
     >
       <aside
         data-pd-skel-sidebar
