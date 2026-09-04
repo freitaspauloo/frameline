@@ -3,7 +3,6 @@
 import type { ComponentType, ReactNode } from "react"
 import { GeistSans } from "geist/font/sans"
 import {
-  Aperture,
   CheckSquare,
   ChevronDown,
   Download,
@@ -21,6 +20,7 @@ import { MdOutlineExplore, MdStorage } from "react-icons/md"
 import type { IconType } from "react-icons"
 import { cn } from "@/lib/utils"
 import { CollectionFolderPreview } from "./background-collection-folder"
+import { FramelineBrand } from "./frameline-brand"
 import type { PicdropTheme } from "./themes"
 import { usePicdropDashboardMotion } from "./use-picdrop-motion"
 import "./picdrop-dashboard.css"
@@ -191,16 +191,12 @@ export default function PicdropDashboard({ className, theme = "pink" }: PicdropD
       {/* Fixed sidebar */}
       <aside
         data-pd-sidebar
-        data-pd-animate
         className="fixed inset-y-0 left-0 z-30 flex w-[260px] flex-col border-r border-[#ebebeb] bg-white"
         style={{ width: SIDEBAR_WIDTH }}
       >
         <div className="shrink-0 px-4 pb-3 pt-5">
           <div className="flex items-center justify-between px-1">
-            <div className="flex items-center gap-2">
-              <Aperture className="picdrop-accent-icon size-[18px]" strokeWidth={2.2} />
-              <span className="text-[15px] font-semibold tracking-[-0.03em] text-zinc-900">picdrop</span>
-            </div>
+            <FramelineBrand />
             <button
               type="button"
               className="rounded-md p-1 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-600"

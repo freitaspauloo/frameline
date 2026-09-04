@@ -9,9 +9,16 @@ import {
 } from "./picdrop-dashboard-motion"
 import type { PicdropTheme } from "./themes"
 
+function revealWithoutMotion(root: HTMLElement, readyClass: string) {
+  root.classList.add(readyClass)
+  root.querySelectorAll(".pd-skel-bone").forEach((bone) => {
+    bone.classList.add("pd-skel-bone--live")
+  })
+}
+
 function mountMotion(
   root: HTMLElement,
-  run: (root: HTMLElement) => void,
+  run: (root: HTMLElement) => gsap.core.Timeline | void,
   readyClass: string,
 ) {
   root.classList.remove(readyClass)
@@ -20,11 +27,43 @@ function mountMotion(
   })
 
   let ctx: gsap.Context | undefined
+  let cancelled = false
+  let fallback: ReturnType<typeof window.setTimeout> | undefined
+
+  const clearFallback = () => {
+    if (fallback !== undefined) {
+      window.clearTimeout(fallback)
+      fallback = undefined
+    }
+  }
+
+  const start = () => {
+    if (cancelled) return
+    try {
+      ctx = gsap.context(() => {
+        const timeline = run(root)
+        timeline?.eventCallback("onComplete", clearFallback)
+      }, root)
+    } catch {
+      clearFallback()
+      revealWithoutMotion(root, readyClass)
+    }
+  }
+
   const frame = requestAnimationFrame(() => {
-    ctx = gsap.context(() => run(root), root)
+    requestAnimationFrame(start)
   })
 
+  fallback = window.setTimeout(() => {
+    if (!root.classList.contains(readyClass)) {
+      ctx?.revert()
+      revealWithoutMotion(root, readyClass)
+    }
+  }, 4000)
+
   return () => {
+    cancelled = true
+    clearFallback()
     cancelAnimationFrame(frame)
     ctx?.revert()
     root.classList.remove(readyClass)

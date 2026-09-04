@@ -1,12 +1,11 @@
 "use client"
 
-// @preview-module picdrop-dashboard-skeleton
-
 import { type ComponentPropsWithoutRef, type CSSProperties } from "react"
 import { GeistSans } from "geist/font/sans"
 
 import { cn } from "@/lib/utils"
 import type { PicdropTheme } from "./themes"
+import { FramelineBrand } from "./frameline-brand"
 import { usePicdropSkeletonMotion } from "./use-picdrop-motion"
 import "./picdrop-dashboard-skeleton.css"
 
@@ -58,7 +57,7 @@ export default function PicdropDashboardSkeleton({
         className,
       )}
       aria-busy="true"
-      aria-label="Loading Picdrop dashboard"
+      aria-label="Loading Frameline dashboard"
     >
       <aside
         data-pd-skel-sidebar
@@ -68,7 +67,7 @@ export default function PicdropDashboardSkeleton({
       >
         <div className="shrink-0 px-4 pb-3 pt-5">
           <div className="flex items-center justify-between px-1">
-            <Bone data-pd-skel-bone className="h-5 w-24 rounded-md" delay={0} accent />
+            <FramelineBrand />
             <Bone data-pd-skel-bone className="size-6 rounded-md" delay={40} />
           </div>
           <Bone data-pd-skel-bone className="mt-4 h-9 w-full rounded-full" delay={80} />

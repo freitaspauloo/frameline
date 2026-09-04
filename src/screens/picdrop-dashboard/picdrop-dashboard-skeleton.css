@@ -4,7 +4,6 @@
   letter-spacing: -0.02em;
 }
 
-.picdrop-skeleton:not(.picdrop-skeleton--ready) [data-pd-skel-sidebar],
 .picdrop-skeleton:not(.picdrop-skeleton--ready) [data-pd-skel-section],
 .picdrop-skeleton:not(.picdrop-skeleton--ready) [data-pd-skel-row],
 .picdrop-skeleton:not(.picdrop-skeleton--ready) [data-pd-skel-bone] {
