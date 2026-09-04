@@ -1,0 +1,35 @@
+/* ── Pink (default) ── */
+.picdrop-theme-pink {
+  --pd-accent: #ff4da6;
+  --pd-accent-dark: #a8006b;
+  --pd-accent-light: #ffb3d9;
+  --pd-accent-muted: rgba(255, 77, 166, 0.12);
+  --pd-accent-border: rgba(255, 77, 166, 0.22);
+  --pd-accent-glow: rgba(255, 77, 166, 0.35);
+  --pd-accent-shadow: #7a0050;
+  --pd-check-stroke: %23FF4DA6;
+}
+
+/* ── Cyan Blue ── */
+.picdrop-theme-cyan {
+  --pd-accent: #06b6d4;
+  --pd-accent-dark: #0e7490;
+  --pd-accent-light: #a5f3fc;
+  --pd-accent-muted: rgba(6, 182, 212, 0.12);
+  --pd-accent-border: rgba(6, 182, 212, 0.24);
+  --pd-accent-glow: rgba(6, 182, 212, 0.38);
+  --pd-accent-shadow: #155e75;
+  --pd-check-stroke: %2306B6D4;
+}
+
+/* ── Lime Green ── */
+.picdrop-theme-lime {
+  --pd-accent: #84cc16;
+  --pd-accent-dark: #4d7c0f;
+  --pd-accent-light: #d9f99d;
+  --pd-accent-muted: rgba(132, 204, 22, 0.14);
+  --pd-accent-border: rgba(132, 204, 22, 0.26);
+  --pd-accent-glow: rgba(132, 204, 22, 0.36);
+  --pd-accent-shadow: #3f6212;
+  --pd-check-stroke: %2384CC16;
+}

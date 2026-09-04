@@ -1,14 +1,51 @@
-/** Reticle pink — default Support hero tint (miracle-login magenta / mexin). */
-export const SUPPORT_TINT_PINK = "#D600BF";
+export type SupportHeroTheme = "pink" | "lime" | "cyan";
 
-/** Cyan — miracle-login-cyan accent. */
-export const SUPPORT_TINT_CYAN = "#00C8FF";
+export type SupportHeroAccent = {
+  id: SupportHeroTheme;
+  label: string;
+  swatch: string;
+  tint: string;
+  accent: string;
+  accentRgb: string;
+  ink: string;
+};
 
-/** Lime — forgeai-lime / health-ai accent. */
-export const SUPPORT_TINT_LIME = "#84CC16";
+export const SUPPORT_HERO_PINK: SupportHeroAccent = {
+  id: "pink",
+  label: "Reticle Pink",
+  swatch: "#D600BF",
+  tint: "#D600BF",
+  accent: "#D600BF",
+  accentRgb: "214, 0, 191",
+  ink: "#10121c",
+};
 
-export const SUPPORT_HERO_TINTS = {
-  pink: SUPPORT_TINT_PINK,
-  cyan: SUPPORT_TINT_CYAN,
-  lime: SUPPORT_TINT_LIME,
-} as const;
+export const SUPPORT_HERO_LIME: SupportHeroAccent = {
+  id: "lime",
+  label: "Lime Green",
+  swatch: "#84CC16",
+  tint: "#84CC16",
+  accent: "#A3E635",
+  accentRgb: "163, 230, 53",
+  ink: "#10121c",
+};
+
+export const SUPPORT_HERO_CYAN: SupportHeroAccent = {
+  id: "cyan",
+  label: "Cyan Blue",
+  swatch: "#06B6D4",
+  tint: "#06B6D4",
+  accent: "#22D3EE",
+  accentRgb: "6, 182, 212",
+  ink: "#10121c",
+};
+
+export const SUPPORT_HERO_ACCENTS: Record<SupportHeroTheme, SupportHeroAccent> = {
+  pink: SUPPORT_HERO_PINK,
+  lime: SUPPORT_HERO_LIME,
+  cyan: SUPPORT_HERO_CYAN,
+};
+
+export function getSupportHeroAccent(theme: SupportHeroTheme = "pink") {
+  return SUPPORT_HERO_ACCENTS[theme];
+}

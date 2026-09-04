@@ -1,0 +1,67 @@
+@import "./picdrop-themes.css";
+
+.picdrop-skeleton {
+  letter-spacing: -0.02em;
+}
+
+.picdrop-skeleton:not(.picdrop-skeleton--ready) [data-pd-skel-section],
+.picdrop-skeleton:not(.picdrop-skeleton--ready) [data-pd-skel-row],
+.picdrop-skeleton:not(.picdrop-skeleton--ready) [data-pd-skel-bone] {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.picdrop-skeleton .pd-skel-bone {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.picdrop-skeleton .pd-skel-bone--solid {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.07);
+}
+
+.picdrop-skeleton .pd-skel-bone--accent {
+  background: var(--pd-accent-muted);
+  border-color: var(--pd-accent-border);
+}
+
+.picdrop-skeleton .pd-skel-bone::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  translate: -100% 0;
+  opacity: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 22%,
+    rgba(255, 255, 255, 0.55) 44%,
+    var(--pd-accent-muted) 50%,
+    rgba(255, 255, 255, 0.55) 56%,
+    transparent 78%
+  );
+}
+
+.picdrop-skeleton .pd-skel-bone--live::after {
+  opacity: 1;
+  animation: pd-skel-sweep 2.2s ease-in-out infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes pd-skel-sweep {
+  0% {
+    translate: -100% 0;
+  }
+  100% {
+    translate: 100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .picdrop-skeleton .pd-skel-bone::after {
+    animation: none;
+  }
+}

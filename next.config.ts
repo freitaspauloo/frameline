@@ -18,6 +18,24 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["127.0.0.1", "localhost", ...extraDevOrigins],
   // Keep Admin SDK / Prisma out of the Turbopack server graph.
   serverExternalPackages: ["firebase-admin", "@prisma/client", "prisma"],
+  async headers() {
+    return [
+      {
+        source: "/dev/picdrop-dashboard/:path*",
+        headers: [
+          { key: "Cache-Control", value: "no-store, no-cache, must-revalidate" },
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
+      },
+      {
+        source: "/dev/support-hero/:path*",
+        headers: [
+          { key: "Cache-Control", value: "no-store, no-cache, must-revalidate" },
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       {

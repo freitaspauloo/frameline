@@ -1,22 +1,24 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Inter } from "next/font/google";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { GeistSans } from "geist/font/sans";
 
+import { useReducedMotion } from "@/components/motion/use-reduced-motion";
+import { LogoMark } from "@/components/relay-ui";
 import { cn } from "@/lib/utils";
 
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
+import { getSupportHeroAccent, type SupportHeroTheme } from "./accents";
+import { SUPPORT_HERO_ASSETS } from "./constants";
+import "./support-hero.css";
+import "./support-themes.css";
 
-const HERO_BG =
-  "https://aruyghvpjdiiuiesaupw.supabase.co/storage/v1/object/public/support-hero/support%20bg.png";
-const DASHBOARD_UI =
-  "https://aruyghvpjdiiuiesaupw.supabase.co/storage/v1/object/public/support-hero/support_dashbaord_ui.png";
+const HERO_BG = SUPPORT_HERO_ASSETS.heroBg;
+const DASHBOARD_UI = SUPPORT_HERO_ASSETS.dashboardUi;
 
 const NAV_LINKS = ["Home", "Docs", "Pricing", "About", "GitHub"] as const;
+const RETICLE_VOID = "#010003";
 
 function readScrollY(node: HTMLElement | null, eventTarget?: EventTarget | null) {
   let y = window.scrollY || document.documentElement.scrollTop || 0;
@@ -31,22 +33,39 @@ function readScrollY(node: HTMLElement | null, eventTarget?: EventTarget | null)
   return y;
 }
 
-const NAV_LINK_DELAYS = ["support-d2", "support-d3", "support-d3", "support-d4", "support-d4"] as const;
+/**
+ * Support product hero — dark canvas, color-blend aurora, floating glass nav, dashboard mock.
+ * Dev preview: `/dev/support-hero` (+ lime / cyan variants)
+ */
+export type SupportHeroProps = {
+  className?: string;
+  embed?: boolean;
+  theme?: SupportHeroTheme;
+};
 
-/** Support product hero — dark canvas, teal aurora bg, floating glass nav, dashboard mock. */
-export function SupportHero({ className }: { className?: string }) {
-  const sectionRef = useRef<HTMLElement>(null);
+export function SupportHero({ className, embed = false, theme = "pink" }: SupportHeroProps) {
+  const accent = getSupportHeroAccent(theme);
+  const rootRef = useRef<HTMLElement>(null);
   const lastScrollY = useRef(0);
+  const reduced = useReducedMotion();
   const [navCompact, setNavCompact] = useState(false);
-  const [motionReady, setMotionReady] = useState(false);
+  const [artReady, setArtReady] = useState(false);
 
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => setMotionReady(true));
-    return () => cancelAnimationFrame(frame);
+  const handleArtLoad = useCallback(() => {
+    setArtReady(true);
   }, []);
 
   useEffect(() => {
-    const root = sectionRef.current;
+    if (reduced) {
+      setArtReady(true);
+      return;
+    }
+    const fallback = window.setTimeout(() => setArtReady(true), 700);
+    return () => window.clearTimeout(fallback);
+  }, [reduced]);
+
+  useEffect(() => {
+    const root = rootRef.current;
     if (!root) return;
 
     lastScrollY.current = readScrollY(root);
@@ -84,143 +103,150 @@ export function SupportHero({ className }: { className?: string }) {
     };
   }, []);
 
+  useGSAP(
+    () => {
+      const root = rootRef.current;
+      if (!root || !artReady) return;
+
+      const targets = [
+        "[data-sh-bg]",
+        "[data-sh-tint]",
+        "[data-sh-blur]",
+        "[data-sh-vignette]",
+        "[data-sh-nav]",
+        "[data-sh-brand]",
+        "[data-sh-nav-link]",
+        "[data-sh-nav-cta]",
+        "[data-sh-badge]",
+        "[data-sh-headline]",
+        "[data-sh-copy]",
+        "[data-sh-cta]",
+        "[data-sh-dash]",
+      ];
+
+      if (reduced) {
+        gsap.set(targets, { autoAlpha: 1, y: 0, scale: 1, clearProps: "transform,filter" });
+        return;
+      }
+
+      const ctx = gsap.context(() => {
+        const bg = root.querySelector<HTMLElement>("[data-sh-bg]");
+        const tint = root.querySelector<HTMLElement>("[data-sh-tint]");
+        const blur = root.querySelector<HTMLElement>("[data-sh-blur]");
+        const vignette = root.querySelector<HTMLElement>("[data-sh-vignette]");
+        const nav = root.querySelector<HTMLElement>("[data-sh-nav]");
+        const brand = root.querySelector<HTMLElement>("[data-sh-brand]");
+        const navLinks = gsap.utils.toArray<HTMLElement>("[data-sh-nav-link]", root);
+        const navCta = root.querySelector<HTMLElement>("[data-sh-nav-cta]");
+        const badge = root.querySelector<HTMLElement>("[data-sh-badge]");
+        const headline = root.querySelector<HTMLElement>("[data-sh-headline]");
+        const copy = root.querySelector<HTMLElement>("[data-sh-copy]");
+        const ctas = gsap.utils.toArray<HTMLElement>("[data-sh-cta]", root);
+        const dash = root.querySelector<HTMLElement>("[data-sh-dash]");
+
+        gsap.set(bg, { autoAlpha: 0, scale: 1.05 });
+        gsap.set(tint, { autoAlpha: 0 });
+        gsap.set(blur, { autoAlpha: 0 });
+        gsap.set(vignette, { autoAlpha: 0 });
+        gsap.set(nav, { autoAlpha: 0, y: -14 });
+        gsap.set(brand, { autoAlpha: 0, y: -8 });
+        gsap.set(navLinks, { autoAlpha: 0, y: -6 });
+        gsap.set(navCta, { autoAlpha: 0, y: -8, scale: 0.96 });
+        gsap.set(badge, { autoAlpha: 0, y: 18, filter: "blur(6px)" });
+        gsap.set(headline, { autoAlpha: 0, y: 18, filter: "blur(6px)" });
+        gsap.set(copy, { autoAlpha: 0, y: 14 });
+        gsap.set(ctas, { autoAlpha: 0, y: 12 });
+        gsap.set(dash, { autoAlpha: 0, y: 36, scale: 0.98 });
+
+        gsap
+          .timeline({ defaults: { ease: "power3.out" } })
+          .to(bg, { autoAlpha: 1, scale: 1, duration: 1.2 }, 0)
+          .to(tint, { autoAlpha: 1, duration: 0.9 }, 0.08)
+          .to(blur, { autoAlpha: 1, duration: 0.8 }, 0.14)
+          .to(vignette, { autoAlpha: 1, duration: 0.85 }, 0.18)
+          .to(nav, { autoAlpha: 1, y: 0, duration: 0.55 }, 0.12)
+          .to(brand, { autoAlpha: 1, y: 0, duration: 0.45 }, 0.2)
+          .to(navLinks, { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.05 }, 0.26)
+          .to(navCta, { autoAlpha: 1, y: 0, scale: 1, duration: 0.45 }, 0.34)
+          .to(badge, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.75 }, 0.36)
+          .to(headline, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.9 }, 0.44)
+          .to(copy, { autoAlpha: 1, y: 0, duration: 0.55 }, 0.54)
+          .to(ctas, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.08 }, 0.62)
+          .to(dash, { autoAlpha: 1, y: 0, scale: 1, duration: 1.05 }, 0.72)
+          .eventCallback("onComplete", () => {
+            gsap.set([badge, headline], { clearProps: "filter" });
+          });
+      }, root);
+
+      return () => ctx.revert();
+    },
+    { scope: rootRef, dependencies: [artReady, reduced] },
+  );
+
   return (
     <section
-      ref={sectionRef}
+      ref={rootRef}
       className={cn(
-        inter.className,
-        "relative flex min-h-dvh w-full flex-col bg-black text-white antialiased",
-        motionReady && "support-motion-ready",
+        GeistSans.className,
+        `sh-theme-${theme}`,
+        "relative flex w-full flex-col text-white antialiased",
+        embed ? "h-full min-h-0" : "min-h-dvh",
         className,
       )}
+      style={{ backgroundColor: RETICLE_VOID }}
     >
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-            @keyframes support-enter {
-              from { opacity: 0; transform: translateY(18px); filter: blur(6px); }
-              to { opacity: 1; transform: translateY(0); filter: blur(0); }
-            }
-            @keyframes support-enter-soft {
-              from { opacity: 0; transform: translateY(12px); }
-              to { opacity: 1; transform: translateY(0); }
-            }
-            @keyframes support-bg-enter {
-              from { opacity: 0; transform: scale(1.05); }
-              to { opacity: 1; transform: scale(1); }
-            }
-            @keyframes support-fade {
-              from { opacity: 0; }
-              to { opacity: 1; }
-            }
-            @keyframes support-dash-enter {
-              from { opacity: 0; transform: translateY(36px) scale(0.98); }
-              to { opacity: 1; transform: translateY(0) scale(1); }
-            }
-            .support-motion-ready .support-enter {
-              animation: support-enter 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
-            }
-            .support-motion-ready .support-enter-soft {
-              animation: support-enter-soft 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
-            }
-            .support-motion-ready .support-bg-enter {
-              animation: support-bg-enter 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
-            }
-            .support-motion-ready .support-fade {
-              animation: support-fade 1s ease both;
-            }
-            .support-motion-ready .support-dash-enter {
-              animation: support-dash-enter 1.05s cubic-bezier(0.22, 1, 0.36, 1) both;
-            }
-            .support-enter,
-            .support-enter-soft,
-            .support-bg-enter,
-            .support-fade,
-            .support-dash-enter {
-              opacity: 0;
-            }
-            .support-d0 { animation-delay: 40ms; }
-            .support-d1 { animation-delay: 120ms; }
-            .support-d2 { animation-delay: 200ms; }
-            .support-d3 { animation-delay: 280ms; }
-            .support-d4 { animation-delay: 360ms; }
-            .support-d5 { animation-delay: 440ms; }
-            .support-d6 { animation-delay: 540ms; }
-            .support-d7 { animation-delay: 640ms; }
-            .support-d8 { animation-delay: 760ms; }
-            .support-d9 { animation-delay: 900ms; }
-            .support-btn {
-              transition: filter 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 200ms ease, padding 220ms ease, font-size 220ms ease;
-            }
-            .support-nav {
-              transition: max-width 320ms cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            @media (hover: hover) and (pointer: fine) {
-              .support-btn:hover {
-                filter: brightness(1.08) saturate(1.05);
-                box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 0 22px rgba(0,157,242,0.22);
-              }
-              .support-btn[href="#github"]:hover {
-                box-shadow: 0 0 0 1px rgba(255,255,255,0.18), 0 0 18px rgba(255,255,255,0.12);
-              }
-              .support-link:hover { color: rgba(255,255,255,0.95); }
-            }
-            @media (prefers-reduced-motion: reduce) {
-              .support-enter,
-              .support-enter-soft,
-              .support-bg-enter,
-              .support-fade,
-              .support-dash-enter {
-                animation: none !important;
-                opacity: 1 !important;
-                transform: none !important;
-                filter: none !important;
-              }
-              .support-nav,
-              .support-btn {
-                transition: none !important;
-              }
-            }
-          `,
-        }}
-      />
-
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         {/* eslint-disable-next-line @next/next/no-img-element -- remote marketing hero art */}
         <img
+          data-sh-bg
           src={HERO_BG}
           alt=""
-          className="support-bg-enter support-d0 absolute inset-0 h-full w-full object-cover object-center"
+          decoding="async"
+          fetchPriority="high"
+          onLoad={handleArtLoad}
+          className="absolute inset-0 h-full w-full object-cover object-center"
         />
-        <div className="support-fade support-d1 absolute inset-0 backdrop-blur-[5px]" />
-        <div className="support-fade support-d2 absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-black/70" />
+        <div
+          data-sh-tint
+          className="absolute inset-0"
+          style={{ background: accent.tint, mixBlendMode: "color" }}
+        />
+        <div data-sh-blur className="absolute inset-0 backdrop-blur-[5px]" />
+        <div
+          data-sh-vignette
+          className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-black/70"
+        />
       </div>
 
-      <header className="support-enter-soft support-d1 sticky top-0 z-40 flex w-full justify-center bg-transparent px-4 pt-4 sm:px-6 sm:pt-5">
+      <header className="sticky top-0 z-40 flex w-full justify-center bg-transparent px-4 pt-4 sm:px-6 sm:pt-5">
         <nav
+          data-sh-nav
           className={cn(
-            "support-nav flex w-full items-center justify-between border border-white/10 bg-[#151515] py-2.5 pl-5 pr-2.5 shadow-[0_2px_10px_0_rgba(0,0,0,0.10)] backdrop-blur-[40px] [border-radius:15px]",
+            "sh-nav flex w-full items-center justify-between border border-white/10 bg-[#151515]/90 py-2.5 pl-5 pr-2.5 shadow-[0_2px_10px_0_rgba(0,0,0,0.10)] backdrop-blur-[40px] [border-radius:15px]",
             navCompact ? "max-w-[980px]" : "max-w-[1340px]",
           )}
           aria-label="Primary"
           data-compact={navCompact ? "true" : "false"}
         >
           <a
+            data-sh-brand
             href="#top"
-            className="support-enter-soft support-d2 shrink-0 px-2 text-[15px] font-semibold tracking-[-0.02em] text-white"
+            aria-label="frameline.ai home"
+            className="flex shrink-0 items-center gap-2 px-2"
           >
-            Support
+            <LogoMark className="size-[18px]" />
+            <span className="text-[15px] font-semibold tracking-[-0.03em] text-white">
+              frameline.ai
+            </span>
           </a>
 
           <div className="hidden min-w-0 flex-1 items-center justify-center gap-6 md:flex lg:gap-8">
-            {NAV_LINKS.map((label, index) => (
+            {NAV_LINKS.map((label) => (
               <a
                 key={label}
+                data-sh-nav-link
                 href={`#${label.toLowerCase()}`}
-                className={cn(
-                  "support-enter-soft support-link text-[13px] font-medium text-white/55 transition-colors",
-                  NAV_LINK_DELAYS[index],
-                )}
+                className="sh-link text-[13px] font-medium text-white/55 transition-colors"
               >
                 {label}
               </a>
@@ -228,8 +254,13 @@ export function SupportHero({ className }: { className?: string }) {
           </div>
 
           <a
+            data-sh-nav-cta
             href="#start"
-            className="support-enter-soft support-d5 support-btn inline-flex min-w-[84px] max-w-[480px] shrink-0 items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] border-[#009DF2] bg-[#0072AF] px-5 py-2.5 text-[13px] font-semibold tracking-[-0.01em] text-white"
+            className="sh-btn sh-btn-primary inline-flex min-w-[84px] max-w-[480px] shrink-0 items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] px-5 py-2.5 text-[13px] font-semibold tracking-[-0.01em] text-white"
+            style={{
+              borderColor: accent.accent,
+              backgroundColor: accent.ink,
+            }}
           >
             Get started
             <ArrowUpRight className="size-3.5 opacity-90" />
@@ -238,33 +269,48 @@ export function SupportHero({ className }: { className?: string }) {
       </header>
 
       <div className="relative z-10 mx-auto w-full max-w-6xl px-5 pt-14 sm:px-8 sm:pt-16 lg:px-10 lg:pt-20">
-        <div className="support-enter support-d4 inline-flex items-center justify-center gap-2.5 rounded-[10px] border border-white/20 bg-white/15 px-2.5 py-1.5 text-[12.5px] font-medium text-white/80 backdrop-blur-[15px]">
+        <div
+          data-sh-badge
+          className="inline-flex items-center justify-center gap-2.5 rounded-[10px] border border-white/20 bg-white/15 px-2.5 py-1.5 text-[12.5px] font-medium text-white/80 backdrop-blur-[15px]"
+        >
           <GitHubMark className="size-3.5 shrink-0 text-white" />
           <span>
             Proudly <span className="font-semibold text-white">Open-source</span> on GitHub.
           </span>
         </div>
 
-        <h1 className="support-enter support-d5 mt-5 w-full max-w-[730px] text-[clamp(2.4rem,5.5vw,4.25rem)] font-medium capitalize leading-[1.03] tracking-[-0.06em] text-white [font-feature-settings:'dlig'_on] sm:text-[68px] sm:leading-[70px] sm:tracking-[-4.08px]">
+        <h1
+          data-sh-headline
+          className="mt-5 w-full max-w-[730px] text-[clamp(2.4rem,5.5vw,4.25rem)] font-medium capitalize leading-[1.03] tracking-[-0.06em] text-white [font-feature-settings:'dlig'_on] sm:text-[68px] sm:leading-[70px] sm:tracking-[-4.08px]"
+        >
           The Intelligence Layer For Your Hardware
         </h1>
 
-        <p className="support-enter support-d6 mt-5 max-w-xl text-[18px] font-normal leading-6 tracking-[-1.08px] text-white/70 [font-feature-settings:'dlig'_on]">
+        <p
+          data-sh-copy
+          className="mt-5 max-w-xl text-[18px] font-normal leading-6 tracking-[-1.08px] text-white/70 [font-feature-settings:'dlig'_on]"
+        >
           A system of record for GPUs, NPUs, and AI-capable devices. Understand real aging, not
           assumptions.
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <a
+            data-sh-cta
             href="#install"
-            className="support-enter support-d7 support-btn inline-flex min-w-[84px] max-w-[480px] items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] border-[#009DF2] bg-[#0072AF] px-5 py-2.5 text-[14px] font-semibold text-white"
+            className="sh-btn sh-btn-primary inline-flex min-w-[84px] max-w-[480px] items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] px-5 py-2.5 text-[14px] font-semibold text-white"
+            style={{
+              borderColor: accent.accent,
+              backgroundColor: accent.ink,
+            }}
           >
             Install the Agent
             <ArrowUpRight className="size-3.5" />
           </a>
           <a
+            data-sh-cta
             href="#github"
-            className="support-enter support-d8 support-btn inline-flex min-w-[84px] max-w-[480px] items-center justify-center gap-2.5 rounded-[10px] border border-white/20 bg-white/10 px-5 py-2.5 text-[14px] font-semibold text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12)] backdrop-blur-[15px]"
+            className="sh-btn inline-flex min-w-[84px] max-w-[480px] items-center justify-center gap-2.5 rounded-[10px] border border-white/20 bg-white/10 px-5 py-2.5 text-[14px] font-semibold text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12)] backdrop-blur-[15px]"
           >
             View on Github
             <ArrowUpRight className="size-3.5 opacity-80" />
@@ -273,11 +319,16 @@ export function SupportHero({ className }: { className?: string }) {
       </div>
 
       <div className="relative z-10 mx-auto mt-12 w-full max-w-[1236px] flex-1 px-4 pb-8 sm:mt-14 sm:px-6 lg:mt-16 lg:px-8">
-        <div className="support-dash-enter support-d9 relative mx-auto aspect-[371/190] h-auto w-full max-w-[1236px] shrink-0 overflow-hidden rounded-[15px] border border-white/10 bg-black/40 shadow-[0_-8px_60px_rgba(0,0,0,0.45)] sm:h-[633px] sm:max-h-[633px]">
+        <div
+          data-sh-dash
+          className="relative mx-auto aspect-[371/190] h-auto w-full max-w-[1236px] shrink-0 overflow-hidden rounded-[15px] border border-white/10 bg-black/40 shadow-[0_-8px_60px_rgba(0,0,0,0.45)] sm:h-[633px] sm:max-h-[633px]"
+        >
           {/* eslint-disable-next-line @next/next/no-img-element -- remote dashboard mock */}
           <img
             src={DASHBOARD_UI}
             alt="Support product dashboard"
+            decoding="async"
+            loading="lazy"
             className="block h-full w-full object-cover object-top"
           />
         </div>

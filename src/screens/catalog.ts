@@ -316,6 +316,15 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
 export const HIDDEN_SCREENS: ScreenCatalogEntry[] = [
   {
     ...SCREEN,
+    slug: "picdrop-dashboard-skeleton",
+    title: "Picdrop Dashboard Skeleton",
+    description:
+      "Loading skeleton for Picdrop — sidebar bones, stat cards, gallery rails, feedback panel, and table rows with GSAP entrance and shimmer.",
+    blurb: "Dashboard loading state · GSAP · reticle pink accents",
+    poster: "/screens/picdrop-dashboard-skeleton/poster.png",
+  },
+  {
+    ...SCREEN,
     slug: "yield-skeleton",
     title: "Yield Skeleton",
     description:
