@@ -1,0 +1,30 @@
+.fl-support-hero .support-nav {
+  max-width: 1340px;
+}
+
+.fl-support-hero .support-btn {
+  transition:
+    filter 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 200ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .fl-support-hero .support-btn:hover {
+    filter: brightness(1.08) saturate(1.05);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.12),
+      0 0 22px rgba(var(--sh-accent-rgb, 255, 77, 166), 0.28);
+  }
+
+  .fl-support-hero .support-btn--ghost:hover {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.18),
+      0 0 18px rgba(var(--sh-accent-rgb, 255, 77, 166), 0.16);
+  }
+
+  .fl-support-hero .support-link:hover {
+    color: rgba(255, 255, 255, 0.95);
+  }
+}
