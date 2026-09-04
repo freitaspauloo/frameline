@@ -1,0 +1,27 @@
+/* Support hero theme tokens — tint, accents, skeleton art */
+.sh-theme-pink {
+  --sh-tint: #d600bf;
+  --sh-accent: #d600bf;
+  --sh-accent-rgb: 214, 0, 191;
+  --sh-ink: #10121c;
+  --sh-skel-shine: rgba(214, 0, 191, 0.28);
+  --sh-skel-art: linear-gradient(165deg, #0a0610 0%, #180820 28%, #3a1458 55%, #120818 100%);
+}
+
+.sh-theme-lime {
+  --sh-tint: #84cc16;
+  --sh-accent: #a3e635;
+  --sh-accent-rgb: 163, 230, 53;
+  --sh-ink: #10121c;
+  --sh-skel-shine: rgba(132, 204, 22, 0.32);
+  --sh-skel-art: linear-gradient(165deg, #071008 0%, #0f1a0a 28%, #2a4510 55%, #0a1208 100%);
+}
+
+.sh-theme-cyan {
+  --sh-tint: #06b6d4;
+  --sh-accent: #22d3ee;
+  --sh-accent-rgb: 6, 182, 212;
+  --sh-ink: #10121c;
+  --sh-skel-shine: rgba(6, 182, 212, 0.32);
+  --sh-skel-art: linear-gradient(165deg, #050f14 0%, #0a1820 28%, #0e3a4a 55%, #061018 100%);
+}
