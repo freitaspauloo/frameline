@@ -22,7 +22,6 @@ import { HealthAiHero, HealthAiSkeleton } from "@/screens/health-ai";
 import { Softwave, SoftwaveSkeleton } from "@/screens/softwave";
 import { SoftwaveFeatureCards, SoftwaveFeatureCardsSkeleton } from "@/screens/softwave-features";
 import { SpacemanMoon } from "@/screens/spaceman-moon";
-import { PicdropDashboardSkeleton } from "@/screens/picdrop-dashboard";
 import { YieldSkeleton } from "@/screens/yield-skeleton";
 import { getScreenBySlug } from "@/screens/catalog";
 
@@ -127,8 +126,6 @@ export function ScreenLivePreview({
       return <ReticleLoginCyanSkeleton className="h-full w-full" embed={embed} />;
     case "miracle-login-skeleton":
       return <ReticleLoginSkeleton className="h-full w-full" embed={embed} />;
-    case "picdrop-dashboard-skeleton":
-      return <PicdropDashboardSkeleton className="h-full w-full" theme="pink" />;
     default:
       return <div className="absolute inset-0 bg-muted" />;
   }

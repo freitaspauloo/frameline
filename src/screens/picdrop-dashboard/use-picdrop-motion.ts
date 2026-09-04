@@ -50,6 +50,7 @@ function mountMotion(
     }
   }
 
+  // Double rAF so layout is settled before GSAP sets initial states
   const frame = requestAnimationFrame(() => {
     requestAnimationFrame(start)
   })

@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils"
 
-/** Inline mark so dev preview never depends on cached assets or external imports. */
 function FramelineLogoMark({ className }: { className?: string }) {
   return (
     <svg
