@@ -28,7 +28,7 @@ function mountMotion(
 
   let ctx: gsap.Context | undefined
   let cancelled = false
-  let fallback: ReturnType<typeof window.setTimeout> | undefined
+  let fallback: number | undefined
 
   const clearFallback = () => {
     if (fallback !== undefined) {
