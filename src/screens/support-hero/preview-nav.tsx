@@ -12,7 +12,7 @@ export function SupportHeroPreviewNav() {
 
   return (
     <nav
-      className="fixed bottom-5 left-1/2 z-50 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 flex-wrap items-center justify-center gap-1 rounded-2xl border border-black/10 bg-white/95 p-1 shadow-lg backdrop-blur-md"
+      className="fixed bottom-5 left-1/2 z-50 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 flex-wrap items-center justify-center gap-1 rounded-2xl border border-black/10 bg-white/95 p-1 shadow-lg backdrop-blur-md pb-[max(0.25rem,env(safe-area-inset-bottom))]"
       aria-label="Support hero dev preview"
     >
       {SUPPORT_HERO_PREVIEW_TABS.map((tab) => {

@@ -1,10 +1,11 @@
 import type { SupportHeroTheme } from "./accents";
+import { SUPPORT_HERO_DEV_BASE } from "./constants";
 
 export type { SupportHeroTheme };
 
 export const SUPPORT_HERO_THEMES: SupportHeroTheme[] = ["pink", "lime", "cyan"];
 
-const DEV_BASE = "/dev/support-hero";
+const DEV_BASE = SUPPORT_HERO_DEV_BASE.replace("https://frameline.ai", "");
 
 export function themeHeroPath(theme: SupportHeroTheme) {
   if (theme === "pink") return DEV_BASE;

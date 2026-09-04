@@ -10,12 +10,12 @@ import { LogoMark } from "@/components/relay-ui";
 import { cn } from "@/lib/utils";
 
 import { getSupportHeroAccent, type SupportHeroTheme } from "./accents";
+import { SUPPORT_HERO_ASSETS } from "./constants";
+import "./support-hero.css";
 import "./support-themes.css";
 
-const HERO_BG =
-  "https://aruyghvpjdiiuiesaupw.supabase.co/storage/v1/object/public/support-hero/support%20bg.png";
-const DASHBOARD_UI =
-  "https://aruyghvpjdiiuiesaupw.supabase.co/storage/v1/object/public/support-hero/support_dashbaord_ui.png";
+const HERO_BG = SUPPORT_HERO_ASSETS.heroBg;
+const DASHBOARD_UI = SUPPORT_HERO_ASSETS.dashboardUi;
 
 const NAV_LINKS = ["Home", "Docs", "Pricing", "About", "GitHub"] as const;
 const RETICLE_VOID = "#010003";
@@ -201,6 +201,8 @@ export function SupportHero({ className, embed = false, theme = "pink" }: Suppor
           data-sh-bg
           src={HERO_BG}
           alt=""
+          decoding="async"
+          fetchPriority="high"
           onLoad={handleArtLoad}
           className="absolute inset-0 h-full w-full object-cover object-center"
         />
@@ -325,44 +327,12 @@ export function SupportHero({ className, embed = false, theme = "pink" }: Suppor
           <img
             src={DASHBOARD_UI}
             alt="Support product dashboard"
+            decoding="async"
+            loading="lazy"
             className="block h-full w-full object-cover object-top"
           />
         </div>
       </div>
-
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-            .sh-nav {
-              transition: max-width 320ms cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            .sh-btn {
-              transition: transform 180ms ease, filter 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 200ms ease;
-            }
-            @media (hover: hover) and (pointer: fine) {
-              .sh-btn:hover {
-                transform: translateY(-1px);
-                filter: brightness(1.06) saturate(1.05);
-              }
-              .sh-btn-primary:hover {
-                background: var(--sh-accent) !important;
-                box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 0 22px rgba(var(--sh-accent-rgb), 0.35);
-              }
-              .sh-btn[href="#github"]:hover {
-                border-color: rgba(var(--sh-accent-rgb), 0.45);
-                box-shadow: 0 0 0 1px rgba(255,255,255,0.18), 0 0 18px rgba(var(--sh-accent-rgb), 0.2);
-              }
-              .sh-link:hover { color: rgba(255,255,255,0.95); }
-            }
-            @media (prefers-reduced-motion: reduce) {
-              .sh-nav,
-              .sh-btn {
-                transition: none !important;
-              }
-            }
-          `,
-        }}
-      />
     </section>
   );
 }
