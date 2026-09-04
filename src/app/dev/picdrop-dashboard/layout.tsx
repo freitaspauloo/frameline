@@ -3,6 +3,9 @@ import type { ReactNode } from "react";
 
 import { PicdropPreviewNav } from "@/screens/picdrop-dashboard/preview-nav";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: "Picdrop Dashboard — Dev Preview",
   description: "Frameline dev preview: Picdrop dashboard skeleton and theme variants.",
