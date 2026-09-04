@@ -5,6 +5,7 @@
 import { type ComponentPropsWithoutRef, type CSSProperties } from "react"
 import { GeistSans } from "geist/font/sans"
 
+import { LogoMark } from "@/components/relay-ui"
 import { cn } from "@/lib/utils"
 import type { PicdropTheme } from "./themes"
 import { usePicdropSkeletonMotion } from "./use-picdrop-motion"
@@ -58,7 +59,7 @@ export default function PicdropDashboardSkeleton({
         className,
       )}
       aria-busy="true"
-      aria-label="Loading Picdrop dashboard"
+      aria-label="Loading Frameline dashboard"
     >
       <aside
         data-pd-skel-sidebar
@@ -68,7 +69,10 @@ export default function PicdropDashboardSkeleton({
       >
         <div className="shrink-0 px-4 pb-3 pt-5">
           <div className="flex items-center justify-between px-1">
-            <Bone data-pd-skel-bone className="h-5 w-24 rounded-md" delay={0} accent />
+            <div className="flex items-center gap-2">
+              <LogoMark className="size-[18px]" />
+              <span className="text-[15px] font-semibold tracking-[-0.03em] text-zinc-900">frameline.ai</span>
+            </div>
             <Bone data-pd-skel-bone className="size-6 rounded-md" delay={40} />
           </div>
           <Bone data-pd-skel-bone className="mt-4 h-9 w-full rounded-full" delay={80} />

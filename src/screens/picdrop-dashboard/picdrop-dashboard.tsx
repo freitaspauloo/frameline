@@ -3,7 +3,6 @@
 import type { ComponentType, ReactNode } from "react"
 import { GeistSans } from "geist/font/sans"
 import {
-  Aperture,
   CheckSquare,
   ChevronDown,
   Download,
@@ -19,6 +18,7 @@ import { HiOutlinePhotograph } from "react-icons/hi"
 import { IoIosArrowRoundBack, IoIosGitBranch } from "react-icons/io"
 import { MdOutlineExplore, MdStorage } from "react-icons/md"
 import type { IconType } from "react-icons"
+import { LogoMark } from "@/components/relay-ui"
 import { cn } from "@/lib/utils"
 import { CollectionFolderPreview } from "./background-collection-folder"
 import type { PicdropTheme } from "./themes"
@@ -198,8 +198,8 @@ export default function PicdropDashboard({ className, theme = "pink" }: PicdropD
         <div className="shrink-0 px-4 pb-3 pt-5">
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center gap-2">
-              <Aperture className="picdrop-accent-icon size-[18px]" strokeWidth={2.2} />
-              <span className="text-[15px] font-semibold tracking-[-0.03em] text-zinc-900">picdrop</span>
+              <LogoMark className="size-[18px]" />
+              <span className="text-[15px] font-semibold tracking-[-0.03em] text-zinc-900">frameline.ai</span>
             </div>
             <button
               type="button"
