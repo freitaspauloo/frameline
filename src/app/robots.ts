@@ -5,6 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
+      disallow: ["/dev/", "/live/", "/capture/", "/admin/"],
     },
     sitemap: "https://frameline.ai/sitemap.xml",
   };
