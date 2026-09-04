@@ -52,7 +52,10 @@ export function SupportHeroSkeleton({
 
         <header className="sh-skel-header">
           <div className="sh-skel-nav">
-            <Bone className="bone-brand" delay={0} />
+            <div className="sh-skel-brand-row">
+              <Bone className="bone-brand-mark" delay={0} />
+              <Bone className="bone-brand-name" delay={40} />
+            </div>
             <div className="sh-skel-nav-links">
               <Bone className="bone-nav-link" delay={60} />
               <Bone className="bone-nav-link" delay={90} />

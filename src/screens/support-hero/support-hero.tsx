@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { GeistSans } from "geist/font/sans";
 
 import { useReducedMotion } from "@/components/motion/use-reduced-motion";
+import { LogoMark } from "@/components/relay-ui";
 import { cn } from "@/lib/utils";
 
 const HERO_BG =
@@ -227,9 +228,13 @@ export function SupportHero({ className, embed = false }: SupportHeroProps) {
           <a
             data-sh-brand
             href="#top"
-            className="shrink-0 px-2 text-[15px] font-semibold tracking-[-0.02em] text-white"
+            aria-label="frameline.ai home"
+            className="flex shrink-0 items-center gap-2 px-2"
           >
-            Support
+            <LogoMark className="size-[18px]" />
+            <span className="text-[15px] font-semibold tracking-[-0.03em] text-white">
+              frameline.ai
+            </span>
           </a>
 
           <div className="hidden min-w-0 flex-1 items-center justify-center gap-6 md:flex lg:gap-8">
