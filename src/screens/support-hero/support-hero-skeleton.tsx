@@ -105,7 +105,10 @@ export function SupportHeroSkeleton({
           data-sh-skel-nav
           className="flex w-full max-w-[1340px] items-center justify-between rounded-[15px] border border-white/10 bg-[#151515]/90 py-2.5 pl-5 pr-2.5 shadow-[0_2px_10px_0_rgba(0,0,0,0.10)] backdrop-blur-[40px]"
         >
-          <Bone data-sh-skel-nav-bone className="h-4 w-16 rounded-md" delay={0} />
+          <div className="flex shrink-0 items-center gap-3">
+            <Bone data-sh-skel-nav-bone className="size-[26px] rounded-sm" delay={0} />
+            <Bone data-sh-skel-nav-bone className="h-4 w-16 rounded-md" delay={40} />
+          </div>
           <div className="hidden min-w-0 flex-1 items-center justify-center gap-6 md:flex lg:gap-8">
             {NAV_LINKS.map((label, index) => (
               <Bone

@@ -1,11 +1,13 @@
 "use client"
 
 import { GeistSans } from "geist/font/sans"
+import Image from "next/image"
 import { useLayoutEffect, useRef, useMemo, type CSSProperties } from "react"
 
 import { cn } from "@/lib/utils"
 
 import { DASHBOARD_UI, HERO_BG, NAV_LINKS } from "./constants"
+import { FramelineBrand } from "./frameline-brand"
 import { ArrowUpRight, GitHubMark } from "./icons"
 import {
   mountSupportHeroMotion,
@@ -65,14 +67,14 @@ export default function SupportHero({
       )}
     >
       <div className="pointer-events-none absolute inset-0" aria-hidden>
-        {/* eslint-disable-next-line @next/next/no-img-element -- remote marketing hero art */}
-        <img
+        <Image
           data-sh-bg
           src={HERO_BG}
           alt=""
-          fetchPriority="high"
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover object-center"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
         />
         <div
           data-sh-overlay
@@ -93,13 +95,18 @@ export default function SupportHero({
           aria-label="Primary"
           data-compact={navCompact ? "true" : "false"}
         >
-          <a
-            data-sh-nav-item
-            href="#top"
-            className="shrink-0 px-2 text-[15px] font-semibold tracking-[-0.02em] text-white"
-          >
-            Support
-          </a>
+          <div className="flex shrink-0 items-center gap-3">
+            <div data-sh-nav-item>
+              <FramelineBrand compact size="nav" className="px-1 py-1" />
+            </div>
+            <a
+              data-sh-nav-item
+              href="#top"
+              className="px-1 text-[15px] font-semibold tracking-[-0.02em] text-white"
+            >
+              Support
+            </a>
+          </div>
 
           <div className="hidden min-w-0 flex-1 items-center justify-center gap-6 md:flex lg:gap-8">
             {NAV_LINKS.map((label) => (
@@ -179,13 +186,12 @@ export default function SupportHero({
           data-sh-dashboard
           className="relative mx-auto aspect-[371/190] h-auto w-full max-w-[1236px] shrink-0 overflow-hidden rounded-[15px] border border-white/10 bg-black/40 shadow-[0_-8px_60px_rgba(0,0,0,0.45)] sm:h-[633px] sm:max-h-[633px]"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element -- remote dashboard mock */}
-          <img
+          <Image
             src={DASHBOARD_UI}
             alt="Support product dashboard"
-            loading="lazy"
-            decoding="async"
-            className="block h-full w-full object-cover object-top"
+            fill
+            sizes="(max-width: 1236px) 100vw, 1236px"
+            className="object-cover object-top"
           />
         </div>
       </div>

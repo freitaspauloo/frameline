@@ -16,6 +16,15 @@ const nextConfig: NextConfig = {
   },
   // Cursor Simple Browser hits 127.0.0.1 while next binds 0.0.0.0.
   allowedDevOrigins: ["127.0.0.1", "localhost", ...extraDevOrigins],
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "aruyghvpjdiiuiesaupw.supabase.co",
+        pathname: "/storage/v1/object/public/support-hero/**",
+      },
+    ],
+  },
   // Keep Admin SDK / Prisma out of the Turbopack server graph.
   serverExternalPackages: ["firebase-admin", "@prisma/client", "prisma"],
   async redirects() {
