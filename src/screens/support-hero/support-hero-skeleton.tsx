@@ -5,7 +5,9 @@ import type { CSSProperties } from "react";
 
 import { cn } from "@/lib/utils";
 
+import type { SupportHeroTheme } from "./accents";
 import "./support-hero-skeleton.css";
+import "./support-themes.css";
 
 function Bone({
   className = "",
@@ -25,14 +27,17 @@ function Bone({
 export function SupportHeroSkeleton({
   className,
   embed = false,
+  theme = "pink",
 }: {
   className?: string;
   embed?: boolean;
+  theme?: SupportHeroTheme;
 }) {
   return (
     <div
       className={cn(
         "fl-support-skeleton relative w-full overflow-hidden bg-[#010003]",
+        `sh-theme-${theme}`,
         GeistSans.className,
         embed ? "h-full min-h-0" : "min-h-dvh",
         className,

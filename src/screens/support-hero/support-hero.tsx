@@ -9,15 +9,15 @@ import { useReducedMotion } from "@/components/motion/use-reduced-motion";
 import { LogoMark } from "@/components/relay-ui";
 import { cn } from "@/lib/utils";
 
+import { getSupportHeroAccent, type SupportHeroTheme } from "./accents";
+import "./support-themes.css";
+
 const HERO_BG =
   "https://aruyghvpjdiiuiesaupw.supabase.co/storage/v1/object/public/support-hero/support%20bg.png";
 const DASHBOARD_UI =
   "https://aruyghvpjdiiuiesaupw.supabase.co/storage/v1/object/public/support-hero/support_dashbaord_ui.png";
 
 const NAV_LINKS = ["Home", "Docs", "Pricing", "About", "GitHub"] as const;
-
-const RETICLE_MAGENTA = "#D600BF";
-const RETICLE_INK = "#10121c";
 const RETICLE_VOID = "#010003";
 
 function readScrollY(node: HTMLElement | null, eventTarget?: EventTarget | null) {
@@ -34,15 +34,17 @@ function readScrollY(node: HTMLElement | null, eventTarget?: EventTarget | null)
 }
 
 /**
- * Support product hero — dark canvas, magenta color-blend aurora, floating glass nav, dashboard mock.
- * Dev preview: `/dev/support-hero`
+ * Support product hero — dark canvas, color-blend aurora, floating glass nav, dashboard mock.
+ * Dev preview: `/dev/support-hero` (+ lime / cyan variants)
  */
 export type SupportHeroProps = {
   className?: string;
   embed?: boolean;
+  theme?: SupportHeroTheme;
 };
 
-export function SupportHero({ className, embed = false }: SupportHeroProps) {
+export function SupportHero({ className, embed = false, theme = "pink" }: SupportHeroProps) {
+  const accent = getSupportHeroAccent(theme);
   const rootRef = useRef<HTMLElement>(null);
   const lastScrollY = useRef(0);
   const reduced = useReducedMotion();
@@ -186,13 +188,13 @@ export function SupportHero({ className, embed = false }: SupportHeroProps) {
       ref={rootRef}
       className={cn(
         GeistSans.className,
+        `sh-theme-${theme}`,
         "relative flex w-full flex-col text-white antialiased",
         embed ? "h-full min-h-0" : "min-h-dvh",
         className,
       )}
       style={{ backgroundColor: RETICLE_VOID }}
     >
-      {/* Full-bleed aurora background + magenta color blend */}
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         {/* eslint-disable-next-line @next/next/no-img-element -- remote marketing hero art */}
         <img
@@ -205,7 +207,7 @@ export function SupportHero({ className, embed = false }: SupportHeroProps) {
         <div
           data-sh-tint
           className="absolute inset-0"
-          style={{ background: RETICLE_MAGENTA, mixBlendMode: "color" }}
+          style={{ background: accent.tint, mixBlendMode: "color" }}
         />
         <div data-sh-blur className="absolute inset-0 backdrop-blur-[5px]" />
         <div
@@ -214,7 +216,6 @@ export function SupportHero({ className, embed = false }: SupportHeroProps) {
         />
       </div>
 
-      {/* Floating glass nav — sticky; only horizontal width shrinks on scroll */}
       <header className="sticky top-0 z-40 flex w-full justify-center bg-transparent px-4 pt-4 sm:px-6 sm:pt-5">
         <nav
           data-sh-nav
@@ -255,8 +256,8 @@ export function SupportHero({ className, embed = false }: SupportHeroProps) {
             href="#start"
             className="sh-btn sh-btn-primary inline-flex min-w-[84px] max-w-[480px] shrink-0 items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] px-5 py-2.5 text-[13px] font-semibold tracking-[-0.01em] text-white"
             style={{
-              borderColor: RETICLE_MAGENTA,
-              backgroundColor: RETICLE_INK,
+              borderColor: accent.accent,
+              backgroundColor: accent.ink,
             }}
           >
             Get started
@@ -265,7 +266,6 @@ export function SupportHero({ className, embed = false }: SupportHeroProps) {
         </nav>
       </header>
 
-      {/* Hero copy */}
       <div className="relative z-10 mx-auto w-full max-w-6xl px-5 pt-14 sm:px-8 sm:pt-16 lg:px-10 lg:pt-20">
         <div
           data-sh-badge
@@ -298,8 +298,8 @@ export function SupportHero({ className, embed = false }: SupportHeroProps) {
             href="#install"
             className="sh-btn sh-btn-primary inline-flex min-w-[84px] max-w-[480px] items-center justify-center gap-2.5 rounded-[10px] border-[1.5px] px-5 py-2.5 text-[14px] font-semibold text-white"
             style={{
-              borderColor: RETICLE_MAGENTA,
-              backgroundColor: RETICLE_INK,
+              borderColor: accent.accent,
+              backgroundColor: accent.ink,
             }}
           >
             Install the Agent
@@ -316,7 +316,6 @@ export function SupportHero({ className, embed = false }: SupportHeroProps) {
         </div>
       </div>
 
-      {/* Dashboard mock */}
       <div className="relative z-10 mx-auto mt-12 w-full max-w-[1236px] flex-1 px-4 pb-8 sm:mt-14 sm:px-6 lg:mt-16 lg:px-8">
         <div
           data-sh-dash
@@ -346,12 +345,12 @@ export function SupportHero({ className, embed = false }: SupportHeroProps) {
                 filter: brightness(1.06) saturate(1.05);
               }
               .sh-btn-primary:hover {
-                background: ${RETICLE_MAGENTA} !important;
-                box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 0 22px rgba(214,0,191,0.35);
+                background: var(--sh-accent) !important;
+                box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 0 22px rgba(var(--sh-accent-rgb), 0.35);
               }
               .sh-btn[href="#github"]:hover {
-                border-color: rgba(214,0,191,0.45);
-                box-shadow: 0 0 0 1px rgba(255,255,255,0.18), 0 0 18px rgba(214,0,191,0.2);
+                border-color: rgba(var(--sh-accent-rgb), 0.45);
+                box-shadow: 0 0 0 1px rgba(255,255,255,0.18), 0 0 18px rgba(var(--sh-accent-rgb), 0.2);
               }
               .sh-link:hover { color: rgba(255,255,255,0.95); }
             }

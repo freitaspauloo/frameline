@@ -24,7 +24,7 @@
     105deg,
     transparent 24%,
     var(--shine) 46%,
-    rgba(214, 0, 191, 0.28) 50%,
+    rgba(var(--sh-accent-rgb), 0.28) 50%,
     var(--shine) 54%,
     transparent 76%
   );
@@ -75,19 +75,13 @@
 .fl-support-skeleton .sh-skel-bg-art {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    165deg,
-    #0a0610 0%,
-    #180820 28%,
-    #3a1458 55%,
-    #120818 100%
-  );
+  background: var(--sh-skel-art);
 }
 
 .fl-support-skeleton .sh-skel-bg-tint {
   position: absolute;
   inset: 0;
-  background: #d600bf;
+  background: var(--sh-tint);
   mix-blend-mode: color;
   opacity: 1;
 }
