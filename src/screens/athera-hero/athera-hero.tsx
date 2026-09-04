@@ -8,6 +8,7 @@ import AtheraHeroPreloader from "./athera-hero-preloader"
 import { mountHeroMotion, safetyReveal } from "./athera-hero-motion"
 import { ATHERA_ASSETS, NAV_LINKS } from "./constants"
 import { PartnerLogos } from "./partner-logos"
+import { FramelineBrand } from "./frameline-brand"
 import { ATHERA_THEME_PINK, type AtheraThemeId } from "./themes"
 import "./athera-hero.css"
 
@@ -100,6 +101,7 @@ function DashboardPreview() {
             className="size-full object-cover object-left-top"
             src={ATHERA_ASSETS.dashboard}
           />
+          <FramelineBrand className="absolute left-[22px] top-[18px] z-10" />
         </div>
       </div>
     </div>
