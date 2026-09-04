@@ -13,7 +13,7 @@ export function PicdropPreviewNav() {
   return (
     <nav
       className="fixed bottom-5 left-1/2 z-50 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 flex-wrap items-center justify-center gap-1 rounded-2xl border border-black/10 bg-white/95 p-1 shadow-lg backdrop-blur-md"
-      aria-label="Picdrop dashboard dev preview"
+      aria-label="Frameline dev preview"
     >
       {PICDROP_PREVIEW_TABS.map((tab) => {
         const active = pathname === tab.href
