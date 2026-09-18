@@ -10,24 +10,18 @@ From this folder (exclude this `APPLY.md`):
 - `public/`
 - `src/`
 
-## Manual (local)
+## Publish (one command — author `dudufreitas28@gmail.com`)
+
+Run on your machine while logged into GitHub as the **Paulo** repo owner:
 
 ```bash
 git clone https://github.com/freitaspauloo/frameline.git
 cd frameline && git checkout dev
-
 git clone https://github.com/freitaspauloo/Paulo.git ../Paulo
-cp -R handoff/paulo-portfolio-frameline-cases/app \
-      handoff/paulo-portfolio-frameline-cases/public \
-      handoff/paulo-portfolio-frameline-cases/src \
-      ../Paulo/
-
-cd ../Paulo
-git checkout main
-git add -A
-git commit -m "Add seven Frameline showcase cases to homepage"
-git push origin main
+./handoff/paulo-portfolio-frameline-cases/publish.sh
 ```
+
+The script sets `user.email` to **dudufreitas28@gmail.com** only for that repo, commits, and pushes `main`.
 
 Vercel deploys **Paulo** on push to `main`.
 
