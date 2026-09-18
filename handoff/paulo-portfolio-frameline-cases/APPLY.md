@@ -38,4 +38,4 @@ Vercel deploys **Paulo** on push to `main`.
 
 ## Cloud Agent note
 
-The agent environment only has push access to **frameline**. Paulo push must use manual steps above or the workflow with `PAULO_DEPLOY_TOKEN`.
+The agent environment only has push access to **frameline** by default. To let agents push **Paulo** directly (no Actions PAT), add **Repository dependency** `github.com/freitaspauloo/Paulo` in the [Cloud Agent environment](https://cursor.com/dashboard/cloud-agents/environments/e/ffb8a96a-a705-11f1-a7d1-d6b4613131ce) and Save. Otherwise use manual steps above or the frameline workflow with optional `PAULO_DEPLOY_TOKEN`.
