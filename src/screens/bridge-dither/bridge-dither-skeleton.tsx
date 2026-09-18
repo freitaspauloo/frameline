@@ -1,18 +1,13 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { Inter } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
 
 import { cn } from "@/lib/utils";
 import { ScreenStage } from "@/screens/stage";
 
 import { NAV_LINKS } from "./constants";
 import "./bridge-dither-skeleton.css";
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-});
 
 function Bone({
   className,
@@ -44,7 +39,7 @@ export function BridgeDitherSkeleton({
     <ScreenStage embed={embed} background="#ffffff" className={className}>
       <section
         className={cn(
-          inter.className,
+          GeistSans.className,
           "fl-oasis-skeleton relative h-full w-full overflow-hidden bg-white text-zinc-950 antialiased",
         )}
         aria-busy="true"
@@ -52,6 +47,7 @@ export function BridgeDitherSkeleton({
       >
       <div className="dither-skel" aria-hidden>
         <div className="dither-skel-grid" />
+        <div className="dither-skel-tint" />
         <div className="dither-skel-sweep" />
       </div>
 
