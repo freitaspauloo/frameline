@@ -1,11 +1,41 @@
 # Apply to freitaspauloo/Paulo
 
-Copy files into the Paulo portfolio repo root (preserve paths), then commit and deploy paulo.dudesign.us.
+Copy files into the Paulo portfolio repo root (preserve paths), then commit and deploy **paulo.dudesign.us**.
+
+## Files to copy
+
+From this folder (exclude this `APPLY.md`):
+
+- `app/`
+- `public/`
+- `src/`
+
+## Manual (local)
 
 ```bash
-cp -R handoff/paulo-portfolio-frameline-cases/* /path/to/Paulo/
-git add -A && git commit -m "Add seven Frameline showcase cases to homepage"
+git clone https://github.com/freitaspauloo/frameline.git
+cd frameline && git checkout dev
+
+git clone https://github.com/freitaspauloo/Paulo.git ../Paulo
+cp -R handoff/paulo-portfolio-frameline-cases/app \
+      handoff/paulo-portfolio-frameline-cases/public \
+      handoff/paulo-portfolio-frameline-cases/src \
+      ../Paulo/
+
+cd ../Paulo
+git checkout main
+git add -A
+git commit -m "Add seven Frameline showcase cases to homepage"
 git push origin main
 ```
 
-Or apply the patch from `/opt/cursor/artifacts/paulo-frameline-cases-patch/0001-*.patch` inside the Paulo repo.
+Vercel deploys **Paulo** on push to `main`.
+
+## Automated (GitHub Actions on frameline)
+
+1. In **freitaspauloo/frameline** → Settings → Secrets → Actions, add **`PAULO_DEPLOY_TOKEN`** (classic PAT with `repo` access to **Paulo**).
+2. Actions → **Sync Paulo portfolio handoff** → **Run workflow** (or push an update under `handoff/paulo-portfolio-frameline-cases/` on `dev`).
+
+## Cloud Agent note
+
+The agent environment only has push access to **frameline**. Paulo push must use manual steps above or the workflow with `PAULO_DEPLOY_TOKEN`.
