@@ -34,7 +34,7 @@ Vercel deploys **Paulo** on push to `main`.
 ## Automated (GitHub Actions on frameline)
 
 1. In **freitaspauloo/frameline** → Settings → Secrets → Actions, add **`PAULO_DEPLOY_TOKEN`** (classic PAT with `repo` access to **Paulo**).
-2. Actions → **Sync Paulo portfolio handoff** → **Run workflow** (or push an update under `handoff/paulo-portfolio-frameline-cases/` on `dev`).
+2. Actions → **Sync Paulo portfolio handoff** → **Run workflow** on branch **`dev`** (or push any change under `handoff/paulo-portfolio-frameline-cases/` on `dev` to auto-run).
 
 ## Cloud Agent note
 
