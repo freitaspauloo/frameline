@@ -7,21 +7,13 @@ const SCREEN = {
 };
 
 /**
- * Storefront catalog — Reticle landing pages.
- * Layout slugs and old product slugs stay as aliases.
+ * Storefront catalog — the ten finished heroes on the public grid.
+ * Skeletons, accent variants, and thinner layouts stay in HIDDEN_SCREENS
+ * so existing slugs still resolve, but they are not listed in the frames.
  *
  * Order: newest screens first (prepend new entries at the top).
  */
 export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
-  {
-    ...SCREEN,
-    slug: "health-ai-skeleton",
-    title: "Pulse Skeleton",
-    description:
-      "Loading skeleton for Pulse — sky-blue shimmer bones over floating nav, hero video plate, headline, and body pill.",
-    blurb: "Health loading state · hero plate · pill bones",
-    poster: "/screens/health-ai-skeleton/poster.png",
-  },
   {
     ...SCREEN,
     slug: "health-ai",
@@ -31,6 +23,108 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     blurb: "Hero video · fluted glass · GSAP intro",
     poster: "/screens/health-ai/poster.png?v=20260831",
     aliases: ["pulse"],
+  },
+  {
+    ...SCREEN,
+    slug: "passo",
+    title: "Passo",
+    description:
+      "Running app homepage — Paris night hero slideshow, lime accents, flip nav, two-column lockup.",
+    blurb: "Hero slideshow · flip nav · lime Join CTA",
+    poster: "/screens/passo/poster.png",
+    aliases: ["running-app"],
+  },
+  {
+    ...SCREEN,
+    slug: "forgeai",
+    title: "FORGE.AI Hero",
+    description:
+      "AI builder landing hero — blue gradient field, typewriter prompt, model and platform dropdowns, template rail.",
+    blurb: "Prompt bar · model chips · template rail",
+    poster: "/screens/forgeai/poster.png",
+    aliases: ["fifty-x-hero"],
+  },
+  {
+    ...SCREEN,
+    slug: "softwave",
+    title: "Softwave Hero",
+    description:
+      "Vintage desktop hero — bliss hill video, pixel headline, glass pill nav, and analog-warmth copy.",
+    blurb: "Bliss hill · pixel headline · glass pills",
+    poster: "/screens/softwave/poster.png",
+  },
+  {
+    ...SCREEN,
+    slug: "bridge-dither",
+    title: "Bridge Dither",
+    description:
+      "Warm bridge dither art hero — interactive canvas, progressive blur edges, and GSAP headline reveal.",
+    blurb: "Bridge dither · progressive blur · clip headline",
+    poster: "/screens/bridge-dither/poster.png",
+    aliases: ["oasis-hero"],
+  },
+  {
+    ...SCREEN,
+    slug: "miracle-login",
+    title: "Miracle Login",
+    description:
+      "Split-panel sign-in — magenta-tinted cover art, Reticle chrome, and GSAP panel entrance.",
+    blurb: "Split panel · magenta art · sign-in form",
+    poster: "/screens/miracle-login/poster.png",
+    aliases: ["reticle-login"],
+  },
+  {
+    ...SCREEN,
+    slug: "dark-pill-hero",
+    title: "Dark Pill Nav Hero",
+    description:
+      "Void canvas hero — cinematic wave art, segmented pill nav, yield lockup, fab wordmarks.",
+    blurb: "Pill nav · wave art · magenta blend",
+    poster: "/screens/dark-pill-hero/poster.png",
+    aliases: ["klyro-hero"],
+  },
+  {
+    ...SCREEN,
+    slug: "insights",
+    title: "Yield Inspection Dashboard",
+    description:
+      "Interactive insights list with ranked review metrics and a sliding highlight.",
+    blurb: "Ranked review · capture rate · line-level yield",
+    poster: "/screens/defect-capture/poster.png",
+    aliases: ["defect-capture"],
+  },
+  {
+    ...SCREEN,
+    slug: "spaceman-moon",
+    title: "Space Explorer Hero",
+    description:
+      "Full-bleed cinematic hero — magenta moon video, glass pills, yield pins.",
+    blurb: "Cinematic lunar hero · yield pins · Request Info",
+    poster: "/screens/spaceman-moon/poster.png",
+    aliases: ["nudgeai"],
+  },
+  {
+    ...SCREEN,
+    slug: "ascii-hero",
+    title: "ASCII Yield Hero",
+    description:
+      "Dark ASCII art hero — magenta color blend, @ deterioration cursor, GSAP entrance, fab marquee.",
+    blurb: "ASCII art · magenta blend · cursor decay",
+    poster: "/screens/ascii-hero/poster.png",
+    aliases: ["axion-hero", "reticle-ascii-hero"],
+  },
+];
+
+/** Still copyable, not listed in the public layout catalog. */
+export const HIDDEN_SCREENS: ScreenCatalogEntry[] = [
+  {
+    ...SCREEN,
+    slug: "health-ai-skeleton",
+    title: "Pulse Skeleton",
+    description:
+      "Loading skeleton for Pulse — sky-blue shimmer bones over floating nav, hero video plate, headline, and body pill.",
+    blurb: "Health loading state · hero plate · pill bones",
+    poster: "/screens/health-ai-skeleton/poster.png",
   },
   {
     ...SCREEN,
@@ -58,16 +152,6 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
       "Passo running homepage in monochrome — B&W hero slideshow, white accents, Geist Sans headline.",
     blurb: "B&W hero · white accents · dawn lockup",
     poster: "/screens/passo-mono/poster.png",
-  },
-  {
-    ...SCREEN,
-    slug: "passo",
-    title: "Passo",
-    description:
-      "Running app homepage — Paris night hero slideshow, lime accents, flip nav, two-column lockup.",
-    blurb: "Hero slideshow · flip nav · lime Join CTA",
-    poster: "/screens/passo/poster.png",
-    aliases: ["running-app"],
   },
   {
     ...SCREEN,
@@ -116,16 +200,6 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
   },
   {
     ...SCREEN,
-    slug: "forgeai",
-    title: "FORGE.AI Hero",
-    description:
-      "AI builder landing hero — blue gradient field, typewriter prompt, model and platform dropdowns, template rail.",
-    blurb: "Prompt bar · model chips · template rail",
-    poster: "/screens/forgeai/poster.png",
-    aliases: ["fifty-x-hero"],
-  },
-  {
-    ...SCREEN,
     slug: "miracle-login-cyan-skeleton",
     title: "Miracle Login Cyan Skeleton",
     description:
@@ -145,15 +219,6 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
   },
   {
     ...SCREEN,
-    slug: "softwave",
-    title: "Softwave Hero",
-    description:
-      "Vintage desktop hero — bliss hill video, pixel headline, glass pill nav, and analog-warmth copy.",
-    blurb: "Bliss hill · pixel headline · glass pills",
-    poster: "/screens/softwave/poster.png",
-  },
-  {
-    ...SCREEN,
     slug: "softwave-features",
     title: "Softwave Feature Cards",
     description:
@@ -163,42 +228,12 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
   },
   {
     ...SCREEN,
-    slug: "bridge-dither",
-    title: "Bridge Dither",
-    description:
-      "Warm bridge dither art hero — interactive canvas, progressive blur edges, and GSAP headline reveal.",
-    blurb: "Bridge dither · progressive blur · clip headline",
-    poster: "/screens/bridge-dither/poster.png",
-    aliases: ["oasis-hero"],
-  },
-  {
-    ...SCREEN,
     slug: "mexin-hero",
     title: "Mexin Hero",
     description:
       "Floating pill nav hero — light canvas, magenta color-blend over abstract art, fab wordmarks.",
     blurb: "Pill nav · magenta blend · fab logos",
     poster: "/screens/mexin-hero/poster.png",
-  },
-  {
-    ...SCREEN,
-    slug: "miracle-login",
-    title: "Miracle Login",
-    description:
-      "Split-panel sign-in — magenta-tinted cover art, Reticle chrome, and GSAP panel entrance.",
-    blurb: "Split panel · magenta art · sign-in form",
-    poster: "/screens/miracle-login/poster.png",
-    aliases: ["reticle-login"],
-  },
-  {
-    ...SCREEN,
-    slug: "dark-pill-hero",
-    title: "Dark Pill Nav Hero",
-    description:
-      "Void canvas hero — cinematic wave art, segmented pill nav, yield lockup, fab wordmarks.",
-    blurb: "Pill nav · wave art · magenta blend",
-    poster: "/screens/dark-pill-hero/poster.png",
-    aliases: ["klyro-hero"],
   },
   {
     ...SCREEN,
@@ -219,16 +254,6 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     blurb: "Three-up cards · killer defects · 6.2× review",
     poster: "/screens/catch-killer-defects/poster.png",
     aliases: ["catch-killer-defects", "features"],
-  },
-  {
-    ...SCREEN,
-    slug: "insights",
-    title: "Yield Inspection Dashboard",
-    description:
-      "Interactive insights list with ranked review metrics and a sliding highlight.",
-    blurb: "Ranked review · capture rate · line-level yield",
-    poster: "/screens/defect-capture/poster.png",
-    aliases: ["defect-capture"],
   },
   {
     ...SCREEN,
@@ -272,16 +297,6 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
   },
   {
     ...SCREEN,
-    slug: "spaceman-moon",
-    title: "Space Explorer Hero",
-    description:
-      "Full-bleed cinematic hero — magenta moon video, glass pills, yield pins.",
-    blurb: "Cinematic lunar hero · yield pins · Request Info",
-    poster: "/screens/spaceman-moon/poster.png",
-    aliases: ["nudgeai"],
-  },
-  {
-    ...SCREEN,
     slug: "light-rays",
     title: "Always-on Wafer Inspection",
     description:
@@ -300,20 +315,6 @@ export const SCREENS_CATALOG: ScreenCatalogEntry[] = [
     poster: "/screens/prompt-bar/poster.png",
     aliases: ["incredible"],
   },
-  {
-    ...SCREEN,
-    slug: "ascii-hero",
-    title: "ASCII Yield Hero",
-    description:
-      "Dark ASCII art hero — magenta color blend, @ deterioration cursor, GSAP entrance, fab marquee.",
-    blurb: "ASCII art · magenta blend · cursor decay",
-    poster: "/screens/ascii-hero/poster.png",
-    aliases: ["axion-hero", "reticle-ascii-hero"],
-  },
-];
-
-/** Still copyable, not listed in the public layout catalog. */
-export const HIDDEN_SCREENS: ScreenCatalogEntry[] = [
   {
     ...SCREEN,
     slug: "yield-skeleton",

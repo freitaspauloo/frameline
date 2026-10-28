@@ -1,10 +1,15 @@
 /** Hero screens that must stay on the public grid even if admin draft overrides exist. */
 export const PRIORITY_STOREFRONT_SCREEN_SLUGS = [
-  "passo",
   "health-ai",
+  "passo",
   "forgeai",
-  "forgeai-pink",
-  "forgeai-lime",
+  "softwave",
+  "bridge-dither",
+  "miracle-login",
+  "dark-pill-hero",
+  "insights",
+  "spaceman-moon",
+  "ascii-hero",
 ] as const;
 
 export type PriorityStorefrontScreenSlug =

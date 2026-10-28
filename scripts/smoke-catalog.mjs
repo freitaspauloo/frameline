@@ -132,26 +132,19 @@ export function runCatalogSmoke() {
     }
   }
 
-  assert(SCREENS_CATALOG.length === 31, `Expected 31 screens, got ${SCREENS_CATALOG.length}`);
+  assert(SCREENS_CATALOG.length === 10, `Expected 10 screens, got ${SCREENS_CATALOG.length}`);
   const screenTitles = SCREENS_CATALOG.map((s) => s.title);
   for (const title of [
-    "Dark Pill Nav Hero",
-    "Built for Yield Hero",
-    "Performance Feature Cards",
-    "Yield Inspection Dashboard",
-    "Magenta Landscape Hero",
-    "AI Inspection Interface",
-    "Protect Yield Features",
-    "Pixel Cube Hero",
-    "Space Explorer Hero",
-    "Always-on Wafer Inspection",
-    "Defect Assistant Hero",
-    "ASCII Yield Hero",
+    "Pulse Hero",
+    "Passo",
+    "FORGE.AI Hero",
     "Softwave Hero",
-    "Softwave Feature Cards",
     "Bridge Dither",
-    "Mexin Hero",
     "Miracle Login",
+    "Dark Pill Nav Hero",
+    "Yield Inspection Dashboard",
+    "Space Explorer Hero",
+    "ASCII Yield Hero",
   ]) {
     assert(screenTitles.includes(title), `Missing layout screen title: ${title}`);
   }
