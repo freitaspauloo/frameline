@@ -88,7 +88,7 @@ function useInkDitherControls() {
   return { defaults, fields, colors };
 }
 
-function HeroInkDitherPlayground() {
+function HeroInkDitherPlayground({ toolbarShown }: { toolbarShown: boolean }) {
   const { defaults, fields, colors } = useInkDitherControls();
   const [props, setProps] = React.useState<Record<string, unknown>>(() => ({
     ...defaults,
@@ -203,7 +203,12 @@ function HeroInkDitherPlayground() {
             </div>
           </div>
 
-          <div className="flex flex-1 flex-col gap-3">
+          {/* Slider thumbs measure their track on mount; the toolbar starts
+              display:none, so remount them once it is actually laid out. */}
+          <div
+            className="flex flex-1 flex-col gap-3"
+            key={toolbarShown ? "shown" : "hidden"}
+          >
             {fields.map((field) => {
               const value = Number(liveProps[field.key]);
               const labelId = `hero-config-${field.key}`;
@@ -311,6 +316,7 @@ export function HeroMacFrame({ className }: { className?: string }) {
   const reduced = useReducedMotion();
   const scope = React.useRef<HTMLDivElement>(null);
   const [bgReady, setBgReady] = React.useState(false);
+  const [toolbarShown, setToolbarShown] = React.useState(false);
 
   const handleBgReady = React.useCallback(() => {
     setBgReady(true);
@@ -347,6 +353,7 @@ export function HeroMacFrame({ className }: { className?: string }) {
           scale: 1,
           clearProps: "transform",
         });
+        setToolbarShown(true);
         return;
       }
 
@@ -383,6 +390,7 @@ export function HeroMacFrame({ className }: { className?: string }) {
             visibility: "visible",
             duration: 0.32,
             pointerEvents: "auto",
+            onStart: () => setToolbarShown(true),
           },
           "+=0.12",
         )
@@ -435,7 +443,7 @@ export function HeroMacFrame({ className }: { className?: string }) {
             <div className="relative z-20 flex h-11 shrink-0 items-center border-b border-border bg-muted/60 px-4">
               <TrafficLights />
             </div>
-            <HeroInkDitherPlayground />
+            <HeroInkDitherPlayground toolbarShown={toolbarShown} />
           </div>
 
           <div
