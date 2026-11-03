@@ -72,7 +72,7 @@ export default function AboutPage() {
             </h2>
             <p className="text-base leading-relaxed text-muted-foreground">
               Frameline is built to ship and run with a small footprint: one
-              catalog, clear tiers, guest checkout, and an account that exists
+              catalog, clear tiers, checkout that requires an account, and an account that exists
               to restore access — not to become another dashboard. The product
               stays focused so the craft stays high.
             </p>
