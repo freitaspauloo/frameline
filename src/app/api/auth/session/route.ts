@@ -14,6 +14,7 @@ import {
   rateLimitResponse,
 } from "@/lib/rate-limit";
 import { ensureUser } from "@/lib/users";
+import { notifyAccountSignup } from "@/lib/email";
 
 const WEEK = 60 * 60 * 24 * 7;
 
