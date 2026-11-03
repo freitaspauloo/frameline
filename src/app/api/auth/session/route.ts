@@ -6,9 +6,6 @@ import {
   sessionUserFromEmail,
 } from "@/lib/auth";
 import { recordEvent } from "@/lib/events";
-if (record?.created) {
-  await notifyAccountSignup(email);
-}
 import { firebaseAdminEnvSnapshot } from "@/lib/firebase-admin-env";
 import { captureException } from "@/lib/monitoring";
 import {
@@ -117,6 +114,9 @@ export async function POST(request: Request) {
       displayName: decoded.name ?? null,
     });
     await recordEvent({
+      if (record?.created) {
+  await notifyAccountSignup(email);
+}
       // A user row that did not exist a moment ago is a signup.
       name: record?.created ? "signup" : "signin",
       email,
