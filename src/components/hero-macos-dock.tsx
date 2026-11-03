@@ -9,7 +9,7 @@ const HERO_DOCK_APPS: DockApp[] = [
   {
     id: "finder",
     name: "Finder",
-    icon: "https://cdn.jim-nielsen.com/macos/1024/finder-2021-09-10.png?rf=1024",
+    icon: "/dock/finder.png",
   },
   {
     id: "cursor",
@@ -39,12 +39,12 @@ const HERO_DOCK_APPS: DockApp[] = [
   {
     id: "terminal",
     name: "Terminal",
-    icon: "https://cdn.jim-nielsen.com/macos/1024/terminal-2021-06-03.png?rf=1024",
+    icon: "/dock/terminal.png",
   },
   {
     id: "safari",
     name: "Safari",
-    icon: "https://cdn.jim-nielsen.com/macos/1024/safari-2021-06-02.png?rf=1024",
+    icon: "/dock/safari.png",
   },
 ];
 
