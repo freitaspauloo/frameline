@@ -6,6 +6,9 @@ import {
   sessionUserFromEmail,
 } from "@/lib/auth";
 import { recordEvent } from "@/lib/events";
+if (record?.created) {
+  await notifyAccountSignup(email);
+}
 import { firebaseAdminEnvSnapshot } from "@/lib/firebase-admin-env";
 import { captureException } from "@/lib/monitoring";
 import {
