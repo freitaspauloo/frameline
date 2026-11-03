@@ -114,16 +114,16 @@ export async function POST(request: Request) {
       displayName: decoded.name ?? null,
     });
     await recordEvent({
-      if (record?.created) {
-  await notifyAccountSignup(email);
-}
-      // A user row that did not exist a moment ago is a signup.
+        // A user row that did not exist a moment ago is a signup.
       name: record?.created ? "signup" : "signin",
       email,
       request,
       source: "firebase",
       props: { uid: decoded.uid, authMethod },
     });
+     if (record?.created) {
+  await notifyAccountSignup(email);
+}
 
     const response = NextResponse.json({
       ok: true,
