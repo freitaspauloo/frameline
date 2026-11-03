@@ -322,3 +322,28 @@ export async function sendContactNotification(input: {
     };
   }
 }
+/** New account only. The Resend automation owns the welcome email. */
+export async function notifyAccountSignup(email: string): Promise<SendResult> {
+  const client = getResend();
+  if (!client) {
+    return { ok: true, skipped: true, reason: "RESEND_API_KEY not set" };
+  }
+
+  try {
+    const { error } = await client.events.send({
+      event: "user.signed_up",
+      email,
+    });
+    if (error) {
+      captureException(error, { route: "email/signup-event" });
+      return { ok: false, error: error.message };
+    }
+    return { ok: true, id: "user.signed_up" };
+  } catch (err) {
+    captureException(err, { route: "email/signup-event" });
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Failed to send signup event",
+    };
+  }
+}
