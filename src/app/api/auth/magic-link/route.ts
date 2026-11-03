@@ -6,6 +6,7 @@ import {
   SESSION_COOKIE,
   sessionUserFromEmail,
 } from "@/lib/auth";
+import { notifyAccountSignup } from "@/lib/email";
 import { recordEvent } from "@/lib/events";
 import {
   clientIp,
@@ -46,6 +47,9 @@ export async function POST(request: Request) {
     source: "magic-link",
     props: { authMethod: "email" },
   });
+  if (record?.created) {
+    await notifyAccountSignup(email);
+  }
 
   const store = await cookies();
 
