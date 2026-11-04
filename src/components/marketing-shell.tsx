@@ -112,6 +112,23 @@ export function MarketingSection({
   );
 }
 
+/** One-line closing note for pages that skip the full footer. */
+export function MarketingFootnote({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <MarketingSection>
+      <div className={cn("py-6", marketingPadX, className)}>
+        <p className="text-xs text-muted-foreground">{children}</p>
+      </div>
+    </MarketingSection>
+  );
+}
+
 /**
  * Empty white band between ruled sections — adds vertical air without
  * inflating section content. The next section’s border-t draws the hairline.

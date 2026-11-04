@@ -5,15 +5,14 @@ import { useEffect } from "react";
 
 import { MarketingNavbar } from "@/components/marketing-navbar";
 import {
+  MarketingFootnote,
   MarketingPageHeader,
   MarketingPad,
   MarketingSection,
   MarketingShell,
-  marketingPadX,
 } from "@/components/marketing-shell";
 import { Button } from "@/components/ui/button";
 import { captureException } from "@/lib/monitoring";
-import { cn } from "@/lib/utils";
 
 export default function GlobalError({
   error,
@@ -61,9 +60,7 @@ export default function GlobalError({
           ) : null}
         </MarketingPad>
       </MarketingSection>
-      <div className={cn("border-t border-border py-6", marketingPadX)}>
-        <p className="text-xs text-muted-foreground">Frameline</p>
-      </div>
+      <MarketingFootnote>Frameline</MarketingFootnote>
     </MarketingShell>
   );
 }

@@ -11,11 +11,11 @@ import {
 } from "@/components/firebase-sign-in-form";
 import { MarketingNavbar } from "@/components/marketing-navbar";
 import {
+  MarketingFootnote,
   MarketingPageHeader,
   MarketingPad,
   MarketingSection,
   MarketingShell,
-  marketingPadX,
 } from "@/components/marketing-shell";
 import { Button } from "@/components/ui/button";
 import { getDemoSession } from "@/lib/auth-client";
@@ -330,11 +330,9 @@ export function CheckoutForm({
           </p>
         </MarketingPad>
       </MarketingSection>
-      <div className={cn("border-t border-border py-6", marketingPadX)}>
-        <p className="text-xs text-muted-foreground">
-          Frameline · Stripe Checkout handles card entry
-        </p>
-      </div>
+      <MarketingFootnote>
+        Frameline · Stripe Checkout handles card entry
+      </MarketingFootnote>
     </MarketingShell>
   );
 }
