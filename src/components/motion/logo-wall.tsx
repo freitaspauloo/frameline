@@ -16,6 +16,15 @@ function fill(entries: readonly ClientLogo[]) {
   return out;
 }
 
+/** Equal-area box: wide wordmarks get shorter, compact marks get taller. */
+function logoSize({ aspect, optical = 1 }: ClientLogo): React.CSSProperties {
+  const root = Math.sqrt(aspect);
+  return {
+    height: `calc(var(--logo-size) * ${(optical / root).toFixed(3)})`,
+    width: `calc(var(--logo-size) * ${(optical * root).toFixed(3)})`,
+  };
+}
+
 /**
  * Credits row — monochrome client logos drifting across the hero band.
  *
@@ -56,17 +65,13 @@ export function LogoWall({
               aria-hidden={mirrored || undefined}
               className="flex shrink-0 items-center border-r border-border px-6 py-3 sm:px-10 sm:py-4"
             >
-              <span className="flex h-8 w-[6.75rem] items-center justify-center sm:h-9 sm:w-[7.5rem]">
+              <span className="flex h-8 w-[6.75rem] items-center justify-center [--logo-size:2.25rem] sm:h-9 sm:w-[7.5rem] sm:[--logo-size:2.5rem]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   alt={mirrored ? "" : `${logo.name} logo`}
-                  className="max-h-5 max-w-full object-contain object-center brightness-0 opacity-45 transition-opacity duration-500 hover:opacity-80 sm:max-h-6"
+                  className="max-h-full max-w-full object-contain object-center brightness-0 opacity-45 transition-opacity duration-500 hover:opacity-80"
                   src={logo.src}
-                  style={
-                    logo.scale === 1
-                      ? undefined
-                      : { transform: `scale(${logo.scale})` }
-                  }
+                  style={logoSize(logo)}
                 />
               </span>
             </span>
