@@ -3,7 +3,6 @@
 import * as React from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import Link from "next/link";
 import {
   RiCheckLine,
   RiFileCopyLine,
@@ -15,25 +14,43 @@ import {
   RiSpeedLine,
 } from "@remixicon/react";
 
+import {
+  DemoEmailSignInForm,
+  FirebaseSignInForm,
+  type AuthSessionUser,
+} from "@/components/firebase-sign-in-form";
 import { HeroMacOSDock } from "@/components/hero-macos-dock";
 import { HeroDither } from "@/components/motion/hero-dither";
 import { useReducedMotion } from "@/components/motion/use-reduced-motion";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
+import { getDemoSession } from "@/lib/auth-client";
+import { isFirebaseClientConfigured } from "@/lib/firebase-client";
+import { recordInstallIntent } from "@/lib/install-intent";
 import { cn } from "@/lib/utils";
 import {
+  getMaterial,
   getMaterialPropDefaults,
   getMaterialProps,
 } from "@/materials";
 import { renderMaterial } from "@/materials/renderers";
+import { buildJsxSnippet, buildMaterialPrompt } from "@/materials/snippets";
 
 const HERO_INK = "#3A58F0";
 const HERO_PAPER = "#FFFFFF";
 /** Ink dither stage back is locked white in the hero. */
 const LOCKED_BACK = "#FFFFFF";
 const SLUG = "ink-dither";
-/** Screen linked from hero copy CTAs — matches homepage catalog tease. */
-const HERO_SCREEN_SLUG = "orb";
+const MATERIAL_TITLE = getMaterial(SLUG)?.title ?? "Ink Dither";
+
+type CopyIntent = "prompt" | "code";
 
 function TrafficLights() {
   return (
@@ -69,7 +86,7 @@ function withLockedBack(
   return { ...props, colorBack: LOCKED_BACK };
 }
 
-function useInkDitherControls() {
+function buildInkDitherControls() {
   const defs = getMaterialProps(SLUG);
   const defaults = withLockedBack(getMaterialPropDefaults(SLUG));
   const fields = defs
@@ -88,21 +105,79 @@ function useInkDitherControls() {
   return { defaults, fields, colors };
 }
 
+const CONTROLS = buildInkDitherControls();
+
+/** Props from a shared `/?speed=…&colorFront=…` link, or null when none apply. */
+function readSharedConfig(search: string): Record<string, unknown> | null {
+  const params = new URLSearchParams(search);
+  const next: Record<string, unknown> = {};
+  for (const field of CONTROLS.fields) {
+    const n = Number(params.get(field.key));
+    if (!params.has(field.key) || !Number.isFinite(n)) continue;
+    next[field.key] = Math.min(field.max, Math.max(field.min, n));
+  }
+  for (const c of CONTROLS.colors) {
+    const raw = params.get(c.key);
+    if (raw && /^#[0-9A-Fa-f]{6}$/.test(raw)) next[c.key] = raw;
+  }
+  return Object.keys(next).length ? next : null;
+}
+
 function HeroInkDitherPlayground({ toolbarShown }: { toolbarShown: boolean }) {
-  const { defaults, fields, colors } = useInkDitherControls();
+  const { defaults, fields, colors } = CONTROLS;
   const [props, setProps] = React.useState<Record<string, unknown>>(() => ({
     ...defaults,
   }));
   const [paused, setPaused] = React.useState(false);
   const [reducedMotion, setReducedMotion] = React.useState(false);
   const [copiedShare, setCopiedShare] = React.useState(false);
+  const [copied, setCopied] = React.useState<CopyIntent | null>(null);
+  const [user, setUser] = React.useState<AuthSessionUser | null>(null);
+  const [authIntent, setAuthIntent] = React.useState<CopyIntent | null>(null);
+  const firebaseReady = isFirebaseClientConfigured();
 
   const forceStatic = paused || reducedMotion;
   const liveProps = withLockedBack(props);
-  const screenHref = `/materials/${HERO_SCREEN_SLUG}`;
+
+  React.useEffect(() => {
+    const shared = readSharedConfig(window.location.search);
+    if (!shared) return;
+    // Applied after hydration so server and client markup agree.
+    const id = window.requestAnimationFrame(() => {
+      setProps((prev) => withLockedBack({ ...prev, ...shared }));
+    });
+    return () => window.cancelAnimationFrame(id);
+  }, []);
 
   function resetConfigurator() {
     setProps({ ...defaults });
+  }
+
+  async function copy(intent: CopyIntent, signedIn = user ?? getDemoSession()) {
+    if (!signedIn?.email) {
+      setAuthIntent(intent);
+      return;
+    }
+    const text =
+      intent === "code"
+        ? buildJsxSnippet(SLUG, liveProps)
+        : buildMaterialPrompt(SLUG, MATERIAL_TITLE, liveProps);
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      // Clipboard needs a fresh user gesture; after sign-in the click is gone.
+      return;
+    }
+    recordInstallIntent({ slug: SLUG, source: "home-hero", path: intent });
+    setCopied(intent);
+    window.setTimeout(() => setCopied(null), 1600);
+  }
+
+  function onAuthSuccess(next: AuthSessionUser) {
+    setUser(next);
+    const intent = authIntent;
+    setAuthIntent(null);
+    if (intent) void copy(intent, next);
   }
 
   async function shareConfig() {
@@ -120,9 +195,8 @@ function HeroInkDitherPlayground({ toolbarShown }: { toolbarShown: boolean }) {
         params.set(c.key, v);
       }
     }
-    // Always advertise white back on shared hero configs.
-    params.set("colorBack", LOCKED_BACK);
-    const url = `${window.location.origin}/materials/${SLUG}?${params.toString()}`;
+    const qs = params.toString();
+    const url = `${window.location.origin}/${qs ? `?${qs}` : ""}`;
     await navigator.clipboard.writeText(url);
     setCopiedShare(true);
     window.setTimeout(() => setCopiedShare(false), 1600);
@@ -284,26 +358,57 @@ function HeroInkDitherPlayground({ toolbarShown }: { toolbarShown: boolean }) {
           <div className="mt-auto flex flex-wrap gap-2 border-t border-border pt-3">
             <Button
               className="min-w-0 flex-1 border-[#3A58F0]/40 bg-[#EEF2FF] text-[#1A2A6B] hover:border-[#3A58F0] hover:bg-[#E0E7FF] hover:text-[#1A2A6B]"
-              nativeButton={false}
-              render={<Link href={screenHref} />}
               size="sm"
+              type="button"
               variant="outline"
+              onClick={() => void copy("prompt")}
             >
-              <RiFileCopyLine data-icon="inline-start" />
-              Copy prompt
+              {copied === "prompt" ? (
+                <RiCheckLine data-icon="inline-start" />
+              ) : (
+                <RiFileCopyLine data-icon="inline-start" />
+              )}
+              {copied === "prompt" ? "Prompt copied" : "Copy prompt"}
             </Button>
             <Button
               className="min-w-0 flex-1 bg-[#3A58F0] text-white hover:bg-[#2F4AD4]"
-              nativeButton={false}
-              render={<Link href={screenHref} />}
               size="sm"
+              type="button"
+              onClick={() => void copy("code")}
             >
-              <RiFileCopyLine data-icon="inline-start" />
-              Copy code
+              {copied === "code" ? (
+                <RiCheckLine data-icon="inline-start" />
+              ) : (
+                <RiFileCopyLine data-icon="inline-start" />
+              )}
+              {copied === "code" ? "Code copied" : "Copy code"}
             </Button>
           </div>
         </section>
       </div>
+
+      <Dialog
+        open={authIntent !== null}
+        onOpenChange={(open) => {
+          if (!open) setAuthIntent(null);
+        }}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Sign in to copy</DialogTitle>
+            <DialogDescription>
+              Create a free account or sign in — then the{" "}
+              {authIntent === "code" ? "code" : "prompt"} for {MATERIAL_TITLE}{" "}
+              lands on your clipboard with your current settings.
+            </DialogDescription>
+          </DialogHeader>
+          {firebaseReady ? (
+            <FirebaseSignInForm onSuccess={onAuthSuccess} />
+          ) : (
+            <DemoEmailSignInForm onSuccess={onAuthSuccess} />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
