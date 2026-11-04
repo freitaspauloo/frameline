@@ -39,7 +39,7 @@ export function AccountRegistryPanel({ email }: { email: string | null }) {
       </h2>
       <pre
         className={cn(
-          "overflow-x-auto border border-border bg-foreground p-4 font-mono text-[11px] text-background",
+          "overflow-x-auto border border-border bg-foreground p-4 font-mono text-[0.6875rem] text-background",
         )}
       >
         {token}

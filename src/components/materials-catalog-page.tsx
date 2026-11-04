@@ -129,7 +129,7 @@ export function MaterialsCatalogPage({
       <MarketingSection>
         <MarketingPageHeader
           action={
-            <p className="font-mono text-[11px] text-muted-foreground">
+            <p className="font-mono text-[0.6875rem] text-muted-foreground">
               {filteredScreens.length + entries.length}{" "}
               {filteredScreens.length + entries.length === 1 ? "item" : "items"}
             </p>

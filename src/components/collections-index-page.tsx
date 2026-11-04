@@ -24,7 +24,7 @@ export function CollectionsIndexPage() {
       <MarketingSection>
         <MarketingPageHeader
           action={
-            <p className="font-mono text-[11px] text-muted-foreground">
+            <p className="font-mono text-[0.6875rem] text-muted-foreground">
               {MATERIALS_COLLECTIONS.length} collections
             </p>
           }
@@ -67,7 +67,7 @@ export function CollectionsIndexPage() {
                         {collection.description}
                       </p>
                     </div>
-                    <p className="shrink-0 font-mono text-[11px] text-muted-foreground tabular-nums">
+                    <p className="shrink-0 font-mono text-[0.6875rem] text-muted-foreground tabular-nums">
                       {countLabel}
                     </p>
                   </div>

@@ -54,7 +54,7 @@ export default async function AccountPage() {
 
         <MarketingPad className="space-y-3 border-b border-border py-6">
           {email ? (
-            <p className="font-mono text-[11px] text-muted-foreground">
+            <p className="font-mono text-[0.6875rem] text-muted-foreground">
               Signed in as{" "}
               <span className="text-foreground">{email}</span>
               {" · "}
@@ -86,7 +86,7 @@ export default async function AccountPage() {
                   <p className="font-heading text-sm font-medium tracking-tight">
                     {item.title}
                   </p>
-                  <p className="mt-1 font-mono text-[11px] text-muted-foreground">
+                  <p className="mt-1 font-mono text-[0.6875rem] text-muted-foreground">
                     {item.tier} · v0.1.0 · entitled
                   </p>
                 </div>
@@ -113,7 +113,7 @@ export default async function AccountPage() {
                   <p className="font-heading text-sm font-medium tracking-tight text-muted-foreground">
                     {item.title}
                   </p>
-                  <p className="mt-1 font-mono text-[11px] text-muted-foreground">
+                  <p className="mt-1 font-mono text-[0.6875rem] text-muted-foreground">
                     {item.tier} · locked until purchase
                   </p>
                 </div>

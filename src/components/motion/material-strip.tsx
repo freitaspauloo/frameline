@@ -50,10 +50,10 @@ function Tile({
         <span className="absolute inset-0 bg-background opacity-0 transition-opacity duration-500 group-hover:opacity-15" />
       </div>
       <div className="flex items-baseline justify-between gap-3 border-t border-border px-4 py-3">
-        <span className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase transition-colors duration-300 group-hover:text-foreground">
+        <span className="font-mono text-[0.625rem] tracking-widest text-muted-foreground uppercase transition-colors duration-300 group-hover:text-foreground">
           {entry.title}
         </span>
-        <span className="font-mono text-[10px] text-border tabular-nums">
+        <span className="font-mono text-[0.625rem] text-border tabular-nums">
           {String(index + 1).padStart(2, "0")}
         </span>
       </div>

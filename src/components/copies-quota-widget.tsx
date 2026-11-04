@@ -42,7 +42,7 @@ function CopiesQuotaChip({
     >
       <div className="inline-flex max-w-[min(22rem,calc(100vw-2rem))] items-center gap-2.5 border border-[#3A58F0] bg-[#EEF2FF] px-3 py-2 shadow-[0_8px_24px_rgba(26,42,107,0.18)]">
         <LogoMark aria-hidden className="size-5 shrink-0" />
-        <span className="font-mono text-[10px] tracking-[0.14em] text-[#1A2A6B] uppercase">
+        <span className="font-mono text-[0.625rem] tracking-[0.14em] text-[#1A2A6B] uppercase">
           {label}
         </span>
       </div>

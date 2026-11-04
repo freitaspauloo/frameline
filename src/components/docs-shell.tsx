@@ -174,7 +174,7 @@ export function DocsUl({ children }: { children: ReactNode }) {
 
 export function DocsCode({ children }: { children: ReactNode }) {
   return (
-    <pre className="mt-6 overflow-x-auto border border-border bg-foreground p-5 font-mono text-[13px] leading-relaxed text-background">
+    <pre className="mt-6 overflow-x-auto border border-border bg-foreground p-5 font-mono text-[0.8125rem] leading-relaxed text-background">
       {children}
     </pre>
   );

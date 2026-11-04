@@ -430,7 +430,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
                 <dt className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
                   Type
                 </dt>
-                <dd className="font-mono text-[11px] text-foreground">
+                <dd className="font-mono text-[0.6875rem] text-foreground">
                   {entry.type}
                 </dd>
               </div>
@@ -438,7 +438,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
                 <dt className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
                   Contexts
                 </dt>
-                <dd className="font-mono text-[11px] text-foreground">
+                <dd className="font-mono text-[0.6875rem] text-foreground">
                   {entry.useContexts.join(" · ")}
                 </dd>
               </div>
@@ -446,7 +446,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
                 <dt className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
                   Tags
                 </dt>
-                <dd className="font-mono text-[11px] text-foreground">
+                <dd className="font-mono text-[0.6875rem] text-foreground">
                   {entry.tags.join(" · ")}
                 </dd>
               </div>
@@ -455,7 +455,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
                   <dt className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
                     Perf
                   </dt>
-                  <dd className="font-mono text-[11px] leading-relaxed text-foreground">
+                  <dd className="font-mono text-[0.6875rem] leading-relaxed text-foreground">
                     {entry.renderingTechnique
                       ? `${entry.renderingTechnique} · ${entry.perfNotes}`
                       : entry.perfNotes}
@@ -502,7 +502,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
                   const labelId = `config-${slug}-${field.key}`;
                   return (
                     <div key={field.key}>
-                      <div className="flex items-baseline justify-between font-mono text-[11px]">
+                      <div className="flex items-baseline justify-between font-mono text-[0.6875rem]">
                         <span className="text-muted-foreground" id={labelId}>
                           {field.label}
                         </span>
@@ -536,11 +536,11 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
                         className="flex items-center justify-between gap-3 border-t border-border pt-5"
                         key={c.key}
                       >
-                        <span className="font-mono text-[11px] text-muted-foreground">
+                        <span className="font-mono text-[0.6875rem] text-muted-foreground">
                           {c.label}
                         </span>
                         <span className="flex items-center gap-3">
-                          <span className="font-mono text-[11px] text-foreground uppercase tabular-nums">
+                          <span className="font-mono text-[0.6875rem] text-foreground uppercase tabular-nums">
                             {hex}
                           </span>
                           <input
@@ -564,7 +564,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
 
             <Panel
               action={
-                <span className="font-mono text-[11px] tracking-wide text-muted-foreground uppercase">
+                <span className="font-mono text-[0.6875rem] tracking-wide text-muted-foreground uppercase">
                   {entry.tier}
                 </span>
               }
@@ -572,7 +572,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
             >
               <div className="space-y-4">
                 <p
-                  className="border border-border bg-muted/30 px-3 py-2 font-mono text-[11px] leading-relaxed text-foreground"
+                  className="border border-border bg-muted/30 px-3 py-2 font-mono text-[0.6875rem] leading-relaxed text-foreground"
                   data-install-speed="under-60s"
                 >
                   Install under 60s — sign in, then CLI or copy-paste into your
@@ -584,7 +584,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
                     CLI
                   </p>
                   <div className="flex items-start gap-2">
-                    <pre className="min-w-0 flex-1 overflow-x-auto bg-foreground p-3 font-mono text-[11px] leading-relaxed text-background">
+                    <pre className="min-w-0 flex-1 overflow-x-auto bg-foreground p-3 font-mono text-[0.6875rem] leading-relaxed text-background">
                       {cliSnippet}
                     </pre>
                     <Button
@@ -607,7 +607,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
                   <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
                     Copy-paste path
                   </p>
-                  <p className="font-mono text-[11px] text-foreground">
+                  <p className="font-mono text-[0.6875rem] text-foreground">
                     {pastePath}
                   </p>
                   <p className="text-sm leading-relaxed text-muted-foreground">
@@ -656,7 +656,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
             {license ? (
               <Panel
                 action={
-                  <span className="font-mono text-[11px] text-muted-foreground">
+                  <span className="font-mono text-[0.6875rem] text-muted-foreground">
                     {license.priceLabel}
                   </span>
                 }
@@ -708,7 +708,7 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
             ) : null}
 
             <Panel title="JSX">
-              <pre className="overflow-x-auto bg-foreground p-5 font-mono text-[11px] leading-relaxed text-background">
+              <pre className="overflow-x-auto bg-foreground p-5 font-mono text-[0.6875rem] leading-relaxed text-background">
                 {snippet}
               </pre>
             </Panel>
@@ -718,16 +718,16 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
                 <table className="w-full min-w-[28rem] border-collapse text-left">
                   <thead>
                     <tr className="border-b border-border">
-                      <th className="pb-3 pr-4 font-mono text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">
+                      <th className="pb-3 pr-4 font-mono text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
                         Name
                       </th>
-                      <th className="pb-3 pr-4 font-mono text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">
+                      <th className="pb-3 pr-4 font-mono text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
                         Type
                       </th>
-                      <th className="pb-3 pr-4 font-mono text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">
+                      <th className="pb-3 pr-4 font-mono text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
                         Default
                       </th>
-                      <th className="pb-3 font-mono text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">
+                      <th className="pb-3 font-mono text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
                         Description
                       </th>
                     </tr>
@@ -735,16 +735,16 @@ export function MaterialDetailPage({ slug, initialParams, entry: entryProp }: Pr
                   <tbody>
                     {getMaterialProps(slug).map((def) => (
                       <tr className="border-b border-border last:border-b-0" key={def.key}>
-                        <td className="py-3 pr-4 align-top font-mono text-[11px] text-foreground">
+                        <td className="py-3 pr-4 align-top font-mono text-[0.6875rem] text-foreground">
                           {def.key}
                         </td>
-                        <td className="py-3 pr-4 align-top font-mono text-[11px] text-muted-foreground">
+                        <td className="py-3 pr-4 align-top font-mono text-[0.6875rem] text-muted-foreground">
                           {def.kind}
                         </td>
-                        <td className="max-w-[10rem] truncate py-3 pr-4 align-top font-mono text-[11px] text-foreground">
+                        <td className="max-w-[10rem] truncate py-3 pr-4 align-top font-mono text-[0.6875rem] text-foreground">
                           {formatPropDefault(def.defaultValue)}
                         </td>
-                        <td className="py-3 align-top text-[11px] leading-relaxed text-muted-foreground">
+                        <td className="py-3 align-top text-[0.6875rem] leading-relaxed text-muted-foreground">
                           {def.description ?? "—"}
                         </td>
                       </tr>

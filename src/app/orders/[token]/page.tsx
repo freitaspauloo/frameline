@@ -114,7 +114,7 @@ export default async function OrderConfirmationPage({
             </p>
           ) : null}
 
-          <pre className="overflow-x-auto bg-foreground p-4 font-mono text-[12px] leading-relaxed text-background">
+          <pre className="overflow-x-auto bg-foreground p-4 font-mono text-[0.75rem] leading-relaxed text-background">
             {`npx shadcn@latest add @frameline/${material}\n# order ${orderRef}`}
           </pre>
 
@@ -123,7 +123,7 @@ export default async function OrderConfirmationPage({
               <p className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">
                 Registry token
               </p>
-              <pre className="overflow-x-auto border border-border bg-background p-4 font-mono text-[12px] leading-relaxed text-foreground">
+              <pre className="overflow-x-auto border border-border bg-background p-4 font-mono text-[0.75rem] leading-relaxed text-foreground">
                 {registryToken}
               </pre>
               <p className="text-xs text-muted-foreground">
