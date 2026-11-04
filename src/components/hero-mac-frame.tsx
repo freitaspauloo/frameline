@@ -131,8 +131,8 @@ function HeroInkDitherPlayground({ toolbarShown }: { toolbarShown: boolean }) {
   return (
     <div className="grid min-h-0 flex-1 grid-cols-1 overflow-auto lg:grid-cols-[1.15fr_0.85fr] lg:items-stretch">
       {/* Preview */}
-      <div className="flex min-h-0 flex-col gap-4 border-b border-border p-4 sm:p-5 lg:min-h-[360px] lg:flex-1 lg:border-b-0">
-        <div className="relative aspect-[16/10] min-h-[280px] w-full flex-1 overflow-hidden border border-border bg-white lg:aspect-auto lg:min-h-[320px]">
+      <div className="flex min-h-0 flex-col gap-4 border-b border-border p-4 sm:p-5 lg:min-h-[22.5rem] lg:flex-1 lg:border-b-0">
+        <div className="relative aspect-[16/10] min-h-[17.5rem] w-full flex-1 overflow-hidden border border-border bg-white lg:aspect-auto lg:min-h-[20rem]">
           {renderMaterial(SLUG, {
             className: "absolute inset-0 h-full w-full",
             forceStatic,
@@ -214,7 +214,7 @@ function HeroInkDitherPlayground({ toolbarShown }: { toolbarShown: boolean }) {
               const labelId = `hero-config-${field.key}`;
               return (
                 <div key={field.key}>
-                  <div className="flex items-baseline justify-between gap-2 font-mono text-[10px]">
+                  <div className="flex items-baseline justify-between gap-2 font-mono text-[0.625rem]">
                     <span className="text-muted-foreground" id={labelId}>
                       {field.label}
                     </span>
@@ -252,11 +252,11 @@ function HeroInkDitherPlayground({ toolbarShown }: { toolbarShown: boolean }) {
                   className="flex items-center justify-between gap-2"
                   key={c.key}
                 >
-                  <span className="font-mono text-[10px] text-muted-foreground">
+                  <span className="font-mono text-[0.625rem] text-muted-foreground">
                     {c.label}
                   </span>
                   <span className="flex items-center gap-2">
-                    <span className="font-mono text-[10px] text-foreground uppercase tabular-nums">
+                    <span className="font-mono text-[0.625rem] text-foreground uppercase tabular-nums">
                       {hex}
                     </span>
                     <input
@@ -412,7 +412,7 @@ export function HeroMacFrame({ className }: { className?: string }) {
     <div
       ref={scope}
       className={cn(
-        "hero-mac-intro relative isolate flex h-full min-h-[min(56dvh,640px)] w-full flex-col pb-8 sm:pb-10 lg:pb-12",
+        "hero-mac-intro relative isolate flex h-full min-h-[min(56dvh,40rem)] w-full flex-col pb-8 sm:pb-10 lg:pb-12",
         bgReady && "hero-mac-intro--bg-ready",
         className,
       )}
@@ -437,7 +437,7 @@ export function HeroMacFrame({ className }: { className?: string }) {
       >
         <div className="flex w-full max-w-5xl flex-col items-center gap-5 sm:gap-6">
           <div
-            className="flex min-h-[min(54dvh,500px)] max-h-[min(80dvh,760px)] w-full flex-col overflow-hidden rounded-[16px] border border-border bg-background shadow-[0_24px_64px_rgba(0,0,0,0.18)]"
+            className="flex min-h-[min(54dvh,31.25rem)] max-h-[min(80dvh,47.5rem)] w-full flex-col overflow-hidden rounded-[1rem] border border-border bg-background shadow-[0_24px_64px_rgba(0,0,0,0.18)]"
             data-hero-stage="window"
           >
             <div className="relative z-20 flex h-11 shrink-0 items-center border-b border-border bg-muted/60 px-4">

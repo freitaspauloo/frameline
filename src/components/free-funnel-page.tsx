@@ -101,7 +101,7 @@ function FreeMaterialInstall({ entry }: { entry: MaterialCatalogEntry }) {
             Install
           </p>
           <div className="flex items-start gap-2">
-            <pre className="min-w-0 flex-1 overflow-x-auto bg-foreground p-3 font-mono text-[11px] leading-relaxed text-background">
+            <pre className="min-w-0 flex-1 overflow-x-auto bg-foreground p-3 font-mono text-[0.6875rem] leading-relaxed text-background">
               {cli}
             </pre>
             <Button
@@ -166,7 +166,7 @@ export function FreeFunnelPage({
       <MarketingSection>
         <MarketingPageHeader
           action={
-            <p className="font-mono text-[11px] text-muted-foreground">
+            <p className="font-mono text-[0.6875rem] text-muted-foreground">
               {materials.length} free{" "}
               {materials.length === 1 ? "material" : "materials"}
             </p>

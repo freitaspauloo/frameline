@@ -26,7 +26,7 @@ export type MaterialSequenceStage = {
 function StageMeta({ index, stage }: { index: number; stage: MaterialSequenceStage }) {
   return (
     <>
-      <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+      <p className="font-mono text-[0.625rem] tracking-widest text-muted-foreground uppercase">
         {String(index + 1).padStart(2, "0")} · {stage.label}
       </p>
       <p className="mt-3 max-w-[42ch] text-base leading-relaxed text-muted-foreground">
@@ -200,13 +200,13 @@ function PinnedSequence({ stages }: { stages: readonly MaterialSequenceStage[] }
                     data-seq-mark
                   >
                     <span className="block h-px w-6 bg-border transition-all duration-500 ease-[var(--ease-emil)] group-data-[active=true]/mark:w-12 group-data-[active=true]/mark:bg-[#3A58F0]" />
-                    <span className="font-mono text-[11px] tracking-widest uppercase">
+                    <span className="font-mono text-[0.6875rem] tracking-widest uppercase">
                       {stage.entry.title}
                     </span>
                   </li>
                 ))}
               </ol>
-              <p className="mt-8 font-mono text-[10px] tracking-widest text-muted-foreground tabular-nums">
+              <p className="mt-8 font-mono text-[0.625rem] tracking-widest text-muted-foreground tabular-nums">
                 <span ref={counterRef} className="text-foreground">
                   01
                 </span>
@@ -225,7 +225,7 @@ function PinnedSequence({ stages }: { stages: readonly MaterialSequenceStage[] }
                 style={{ opacity: index === 0 ? 1 : 0, zIndex: index }}
               >
                 <MaterialPreview entry={stage.entry} forceStatic={!live} />
-                <span className="absolute bottom-6 left-6 z-10 font-mono text-[10px] tracking-widest text-background/80 uppercase">
+                <span className="absolute bottom-6 left-6 z-10 font-mono text-[0.625rem] tracking-widest text-background/80 uppercase">
                   {stage.entry.title}
                 </span>
               </div>

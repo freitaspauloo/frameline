@@ -61,9 +61,11 @@ export function MarketingShell({
   return (
     <div
       className={cn(
-        "relative min-h-dvh overflow-visible bg-background text-foreground",
+        /* x-clip: rail crosses straddle the viewport edge once the UI scale fills it */
+        "relative min-h-dvh overflow-x-clip overflow-y-visible bg-background text-foreground",
         className,
       )}
+      data-ui-scale="fluid"
     >
       <a
         className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:border focus:border-border focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:text-foreground focus:outline-none"

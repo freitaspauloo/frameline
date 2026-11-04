@@ -66,7 +66,7 @@ export function FirebaseSignInForm({
         <p>
           Paste these from Firebase Console → Project settings → Your apps:
         </p>
-        <ul className="list-inside list-disc space-y-1 font-mono text-[11px]">
+        <ul className="list-inside list-disc space-y-1 font-mono text-[0.6875rem]">
           <li>NEXT_PUBLIC_FIREBASE_API_KEY</li>
           <li>NEXT_PUBLIC_FIREBASE_APP_ID</li>
           <li>NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID</li>

@@ -325,6 +325,7 @@ export function ScreenDetailPage({
               ? "h-[min(100dvh,1100px)] min-h-[640px]"
               : "aspect-[16/9]",
           )}
+          data-ui-scale="off"
         >
           <ScreenLivePreview embed slug={entry.slug} />
         </div>

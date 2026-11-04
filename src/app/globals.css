@@ -444,6 +444,21 @@ html {
   scroll-behavior: smooth;
 }
 
+/*
+ * Wide-screen UI scale — marketing pages lay out as at a 1280px viewport and
+ * grow with the window (like browser zoom) up to 150% at 1920px. Media
+ * queries resolve rem against the initial font size, so breakpoints stay put.
+ * Live screen plates mix px and rem inside a fixed 1920×1080 stage, so pages
+ * that mount one opt out with data-ui-scale="off".
+ */
+html:has([data-ui-scale="fluid"]) {
+  font-size: clamp(100%, 100vw / 80, 150%);
+}
+
+html:has([data-ui-scale="off"]) {
+  font-size: 100%;
+}
+
 /* Sections clear the sticky 4rem navbar when anchored */
 [data-relay-anchor] {
   scroll-margin-top: 5rem;

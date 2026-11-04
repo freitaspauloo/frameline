@@ -26,7 +26,7 @@ export function MarketingFaq({
         >
           <AccordionTrigger className="gap-4 px-6 py-5 hover:no-underline sm:px-8 sm:py-6 lg:px-12 [&[data-panel-open]]:pb-3">
             <span className="flex min-w-0 flex-1 items-start gap-4 text-left">
-              <span className="mt-0.5 shrink-0 font-mono text-[10px] font-medium tracking-[0.2em] text-muted-foreground tabular-nums">
+              <span className="mt-0.5 shrink-0 font-mono text-[0.625rem] font-medium tracking-[0.2em] text-muted-foreground tabular-nums">
                 {String(index + 1).padStart(2, "0")}
               </span>
               <span className="font-heading text-base font-medium tracking-tight text-foreground sm:text-lg">
