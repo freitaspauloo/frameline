@@ -155,6 +155,42 @@ function SectionIntro({
   );
 }
 
+function ScreenPoster({ screen }: { screen: ScreenCatalogEntry }) {
+  return (
+    <>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        alt=""
+        className="absolute inset-0 size-full object-cover"
+        src={screen.poster}
+      />
+      {screenPosterNeedsMagentaTint(screen.slug) ? (
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-[#d600bf] mix-blend-color"
+        />
+      ) : null}
+    </>
+  );
+}
+
+type FeaturedEntry =
+  | { kind: "material"; entry: MaterialCatalogEntry }
+  | { kind: "screen"; entry: ScreenCatalogEntry };
+
+/**
+ * Configurator spotlight — first published material, else first screen.
+ * Materials can be drafted from admin, so never hardcode a slug here.
+ */
+function pickFeatured(
+  catalog: MaterialCatalogEntry[],
+  screens: ScreenCatalogEntry[],
+): FeaturedEntry | null {
+  if (catalog[0]) return { kind: "material", entry: catalog[0] };
+  if (screens[0]) return { kind: "screen", entry: screens[0] };
+  return null;
+}
+
 export function FramelineHomePageV2({
   catalog,
   screens,
@@ -162,6 +198,8 @@ export function FramelineHomePageV2({
   catalog: MaterialCatalogEntry[];
   screens: ScreenCatalogEntry[];
 }) {
+  const featured = pickFeatured(catalog, screens);
+
   return (
     <FramelineLenis>
       <FramelineReveal>
@@ -258,18 +296,7 @@ export function FramelineHomePageV2({
                     aria-label={screen.title}
                   >
                     <div className="relative aspect-[16/9] overflow-hidden bg-foreground">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        alt=""
-                        className="absolute inset-0 size-full object-cover"
-                        src={screen.poster}
-                      />
-                      {screenPosterNeedsMagentaTint(screen.slug) ? (
-                        <div
-                          aria-hidden
-                          className="absolute inset-0 bg-[#d600bf] mix-blend-color"
-                        />
-                      ) : null}
+                      <ScreenPoster screen={screen} />
                     </div>
                   </Link>
                 ))}
@@ -331,28 +358,40 @@ export function FramelineHomePageV2({
                       className="max-w-[42ch] text-base leading-relaxed text-muted-foreground"
                       data-reveal
                     >
-                      Open any material, adjust props, and copy JSX — the
-                      surface is the product, not a PNG pack.
+                      {featured?.kind === "screen"
+                        ? "Open any screen, preview it live, and copy the prompt or code — the surface is the product, not a PNG pack."
+                        : "Open any material, adjust props, and copy JSX — the surface is the product, not a PNG pack."}
                     </p>
-                    <div data-reveal>
-                      <Button
-                        nativeButton={false}
-                        render={<Link href="/materials/aurora-mesh" />}
-                        size="lg"
-                      >
-                        Open Aurora Mesh
-                        <RiArrowRightLine data-icon="inline-end" />
-                      </Button>
-                    </div>
+                    {featured ? (
+                      <div data-reveal>
+                        <Button
+                          nativeButton={false}
+                          render={
+                            <Link href={`/materials/${featured.entry.slug}`} />
+                          }
+                          size="lg"
+                        >
+                          Open {featured.entry.title}
+                          <RiArrowRightLine data-icon="inline-end" />
+                        </Button>
+                      </div>
+                    ) : null}
                   </div>
                 }
                 right={
                   <div
-                    className="pointer-events-none relative aspect-[16/10] overflow-hidden bg-foreground lg:aspect-auto lg:min-h-[20rem]"
+                    className={cn(
+                      "pointer-events-none relative overflow-hidden bg-foreground",
+                      featured?.kind === "screen"
+                        ? "aspect-[16/9]"
+                        : "aspect-[16/10] lg:aspect-auto lg:min-h-[20rem]",
+                    )}
                     data-reveal
                   >
-                    {catalog[0] ? (
-                      <MaterialPreview entry={catalog[0]} />
+                    {featured?.kind === "material" ? (
+                      <MaterialPreview entry={featured.entry} />
+                    ) : featured?.kind === "screen" ? (
+                      <ScreenPoster screen={featured.entry} />
                     ) : null}
                   </div>
                 }
