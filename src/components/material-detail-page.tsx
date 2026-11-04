@@ -41,10 +41,8 @@ import {
   type MaterialCatalogEntry,
   type MaterialPropDef,
 } from "@/materials";
-import {
-  getMaterialComponentName,
-  renderMaterial,
-} from "@/materials/renderers";
+import { renderMaterial } from "@/materials/renderers";
+import { buildJsxSnippet } from "@/materials/snippets";
 import { getMaterialThumbnailSrc } from "@/materials/thumbnails";
 
 type Props = {
@@ -53,25 +51,6 @@ type Props = {
   /** Resolved catalog entry (with demo overrides). Falls back to source catalog. */
   entry?: MaterialCatalogEntry;
 };
-
-function buildJsxSnippet(slug: string, props: Record<string, unknown>) {
-  const entries = Object.entries(props).filter(
-    ([, v]) => v !== undefined && v !== "",
-  );
-  const propsStr = entries
-    .map(([k, v]) => {
-      if (typeof v === "number") return `  ${k}={${v}}`;
-      if (typeof v === "boolean") return v ? `  ${k}` : null;
-      if (Array.isArray(v)) return `  ${k}={${JSON.stringify(v)}}`;
-      return `  ${k}=${JSON.stringify(String(v))}`;
-    })
-    .filter(Boolean)
-    .join("\n");
-
-  const name = getMaterialComponentName(slug);
-
-  return `import { ${name} } from "@/materials";\n\n<${name}\n${propsStr}\n  className="absolute inset-0"\n/>`;
-}
 
 function LivePreview({
   entry,
