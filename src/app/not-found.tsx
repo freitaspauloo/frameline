@@ -2,14 +2,13 @@ import Link from "next/link";
 
 import { MarketingNavbar } from "@/components/marketing-navbar";
 import {
+  MarketingFootnote,
   MarketingPageHeader,
   MarketingPad,
   MarketingSection,
   MarketingShell,
-  marketingPadX,
 } from "@/components/marketing-shell";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 export default function NotFound() {
   return (
@@ -38,9 +37,7 @@ export default function NotFound() {
           </Link>
         </MarketingPad>
       </MarketingSection>
-      <div className={cn("border-t border-border py-6", marketingPadX)}>
-        <p className="text-xs text-muted-foreground">Frameline</p>
-      </div>
+      <MarketingFootnote>Frameline</MarketingFootnote>
     </MarketingShell>
   );
 }
