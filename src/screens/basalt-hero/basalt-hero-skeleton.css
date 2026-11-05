@@ -1,11 +1,11 @@
-/* Basalt Hero skeleton — mirrors the hero's geometry; shimmer carries a hint of the aurora. */
+/* Basalt Hero skeleton — mirrors the hero's geometry; shimmer carries a hint of Frameline blue. */
 .fl-basalt-skeleton {
   position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
   overflow: hidden;
-  background: #07080a;
+  background: #05070f;
 }
 
 .fl-basalt-skeleton .bone {
@@ -30,7 +30,7 @@
     105deg,
     transparent 24%,
     var(--shine) 46%,
-    rgba(255, 107, 74, 0.16) 50%,
+    rgba(58, 88, 240, 0.16) 50%,
     var(--shine) 54%,
     transparent 76%
   );
@@ -59,8 +59,8 @@
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 46% 14% at 66% 30%, rgba(255, 47, 58, 0.12), transparent 70%),
-    radial-gradient(ellipse 40% 12% at 18% 72%, rgba(255, 107, 74, 0.1), transparent 70%);
+    radial-gradient(ellipse 46% 14% at 66% 30%, rgba(20, 71, 230, 0.12), transparent 70%),
+    radial-gradient(ellipse 40% 12% at 18% 72%, rgba(58, 88, 240, 0.1), transparent 70%);
 }
 
 .fl-basalt-skeleton .bhs-row {
@@ -173,8 +173,8 @@
 }
 
 .fl-basalt-skeleton .bhs-result--active {
-  background: rgba(255, 47, 58, 0.06);
-  box-shadow: inset 0 0 0 1px rgba(255, 107, 74, 0.1);
+  background: rgba(20, 71, 230, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(58, 88, 240, 0.1);
 }
 
 .fl-basalt-skeleton .bone-tile { width: 28px; height: 28px; border-radius: 7px; }

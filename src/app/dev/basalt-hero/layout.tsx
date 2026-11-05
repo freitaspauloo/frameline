@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 export const metadata: Metadata = {
   title: "Basalt Hero — Dev Preview",
   description:
-    "Frameline dev preview (not in catalog): dark developer-tool hero with a living warm aurora and command-bar mockup.",
+    "Frameline dev preview (not in catalog): dark developer-tool hero with a living Frameline-blue aurora and command-bar mockup.",
   robots: { index: false, follow: false },
 };
 

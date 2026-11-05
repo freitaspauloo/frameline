@@ -9,8 +9,8 @@ import { cn } from "@/lib/utils";
 import {
   AppleGlyph,
   ArrowRightIcon,
-  BasaltMark,
   FolderOpenIcon,
+  FramelineMark,
   HammerIcon,
   MenuIcon,
   ProductHuntGlyph,
@@ -44,7 +44,7 @@ const RESULTS: readonly Result[] = [
   {
     icon: RocketIcon,
     label: "Deploy to staging",
-    arg: "basalt deploy --env staging",
+    arg: "frameline deploy --env staging",
     keys: ["⌘", "↵"],
     active: true,
   },
@@ -52,7 +52,7 @@ const RESULTS: readonly Result[] = [
   { icon: FolderOpenIcon, label: "Open project", arg: "~/projects/app", keys: ["⌘", "O"] },
   {
     icon: SparklesIcon,
-    label: "Ask Basalt AI",
+    label: "Ask Frameline AI",
     arg: "“why did staging fail?”",
     keys: ["⌘", "K"],
   },
@@ -67,8 +67,8 @@ export type BasaltHeroProps = {
 };
 
 /**
- * Basalt Hero — dark developer-tool landing with a living warm aurora,
- * keycap download CTAs, and a dark-glass command-bar mockup.
+ * Basalt Hero (branded frameline.ai) — dark developer-tool landing with a living
+ * Frameline-blue aurora, keycap download CTAs, and a dark-glass command-bar mockup.
  * All motion is CSS keyframes; the 0% frame is full bloom so stills read complete.
  */
 export function BasaltHero({ className, embed = false }: BasaltHeroProps) {
@@ -96,9 +96,9 @@ export function BasaltHero({ className, embed = false }: BasaltHeroProps) {
 
       <header className="bh-nav-wrap">
         <nav className="bh-nav" aria-label="Primary">
-          <a className="bh-brand" href="#">
-            <BasaltMark className="bh-brand-mark" />
-            <span>Basalt</span>
+          <a className="bh-brand" href="#" aria-label="frameline.ai home">
+            <FramelineMark className="bh-brand-mark" />
+            <span>frameline.ai</span>
           </a>
           <ul className="bh-nav-links">
             {NAV_LINKS.map((link) => (
@@ -136,8 +136,8 @@ export function BasaltHero({ className, embed = false }: BasaltHeroProps) {
         </h1>
 
         <p className="bh-subtitle">
-          Basalt is a keyboard-first launcher for your whole dev loop. Run scripts, jump between
-          repos, and ship to staging from a single command bar.
+          Frameline is a keyboard-first launcher for your dev loop. Run scripts, jump between
+          repos, and ship to staging from one command bar.
         </p>
 
         <div className="bh-ctas">
@@ -152,14 +152,14 @@ export function BasaltHero({ className, embed = false }: BasaltHeroProps) {
         </div>
 
         <p className="bh-install">
-          <span className="bh-install-cmd">brew install basalt</span>
+          <span className="bh-install-cmd">brew install frameline</span>
           <span className="bh-install-sep" aria-hidden>
             ·
           </span>
           <span>Install via homebrew or winget</span>
         </p>
 
-        <div className="bh-palette" role="img" aria-label="Basalt command bar preview">
+        <div className="bh-palette" role="img" aria-label="Frameline command bar preview">
           <div className="bh-palette-input">
             <SearchIcon className="bh-palette-search" />
             <span className="bh-palette-query">
@@ -206,8 +206,8 @@ export function BasaltHero({ className, embed = false }: BasaltHeroProps) {
               </span>
             </span>
             <span className="bh-palette-brand">
-              <BasaltMark className="bh-palette-brand-mark" />
-              Basalt
+              <FramelineMark className="bh-palette-brand-mark" />
+              frameline.ai
             </span>
           </div>
         </div>
