@@ -3,8 +3,14 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 
+import { useOptionalAuthSession } from "@/components/auth-session-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  clearClientSession,
+  getDemoSession,
+  suppressAuthRestore,
+} from "@/lib/auth-client";
 import {
   clientSignOut,
   getIdToken,
@@ -13,6 +19,8 @@ import {
 import { cn } from "@/lib/utils";
 
 function readSessionEmail(): string | null {
+  const fromCookie = getDemoSession()?.email ?? null;
+  if (fromCookie) return fromCookie;
   try {
     const raw = sessionStorage.getItem("fl_demo_user");
     if (!raw) return null;
@@ -31,59 +39,66 @@ export function AccountDeletePanel({
   className?: string;
 }) {
   const router = useRouter();
+  const auth = useOptionalAuthSession();
   const firebase = isFirebaseClientConfigured();
   const [confirm, setConfirm] = React.useState("");
   const [busy, setBusy] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const hintEmail = serverEmail?.trim().toLowerCase() ?? readSessionEmail();
+  const hintEmail =
+    serverEmail?.trim().toLowerCase() ??
+    auth?.user?.email ??
+    readSessionEmail();
 
   async function deleteAccount() {
     setBusy(true);
     setError(null);
+    suppressAuthRestore(true);
     try {
       const normalized = confirm.trim().toLowerCase();
       if (!normalized || !normalized.includes("@")) {
         setError("Enter a valid email.");
+        suppressAuthRestore(false);
         return;
       }
       if (hintEmail && normalized !== hintEmail) {
         setError("Must match the address you are signed in with.");
+        suppressAuthRestore(false);
         return;
       }
 
       let idToken: string | undefined;
       if (firebase) {
-        const t = await getIdToken(true);
-        if (!t) {
-          setError("You are not signed in — refresh and try again.");
-          return;
+        try {
+          idToken = (await getIdToken(true)) ?? undefined;
+        } catch {
+          idToken = undefined;
         }
-        idToken = t;
       }
 
       const res = await fetch("/api/account", {
         method: "DELETE",
+        credentials: "include",
+        cache: "no-store",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ confirmEmail: normalized, idToken }),
       });
       const data = (await res.json()) as { ok?: boolean; error?: string };
       if (!res.ok || !data.ok) {
+        suppressAuthRestore(false);
         setError(data.error ?? "Could not delete account");
         return;
       }
 
-      sessionStorage.removeItem("fl_demo_user");
-      await fetch("/api/auth/sign-out", { method: "POST" });
-      if (firebase) {
-        try {
-          await clientSignOut();
-        } catch {
-          // User may already be removed server-side — ignore.
-        }
+      clearClientSession();
+      try {
+        await clientSignOut();
+      } catch {
+        // User may already be removed server-side — ignore.
       }
       router.push("/");
       router.refresh();
     } catch {
+      suppressAuthRestore(false);
       setError("Network error — try again");
     } finally {
       setBusy(false);
@@ -103,11 +118,11 @@ export function AccountDeletePanel({
         Delete account
       </h2>
       <p className="text-sm leading-relaxed text-muted-foreground">
-        Removes your Frameline profile, marketing subscriptions, and registry
-        access for this email. Purchases stay on file for tax and legal
-        records; active licenses are revoked so tokens stop working. This cannot
-        be undone from the app — you would need to create a new account to sign
-        in again.
+        Removes your Frameline profile, login, marketing subscriptions, and
+        registry access for this email. You will get a confirmation email.
+        Purchases stay on file for tax and legal records; active licenses are
+        revoked so tokens stop working. This cannot be undone from the app —
+        signing in again creates a new account.
       </p>
       <label className="block space-y-2">
         <span className="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase">

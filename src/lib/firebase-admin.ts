@@ -72,3 +72,67 @@ export async function verifyFirebaseIdToken(idToken: string) {
   }
   return auth.verifyIdToken(idToken);
 }
+
+function isFirebaseUserNotFound(err: unknown): boolean {
+  if (!err || typeof err !== "object") return false;
+  const code = "code" in err ? String(err.code) : "";
+  return (
+    code === "auth/user-not-found" ||
+    code === "auth/user-disabled" ||
+    (err instanceof Error && /no user record/i.test(err.message))
+  );
+}
+
+/** False when the Auth user was deleted (ID tokens can still verify until expiry). */
+export async function firebaseAuthUserExists(uid: string): Promise<boolean> {
+  const auth = getFirebaseAdminAuth();
+  if (!auth) return false;
+  try {
+    await auth.getUser(uid);
+    return true;
+  } catch (err) {
+    if (isFirebaseUserNotFound(err)) return false;
+    throw err;
+  }
+}
+
+/**
+ * Remove the Firebase Auth user by uid or email.
+ * Missing users are success — the account is already gone there.
+ */
+export async function deleteFirebaseAuthUser(input: {
+  email: string;
+  uid?: string | null;
+}): Promise<{ deleted: boolean; missing: boolean }> {
+  const auth = getFirebaseAdminAuth();
+  if (!auth) {
+    throw new Error(loadError || "Firebase Admin is not configured");
+  }
+
+  let uid = input.uid?.trim() || "";
+  if (!uid) {
+    try {
+      uid = (await auth.getUserByEmail(input.email.trim().toLowerCase())).uid;
+    } catch (err) {
+      if (isFirebaseUserNotFound(err)) return { deleted: false, missing: true };
+      throw err;
+    }
+  }
+
+  try {
+    await auth.revokeRefreshTokens(uid);
+  } catch (err) {
+    if (!isFirebaseUserNotFound(err)) {
+      // Still try deleteUser — revocation is best-effort.
+      console.warn("[firebase-admin] revokeRefreshTokens failed", err);
+    }
+  }
+
+  try {
+    await auth.deleteUser(uid);
+    return { deleted: true, missing: false };
+  } catch (err) {
+    if (isFirebaseUserNotFound(err)) return { deleted: false, missing: true };
+    throw err;
+  }
+}

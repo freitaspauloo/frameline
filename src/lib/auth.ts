@@ -8,6 +8,7 @@ import {
   sessionUserFromFields,
   type SessionUser as CookieSessionUser,
 } from "@/lib/session";
+import { hasStoredUser } from "@/lib/users";
 
 export { ADMIN_EMAILS, isAdminEmail } from "@/lib/admin-emails";
 export { DEMO_EMAIL_COOKIE, SESSION_COOKIE } from "@/lib/session";
@@ -34,12 +35,22 @@ export async function getDemoEmail(): Promise<string | null> {
 export async function resolveDemoUser(): Promise<SessionUser | null> {
   const store = await cookies();
   const demo = store.get(DEMO_EMAIL_COOKIE)?.value?.trim();
+  let user: SessionUser | null = null;
   if (demo) {
-    const user = sessionUserFromFields(demo);
-    return user ? withComputedRole(user) : null;
+    const parsed = sessionUserFromFields(demo);
+    user = parsed ? withComputedRole(parsed) : null;
   }
-  const fromSession = parseSessionCookieValue(store.get(SESSION_COOKIE)?.value);
-  return fromSession ? withComputedRole(fromSession) : null;
+  if (!user) {
+    const fromSession = parseSessionCookieValue(
+      store.get(SESSION_COOKIE)?.value,
+    );
+    user = fromSession ? withComputedRole(fromSession) : null;
+  }
+  if (!user) return null;
+
+  const exists = await hasStoredUser(user.email);
+  if (exists === false) return null;
+  return user;
 }
 
 export function sessionUserFromEmail(email: string): SessionUser {
