@@ -1,6 +1,8 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { useOptionalAuthSession } from "@/components/auth-session-provider";
 import { Button } from "@/components/ui/button";
@@ -11,8 +13,27 @@ function displayEmail(email: string) {
   return `${local.slice(0, 10)}…@${domain}`;
 }
 
-export function MarketingAuthButtons() {
+function useSignOutAction() {
   const session = useOptionalAuthSession();
+  const router = useRouter();
+  const [signingOut, setSigningOut] = React.useState(false);
+
+  async function signOut() {
+    if (!session || signingOut) return;
+    setSigningOut(true);
+    try {
+      await session.signOut();
+      router.refresh();
+    } finally {
+      setSigningOut(false);
+    }
+  }
+
+  return { session, signingOut, signOut };
+}
+
+export function MarketingAuthButtons() {
+  const { session, signingOut, signOut } = useSignOutAction();
   const user = session?.user ?? null;
 
   if (user) {
@@ -28,11 +49,13 @@ export function MarketingAuthButtons() {
           {displayEmail(user.email)}
         </Button>
         <Button
-          nativeButton={false}
-          render={<Link href="/account" />}
+          disabled={signingOut}
           size="sm"
+          type="button"
+          variant="outline"
+          onClick={() => void signOut()}
         >
-          Account
+          {signingOut ? "Signing out…" : "Sign out"}
         </Button>
       </>
     );
@@ -61,17 +84,27 @@ export function MarketingAuthButtons() {
 }
 
 export function MarketingMobileAuthLink() {
-  const session = useOptionalAuthSession();
+  const { session, signingOut, signOut } = useSignOutAction();
   const user = session?.user ?? null;
 
   if (user) {
     return (
-      <Link
-        className="block border-t border-border px-4 py-2.5 text-[0.75rem] font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:bg-muted hover:text-foreground sm:hidden"
-        href="/account"
-      >
-        Account
-      </Link>
+      <>
+        <Link
+          className="block border-t border-border px-4 py-2.5 text-[0.75rem] font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:bg-muted hover:text-foreground"
+          href="/account"
+        >
+          Account
+        </Link>
+        <button
+          className="block w-full border-t border-border px-4 py-2.5 text-left text-[0.75rem] font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
+          disabled={signingOut}
+          type="button"
+          onClick={() => void signOut()}
+        >
+          {signingOut ? "Signing out…" : "Sign out"}
+        </button>
+      </>
     );
   }
 
