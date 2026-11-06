@@ -15,6 +15,7 @@ import {
 } from "@/lib/rate-limit";
 import { ensureUser } from "@/lib/users";
 import { notifyAccountSignup } from "@/lib/email";
+import { enrollNurture } from "@/lib/nurture";
 
 const WEEK = 60 * 60 * 24 * 7;
 
@@ -114,16 +115,17 @@ export async function POST(request: Request) {
       displayName: decoded.name ?? null,
     });
     await recordEvent({
-        // A user row that did not exist a moment ago is a signup.
+      // A user row that did not exist a moment ago is a signup.
       name: record?.created ? "signup" : "signin",
       email,
       request,
       source: "firebase",
       props: { uid: decoded.uid, authMethod },
     });
-     if (record?.created) {
-  await notifyAccountSignup(email);
-}
+    if (record?.created) {
+      await notifyAccountSignup(email);
+      await enrollNurture(email, "account");
+    }
 
     const response = NextResponse.json({
       ok: true,

@@ -11,6 +11,7 @@ import {
 } from "@/components/admin-metrics";
 import { getPrisma, hasDatabaseUrl } from "@/lib/db";
 import { readDemoOrders } from "@/lib/fulfillment";
+import { countNurture } from "@/lib/nurture";
 import {
   formatCents,
   funnelSummary,
@@ -58,16 +59,25 @@ export default async function AdminDashboardPage() {
   const freeCount = MATERIALS_CATALOG.filter((m) => m.tier === "free").length;
   const paidCount = materialCount - freeCount;
 
-  const [orders, waitlistCount, inboxCount, revenue, signups, funnel, traffic] =
-    await Promise.all([
-      readDemoOrders(),
-      readWaitlistCount(),
-      readContactCount(),
-      revenueSummary(),
-      signupSummary(),
-      funnelSummary(),
-      trafficSummary(),
-    ]);
+  const [
+    orders,
+    waitlistCount,
+    inboxCount,
+    revenue,
+    signups,
+    funnel,
+    traffic,
+    nurtureCount,
+  ] = await Promise.all([
+    readDemoOrders(),
+    readWaitlistCount(),
+    readContactCount(),
+    revenueSummary(),
+    signupSummary(),
+    funnelSummary(),
+    trafficSummary(),
+    countNurture({ subscribedOnly: true }),
+  ]);
 
   const stats: Stat[] = [
     { label: "Visits", value: traffic.pageViews, hint: `${traffic.uniqueVisitors} unique` },
@@ -86,6 +96,7 @@ export default async function AdminDashboardPage() {
     { label: "Copies", value: funnel.copies, href: "/admin/analytics" },
     { label: "Paywall hits", value: funnel.blocked, href: "/admin/analytics" },
     { label: "Waitlist", value: waitlistCount },
+    { label: "Nurture list", value: nurtureCount },
   ];
 
   return (

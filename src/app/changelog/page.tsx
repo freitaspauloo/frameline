@@ -16,6 +16,15 @@ export const metadata: Metadata = {
 
 const ENTRIES = [
   {
+    date: "2026-11-06",
+    title: "Biweekly product notes",
+    items: [
+      "Four rotating Resend templates for signed-up users (materials, screens, craft, shipping)",
+      "First note 15 days after account or waitlist signup; cadence continues every 15 days",
+      "Unsubscribe page + one-click List-Unsubscribe; preview at /dev/emails",
+    ],
+  },
+  {
     date: "2026-08-03",
     title: "Quality & discovery pass",
     items: [

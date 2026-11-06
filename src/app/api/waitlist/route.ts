@@ -3,7 +3,9 @@ import path from "node:path";
 import { NextResponse } from "next/server";
 
 import { getPrisma, hasDatabaseUrl } from "@/lib/db";
+import { recordEvent } from "@/lib/events";
 import { captureException } from "@/lib/monitoring";
+import { enrollNurture } from "@/lib/nurture";
 import {
   clientIp,
   rateLimit,
@@ -76,6 +78,9 @@ export async function POST(request: Request) {
   if (hasDatabaseUrl()) {
     try {
       const prisma = getPrisma();
+      const existing = await prisma.emailCapture.findUnique({
+        where: { email_source: { email, source: "waitlist" } },
+      });
       await prisma.emailCapture.upsert({
         where: {
           email_source: { email, source: "waitlist" },
@@ -87,6 +92,15 @@ export async function POST(request: Request) {
         },
         update: {},
       });
+      await enrollNurture(email, "waitlist");
+      if (!existing) {
+        await recordEvent({
+          name: "waitlist_join",
+          email,
+          request,
+          source: source ?? "waitlist",
+        });
+      }
       return NextResponse.json({ ok: true, mode: "db" as const });
     } catch (err) {
       captureException(err, { route: "waitlist", phase: "db" });
@@ -95,13 +109,24 @@ export async function POST(request: Request) {
   }
 
   const entries = await readWaitlist();
-  if (!entries.some((e) => e.email === email)) {
+  const isNew = !entries.some((e) => e.email === email);
+  if (isNew) {
     entries.push({
       email,
       source,
       createdAt: new Date().toISOString(),
     });
     await writeWaitlist(entries);
+  }
+
+  await enrollNurture(email, "waitlist");
+  if (isNew) {
+    await recordEvent({
+      name: "waitlist_join",
+      email,
+      request,
+      source: source ?? "waitlist",
+    });
   }
 
   return NextResponse.json({ ok: true, mode: "demo" as const });
