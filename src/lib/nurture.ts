@@ -329,6 +329,24 @@ async function syncResendContact(email: string, unsubscribed: boolean) {
   }
 }
 
+/** Remove biweekly enrollment for `email` — safe when missing. */
+export async function deleteNurtureSubscriptionByEmail(
+  emailRaw: string,
+): Promise<void> {
+  const email = emailRaw.trim().toLowerCase();
+  try {
+    if (hasDatabaseUrl()) {
+      await getPrisma().nurtureSubscription.deleteMany({ where: { email } });
+      return;
+    }
+    const rows = await readFileStore();
+    const next = rows.filter((row) => row.email !== email);
+    if (next.length !== rows.length) await writeFileStore(next);
+  } catch (err) {
+    captureException(err, { route: "nurture/delete", email });
+  }
+}
+
 export async function sendNurtureIssue(input: {
   email: string;
   issueIndex: number;

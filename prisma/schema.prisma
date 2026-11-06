@@ -164,7 +164,7 @@ model Order {
   id                 String        @id @default(cuid())
   email              String
   userId             String?
-  user               User?         @relation(fields: [userId], references: [id])
+  user               User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
   paymentProviderRef String?
   status             OrderStatus   @default(pending)
   planKey            String

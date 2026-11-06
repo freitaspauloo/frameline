@@ -44,6 +44,26 @@ export default function PrivacyPage() {
 
           <div className="space-y-4 border-t border-border pt-10">
             <h2 className="font-heading text-xl font-medium tracking-tight text-foreground">
+              Delete your account
+            </h2>
+            <p className="text-base leading-relaxed text-muted-foreground">
+              When you are signed in, you can permanently delete your Frameline
+              account from{" "}
+              <Link
+                className="text-foreground underline underline-offset-4 hover:text-muted-foreground"
+                href="/account"
+              >
+                Account
+              </Link>
+              . That removes your profile, marketing enrollment, and registry
+              access for your email; paid license entitlements tied to that email
+              are revoked. Order and payment records may be retained for tax,
+              fraud prevention, and chargeback handling.
+            </p>
+          </div>
+
+          <div className="space-y-4 border-t border-border pt-10">
+            <h2 className="font-heading text-xl font-medium tracking-tight text-foreground">
               Orders
             </h2>
             <p className="text-base leading-relaxed text-muted-foreground">

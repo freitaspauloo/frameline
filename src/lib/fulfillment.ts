@@ -594,6 +594,63 @@ export type LifecycleResult = {
  * End access for an order: revoke its entitlements and their tokens.
  * Used for refunds and for subscriptions that have actually ended.
  */
+/**
+ * Revoke every active entitlement tied to `userEmail` (registry tokens included).
+ * Used when a person deletes their Frameline account so registry access ends
+ * even when the order row stays for billing records.
+ */
+export async function revokeAccessForEmail(userEmail: string): Promise<void> {
+  const email = userEmail.trim().toLowerCase();
+  const now = new Date();
+
+  if (hasDatabaseUrl()) {
+    const prisma = getPrisma();
+    const active = await prisma.entitlement.findMany({
+      where: { userEmail: email, status: "active" },
+      select: { id: true },
+    });
+    if (active.length === 0) return;
+    const ids = active.map((e) => e.id);
+    await prisma.entitlement.updateMany({
+      where: { id: { in: ids } },
+      data: { status: "revoked", revokedAt: now },
+    });
+    await prisma.registryToken.updateMany({
+      where: { entitlementId: { in: ids } },
+      data: { revokedAt: now },
+    });
+    return;
+  }
+
+  const store = await readJsonFile<Partial<DemoEntitlementStore>>(
+    ENTITLEMENTS_PATH,
+    { entitlements: [], tokens: [] },
+  );
+  const entitlements = Array.isArray(store.entitlements)
+    ? store.entitlements
+    : [];
+  const tokens = Array.isArray(store.tokens) ? store.tokens : [];
+  const affected = new Set(
+    entitlements
+      .filter((e) => e.userEmail === email && e.status === "active")
+      .map((e) => e.id),
+  );
+  if (affected.size === 0) return;
+
+  await writeJsonFile(ENTITLEMENTS_PATH, {
+    entitlements: entitlements.map((e) =>
+      affected.has(e.id)
+        ? { ...e, status: "revoked" as const, revokedAt: now.toISOString() }
+        : e,
+    ),
+    tokens: tokens.map((t) =>
+      affected.has(t.entitlementId)
+        ? { ...t, revokedAt: now.toISOString() }
+        : t,
+    ),
+  });
+}
+
 async function revokeAccessForOrder(orderId: string): Promise<void> {
   const now = new Date();
 
