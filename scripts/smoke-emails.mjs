@@ -22,13 +22,26 @@ function assert(condition, message) {
 }
 
 export function runEmailSmoke() {
-  assert(NURTURE_ISSUES.length === 4, "expected 4 rotating nurture issues");
+  assert(NURTURE_ISSUES.length === 12, "expected 12 rotating nurture issues");
   assert(NURTURE_INTERVAL_DAYS === 15, "cadence must be 15 days");
 
   const ids = NURTURE_ISSUES.map((issue) => issue.id);
   assert(
     JSON.stringify(ids) ===
-      JSON.stringify(["materials", "screens", "craft", "shipping"]),
+      JSON.stringify([
+        "materials",
+        "screens",
+        "craft",
+        "shipping",
+        "collections",
+        "frames",
+        "still",
+        "install",
+        "offer",
+        "checkin",
+        "highlight",
+        "recipes",
+      ]),
     `unexpected issue ids: ${ids.join(",")}`,
   );
 
