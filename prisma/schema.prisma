@@ -253,6 +253,21 @@ model EmailCapture {
   @@index([createdAt])
 }
 
+/// Biweekly product notes (Resend). First send is 15 days after enroll.
+model NurtureSubscription {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  source         String
+  issueIndex     Int       @default(0)
+  enrolledAt     DateTime  @default(now())
+  lastSentAt     DateTime?
+  lastIssueId    String?
+  unsubscribedAt DateTime?
+
+  @@index([unsubscribedAt, lastSentAt])
+  @@index([enrolledAt])
+}
+
 /// JSON blobs for storefront catalog overrides and order (see src/lib/demo-catalog.ts).
 model CatalogStore {
   key       String   @id

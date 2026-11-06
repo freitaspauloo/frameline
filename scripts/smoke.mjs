@@ -7,6 +7,7 @@
  */
 
 import { runCatalogSmoke } from "./smoke-catalog.mjs";
+import { runEmailSmoke } from "./smoke-emails.mjs";
 
 function fail(message) {
   console.error(`FAIL  ${message}`);
@@ -24,6 +25,14 @@ async function runUnit() {
     ok(
       `catalog=${summary.catalog} free=${summary.free} collections=${summary.collections} renderers=${summary.renderers} plans=${summary.plans.join(",")}`,
     );
+  } catch (err) {
+    fail(err instanceof Error ? err.message : String(err));
+  }
+
+  console.log("— unit (nurture emails) —");
+  try {
+    const summary = runEmailSmoke();
+    ok(`nurture issues=${summary.issues} cadence=${summary.days}d`);
   } catch (err) {
     fail(err instanceof Error ? err.message : String(err));
   }

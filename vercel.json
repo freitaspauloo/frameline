@@ -1,3 +1,9 @@
 {
-  "installCommand": "rm -rf node_modules && pnpm install --frozen-lockfile"
+  "installCommand": "rm -rf node_modules && pnpm install --frozen-lockfile",
+  "crons": [
+    {
+      "path": "/api/cron/nurture",
+      "schedule": "0 14 * * *"
+    }
+  ]
 }

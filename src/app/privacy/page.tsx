@@ -34,8 +34,11 @@ export default function PrivacyPage() {
             <p className="text-base leading-relaxed text-muted-foreground">
               We store the email you provide at checkout, waitlist signup, or
               account sign-in — to deliver receipts, registry access, and
-              product updates you opted into. Waitlist entries are used only for
-              drop notices and related product mail; you can ask to be removed.
+              product updates you opted into. Account and waitlist signups also
+              receive a biweekly product note (materials, screens, shipping)
+              starting 15 days after signup. Every note includes an unsubscribe
+              link; receipts and license mail are separate and still go out
+              when you buy.
             </p>
           </div>
 

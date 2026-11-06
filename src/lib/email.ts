@@ -1,25 +1,12 @@
 import { Resend } from "resend";
 
 import type { LicensePlanKey } from "@/lib/domain";
+import { escapeHtml, mail } from "@/lib/email-layout";
 import { getLicensePlan } from "@/lib/license-plans";
 import { captureException, captureMessage } from "@/lib/monitoring";
-import { relayColors } from "@/lib/relay-tokens";
 import { appBaseUrl } from "@/lib/stripe";
 
 let resend: Resend | null = null;
-
-/** Inline hex from Relay tokens — email clients ignore CSS variables. */
-const mail = {
-  ink: relayColors.text.ink.value,
-  secondary: relayColors.text.secondary.value,
-  tertiary: relayColors.text.tertiary.value,
-  blue: relayColors.brand.blue.value,
-  blueTint: relayColors.brand.blueTint.value,
-  white: relayColors.surface.white.value,
-  canvas: relayColors.surface.canvas.value,
-  panel: relayColors.surface.panel.value,
-  border: relayColors.border.default.value,
-} as const;
 
 export type OrderReceiptInput = {
   created: boolean;
@@ -60,14 +47,6 @@ function formatCents(cents: number): string {
     style: "currency",
     currency: "USD",
   }).format(cents / 100);
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
 }
 
 function detailRow(label: string, value: string, last = false): string {
@@ -322,7 +301,10 @@ export async function sendContactNotification(input: {
     };
   }
 }
-/** New account only. The Resend automation owns the welcome email. */
+/**
+ * New account only. The Resend automation owns the welcome email.
+ * Biweekly notes are enrolled separately via `enrollNurture`.
+ */
 export async function notifyAccountSignup(email: string): Promise<SendResult> {
   const client = getResend();
   if (!client) {

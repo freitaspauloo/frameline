@@ -8,6 +8,7 @@ import {
 } from "@/lib/auth";
 import { notifyAccountSignup } from "@/lib/email";
 import { recordEvent } from "@/lib/events";
+import { enrollNurture } from "@/lib/nurture";
 import {
   clientIp,
   rateLimit,
@@ -49,6 +50,7 @@ export async function POST(request: Request) {
   });
   if (record?.created) {
     await notifyAccountSignup(email);
+    await enrollNurture(email, "account");
   }
 
   const store = await cookies();
