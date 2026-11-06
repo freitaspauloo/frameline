@@ -95,6 +95,16 @@ export function AccountDeletePanel({
       } catch {
         // User may already be removed server-side — ignore.
       }
+      try {
+        await fetch("/api/auth/sign-out", {
+          method: "POST",
+          credentials: "include",
+          cache: "no-store",
+        });
+      } catch {
+        // Best-effort — DELETE already expired cookies on that response.
+      }
+      suppressAuthRestore(false);
       router.push("/");
       router.refresh();
     } catch {

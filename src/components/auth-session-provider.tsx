@@ -82,7 +82,13 @@ export function AuthSessionProvider({
 
         unsubFirebase = onAuthStateChanged(auth, async (firebaseUser) => {
           if (cancelled) return;
+          // While deleting an account we skip remint, but we must still react when
+          // Firebase becomes signed out (deleteUser / signOut on the client).
           if (isAuthRestoreSuppressed()) {
+            if (!firebaseUser) {
+              clearClientSession();
+              setUser(null);
+            }
             if (!cancelled) setReady(true);
             return;
           }
