@@ -301,14 +301,25 @@ export async function sendContactNotification(input: {
     };
   }
 }
+
 /**
  * New account only. The Resend automation owns the welcome email.
  * Biweekly notes are enrolled separately via `enrollNurture`.
+ * Claimed once per email so parallel session + magic-link posts cannot
+ * fire `user.signed_up` twice.
  */
 export async function notifyAccountSignup(email: string): Promise<SendResult> {
   const client = getResend();
   if (!client) {
     return { ok: true, skipped: true, reason: "RESEND_API_KEY not set" };
+  }
+
+  const { claimSignupNotification, releaseSignupNotification } =
+    await import("@/lib/users");
+
+  const claimed = await claimSignupNotification(email);
+  if (!claimed) {
+    return { ok: true, skipped: true, reason: "signup already notified" };
   }
 
   try {
@@ -317,11 +328,13 @@ export async function notifyAccountSignup(email: string): Promise<SendResult> {
       email,
     });
     if (error) {
+      await releaseSignupNotification(email);
       captureException(error, { route: "email/signup-event" });
       return { ok: false, error: error.message };
     }
     return { ok: true, id: "user.signed_up" };
   } catch (err) {
+    await releaseSignupNotification(email);
     captureException(err, { route: "email/signup-event" });
     return {
       ok: false,
