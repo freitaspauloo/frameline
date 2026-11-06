@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { AccountDeletePanel } from "@/components/account-delete-panel";
 import { AccountRegistryPanel } from "@/components/account-registry-panel";
 import { MarketingFooter } from "@/components/marketing-footer";
 import { MarketingNavbar } from "@/components/marketing-navbar";
@@ -134,7 +135,14 @@ export default async function AccountPage() {
             ))}
           </div>
 
-          <AccountRegistryPanel email={email} />
+          <div>
+            <AccountRegistryPanel email={email} />
+            {email ? (
+              <div className="px-6 pb-10 sm:px-8 lg:px-12">
+                <AccountDeletePanel serverEmail={email} />
+              </div>
+            ) : null}
+          </div>
         </div>
       </MarketingSection>
       <MarketingFooter />

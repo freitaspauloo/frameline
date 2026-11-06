@@ -26,6 +26,7 @@ const FILE_EVENT_CAP = 20_000;
 export type EventName =
   | "signup"
   | "signin"
+  | "account_deleted"
   | "waitlist_join"
   | "nurture_enrolled"
   | "nurture_sent"
