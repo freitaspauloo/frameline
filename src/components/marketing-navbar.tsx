@@ -1,7 +1,10 @@
 import Link from "next/link";
 
+import {
+  MarketingAuthButtons,
+  MarketingMobileAuthLink,
+} from "@/components/marketing-auth-buttons";
 import { LogoMark } from "@/components/relay-ui";
-import { Button } from "@/components/ui/button";
 import {
   MarketingRailCross,
   marketingPadX,
@@ -66,12 +69,7 @@ export function MarketingNavbar({
                   {link.label}
                 </Link>
               ))}
-              <Link
-                className="block border-t border-border px-4 py-2.5 text-[0.75rem] font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:bg-muted hover:text-foreground sm:hidden"
-                href="/account/sign-in"
-              >
-                Log in
-              </Link>
+              <MarketingMobileAuthLink />
             </nav>
           </details>
 
@@ -84,22 +82,7 @@ export function MarketingNavbar({
           </Link>
 
           <div className="flex items-center justify-end gap-2">
-            <Button
-              className="hidden sm:inline-flex"
-              nativeButton={false}
-              render={<Link href="/account/sign-in" />}
-              size="sm"
-              variant="ghost"
-            >
-              Log in
-            </Button>
-            <Button
-              nativeButton={false}
-              render={<Link href="/account/sign-in" />}
-              size="sm"
-            >
-              Sign up
-            </Button>
+            <MarketingAuthButtons />
           </div>
         </div>
       </div>

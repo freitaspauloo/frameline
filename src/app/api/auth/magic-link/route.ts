@@ -1,11 +1,7 @@
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-import {
-  DEMO_EMAIL_COOKIE,
-  SESSION_COOKIE,
-  sessionUserFromEmail,
-} from "@/lib/auth";
+import { sessionUserFromEmail } from "@/lib/auth";
+import { writeSessionCookies } from "@/lib/session";
 import { notifyAccountSignup } from "@/lib/email";
 import { recordEvent } from "@/lib/events";
 import { enrollNurture } from "@/lib/nurture";
@@ -53,26 +49,16 @@ export async function POST(request: Request) {
     await enrollNurture(email, "account");
   }
 
-  const store = await cookies();
-
-  store.set(DEMO_EMAIL_COOKIE, email, {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 30,
-  });
-
-  // Non-httpOnly mirror for client demo session helpers
-  store.set(SESSION_COOKIE, JSON.stringify(user), {
-    httpOnly: false,
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 30,
-  });
-
-  return NextResponse.json({
+  const response = NextResponse.json({
     ok: true,
     user,
     message: "Demo magic link accepted — real provider later (Clerk/Firebase).",
   });
+  writeSessionCookies(
+    (name, value, options) => {
+      response.cookies.set(name, value, options);
+    },
+    user,
+  );
+  return response;
 }

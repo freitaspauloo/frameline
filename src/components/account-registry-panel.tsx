@@ -4,7 +4,9 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import { useOptionalAuthSession } from "@/components/auth-session-provider";
 import { Button } from "@/components/ui/button";
+import { clearClientSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
 function mintRegistryToken() {
@@ -18,14 +20,23 @@ function mintRegistryToken() {
 
 export function AccountRegistryPanel({ email }: { email: string | null }) {
   const router = useRouter();
+  const auth = useOptionalAuthSession();
   const [token, setToken] = React.useState("fl_demo_••••••••••••••••");
   const [signingOut, setSigningOut] = React.useState(false);
 
   async function signOut() {
     setSigningOut(true);
     try {
-      await fetch("/api/auth/sign-out", { method: "POST" });
-      sessionStorage.removeItem("fl_demo_user");
+      if (auth) {
+        await auth.signOut();
+      } else {
+        await fetch("/api/auth/sign-out", {
+          method: "POST",
+          credentials: "include",
+          cache: "no-store",
+        });
+        clearClientSession();
+      }
       router.refresh();
     } finally {
       setSigningOut(false);

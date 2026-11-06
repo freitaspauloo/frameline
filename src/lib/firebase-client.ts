@@ -2,8 +2,10 @@
 
 import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
 import {
+  browserLocalPersistence,
   getAuth,
   GoogleAuthProvider,
+  setPersistence,
   signInWithPopup,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -71,7 +73,12 @@ export function getFirebaseApp(): FirebaseApp | null {
 export function getFirebaseClientAuth(): Auth | null {
   const firebaseApp = getFirebaseApp();
   if (!firebaseApp) return null;
-  if (!auth) auth = getAuth(firebaseApp);
+  if (!auth) {
+    auth = getAuth(firebaseApp);
+    void setPersistence(auth, browserLocalPersistence).catch(() => {
+      // IndexedDB persistence is the Firebase default; ignore if unavailable.
+    });
+  }
   return auth;
 }
 

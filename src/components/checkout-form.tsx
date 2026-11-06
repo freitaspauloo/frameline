@@ -18,7 +18,7 @@ import {
   MarketingShell,
 } from "@/components/marketing-shell";
 import { Button } from "@/components/ui/button";
-import { getDemoSession } from "@/lib/auth-client";
+import { clearClientSession, getDemoSession } from "@/lib/auth-client";
 import { useCartStore } from "@/lib/cart";
 import {
   clientSignOut,
@@ -170,11 +170,15 @@ export function CheckoutForm({
       // still clear Frameline session
     }
     try {
-      await fetch("/api/auth/sign-out", { method: "POST" });
+      await fetch("/api/auth/sign-out", {
+        method: "POST",
+        credentials: "include",
+        cache: "no-store",
+      });
     } catch {
       // ignore network errors — local clear still applies
     }
-    sessionStorage.removeItem("fl_demo_user");
+    clearClientSession();
     setUser(null);
     setError(null);
     setStripeMessage(null);

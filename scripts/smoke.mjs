@@ -6,6 +6,7 @@
  *   SMOKE_BASE_URL=http://localhost:3000 pnpm smoke
  */
 
+import { runAuthSmoke } from "./smoke-auth.mjs";
 import { runCatalogSmoke } from "./smoke-catalog.mjs";
 import { runEmailSmoke } from "./smoke-emails.mjs";
 import { runSignupSmoke } from "./smoke-signup.mjs";
@@ -42,6 +43,14 @@ async function runUnit() {
   try {
     const summary = await runSignupSmoke();
     ok(`signup claim once=${summary.claimedOnce}`);
+  } catch (err) {
+    fail(err instanceof Error ? err.message : String(err));
+  }
+
+  console.log("— unit (session cookies) —");
+  try {
+    const summary = runAuthSmoke();
+    ok(`session parse cases=${summary.cases}`);
   } catch (err) {
     fail(err instanceof Error ? err.message : String(err));
   }
@@ -204,6 +213,66 @@ async function runLive(baseUrl) {
     }
   });
 
+  await check("auth session cookies persist after magic-link", async () => {
+    const email = `smoke-auth-${Date.now()}@frameline.test`;
+    const signIn = await fetch(`${root}/api/auth/magic-link`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    if (signIn.status !== 200) {
+      throw new Error(`magic-link expected 200, got ${signIn.status}`);
+    }
+    const setCookie =
+      typeof signIn.headers.getSetCookie === "function"
+        ? signIn.headers.getSetCookie()
+        : [signIn.headers.get("set-cookie")].filter(Boolean);
+    const cookieHeader = setCookie
+      .flatMap((value) => String(value).split(/,(?=\s*[A-Za-z0-9_-]+=)/))
+      .map((part) => part.split(";")[0].trim())
+      .filter(Boolean)
+      .join("; ");
+    if (!cookieHeader.includes("fl_demo_email=")) {
+      throw new Error(`missing fl_demo_email Set-Cookie: ${cookieHeader}`);
+    }
+    if (!cookieHeader.includes("fl_session=")) {
+      throw new Error(`missing fl_session Set-Cookie: ${cookieHeader}`);
+    }
+
+    const me = await fetch(`${root}/api/auth/me`, {
+      headers: { cookie: cookieHeader },
+    });
+    if (me.status !== 200) {
+      throw new Error(`/api/auth/me expected 200, got ${me.status}`);
+    }
+    const meData = await me.json();
+    if (meData.user?.email !== email) {
+      throw new Error(`expected signed-in ${email}, got ${JSON.stringify(meData)}`);
+    }
+
+    const account = await fetch(`${root}/account`, {
+      headers: { cookie: cookieHeader },
+    });
+    if (account.status !== 200) {
+      throw new Error(`/account expected 200, got ${account.status}`);
+    }
+    const html = await account.text();
+    if (!html.includes(email)) {
+      throw new Error("account page did not render the signed-in email");
+    }
+    if (html.includes("Not signed in")) {
+      throw new Error("account page still shows Not signed in after magic-link");
+    }
+
+    const signOut = await fetch(`${root}/api/auth/sign-out`, {
+      method: "POST",
+      headers: { cookie: cookieHeader },
+    });
+    if (signOut.status !== 200) {
+      throw new Error(`sign-out expected 200, got ${signOut.status}`);
+    }
+  });
+
   await check("copy → manifest URL carries a copy id", async () => {
     const res = await fetch(`${root}/api/screens/copy`, {
       method: "POST",
@@ -211,8 +280,8 @@ async function runLive(baseUrl) {
       body: JSON.stringify({ slug: "spaceman-moon", path: "code" }),
     });
     const data = await res.json();
-    // A used-up weekly quota is a valid outcome; only assert on a real payload.
-    if (data.reason === "pay") return;
+    // A used-up weekly quota or signed-out gate is a valid outcome.
+    if (data.reason === "pay" || data.reason === "auth") return;
     if (!data.ok || !data.copyId) {
       throw new Error(`expected a copyId, got ${JSON.stringify(data).slice(0, 120)}`);
     }

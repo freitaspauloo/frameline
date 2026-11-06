@@ -1,7 +1,10 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
+import { useOptionalAuthSession } from "@/components/auth-session-provider";
 import {
   DemoEmailSignInForm,
   FirebaseSignInForm,
@@ -18,6 +21,12 @@ import { isFirebaseClientConfigured } from "@/lib/firebase-client";
 
 export default function SignInPage() {
   const firebaseReady = isFirebaseClientConfigured();
+  const router = useRouter();
+  const session = useOptionalAuthSession();
+
+  React.useEffect(() => {
+    if (session?.user) router.replace("/account");
+  }, [router, session?.user]);
 
   return (
     <MarketingShell>
