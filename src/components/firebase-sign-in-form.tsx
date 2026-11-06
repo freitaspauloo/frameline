@@ -6,6 +6,11 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  exchangeFirebaseSession,
+  rememberClientSession,
+  type ClientSessionUser,
+} from "@/lib/auth-client";
+import {
   getIdToken,
   isFirebaseClientConfigured,
   registerWithEmail,
@@ -14,27 +19,7 @@ import {
 } from "@/lib/firebase-client";
 import { cn } from "@/lib/utils";
 
-export type AuthSessionUser = { email: string; role: string };
-
-async function exchangeSession(
-  idToken: string,
-  authMethod: "google" | "email",
-) {
-  const res = await fetch("/api/auth/session", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ idToken, authMethod }),
-  });
-  const data = (await res.json()) as {
-    ok?: boolean;
-    error?: string;
-    user?: AuthSessionUser;
-  };
-  if (!res.ok || !data.ok) {
-    throw new Error(data.error ?? "Could not create session");
-  }
-  return data;
-}
+export type AuthSessionUser = ClientSessionUser;
 
 export function FirebaseSignInForm({
   onSuccess,
@@ -79,13 +64,14 @@ export function FirebaseSignInForm({
   async function finish(userToken?: string, authMethod: "google" | "email" = "email") {
     const idToken = userToken ?? (await getIdToken(true));
     if (!idToken) throw new Error("No Firebase ID token");
-    const data = await exchangeSession(idToken, authMethod);
-    if (data.user) {
-      sessionStorage.setItem("fl_demo_user", JSON.stringify(data.user));
-      if (onSuccess) {
-        onSuccess(data.user);
-        return;
-      }
+    const { user } = await exchangeFirebaseSession(idToken, authMethod);
+    rememberClientSession(user);
+    if (onSuccess) {
+      onSuccess(user);
+      inFlight.current = false;
+      setStatus("idle");
+      router.refresh();
+      return;
     }
     router.push("/account");
     router.refresh();
@@ -259,6 +245,8 @@ export function DemoEmailSignInForm({
     try {
       const res = await fetch("/api/auth/magic-link", {
         method: "POST",
+        credentials: "include",
+        cache: "no-store",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
@@ -273,10 +261,15 @@ export function DemoEmailSignInForm({
         setError(data.error ?? "Could not sign in");
         return;
       }
-      if (data.user) {
-        sessionStorage.setItem("fl_demo_user", JSON.stringify(data.user));
+      if (data.user?.email) {
+        const user: AuthSessionUser = {
+          email: data.user.email,
+          role: data.user.role === "admin" ? "admin" : "buyer",
+        };
+        rememberClientSession(user);
         if (onSuccess) {
-          onSuccess(data.user);
+          onSuccess(user);
+          router.refresh();
           return;
         }
       }

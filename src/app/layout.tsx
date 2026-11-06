@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Instrument_Serif, Inter, Syne } from "next/font/google";
 import { GeistPixelCircle, GeistPixelLine, GeistPixelSquare } from "geist/font/pixel";
 import { Analytics } from "@/components/analytics";
+import { AuthSessionProvider } from "@/components/auth-session-provider";
 import { SiteAnalyticsBoundary } from "@/components/site-analytics-boundary";
 import { CopiesQuotaProvider } from "@/components/copies-quota-widget";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -82,9 +83,11 @@ export default function RootLayout({
       lang="en"
     >
       <body className="min-h-full font-sans antialiased">
-        <CopiesQuotaProvider>
-          <TooltipProvider>{children}</TooltipProvider>
-        </CopiesQuotaProvider>
+        <AuthSessionProvider>
+          <CopiesQuotaProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+          </CopiesQuotaProvider>
+        </AuthSessionProvider>
         <Analytics />
         <SiteAnalyticsBoundary />
       </body>

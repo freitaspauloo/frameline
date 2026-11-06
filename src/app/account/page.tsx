@@ -11,12 +11,14 @@ import {
   MarketingShell,
 } from "@/components/marketing-shell";
 import { Button } from "@/components/ui/button";
-import { getDemoEmail } from "@/lib/auth";
+import { resolveDemoUser } from "@/lib/auth";
 import {
   getDemoEntitlements,
   partitionCatalogByAccess,
 } from "@/lib/entitlements";
 import { getV1LaunchCatalog } from "@/materials";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Account",
@@ -24,7 +26,8 @@ export const metadata: Metadata = {
 };
 
 export default async function AccountPage() {
-  const email = await getDemoEmail();
+  const session = await resolveDemoUser();
+  const email = session?.email ?? null;
   const entitlements = getDemoEntitlements(email ?? "you@studio.dev");
   const { entitled, locked } = partitionCatalogByAccess(
     getV1LaunchCatalog(),
@@ -47,7 +50,11 @@ export default async function AccountPage() {
               </Button>
             )
           }
-          description="Demo account — free materials are entitled. Paid SKUs stay locked until checkout grants access."
+          description={
+            email
+              ? "Licenses and registry access for this account. Paid SKUs stay locked until checkout."
+              : "Sign in to keep licenses on this account. Free materials below are installable now."
+          }
           eyebrow="Account"
           title="Your licenses"
         />
@@ -57,8 +64,7 @@ export default async function AccountPage() {
             <p className="font-mono text-[0.6875rem] text-muted-foreground">
               Signed in as{" "}
               <span className="text-foreground">{email}</span>
-              {" · "}
-              demo auth (Clerk/Firebase later)
+              {session?.role === "admin" ? " · admin" : ""}
             </p>
           ) : (
             <p className="text-sm leading-relaxed text-muted-foreground">
@@ -67,10 +73,10 @@ export default async function AccountPage() {
                 className="underline underline-offset-4 hover:text-foreground"
                 href="/account/sign-in"
               >
-                Sign in with a demo magic link
+                Sign in with Google or email
               </Link>
-              . Demo — paid entitlements after checkout. Free materials below are
-              installable now.
+              . Paid entitlements unlock after checkout. Free materials below
+              are installable now.
             </p>
           )}
         </MarketingPad>

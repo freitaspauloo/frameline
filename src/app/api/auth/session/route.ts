@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
 
-import {
-  DEMO_EMAIL_COOKIE,
-  SESSION_COOKIE,
-  sessionUserFromEmail,
-} from "@/lib/auth";
+import { sessionUserFromEmail } from "@/lib/auth";
+import { writeSessionCookies } from "@/lib/session";
 import { recordEvent } from "@/lib/events";
 import { firebaseAdminEnvSnapshot } from "@/lib/firebase-admin-env";
 import { captureException } from "@/lib/monitoring";
@@ -16,8 +13,6 @@ import {
 import { ensureUser } from "@/lib/users";
 import { notifyAccountSignup } from "@/lib/email";
 import { enrollNurture } from "@/lib/nurture";
-
-const WEEK = 60 * 60 * 24 * 7;
 
 /**
  * Exchange a Firebase ID token for Frameline session cookies.
@@ -134,27 +129,12 @@ export async function POST(request: Request) {
       provider: "firebase",
     });
 
-    response.cookies.set(DEMO_EMAIL_COOKIE, email, {
-      httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-      path: "/",
-      maxAge: WEEK,
-    });
-    response.cookies.set(
-      SESSION_COOKIE,
-      JSON.stringify({
-        email: user.email,
-        role: user.role,
-        uid: decoded.uid,
-      }),
-      {
-        httpOnly: false,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
-        maxAge: WEEK,
+    writeSessionCookies(
+      (name, value, options) => {
+        response.cookies.set(name, value, options);
       },
+      user,
+      { uid: decoded.uid },
     );
 
     return response;
