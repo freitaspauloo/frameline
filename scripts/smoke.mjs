@@ -8,6 +8,7 @@
 
 import { runCatalogSmoke } from "./smoke-catalog.mjs";
 import { runEmailSmoke } from "./smoke-emails.mjs";
+import { runSignupSmoke } from "./smoke-signup.mjs";
 
 function fail(message) {
   console.error(`FAIL  ${message}`);
@@ -33,6 +34,14 @@ async function runUnit() {
   try {
     const summary = runEmailSmoke();
     ok(`nurture issues=${summary.issues} cadence=${summary.days}d`);
+  } catch (err) {
+    fail(err instanceof Error ? err.message : String(err));
+  }
+
+  console.log("— unit (signup welcome claim) —");
+  try {
+    const summary = await runSignupSmoke();
+    ok(`signup claim once=${summary.claimedOnce}`);
   } catch (err) {
     fail(err instanceof Error ? err.message : String(err));
   }

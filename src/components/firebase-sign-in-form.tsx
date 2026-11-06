@@ -53,6 +53,7 @@ export function FirebaseSignInForm({
     "idle",
   );
   const [error, setError] = React.useState<string | null>(null);
+  const inFlight = React.useRef(false);
 
   if (!configured) {
     return (
@@ -91,12 +92,15 @@ export function FirebaseSignInForm({
   }
 
   async function onGoogle() {
+    if (inFlight.current) return;
+    inFlight.current = true;
     setStatus("loading");
     setError(null);
     try {
       const user = await signInWithGoogle();
       await finish(await user.getIdToken(), "google");
     } catch (e) {
+      inFlight.current = false;
       setStatus("error");
       setError(e instanceof Error ? e.message : "Google sign-in failed");
     }
@@ -104,6 +108,8 @@ export function FirebaseSignInForm({
 
   async function onEmail(e: React.FormEvent) {
     e.preventDefault();
+    if (inFlight.current) return;
+    inFlight.current = true;
     setStatus("loading");
     setError(null);
     try {
@@ -113,6 +119,7 @@ export function FirebaseSignInForm({
           : await signInWithEmail(email, password);
       await finish(await user.getIdToken(), "email");
     } catch (err) {
+      inFlight.current = false;
       setStatus("error");
       setError(err instanceof Error ? err.message : "Sign-in failed");
     }
@@ -241,9 +248,12 @@ export function DemoEmailSignInForm({
     "idle",
   );
   const [error, setError] = React.useState<string | null>(null);
+  const inFlight = React.useRef(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (inFlight.current) return;
+    inFlight.current = true;
     setStatus("loading");
     setError(null);
     try {
@@ -258,6 +268,7 @@ export function DemoEmailSignInForm({
         user?: AuthSessionUser;
       };
       if (!res.ok || !data.ok) {
+        inFlight.current = false;
         setStatus("error");
         setError(data.error ?? "Could not sign in");
         return;
@@ -272,6 +283,7 @@ export function DemoEmailSignInForm({
       router.push("/account");
       router.refresh();
     } catch {
+      inFlight.current = false;
       setStatus("error");
       setError("Network error — try again");
     }
