@@ -3,6 +3,7 @@
  * Run via: node --experimental-strip-types --import ./scripts/smoke-register.mjs scripts/smoke.mjs
  */
 
+import { buildAccountDeletedEmail } from "../src/lib/email.ts";
 import {
   isNurtureDue,
   NURTURE_INTERVAL_DAYS,
@@ -180,6 +181,20 @@ export function runEmailSmoke() {
     now,
   );
   assert(due.length === 1 && due[0].email === "due@frameline.ai", "due filter");
+
+  const deleted = buildAccountDeletedEmail("gone@frameline.test");
+  assert(deleted.subject.includes("deleted"), deleted.subject);
+  assert(
+    deleted.html.includes("Account deleted") &&
+      deleted.html.includes("gone@frameline.test") &&
+      deleted.html.includes("https://frameline.ai") &&
+      !deleted.html.includes("frameline.vercel.app"),
+    "account-deleted email must confirm frameline.ai deletion",
+  );
+  assert(
+    deleted.text.includes("gone@frameline.test"),
+    "account-deleted text must include the email",
+  );
 
   return {
     issues: NURTURE_ISSUES.length,

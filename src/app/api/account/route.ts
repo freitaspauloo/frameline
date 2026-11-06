@@ -1,13 +1,9 @@
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-import {
-  DEMO_EMAIL_COOKIE,
-  SESSION_COOKIE,
-  getDemoEmail,
-  isAdminEmail,
-} from "@/lib/auth";
 import { purgeFramelineAccountData } from "@/lib/account-deletion";
+import { isListedAdminEmail } from "@/lib/admin-emails";
+import { getDemoEmail } from "@/lib/auth";
+import { sendAccountDeletedEmail } from "@/lib/email";
 import { recordEvent } from "@/lib/events";
 import { firebaseAdminEnvSnapshot } from "@/lib/firebase-admin-env";
 import { captureException } from "@/lib/monitoring";
@@ -16,6 +12,8 @@ import {
   rateLimit,
   rateLimitResponse,
 } from "@/lib/rate-limit";
+import { expireSessionCookies } from "@/lib/session";
+import { findUserByEmail } from "@/lib/users";
 
 function normalizeEmail(value: unknown): string | null {
   if (typeof value !== "string") return null;
@@ -113,7 +111,7 @@ export async function DELETE(request: Request) {
     targetEmail = demo;
   }
 
-  if (isAdminEmail(targetEmail)) {
+  if (isListedAdminEmail(targetEmail)) {
     return NextResponse.json(
       {
         ok: false,
@@ -122,6 +120,34 @@ export async function DELETE(request: Request) {
       },
       { status: 403 },
     );
+  }
+
+  const stored = await findUserByEmail(targetEmail);
+  const uid = firebaseUid || stored?.firebaseUid || null;
+
+  if (adminSnapshot.configured) {
+    try {
+      const { deleteFirebaseAuthUser, getFirebaseAdminApp } = await import(
+        "@/lib/firebase-admin"
+      );
+      if (getFirebaseAdminApp()) {
+        await deleteFirebaseAuthUser({ email: targetEmail, uid });
+      }
+    } catch (err) {
+      captureException(err, {
+        route: "account/delete",
+        phase: "firebase-delete",
+        email: targetEmail,
+      });
+      return NextResponse.json(
+        {
+          ok: false,
+          error:
+            "Could not remove the login for this account. Try again or contact support.",
+        },
+        { status: 500 },
+      );
+    }
   }
 
   try {
@@ -134,34 +160,22 @@ export async function DELETE(request: Request) {
     );
   }
 
-  if (firebaseUid && adminSnapshot.configured) {
-    try {
-      const { getFirebaseAdminAuth } = await import("@/lib/firebase-admin");
-      const auth = getFirebaseAdminAuth();
-      if (auth) await auth.deleteUser(firebaseUid);
-    } catch (err) {
-      captureException(err, {
-        route: "account/delete",
-        phase: "firebase-delete",
-        uid: firebaseUid,
-      });
-    }
-  }
-
   await recordEvent({
     name: "account_deleted",
     email: targetEmail,
     request,
-    source: firebaseUid ? "firebase" : "magic-link",
+    source: uid ? "firebase" : "magic-link",
   });
 
-  const store = await cookies();
-  store.delete(DEMO_EMAIL_COOKIE);
-  store.delete(SESSION_COOKIE);
+  await sendAccountDeletedEmail(targetEmail);
 
-  return NextResponse.json({
+  const response = NextResponse.json({
     ok: true,
     message:
-      "Your Frameline account data was removed. Order history may be retained for legal and tax records; registry access for your purchases was revoked.",
+      "Your Frameline account was deleted. A confirmation email is on the way. Order history may be retained for legal and tax records; registry access for your purchases was revoked.",
   });
+  expireSessionCookies((name, value, options) => {
+    response.cookies.set(name, value, options);
+  });
+  return response;
 }

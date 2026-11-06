@@ -17,6 +17,17 @@ export type ClientSessionUser = SessionUser;
 
 export const AUTH_SESSION_EVENT = "fl-auth-session";
 
+let authRestoreSuppressed = false;
+
+/** While true, Firebase must not mint a new Frameline session (account deletion). */
+export function suppressAuthRestore(value = true) {
+  authRestoreSuppressed = value;
+}
+
+export function isAuthRestoreSuppressed(): boolean {
+  return authRestoreSuppressed;
+}
+
 type AuthListener = (user: ClientSessionUser | null) => void;
 
 const listeners = new Set<AuthListener>();

@@ -34,25 +34,26 @@ export async function POST(request: Request) {
     );
   }
 
+  let firebaseAdmin: typeof import("@/lib/firebase-admin");
   let verifyFirebaseIdToken: (idToken: string) => Promise<{
     email?: string;
     uid: string;
     name?: string;
   }>;
   try {
-    const mod = await import("@/lib/firebase-admin");
-    if (!mod.getFirebaseAdminApp()) {
+    firebaseAdmin = await import("@/lib/firebase-admin");
+    if (!firebaseAdmin.getFirebaseAdminApp()) {
       return NextResponse.json(
         {
           ok: false,
           error:
-            mod.getFirebaseAdminLoadError() ||
+            firebaseAdmin.getFirebaseAdminLoadError() ||
             "Firebase Admin failed to initialize",
         },
         { status: 503 },
       );
     }
-    verifyFirebaseIdToken = mod.verifyFirebaseIdToken;
+    verifyFirebaseIdToken = firebaseAdmin.verifyFirebaseIdToken;
   } catch (err) {
     captureException(err, { route: "auth/session", phase: "import" });
     return NextResponse.json(
@@ -92,6 +93,14 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { ok: false, error: "Token has no email claim" },
         { status: 400 },
+      );
+    }
+
+    const stillExists = await firebaseAdmin.firebaseAuthUserExists(decoded.uid);
+    if (!stillExists) {
+      return NextResponse.json(
+        { ok: false, error: "This account no longer exists" },
+        { status: 401 },
       );
     }
 

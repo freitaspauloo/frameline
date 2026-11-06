@@ -273,6 +273,82 @@ async function runLive(baseUrl) {
     }
   });
 
+  await check("DELETE /api/account removes the user and expires cookies", async () => {
+    const email = `smoke-del-${Date.now()}@frameline.test`;
+    const signIn = await fetch(`${root}/api/auth/magic-link`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    if (signIn.status !== 200) {
+      throw new Error(`magic-link expected 200, got ${signIn.status}`);
+    }
+    const setCookie =
+      typeof signIn.headers.getSetCookie === "function"
+        ? signIn.headers.getSetCookie()
+        : [signIn.headers.get("set-cookie")].filter(Boolean);
+    const cookieHeader = setCookie
+      .flatMap((value) => String(value).split(/,(?=\s*[A-Za-z0-9_-]+=)/))
+      .map((part) => part.split(";")[0].trim())
+      .filter(Boolean)
+      .join("; ");
+
+    const del = await fetch(`${root}/api/account`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        cookie: cookieHeader,
+      },
+      body: JSON.stringify({ confirmEmail: email }),
+    });
+    const delData = await del.json();
+    if (del.status !== 200 || !delData.ok) {
+      throw new Error(
+        `delete expected 200 ok, got ${del.status} ${JSON.stringify(delData)}`,
+      );
+    }
+    const expired =
+      typeof del.headers.getSetCookie === "function"
+        ? del.headers.getSetCookie()
+        : [del.headers.get("set-cookie")].filter(Boolean);
+    const expiredBlob = expired.join("\n");
+    if (!/fl_demo_email=/.test(expiredBlob) || !/fl_session=/.test(expiredBlob)) {
+      throw new Error(`delete did not expire session cookies: ${expiredBlob}`);
+    }
+
+    const me = await fetch(`${root}/api/auth/me`);
+    const meData = await me.json();
+    if (meData.user) {
+      throw new Error(
+        `session still present after delete: ${JSON.stringify(meData)}`,
+      );
+    }
+
+    const leftover = await fetch(`${root}/api/auth/me`, {
+      headers: { cookie: cookieHeader },
+    });
+    const leftoverData = await leftover.json();
+    if (leftoverData.user) {
+      throw new Error(
+        `deleted account still signed in via leftover cookies: ${JSON.stringify(leftoverData)}`,
+      );
+    }
+
+    const account = await fetch(`${root}/account`, {
+      headers: { cookie: cookieHeader },
+    });
+    if (account.status !== 200) {
+      throw new Error(`/account expected 200, got ${account.status}`);
+    }
+    const html = await account.text();
+    if (html.includes(email)) {
+      throw new Error("account page still renders the deleted email");
+    }
+    if (!html.includes("Not signed in")) {
+      throw new Error("account page did not return to the signed-out state");
+    }
+  });
+
   await check("copy → manifest URL carries a copy id", async () => {
     const res = await fetch(`${root}/api/screens/copy`, {
       method: "POST",

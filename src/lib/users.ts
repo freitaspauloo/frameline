@@ -179,6 +179,49 @@ export async function ensureUser(
   }
 }
 
+export async function findUserByEmail(
+  emailRaw: string,
+): Promise<AppUser | null> {
+  const email = emailRaw.trim().toLowerCase();
+  if (!email) return null;
+  try {
+    if (hasDatabaseUrl()) {
+      const row = await getPrisma().user.findUnique({ where: { email } });
+      return row ? mapUser(row) : null;
+    }
+    const users = await readUserFile();
+    return users.find((u) => u.email === email) ?? null;
+  } catch (err) {
+    console.error("[users] find failed", err);
+    return null;
+  }
+}
+
+/**
+ * Whether a Frameline user row exists for this email.
+ * `null` means the store could not be read — callers should not treat that as deletion.
+ */
+export async function hasStoredUser(
+  emailRaw: string,
+): Promise<boolean | null> {
+  const email = emailRaw.trim().toLowerCase();
+  if (!email) return false;
+  try {
+    if (hasDatabaseUrl()) {
+      const row = await getPrisma().user.findUnique({
+        where: { email },
+        select: { id: true },
+      });
+      return Boolean(row);
+    }
+    const users = await readUserFile();
+    return users.some((u) => u.email === email);
+  } catch (err) {
+    console.error("[users] hasStoredUser failed", err);
+    return null;
+  }
+}
+
 export async function readUsers(): Promise<AppUser[]> {
   try {
     if (hasDatabaseUrl()) {

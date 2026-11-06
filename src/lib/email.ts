@@ -1,7 +1,12 @@
 import { Resend } from "resend";
 
 import type { LicensePlanKey } from "@/lib/domain";
-import { escapeHtml, mail } from "@/lib/email-layout";
+import {
+  buildFramelineEmailHtml,
+  escapeHtml,
+  featureBlock,
+  mail,
+} from "@/lib/email-layout";
 import { getLicensePlan } from "@/lib/license-plans";
 import { captureException, captureMessage } from "@/lib/monitoring";
 import { appBaseUrl } from "@/lib/stripe";
@@ -339,6 +344,87 @@ export async function notifyAccountSignup(email: string): Promise<SendResult> {
     return {
       ok: false,
       error: err instanceof Error ? err.message : "Failed to send signup event",
+    };
+  }
+}
+
+export function buildAccountDeletedEmail(email: string): {
+  subject: string;
+  html: string;
+  text: string;
+} {
+  const home = "https://frameline.ai/";
+  const subject = "Frameline — your account was deleted";
+  const html = buildFramelineEmailHtml({
+    documentTitle: subject,
+    preheader: "Your Frameline account and sign-in were removed.",
+    eyebrow: "Frameline · Account",
+    heading: "Account deleted",
+    intro: `We permanently removed the Frameline account for ${email}.`,
+    bodyHtml: featureBlock([
+      {
+        kicker: "Removed",
+        title: "Profile, login, and marketing",
+        body: "Your profile, stored sign-in, marketing enrollment, and registry access for this email are gone.",
+      },
+      {
+        kicker: "Kept on file",
+        title: "Order records",
+        body: "Paid order history may be retained for tax and legal records. Those licenses no longer unlock downloads.",
+      },
+    ]),
+    ctaLabel: "Go to Frameline",
+    ctaHref: home,
+    footerNote: "If you did not request this, contact hello@frameline.ai.",
+  });
+  const text = [
+    "Frameline — account deleted",
+    "",
+    `We permanently removed the Frameline account for ${email}.`,
+    "",
+    "Removed: profile, login, marketing enrollment, and registry access.",
+    "Paid order history may be retained for tax and legal records.",
+    "",
+    `Frameline: ${home}`,
+  ].join("\n");
+  return { subject, html, text };
+}
+
+/** Confirmation after a successful self-serve account deletion. */
+export async function sendAccountDeletedEmail(
+  emailRaw: string,
+): Promise<SendResult> {
+  const email = emailRaw.trim().toLowerCase();
+  const client = getResend();
+  if (!client) {
+    return { ok: true, skipped: true, reason: "RESEND_API_KEY not set" };
+  }
+
+  const { subject, html, text } = buildAccountDeletedEmail(email);
+
+  try {
+    const { data, error } = await client.emails.send({
+      from: emailFrom(),
+      to: [email],
+      subject,
+      html,
+      text,
+    });
+    if (error) {
+      captureException(error, { route: "email/account-deleted", email });
+      return { ok: false, error: error.message };
+    }
+    return data?.id
+      ? { ok: true, id: data.id }
+      : { ok: false, error: "Resend returned no email id" };
+  } catch (err) {
+    captureException(err, { route: "email/account-deleted", email });
+    return {
+      ok: false,
+      error:
+        err instanceof Error
+          ? err.message
+          : "Failed to send account-deleted email",
     };
   }
 }

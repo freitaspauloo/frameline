@@ -9,10 +9,16 @@ export const ADMIN_EMAILS: string[] = (() => {
     .filter(Boolean);
 })();
 
+/** Exact match against FRAMELINE_ADMIN_EMAILS (or the demo fallback). */
+export function isListedAdminEmail(email: string): boolean {
+  const normalized = email.trim().toLowerCase();
+  return Boolean(normalized) && ADMIN_EMAILS.includes(normalized);
+}
+
 export function isAdminEmail(email: string): boolean {
   const normalized = email.trim().toLowerCase();
   if (!normalized) return false;
-  if (ADMIN_EMAILS.includes(normalized)) return true;
+  if (isListedAdminEmail(normalized)) return true;
   // Demo: any signed-in address containing "admin"
   if (normalized.includes("admin")) return true;
   return false;
