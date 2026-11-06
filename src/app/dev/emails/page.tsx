@@ -46,8 +46,8 @@ export default async function DevEmailsPage({
           Biweekly notes
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#6B7280]">
-          Four rotating templates, first send 15 days after signup, then every
-          15 days. Preview uses{" "}
+          Twelve rotating templates (~6 months), first send 15 days after
+          signup, then every 15 days. Preview uses{" "}
           <span className="font-mono text-[#0B0D12]">frameline.ai</span> links.
           Cron: <span className="font-mono">GET /api/cron/nurture</span>
         </p>
