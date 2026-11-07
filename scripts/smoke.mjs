@@ -83,17 +83,60 @@ async function runLive(baseUrl) {
     }
   });
 
+  await check("POST /api/checkout without session → 401", async () => {
+    const res = await fetch(`${root}/api/checkout`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        plan: "screen",
+        email: "anon@frameline.test",
+        material: "spaceman-moon",
+      }),
+    });
+    if (res.status !== 401) {
+      throw new Error(`expected 401, got ${res.status}`);
+    }
+    const data = await res.json();
+    if (data.ok !== false) {
+      throw new Error(`anonymous checkout should fail: ${JSON.stringify(data)}`);
+    }
+  });
+
   // /api/checkout takes the real Stripe path whenever the server has a
   // STRIPE_SECRET_KEY, which on a live key means this check creates live
   // Checkout Sessions. Opt in explicitly rather than doing that by accident.
+  // The session cookie is required; a bare email is not a login.
   if (process.env.SMOKE_ALLOW_CHECKOUT === "1") {
-    await check("POST /api/checkout → 200", async () => {
-      const res = await fetch(`${root}/api/checkout`, {
+    await check("POST /api/checkout after magic-link → 200", async () => {
+      const email = "smoke@frameline.test";
+      const auth = await fetch(`${root}/api/auth/magic-link`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (auth.status !== 200) {
+        throw new Error(`magic-link expected 200, got ${auth.status}`);
+      }
+      const setCookies =
+        typeof auth.headers.getSetCookie === "function"
+          ? auth.headers.getSetCookie()
+          : [];
+      const cookie = setCookies
+        .map((entry) => entry.split(";")[0])
+        .filter(Boolean)
+        .join("; ");
+      if (!cookie.includes("fl_demo_email=")) {
+        throw new Error("magic-link did not set a session cookie");
+      }
+      const res = await fetch(`${root}/api/checkout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: cookie,
+        },
         body: JSON.stringify({
           plan: "screen",
-          email: "smoke@frameline.test",
+          email,
           material: "spaceman-moon",
         }),
       });
