@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { AccountDeletePanel } from "@/components/account-delete-panel";
 import { AccountRegistryPanel } from "@/components/account-registry-panel";
+import { AccountSignOutButton } from "@/components/account-sign-out-button";
 import { MarketingFooter } from "@/components/marketing-footer";
 import { MarketingNavbar } from "@/components/marketing-navbar";
 import {
@@ -42,7 +43,9 @@ export default async function AccountPage() {
       <MarketingSection>
         <MarketingPageHeader
           action={
-            email ? undefined : (
+            email ? (
+              <AccountSignOutButton size="sm" />
+            ) : (
               <Button
                 nativeButton={false}
                 render={<Link href="/account/sign-in" />}

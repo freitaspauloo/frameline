@@ -6,6 +6,7 @@ import { getResend } from "@/lib/email";
 import { captureException } from "@/lib/monitoring";
 import { deleteNurtureSubscriptionByEmail } from "@/lib/nurture";
 import { revokeAccessForEmail } from "@/lib/fulfillment";
+import { releaseSignupNotification } from "@/lib/users";
 
 const DATA_DIR = path.join(process.cwd(), ".data");
 const USERS_PATH = path.join(DATA_DIR, "users.json");
@@ -50,6 +51,8 @@ export async function purgeFramelineAccountData(emailRaw: string): Promise<void>
   await revokeAccessForEmail(email);
   await deleteNurtureSubscriptionByEmail(email);
   await removeResendAudienceContact(email);
+  // Clear welcome claim before row removal so a leftover profile cannot block re-signup mail.
+  await releaseSignupNotification(email);
 
   if (hasDatabaseUrl()) {
     const prisma = getPrisma();

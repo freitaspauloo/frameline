@@ -10,7 +10,7 @@ import {
   rateLimit,
   rateLimitResponse,
 } from "@/lib/rate-limit";
-import { ensureUser } from "@/lib/users";
+import { ensureUser, isSignupWelcomeDue } from "@/lib/users";
 import { notifyAccountSignup } from "@/lib/email";
 import { enrollNurture } from "@/lib/nurture";
 
@@ -126,7 +126,7 @@ export async function POST(request: Request) {
       source: "firebase",
       props: { uid: decoded.uid, authMethod },
     });
-    if (record?.created) {
+    if (record && isSignupWelcomeDue(record.user, record.created)) {
       await notifyAccountSignup(email);
       await enrollNurture(email, "account");
     }
