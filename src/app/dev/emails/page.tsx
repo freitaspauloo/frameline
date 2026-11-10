@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { buildOrderReceiptHtml } from "@/lib/email";
 import {
   NURTURE_ISSUES,
   nurtureUnsubscribeUrl,
@@ -10,7 +11,7 @@ export const dynamic = "force-dynamic";
 
 const PREVIEW_EMAIL = "preview@frameline.ai";
 
-type Search = Promise<{ issue?: string }>;
+type Search = Promise<{ issue?: string; kind?: string }>;
 
 export default async function DevEmailsPage({
   searchParams,
@@ -18,6 +19,7 @@ export default async function DevEmailsPage({
   searchParams: Search;
 }) {
   const params = await searchParams;
+  const showReceipt = params.kind === "receipt";
   const selected =
     NURTURE_ISSUES.find((issue) => issue.id === params.issue) ??
     NURTURE_ISSUES[0];
@@ -30,11 +32,29 @@ export default async function DevEmailsPage({
     PREVIEW_EMAIL,
     "https://frameline.ai",
   );
-  const rendered = renderNurtureEmail(selected, {
-    email: PREVIEW_EMAIL,
-    unsubscribeUrl,
-    baseUrl: "https://frameline.ai",
-  });
+  const rendered = showReceipt
+    ? {
+        subject: "Frameline receipt — Studio license",
+        preheader: "Studio license confirmed ($49.00).",
+        html: buildOrderReceiptHtml({
+          orderId: "ord_preview",
+          planName: "Studio",
+          amount: "$49.00",
+          licenseVersion: "2026.1",
+          materialSlug: "aurora-mesh",
+          email: PREVIEW_EMAIL,
+          accessUrl:
+            "https://frameline.ai/orders/ord_preview?email=preview@frameline.ai&plan=studio&token=preview",
+        }),
+      }
+    : {
+        ...renderNurtureEmail(selected, {
+          email: PREVIEW_EMAIL,
+          unsubscribeUrl,
+          baseUrl: "https://frameline.ai",
+        }),
+        preheader: selected.preheader,
+      };
 
   return (
     <div className="min-h-dvh bg-[#FCFCFD] text-[#0B0D12]">
@@ -52,8 +72,18 @@ export default async function DevEmailsPage({
           Cron: <span className="font-mono">GET /api/cron/nurture</span>
         </p>
         <nav className="mt-5 flex flex-wrap gap-2">
+          <Link
+            className={
+              showReceipt
+                ? "border border-[#2D6BFF] bg-[#2D6BFF] px-3 py-1.5 text-[11px] font-semibold tracking-widest text-white uppercase"
+                : "border border-[#E6E8EC] bg-white px-3 py-1.5 text-[11px] font-semibold tracking-widest text-[#6B7280] uppercase hover:border-[#2D6BFF] hover:text-[#2D6BFF]"
+            }
+            href="/dev/emails?kind=receipt"
+          >
+            Receipt
+          </Link>
           {NURTURE_ISSUES.map((issue) => {
-            const active = issue.id === selected.id;
+            const active = !showReceipt && issue.id === selected.id;
             return (
               <Link
                 className={
@@ -76,17 +106,19 @@ export default async function DevEmailsPage({
           <p>
             <span className="font-medium text-[#0B0D12]">Subject</span>
             <br />
-            {selected.subject}
+            {rendered.subject}
           </p>
           <p>
             <span className="font-medium text-[#0B0D12]">Preheader</span>
             <br />
-            {selected.preheader}
+            {rendered.preheader}
           </p>
           <p>
             <span className="font-medium text-[#0B0D12]">CTA</span>
             <br />
-            {selected.ctaLabel} → {selected.path}
+            {showReceipt
+              ? "Open order & token → /orders/ord_preview"
+              : `${selected.ctaLabel} → ${selected.path}`}
           </p>
           <p className="text-[12px]">
             Enrolled on account signup and waitlist. Welcome mail stays on the
@@ -97,7 +129,7 @@ export default async function DevEmailsPage({
           <iframe
             className="h-[900px] w-full bg-[#FCFCFD]"
             srcDoc={rendered.html}
-            title={selected.subject}
+            title={rendered.subject}
           />
         </div>
       </div>

@@ -6,6 +6,9 @@ import {
   escapeHtml,
   featureBlock,
   mail,
+  mailLetterhead,
+  mailPerforation,
+  mailRail,
 } from "@/lib/email-layout";
 import { getLicensePlan } from "@/lib/license-plans";
 import { captureException, captureMessage } from "@/lib/monitoring";
@@ -77,68 +80,31 @@ export function buildOrderReceiptHtml(input: {
     ? detailRow("Material", escapeHtml(input.materialSlug))
     : "";
 
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <meta name="color-scheme" content="light"/>
-  <title>Frameline receipt</title>
-  <!--[if !mso]><!-->
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
-  <!--<![endif]-->
-</head>
-<body style="margin:0;padding:0;background:${mail.canvas};color:${mail.ink};-webkit-font-smoothing:antialiased">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${mail.canvas};padding:32px 16px">
+  const bodyHtml = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${mail.panel};border:1px solid ${mail.border}">
     <tr>
-      <td align="center">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:${mail.white};border:1px solid ${mail.border}">
-          <tr>
-            <td style="height:3px;background:${mail.blue};font-size:0;line-height:0">&nbsp;</td>
-          </tr>
-          <tr>
-            <td style="padding:28px 28px 8px">
-              <p style="margin:0 0 20px;font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:${mail.blue}">Frameline</p>
-              <h1 style="margin:0 0 10px;font-family:'Instrument Serif',Georgia,'Times New Roman',serif;font-size:34px;font-weight:400;line-height:1.15;letter-spacing:-0.02em;color:${mail.ink}">You&rsquo;re in</h1>
-              <p style="margin:0 0 24px;font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:14px;line-height:1.55;color:${mail.secondary}">${escapeHtml(input.planName)} license confirmed (${escapeHtml(input.amount)}). Keep this email &mdash; receipt and reinstall path.</p>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:0 28px 24px">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${mail.panel};border:1px solid ${mail.border}">
-                <tr>
-                  <td style="padding:18px 20px">
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                      ${detailRow("Order", escapeHtml(input.orderId))}
-                      ${detailRow("Plan", `${escapeHtml(input.planName)} (${escapeHtml(input.amount)})`)}
-                      ${detailRow("License", escapeHtml(input.licenseVersion))}
-                      ${materialRow}
-                      ${detailRow("Email", escapeHtml(input.email), true)}
-                    </table>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:0 28px 28px">
-              <a href="${access}" style="display:inline-block;background:${mail.blue};color:${mail.white};text-decoration:none;padding:12px 18px;font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;border-radius:0;border:1px solid ${mail.blue}">Open order &amp; token</a>
-              <p style="margin:16px 0 0;font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:12px;line-height:1.5;color:${mail.tertiary}">If the button does not work, copy this link:<br/><a href="${access}" style="color:${mail.blue};text-decoration:underline;word-break:break-all">${access}</a></p>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:16px 28px;border-top:1px solid ${mail.border};background:${mail.panel}">
-              <p style="margin:0;font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:11px;line-height:1.5;color:${mail.tertiary}">Design assets for the AI era &middot; <a href="https://frameline.ai" style="color:${mail.secondary};text-decoration:none">frameline.ai</a></p>
-            </td>
-          </tr>
+      <td style="padding:18px 20px">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+          ${detailRow("Order", escapeHtml(input.orderId))}
+          ${detailRow("Plan", `${escapeHtml(input.planName)} (${escapeHtml(input.amount)})`)}
+          ${detailRow("License", escapeHtml(input.licenseVersion))}
+          ${materialRow}
+          ${detailRow("Email", escapeHtml(input.email), true)}
         </table>
       </td>
     </tr>
-  </table>
-</body>
-</html>`;
+  </table>`;
+
+  return buildFramelineEmailHtml({
+    documentTitle: "Frameline receipt",
+    preheader: `${input.planName} license confirmed (${input.amount}).`,
+    eyebrow: "Frameline",
+    heading: "You’re in",
+    intro: `${input.planName} license confirmed (${input.amount}). Keep this email — receipt and reinstall path.`,
+    bodyHtml,
+    ctaLabel: "Open order & token",
+    ctaHref: input.accessUrl,
+    belowCtaHtml: `<p style="margin:16px 0 0;font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:12px;line-height:1.5;color:${mail.tertiary}">If the button does not work, copy this link:<br/><a href="${access}" style="color:${mail.blue};text-decoration:underline;word-break:break-all">${access}</a></p>`,
+  });
 }
 
 export type SendResult =
@@ -267,15 +233,18 @@ export async function sendContactNotification(input: {
   const html = `<!DOCTYPE html>
 <html lang="en">
 <body style="margin:0;padding:24px;background:${mail.canvas};font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:${mail.ink}">
-  <table role="presentation" width="100%" style="max-width:560px;margin:0 auto;background:${mail.white};border:1px solid ${mail.border}">
-    <tr><td style="height:3px;background:${mail.blue};font-size:0;line-height:0">&nbsp;</td></tr>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;margin:0 auto;background:${mail.white};border:1px solid ${mail.border}">
+    <tr><td style="font-size:0;line-height:0">${mailPerforation()}</td></tr>
+    <tr><td style="padding:22px 28px 0">${mailLetterhead()}</td></tr>
+    <tr><td style="padding:16px 28px 0">${mailRail()}</td></tr>
     <tr>
-      <td style="padding:24px 28px">
+      <td style="padding:18px 28px 22px">
         <p style="margin:0 0 12px;font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:${mail.blue}">Frameline · Contact</p>
         <p style="margin:0 0 8px;font-size:14px;color:${mail.secondary}"><strong style="color:${mail.ink}">${escapeHtml(input.name)}</strong> &lt;${escapeHtml(input.email)}&gt;</p>
         <p style="margin:16px 0 0;font-size:14px;line-height:1.55;white-space:pre-wrap">${escapeHtml(input.message)}</p>
       </td>
     </tr>
+    <tr><td style="padding:0 28px 18px">${mailRail()}</td></tr>
   </table>
 </body>
 </html>`;
