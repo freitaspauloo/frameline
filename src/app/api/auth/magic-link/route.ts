@@ -10,7 +10,7 @@ import {
   rateLimit,
   rateLimitResponse,
 } from "@/lib/rate-limit";
-import { ensureUser, isSignupWelcomeDue } from "@/lib/users";
+import { ensureUser, shouldDeliverSignupWelcome } from "@/lib/users";
 
 export async function POST(request: Request) {
   const limited = rateLimit(`magic-link:${clientIp(request)}`);
@@ -44,9 +44,12 @@ export async function POST(request: Request) {
     source: "magic-link",
     props: { authMethod: "email" },
   });
-  if (record && isSignupWelcomeDue(record.user, record.created)) {
-    await notifyAccountSignup(email);
+  if (
+    record &&
+    shouldDeliverSignupWelcome(record.user, record.created, "email")
+  ) {
     await enrollNurture(email, "account");
+    await notifyAccountSignup(email);
   }
 
   const response = NextResponse.json({

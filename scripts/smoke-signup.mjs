@@ -7,6 +7,7 @@ import {
   claimSignupNotification,
   isSignupWelcomeDue,
   releaseSignupNotification,
+  shouldDeliverSignupWelcome,
   upsertUser,
 } from "../src/lib/users.ts";
 
@@ -72,6 +73,24 @@ export async function runSignupSmoke() {
     assert(
       isSignupWelcomeDue(afterDelete.user, afterDelete.created),
       "after welcome reset, sign-in should be welcome-due again",
+    );
+
+    const bgUser = { ...afterDelete.user };
+    assert(
+      isSignupWelcomeDue(bgUser, false),
+      "unset claim should still be welcome-due",
+    );
+    assert(
+      !shouldDeliverSignupWelcome(bgUser, false, "unknown"),
+      "background restore must not deliver welcome",
+    );
+    assert(
+      shouldDeliverSignupWelcome(bgUser, false, "email"),
+      "explicit email sign-in should deliver welcome retry",
+    );
+    assert(
+      shouldDeliverSignupWelcome(bgUser, true, "unknown"),
+      "brand-new row still welcomes on background restore",
     );
 
     return { claimedOnce: true };
