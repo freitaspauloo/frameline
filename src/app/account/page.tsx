@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { AccountDeletePanel } from "@/components/account-delete-panel";
 import { AccountRegistryPanel } from "@/components/account-registry-panel";
-import { AccountSignOutButton } from "@/components/account-sign-out-button";
+import { AccountPageActions } from "@/components/account-page-actions";
 import { MarketingFooter } from "@/components/marketing-footer";
 import { MarketingNavbar } from "@/components/marketing-navbar";
 import {
@@ -42,19 +42,7 @@ export default async function AccountPage() {
       <MarketingNavbar />
       <MarketingSection>
         <MarketingPageHeader
-          action={
-            email ? (
-              <AccountSignOutButton size="sm" />
-            ) : (
-              <Button
-                nativeButton={false}
-                render={<Link href="/account/sign-in" />}
-                size="sm"
-              >
-                Sign in
-              </Button>
-            )
-          }
+          action={<AccountPageActions serverEmail={email} />}
           description={
             email
               ? "Licenses and registry access for this account. Paid SKUs stay locked until checkout."
@@ -195,11 +183,10 @@ export default async function AccountPage() {
 
           <div>
             <AccountRegistryPanel email={email} />
-            {email ? (
-              <div className="px-6 pb-10 sm:px-8 lg:px-12">
-                <AccountDeletePanel serverEmail={email} />
-              </div>
-            ) : null}
+            {/* Always mount — server email can lag cookies/Firebase; the panel reads client session too. */}
+            <div className="px-6 pb-10 sm:px-8 lg:px-12">
+              <AccountDeletePanel serverEmail={email} />
+            </div>
           </div>
         </div>
       </MarketingSection>

@@ -123,6 +123,7 @@ export function AccountDeletePanel({
         "space-y-4 border-t border-destructive/30 pt-8",
         className,
       )}
+      id="delete-account"
     >
       <h2 className="font-heading text-sm font-medium tracking-tight text-destructive">
         Delete account
