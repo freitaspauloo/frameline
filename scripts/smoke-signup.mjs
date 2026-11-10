@@ -5,6 +5,7 @@
 
 import {
   claimSignupNotification,
+  isSignupWelcomeDue,
   releaseSignupNotification,
   upsertUser,
 } from "../src/lib/users.ts";
@@ -51,6 +52,27 @@ export async function runSignupSmoke() {
       `missing-${stamp}@frameline.test`,
     );
     assert(!missing, "claim on a missing user must fail closed");
+
+    const resignEmail = `resign-welcome-${stamp}@frameline.test`;
+    const signup = await upsertUser({ email: resignEmail });
+    assert(signup.created, "resign fixture must create");
+    assert(
+      isSignupWelcomeDue(signup.user, signup.created),
+      "brand-new user should be welcome-due",
+    );
+    assert(await claimSignupNotification(resignEmail), "first welcome claim");
+    const returner = await upsertUser({ email: resignEmail });
+    assert(!returner.created, "returning sign-in must not be created");
+    assert(
+      !isSignupWelcomeDue(returner.user, returner.created),
+      "welcome already claimed",
+    );
+    await releaseSignupNotification(resignEmail);
+    const afterDelete = await upsertUser({ email: resignEmail });
+    assert(
+      isSignupWelcomeDue(afterDelete.user, afterDelete.created),
+      "after welcome reset, sign-in should be welcome-due again",
+    );
 
     return { claimedOnce: true };
   } finally {

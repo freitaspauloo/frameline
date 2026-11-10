@@ -57,6 +57,11 @@ export type UpsertUserInput = {
   displayName?: string | null;
 };
 
+/** Welcome + nurture run while the user row has no successful Resend claim yet. */
+export function isSignupWelcomeDue(user: AppUser, created: boolean): boolean {
+  return created || !user.signupNotifiedAt;
+}
+
 async function readUserFile(): Promise<AppUser[]> {
   try {
     const raw = await readFile(USERS_PATH, "utf8");
