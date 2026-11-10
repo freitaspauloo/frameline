@@ -3,7 +3,10 @@
  * Run via: node --experimental-strip-types --import ./scripts/smoke-register.mjs scripts/smoke.mjs
  */
 
-import { buildAccountDeletedEmail } from "../src/lib/email.ts";
+import {
+  buildAccountDeletedEmail,
+  buildOrderReceiptHtml,
+} from "../src/lib/email.ts";
 import {
   isNurtureDue,
   NURTURE_INTERVAL_DAYS,
@@ -79,6 +82,12 @@ export function runEmailSmoke() {
       rendered.html.includes("Unsubscribe"),
       `${issue.id} missing unsubscribe`,
     );
+    for (const ornament of ["aperture", "chip", "rail", "perforation"]) {
+      assert(
+        rendered.html.includes(`frameline-ornament:${ornament}`),
+        `${issue.id} missing ${ornament} ornament`,
+      );
+    }
     assert(
       rendered.html.includes("/unsubscribe") &&
         (rendered.html.includes("preview@frameline.ai") ||
@@ -194,6 +203,27 @@ export function runEmailSmoke() {
   assert(
     deleted.text.includes("gone@frameline.test"),
     "account-deleted text must include the email",
+  );
+  assert(
+    deleted.html.includes("frameline-ornament:aperture"),
+    "account-deleted email should carry the letterhead ornament",
+  );
+
+  const receipt = buildOrderReceiptHtml({
+    orderId: "ord_123",
+    planName: "Studio",
+    amount: "$49.00",
+    licenseVersion: "2026.1",
+    materialSlug: "aurora-mesh",
+    email: "buyer@frameline.ai",
+    accessUrl: "https://frameline.ai/orders/ord_123?token=abc",
+  });
+  assert(
+    receipt.includes("You’re in") &&
+      receipt.includes("frameline-ornament:perforation") &&
+      receipt.includes("https://frameline.ai/orders/ord_123?token=abc") &&
+      !receipt.includes("frameline.vercel.app"),
+    "receipt should use the shared ornaments and the order link",
   );
 
   return {
