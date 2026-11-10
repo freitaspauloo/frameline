@@ -62,6 +62,23 @@ export function isSignupWelcomeDue(user: AppUser, created: boolean): boolean {
   return created || !user.signupNotifiedAt;
 }
 
+export type SignupAuthMethod = "google" | "email" | "unknown";
+
+/**
+ * Whether this session exchange should fire Resend signup mail.
+ * Background Firebase restore posts `unknown` and must not claim welcome when
+ * the user row already existed from a parallel signup post.
+ */
+export function shouldDeliverSignupWelcome(
+  user: AppUser,
+  created: boolean,
+  authMethod: SignupAuthMethod,
+): boolean {
+  if (!isSignupWelcomeDue(user, created)) return false;
+  if (created) return true;
+  return authMethod === "google" || authMethod === "email";
+}
+
 async function readUserFile(): Promise<AppUser[]> {
   try {
     const raw = await readFile(USERS_PATH, "utf8");

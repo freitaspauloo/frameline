@@ -296,6 +296,9 @@ export async function notifyAccountSignup(email: string): Promise<SendResult> {
     return { ok: true, skipped: true, reason: "signup already notified" };
   }
 
+  const { ensureResendAudienceContact } = await import("@/lib/nurture");
+  await ensureResendAudienceContact(email, false);
+
   try {
     const { error } = await client.events.send({
       event: "user.signed_up",

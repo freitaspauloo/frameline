@@ -307,17 +307,25 @@ async function markSent(
   await writeFileStore(rows);
 }
 
-async function syncResendContact(email: string, unsubscribed: boolean) {
+/** Ensure Resend knows this address before signup automations run. */
+export async function ensureResendAudienceContact(
+  email: string,
+  unsubscribed = false,
+): Promise<void> {
   const client = getResend();
+  if (!client) return;
+
   const segmentId = process.env.RESEND_SEGMENT_ID?.trim();
-  if (!client || !segmentId) return;
+  const payload = segmentId
+    ? {
+        email,
+        unsubscribed,
+        segments: [{ id: segmentId }],
+      }
+    : { email, unsubscribed };
 
   try {
-    const { error } = await client.contacts.create({
-      email,
-      unsubscribed,
-      segments: [{ id: segmentId }],
-    });
+    const { error } = await client.contacts.create(payload);
     if (error) {
       await client.contacts.update({
         email,
@@ -327,6 +335,10 @@ async function syncResendContact(email: string, unsubscribed: boolean) {
   } catch (err) {
     captureException(err, { route: "nurture/resend-contact", email });
   }
+}
+
+async function syncResendContact(email: string, unsubscribed: boolean) {
+  await ensureResendAudienceContact(email, unsubscribed);
 }
 
 /** Remove biweekly enrollment for `email` — safe when missing. */
