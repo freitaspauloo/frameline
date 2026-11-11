@@ -73,7 +73,7 @@ export function ScreenLivePreview({
     case "feature-cards":
       return <CatchKillerDefects embed={embed} />;
     case "insights":
-      return <DefectCapture embed={embed} />;
+      return <DefectCapture className="h-full w-full" embed={embed} />;
     case "magenta-landscape":
       return <MagentaLandscape embed={embed} />;
     case "browser-frame":
@@ -109,7 +109,9 @@ export function ScreenLivePreview({
     case "features-skeleton":
       return <FeaturesSkeleton embed={embed} />;
     case "insights-skeleton":
-      return <InsightsSkeletonScreen embed={embed} />;
+      return (
+        <InsightsSkeletonScreen className="h-full w-full" embed={embed} />
+      );
     case "ascii-hero-skeleton":
       return <ReticleAsciiHeroSkeleton className="h-full w-full" embed={embed} />;
     case "dark-pill-hero-skeleton":

@@ -42,6 +42,27 @@ type AccessState = {
   message: string | null;
 };
 
+/** Insight screens are authored at 1920×1200 — 16:9 preview frames clip the base. */
+function screenPreviewFrame(entry: ScreenCatalogEntry): {
+  className: string;
+  background: string;
+} {
+  if (entry.slug === "softwave") {
+    return {
+      className: "h-[min(100dvh,1100px)] min-h-[640px]",
+      background: "#140810",
+    };
+  }
+  const tall =
+    entry.slug === "insights" ||
+    entry.slug === "insights-skeleton" ||
+    entry.aliases?.includes("defect-capture");
+  if (tall) {
+    return { className: "aspect-[8/5]", background: "#ffffff" };
+  }
+  return { className: "aspect-[16/9]", background: "#140810" };
+}
+
 export function ScreenDetailPage({
   entry,
   unlocked = false,
@@ -240,6 +261,8 @@ export function ScreenDetailPage({
     );
   }
 
+  const previewFrame = screenPreviewFrame(entry);
+
   return (
     <MarketingShell>
       <MaterialViewBeacon slug={entry.slug} />
@@ -319,15 +342,13 @@ export function ScreenDetailPage({
 
       <MarketingSection className="border-t-0">
         <div
-          className={cn(
-            "relative w-full overflow-hidden bg-[#140810]",
-            entry.slug === "softwave"
-              ? "h-[min(100dvh,1100px)] min-h-[640px]"
-              : "aspect-[16/9]",
-          )}
+          className={cn("relative w-full overflow-hidden", previewFrame.className)}
           data-ui-scale="off"
+          style={{ backgroundColor: previewFrame.background }}
         >
-          <ScreenLivePreview embed slug={entry.slug} />
+          <div className="absolute inset-0">
+            <ScreenLivePreview embed slug={entry.slug} />
+          </div>
         </div>
       </MarketingSection>
 

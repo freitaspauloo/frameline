@@ -2,6 +2,7 @@
 
 import { Fragment, type CSSProperties } from "react";
 
+import { cn } from "@/lib/utils";
 import { ScreenStage } from "@/screens/stage";
 
 import "./insights-skeleton.css";
@@ -29,10 +30,22 @@ function GridLine({
   );
 }
 
-export function InsightsSkeletonScreen({ embed = false }: { embed?: boolean }) {
+export function InsightsSkeletonScreen({
+  className,
+  embed = false,
+}: {
+  className?: string;
+  embed?: boolean;
+}) {
   return (
-    <div className="fl-insights-skeleton">
-    <ScreenStage width={1920} height={1200} background="#FFFFFF" className="insights-stage ins-skel" embed={embed}>
+    <div className={cn("fl-insights-skeleton", className)}>
+    <ScreenStage
+      width={1920}
+      height={1200}
+      background="#FFFFFF"
+      className="insights-stage ins-skel h-full w-full"
+      embed={embed}
+    >
       <div className="ins-root">
         <div className="ins-frame">
           <div className="ins-copy">

@@ -3,6 +3,7 @@
 import { Fragment, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import gsap from "gsap";
 
+import { cn } from "@/lib/utils";
 import { ScreenStage } from "@/screens/stage";
 
 import "./defect-capture.css";
@@ -132,7 +133,13 @@ function prefersReduced() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-export function DefectCapture({ embed = false }: { embed?: boolean }) {
+export function DefectCapture({
+  className,
+  embed = false,
+}: {
+  className?: string;
+  embed?: boolean;
+}) {
   const rootRef = useRef<HTMLDivElement>(null);
   const highlightRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -284,8 +291,14 @@ export function DefectCapture({ embed = false }: { embed?: boolean }) {
   }, []);
 
   return (
-    <div className="fl-defect-capture">
-    <ScreenStage width={1920} height={1200} background="#FFFFFF" className="insights-stage" embed={embed}>
+    <div className={cn("fl-defect-capture", className)}>
+    <ScreenStage
+      width={1920}
+      height={1200}
+      background="#FFFFFF"
+      className="insights-stage h-full w-full"
+      embed={embed}
+    >
       <div ref={rootRef} className="ins-root">
         <div className="ins-frame">
           <div className="ins-copy">
