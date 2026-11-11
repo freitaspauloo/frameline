@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { Inter } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
 import { GeistPixelSquare } from "geist/font/pixel";
 
 import { useReducedMotion } from "@/components/motion/use-reduced-motion";
@@ -12,12 +12,7 @@ import { ScreenStage } from "@/screens/stage";
 import { cn } from "@/lib/utils";
 
 import { DitherField } from "./dither-field";
-import { BRIDGE_SRC, HEADLINE_LINES, NAV_LINKS } from "./constants";
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-});
+import { BRIDGE_SRC, HEADLINE_LINES, NAV_LINKS, RETICLE_MAGENTA } from "./constants";
 
 const PROGRESSIVE_WHITE_STEPS = [
   { alpha: 0.72, from: "0%", to: "38%" },
@@ -149,7 +144,7 @@ export function BridgeDither({ className, embed = false }: BridgeDitherProps) {
       <section
         ref={scope}
         className={cn(
-          inter.className,
+          GeistSans.className,
           "relative h-full w-full overflow-hidden bg-white text-zinc-950 antialiased",
         )}
       >
@@ -160,6 +155,11 @@ export function BridgeDither({ className, embed = false }: BridgeDitherProps) {
             disturbRadius={40}
             className="z-0"
             onReady={handleArtReady}
+          />
+          <div
+            className="pointer-events-none absolute inset-0 z-[1]"
+            style={{ background: RETICLE_MAGENTA, mixBlendMode: "color" }}
+            aria-hidden
           />
         </div>
 
@@ -180,7 +180,10 @@ export function BridgeDither({ className, embed = false }: BridgeDitherProps) {
                   href="#top"
                   className="oasis-brand inline-flex shrink-0 items-center gap-2 sm:gap-2.5"
                 >
-                  <ReticleMark className="oasis-brand-mark size-4 sm:size-[18px]" color="#18181b" />
+                  <ReticleMark
+                    className="oasis-brand-mark size-4 sm:size-[18px]"
+                    color={RETICLE_MAGENTA}
+                  />
                   <span className="text-[14px] font-semibold tracking-[-0.02em] text-zinc-950 sm:text-[15px]">
                     Reticle
                   </span>
@@ -191,7 +194,7 @@ export function BridgeDither({ className, embed = false }: BridgeDitherProps) {
                     <a
                       key={label}
                       href={`#${label.toLowerCase()}`}
-                      className="oasis-nav-link text-[12px] font-medium text-zinc-500 transition-colors hover:text-zinc-900 lg:text-[13px]"
+                      className="oasis-nav-link text-[12px] font-medium text-zinc-500 transition-colors hover:text-[#D600BF] lg:text-[13px]"
                     >
                       {label}
                     </a>
@@ -201,7 +204,8 @@ export function BridgeDither({ className, embed = false }: BridgeDitherProps) {
 
               <a
                 href="#request"
-                className="oasis-header-cta inline-flex h-8 shrink-0 items-center justify-center rounded-full bg-zinc-950 px-3.5 text-[12px] font-medium text-white transition-colors hover:bg-zinc-800 sm:h-9 sm:px-4 sm:text-[13px]"
+                className="oasis-header-cta inline-flex h-8 shrink-0 items-center justify-center rounded-full px-3.5 text-[12px] font-medium text-white transition-[background-color,transform,filter] hover:-translate-y-px hover:brightness-110 sm:h-9 sm:px-4 sm:text-[13px]"
+                style={{ backgroundColor: RETICLE_MAGENTA }}
               >
                 Request Info
               </a>

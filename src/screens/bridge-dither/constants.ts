@@ -1,3 +1,5 @@
+export const RETICLE_MAGENTA = "#D600BF";
+
 export const NAV_LINKS = ["Portfolio", "Company", "Careers", "Inspect"] as const;
 
 export const BRIDGE_SRC = "/screens/bridge-dither/bridge-dither.png";
