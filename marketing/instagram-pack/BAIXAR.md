@@ -1,13 +1,16 @@
 # Baixar posts Instagram
 
-## Versão certa (conteúdo dos links + paleta Frameline)
+## Conteúdo dos links + paleta Frameline
 
-**Arquivo:**  
-https://github.com/freitaspauloo/frameline/raw/dev/marketing/instagram-pack/recoloridos-dos-links-download.tar.gz
+1. **Tar.gz (só esta pasta):**  
+   https://github.com/freitaspauloo/frameline/raw/dev/marketing/instagram-pack/recoloridos-dos-links-download.tar.gz
 
-**Pasta:**  
-https://github.com/freitaspauloo/frameline/tree/dev/marketing/instagram-pack/recoloridos-dos-links
+2. **Pasta no GitHub:**  
+   https://github.com/freitaspauloo/frameline/tree/dev/marketing/instagram-pack/recoloridos-dos-links
 
-## Versão antiga (copy do site Frameline)
+3. **Depois de baixar:** abra `VER-IMAGENS.html` na pasta — os `.png` carregam com caminho relativo.
 
-Ainda em `posts-avulsos/`, `carrossel-kalypso-6-slides/`, etc. — ignore se você queria só recolorir os posts de referência.
+4. **Um PNG direto (teste):**  
+   https://raw.githubusercontent.com/freitaspauloo/frameline/dev/marketing/instagram-pack/recoloridos-dos-links/kalypso-Dft_GO9EvmA/01-cover.png
+
+Não use `reskin-*.html` no navegador para preview; os JPG de referência não vêm nesse HTML no GitHub.
