@@ -1,11 +1,13 @@
-# Baixar o pacote Instagram
+# Baixar posts Instagram
 
-**Um arquivo (recomendado):**  
-https://github.com/freitaspauloo/frameline/raw/dev/marketing/instagram-pack/frameline-instagram-pack.tar.gz
+## Versão certa (conteúdo dos links + paleta Frameline)
 
-Baixe, descompacte (`tar -xzf frameline-instagram-pack.tar.gz` ou duplo clique no macOS) e use a pasta `frameline-instagram-pack`.
+**Arquivo:**  
+https://github.com/freitaspauloo/frameline/raw/dev/marketing/instagram-pack/recoloridos-dos-links-download.tar.gz
 
-**Pasta no GitHub (arquivo a arquivo):**  
-https://github.com/freitaspauloo/frameline/tree/dev/marketing/instagram-pack
+**Pasta:**  
+https://github.com/freitaspauloo/frameline/tree/dev/marketing/instagram-pack/recoloridos-dos-links
 
-**Site:** https://frameline.ai
+## Versão antiga (copy do site Frameline)
+
+Ainda em `posts-avulsos/`, `carrossel-kalypso-6-slides/`, etc. — ignore se você queria só recolorir os posts de referência.
