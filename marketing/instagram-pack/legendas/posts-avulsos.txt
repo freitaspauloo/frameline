@@ -1,0 +1,17 @@
+statement.png
+Design assets for the AI era. Shippable surface — so you don’t ship the default look. frameline.ai
+
+same-look.png
+Don’t ship the default AI look. Same hero. Same type. Same empty gradient. frameline.ai
+
+three.png
+Three things you actually copy. Materials, screens, and the source in your repo. frameline.ai
+
+grain-field.png
+Grain Field — quiet grain for cards, auth shells, and understated backgrounds. frameline.ai/materials/grain-field
+
+nine.png
+$9/mo — unlimited prompt and code copies for one screen. Free weekly copy, $49/y, or $150 lifetime. frameline.ai
+
+site.png
+The catalog, live. Browse materials at frameline.ai

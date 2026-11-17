@@ -1,0 +1,4 @@
+01.png — Stop shipping the default. Frameline is the surface layer for products built with AI.
+02.png — Shaders you install: Aurora Mesh, Neuro Veil, Ink Dither, Grain Field, Tide Wave.
+03.png — Pages you can ship: Pulse Hero, Passo, FORGE.AI, Softwave — copy the prompt or the code.
+04.png — You own the component. npx shadcn@latest add @frameline/aurora-mesh — frameline.ai

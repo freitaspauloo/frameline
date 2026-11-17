@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Frameline carousel</title>
+<style>
+  @font-face { font-family: Anton; src: url("fonts/Anton.ttf") format("truetype"); font-weight: 400; font-display: block; }
+  @font-face { font-family: Inter; src: url("fonts/Inter-Regular.ttf") format("truetype"); font-weight: 400; font-display: block; }
+  @font-face { font-family: Inter; src: url("fonts/Inter-Medium.ttf") format("truetype"); font-weight: 500; font-display: block; }
+  @font-face { font-family: Inter; src: url("fonts/Inter-Semibold.ttf") format("truetype"); font-weight: 600; font-display: block; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1440px; overflow: hidden; background: #05060a; }
+  .slide { display: none; position: relative; width: 1080px; height: 1440px; overflow: hidden; background: #05060a; }
+  .slide:target { display: block; }
+
+  .grain {
+    position: absolute; inset: 0; pointer-events: none; z-index: 4;
+    background-image: url("grain.png?v=3");
+    background-size: 680px 680px;
+    opacity: 0.28;
+    mix-blend-mode: overlay;
+  }
+
+  /* cover */
+  #cover {
+    display: none;
+    padding: 72px 28px 48px 52px;
+    background: #05060a;
+  }
+  #cover:target { display: flex; align-items: flex-start; }
+  #cover h1 {
+    font-family: Anton, sans-serif;
+    font-weight: 400;
+    font-size: 326px;
+    line-height: 0.88;
+    letter-spacing: -0.01em;
+    color: #2d6bff;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .shot {
+    position: absolute;
+    inset: 18px;
+    border-radius: 36px;
+    overflow: hidden;
+    background: #0b0d12;
+  }
+  .pill {
+    position: absolute;
+    z-index: 5;
+    left: 50%;
+    bottom: 42px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 940px;
+    background: rgba(8, 10, 16, 0.9);
+    color: #f4f7ff;
+    border-radius: 999px;
+    padding: 16px 26px;
+    font-family: Inter, sans-serif;
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .pill em { font-style: normal; color: #8eb0ff; }
+
+  .aurora {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(42% 36% at 18% 22%, #e3fffe 0%, transparent 70%),
+      radial-gradient(46% 40% at 78% 18%, #ff4fa3 0%, transparent 68%),
+      radial-gradient(50% 46% at 62% 78%, #b700ff 0%, transparent 70%),
+      radial-gradient(40% 34% at 28% 72%, #7ad7ff 0%, transparent 72%),
+      radial-gradient(30% 28% at 88% 62%, #2d6bff 0%, transparent 70%),
+      #14081c;
+  }
+  .aurora i {
+    position: absolute; inset: -10%;
+    background:
+      radial-gradient(36% 30% at 40% 40%, rgba(255,255,255,.55), transparent 60%),
+      radial-gradient(28% 24% at 70% 48%, rgba(255,0,141,.45), transparent 70%);
+    filter: blur(8px);
+  }
+
+  .field {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(80% 60% at 20% 15%, #9dbeff 0%, transparent 55%),
+      radial-gradient(70% 70% at 100% 100%, #07143d 0%, transparent 60%),
+      linear-gradient(165deg, #3d7bff 0%, #1447e6 46%, #0c2670 100%);
+  }
+  .field .grain { opacity: 0.9; z-index: 2; background-size: 420px 420px; }
+
+  .dither {
+    position: absolute; inset: 0;
+    background-color: #07111f;
+    background-image: radial-gradient(#d7e4ff 1.25px, transparent 1.45px);
+    background-size: 8px 8px;
+  }
+
+  .stack {
+    position: absolute; inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #fff;
+  }
+  .stack img { width: 100%; height: 50%; object-fit: cover; object-position: left center; display: block; }
+
+  .term {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(80% 50% at 80% 0%, rgba(45,107,255,.35), transparent 60%),
+      #0b0d12;
+    color: #f4f7ff;
+    font-family: Inter, sans-serif;
+    padding: 72px 64px;
+    display: flex;
+    flex-direction: column;
+  }
+  .term .bar {
+    display: flex; gap: 10px; margin-bottom: 64px;
+  }
+  .term .bar i { width: 16px; height: 16px; border-radius: 50%; background: #243049; display: block; }
+  .term .bar i:first-child { background: #2d6bff; }
+  .term h2 {
+    font-family: Anton, sans-serif;
+    font-weight: 400;
+    font-size: 128px;
+    letter-spacing: 0.01em;
+    line-height: 0.88;
+    color: #2d6bff;
+    margin-bottom: 56px;
+  }
+  .term pre {
+    font-family: Inter, sans-serif;
+    font-size: 36px;
+    line-height: 1.45;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    white-space: pre-wrap;
+  }
+  .term pre span { color: #8eb0ff; }
+</style>
+</head>
+<body>
+
+<section class="slide" id="cover">
+  <div class="grain"></div>
+  <h1>Design<br>assets<br>for the<br>AI era</h1>
+</section>
+
+<section class="slide" id="aurora">
+  <div class="shot"><div class="aurora"><i></i></div></div>
+  <div class="pill"><span>Source</span><em>›</em><span>frameline.ai/materials/aurora-mesh</span></div>
+</section>
+
+<section class="slide" id="grain">
+  <div class="shot">
+    <div class="field"></div>
+    <div class="grain"></div>
+  </div>
+  <div class="pill"><span>Source</span><em>›</em><span>frameline.ai/materials/grain-field</span></div>
+</section>
+
+<section class="slide" id="dither">
+  <div class="shot"><div class="dither"><div class="mask"></div></div></div>
+  <div class="pill"><span>Source</span><em>›</em><span>frameline.ai/materials/ink-dither</span></div>
+</section>
+
+<section class="slide" id="pulse">
+  <div class="shot">
+    <div class="stack">
+      <img src="file:///agent/repos/frameline/public/screens/health-ai/poster.png" alt="" />
+      <img src="file:///agent/repos/frameline/public/screens/forgeai/poster.png" alt="" />
+    </div>
+  </div>
+  <div class="pill"><span>Source</span><em>›</em><span>frameline.ai/screens</span></div>
+</section>
+
+<section class="slide" id="source">
+  <div class="shot">
+    <div class="term">
+      <div class="bar"><i></i><i></i><i></i></div>
+      <h2>IN YOUR REPO</h2>
+      <pre><span>$</span> npx shadcn@latest add
+  @frameline/aurora-mesh
+
+<span>$</span> npx shadcn@latest add
+  @frameline/grain-field</pre>
+    </div>
+    <div class="grain"></div>
+  </div>
+  <div class="pill"><span>Source</span><em>›</em><span>frameline.ai</span></div>
+</section>
+
+</body>
+</html>

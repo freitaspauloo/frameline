@@ -1,0 +1,10 @@
+Legenda do post (carrossel completo):
+Design assets for the AI era. Aurora Mesh, Grain Field, Ink Dither, screens, and the source in your repo. O link da fonte está em cada slide. frameline.ai
+
+Por slide:
+01-cover — Capa tipográfica
+02-aurora — frameline.ai/materials/aurora-mesh
+03-grain — frameline.ai/materials/grain-field
+04-dither — frameline.ai/materials/ink-dither
+05-pulse — frameline.ai/screens
+06-source — CLI no repo (aurora-mesh, grain-field)

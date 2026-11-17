@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Frameline Instagram</title>
+<style>
+  @font-face {
+    font-family: "Instrument Serif";
+    src: url("fonts/InstrumentSerif-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: block;
+  }
+  @font-face {
+    font-family: "Inter";
+    src: url("fonts/Inter-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: block;
+  }
+  @font-face {
+    font-family: "Inter";
+    src: url("fonts/Inter-Medium.ttf") format("truetype");
+    font-weight: 500;
+    font-style: normal;
+    font-display: block;
+  }
+  @font-face {
+    font-family: "Inter";
+    src: url("fonts/Inter-Semibold.ttf") format("truetype");
+    font-weight: 600;
+    font-style: normal;
+    font-display: block;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1080px;
+    height: 1350px;
+    overflow: hidden;
+    background: #0b0d12;
+  }
+
+  .post {
+    display: none;
+    position: relative;
+    width: 1080px;
+    height: 1350px;
+    overflow: hidden;
+    padding: 88px;
+    color: #0b0d12;
+    font-family: Inter, sans-serif;
+  }
+  .post:target { display: flex; flex-direction: column; }
+
+  .wash, .grain { position: absolute; inset: 0; pointer-events: none; }
+  .grain {
+    background-image: url("grain.png?v=3");
+    background-size: 760px 760px;
+    opacity: 0.42;
+    mix-blend-mode: overlay;
+  }
+  .dark .grain { opacity: 0.38; }
+  .field .grain { opacity: 0.62; background-size: 620px 620px; }
+  .grain svg { display: none; }
+
+  .light { background: #eaf1ff; color: #0b0d12; }
+  .light .wash {
+    background:
+      radial-gradient(90% 70% at 8% 0%, #ffffff 0%, transparent 52%),
+      radial-gradient(70% 60% at 110% 110%, #1b4dd1 0%, transparent 58%),
+      linear-gradient(165deg, #f7f9ff 0%, #d7e4ff 55%, #b9cdff 100%);
+  }
+  .dark {
+    background: #0b0d12;
+    color: #f4f7ff;
+  }
+  .dark .wash {
+    background:
+      radial-gradient(80% 55% at 85% 8%, rgba(45, 107, 255, 0.85) 0%, transparent 58%),
+      radial-gradient(60% 50% at 0% 100%, rgba(27, 77, 209, 0.55) 0%, transparent 60%),
+      linear-gradient(195deg, #16388f 0%, #0b0d12 58%);
+  }
+  .field {
+    background: #1b4dd1;
+    color: #f7f9ff;
+  }
+  .field .wash {
+    background:
+      radial-gradient(80% 60% at 20% 15%, #7aa2ff 0%, transparent 55%),
+      radial-gradient(70% 70% at 100% 100%, #0b1d66 0%, transparent 60%),
+      linear-gradient(160deg, #2d6bff 0%, #1447e6 42%, #0e2f8f 100%);
+  }
+
+  .top, .bottom { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; }
+  .bottom { margin-top: auto; padding-top: 36px; }
+  .mid { position: relative; z-index: 2; margin-top: auto; margin-bottom: auto; }
+
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .mark { width: 36px; height: 36px; display: block; }
+  .word {
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .kicker {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+  .light .kicker { color: #1b4dd1; }
+  .dark .kicker, .field .kicker { color: rgba(247, 249, 255, 0.72); }
+
+  h1 {
+    font-family: "Instrument Serif", serif;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 0.92;
+  }
+  .sub {
+    margin-top: 36px;
+    max-width: 16em;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+  }
+  .light .sub { color: #2a3142; }
+  .dark .sub, .field .sub { color: rgba(244, 247, 255, 0.78); }
+
+  .meta {
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .light .meta { color: #3c465c; }
+  .dark .meta, .field .meta { color: rgba(244, 247, 255, 0.7); }
+  .rule {
+    height: 1px;
+    background: currentColor;
+    opacity: 0.2;
+    margin-bottom: 22px;
+  }
+
+  /* statement */
+  #statement h1 { font-size: 132px; max-width: 8.2em; }
+  #statement .sub { font-size: 34px; max-width: 14em; }
+
+  /* same look */
+  #same-look { text-align: left; }
+  #same-look h1 { font-size: 132px; max-width: 8em; }
+  #same-look .sub { max-width: 16em; }
+
+  /* three */
+  #three h1 { font-size: 92px; max-width: 10em; margin-top: 28px; }
+  .rows { margin-top: 64px; display: flex; flex-direction: column; gap: 0; }
+  .row {
+    display: grid;
+    grid-template-columns: 92px 1fr;
+    gap: 12px 28px;
+    padding: 28px 0;
+    border-top: 1px solid rgba(11, 13, 18, 0.14);
+  }
+  .row:last-child { border-bottom: 1px solid rgba(11, 13, 18, 0.14); }
+  .num {
+    font-family: "Instrument Serif", serif;
+    font-size: 42px;
+    line-height: 1;
+    color: #1b4dd1;
+    padding-top: 4px;
+  }
+  .row h2 {
+    font-family: Inter, sans-serif;
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .row p {
+    grid-column: 2;
+    font-size: 24px;
+    line-height: 1.35;
+    color: #3c465c;
+    margin-top: -6px;
+  }
+
+  /* grain field */
+  #grain-field h1 { font-size: 148px; }
+  #grain-field .sub { max-width: 13em; font-size: 34px; }
+
+  /* nine */
+  .price {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .price em {
+    font-family: "Instrument Serif", serif;
+    font-style: normal;
+    font-size: 320px;
+    line-height: 0.78;
+    letter-spacing: -0.05em;
+  }
+  .per {
+    font-size: 40px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    padding-bottom: 28px;
+    color: rgba(244, 247, 255, 0.75);
+  }
+  #nine .sub { max-width: 14em; }
+  .tiers {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    gap: 18px;
+    margin-top: 56px;
+  }
+  .tier {
+    flex: 1;
+    border-top: 1px solid rgba(244, 247, 255, 0.28);
+    padding-top: 16px;
+  }
+  .tier b {
+    display: block;
+    font-weight: 500;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+  }
+  .tier span {
+    display: block;
+    margin-top: 6px;
+    font-size: 18px;
+    color: rgba(244, 247, 255, 0.68);
+  }
+
+  /* site */
+  #site { padding: 64px; }
+  .frame {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    background: #ffffff;
+    color: #0b0d12;
+    border-radius: 28px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 30px 80px rgba(6, 16, 48, 0.28);
+  }
+  .nav {
+    height: 92px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 0 28px;
+    border-bottom: 1px solid #e6e8ec;
+  }
+  .nav .links { display: flex; gap: 18px; }
+  .nav .links span, .nav .ghost {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6b7280;
+  }
+  .nav .ghost { justify-self: end; }
+  .hero {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 64px 28px;
+  }
+  .hero h1 {
+    font-size: 84px;
+    max-width: 9em;
+  }
+  .hero p {
+    margin-top: 22px;
+    max-width: 18em;
+    font-size: 24px;
+    line-height: 1.4;
+    color: #5c6574;
+  }
+  .btn {
+    margin-top: 32px;
+    background: #0b0d12;
+    color: white;
+    border-radius: 999px;
+    padding: 16px 26px;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .tiles {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    padding: 0 28px 28px;
+  }
+  .tile { height: 168px; border-radius: 16px; position: relative; overflow: hidden; }
+  .tile span {
+    position: absolute;
+    left: 16px;
+    bottom: 14px;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: #0b0d12;
+  }
+  .tile.mesh {
+    background:
+      radial-gradient(at 18% 20%, #ffffff 0%, transparent 42%),
+      radial-gradient(at 82% 18%, #2d6bff 0%, transparent 46%),
+      radial-gradient(at 50% 100%, #1b4dd1 0%, transparent 55%),
+      #c5d6ff;
+  }
+  .tile.dither {
+    background-color: #eaf1ff;
+    background-image: radial-gradient(#2d6bff 1.15px, transparent 1.25px);
+    background-size: 7px 7px;
+  }
+  .tile.grainy {
+    background: linear-gradient(160deg, #d5e3ff, #2d6bff 70%, #0e2f8f);
+  }
+  .tile.grainy i {
+    position: absolute;
+    inset: 0;
+    opacity: 0.45;
+    mix-blend-mode: overlay;
+  }
+  .tile.grainy i svg { width: 100%; height: 100%; }
+
+  /* carousel */
+  .slide h1 { font-size: 108px; max-width: 11em; margin-top: 36px; }
+  .slide .lede {
+    margin-top: 28px;
+    font-size: 32px;
+    line-height: 1.35;
+    max-width: 18em;
+    color: #2a3142;
+  }
+  .list { margin-top: 48px; display: flex; flex-direction: column; }
+  .list li {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
+    padding: 22px 0;
+    border-top: 1px solid rgba(11, 13, 18, 0.14);
+    font-size: 32px;
+    letter-spacing: -0.02em;
+  }
+  .list li:last-child { border-bottom: 1px solid rgba(11, 13, 18, 0.14); }
+  .list small {
+    font-size: 18px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #1b4dd1;
+    font-weight: 600;
+  }
+  .cmd {
+    margin-top: 48px;
+    background: #0b0d12;
+    color: #eaf1ff;
+    border-radius: 18px;
+    padding: 28px 32px;
+    font-family: "Inter", sans-serif;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    line-height: 1.45;
+  }
+  .cmd em { font-style: normal; color: #8eb0ff; }
+  .ticks { display: flex; gap: 8px; }
+  .ticks i {
+    width: 36px;
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(11, 13, 18, 0.16);
+    display: block;
+  }
+  .ticks i.on { background: #1b4dd1; }
+</style>
+</head>
+<body>
+
+<section class="post light" id="statement">
+  <div class="wash"></div>
+  <div class="grain"><svg><filter id="n1"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" seed="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n1)"/></svg></div>
+  <div class="top">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 400 400" fill="#1447E6"><path d="M94 211.232C94.2139 214.334 94.0928 218.658 94.0937 221.835L94.1035 242.01C94.1043 242.8 94.0992 243.602 94.0937 244.412H94V286.386C94 297.159 102.953 305.892 113.998 305.892H150.83C155.373 306.03 159.965 305.9 164.829 305.874C184.226 305.771 197.766 308.329 213.008 294.587C215.696 291.913 217.433 289.859 219.377 286.635C230.63 267.983 222.342 241.265 200.051 235.307C193.92 233.669 185.936 234.113 179.541 234.158L151.681 234.204C142.499 234.203 128.522 234.767 120.099 232.318C112.215 230.025 102.881 223.592 98.1617 217.015C97.4832 216.069 94.5542 211.506 94 211.232Z"/><path d="M289.448 184.368C282.946 179.144 272.807 176.211 264.374 177.049C264.316 177.06 264.258 177.071 264.198 177.082C250.171 178.24 239.064 187.004 236.306 200.7C235.034 207.016 235.47 213.333 235.501 219.737L235.515 253.177C235.521 260.671 236.057 272.636 234.417 279.522C231.901 290.09 222.584 301.717 212.114 305.872L237.21 305.829C238.984 305.836 240.82 305.859 242.674 305.875V305.892H285.706C296.751 305.892 305.704 297.159 305.704 286.386V244.284C305.701 241.455 305.658 238.53 305.63 235.487C305.561 227.801 305.821 220.357 305.142 212.593C304.216 202.026 297.779 191.063 289.448 184.368Z"/><path d="M189.487 94C185.591 94.264 181.19 94.1552 177.227 94.1629L152.988 94.1048C150.639 94.1416 148.593 94.1769 146.509 94.3143H113.998C102.954 94.3143 94.0002 103.048 94 113.821V155.795H94.0684C94.0413 164.905 94.3915 174.149 94.2724 182.973C94.1156 194.606 98.8757 205.296 107.538 213.19C114.305 219.509 121.273 222.379 130.571 223.193C135.609 223.266 139.491 223.089 144.3 221.581C158.424 217.151 165.891 205.332 165.919 191.236C165.947 177.671 166.02 163.99 166.032 150.375L166.041 137.239C166.042 130.918 165.795 125.942 167.53 119.73C169.451 112.847 173.651 106.862 178.76 101.825C181.925 98.7052 185.72 96.3481 189.487 94Z"/><path d="M242.969 94.3143V94.3324C240.309 94.3528 237.688 94.3847 235.329 94.3886L223.439 94.3581C221.416 94.3521 218.212 94.2877 216.261 94.4477C204.935 95.1366 194.342 100.148 186.775 108.396C179.593 116.309 176.654 124.905 177.401 135.426C178.069 144.836 181.23 151.666 188.499 158.004C198.098 166.373 207.98 165.627 219.94 165.6L250.778 165.412C262.307 165.33 275.149 164.575 285.723 169.716C295.542 174.368 299.525 179.191 306 187.736C305.639 184.382 305.822 177.868 305.825 174.338L305.834 155.795H306V113.821C306 103.048 297.046 94.3143 286.002 94.3143H242.969Z"/></svg>
+      <span class="word">Frameline</span>
+    </div>
+    <span class="kicker">Catalog</span>
+  </div>
+  <div class="mid">
+    <h1>Design assets for the AI era.</h1>
+    <p class="sub">Shippable surface — so you don’t ship the default look.</p>
+  </div>
+  <div class="bottom">
+    <div style="width:100%">
+      <div class="rule"></div>
+      <div class="top">
+        <span class="meta">Materials · Screens · Source</span>
+        <span class="meta">frameline.ai</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="post dark" id="same-look">
+  <div class="wash"></div>
+  <div class="grain"><svg><filter id="n2"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" seed="7" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n2)"/></svg></div>
+  <div class="top">
+    <span class="kicker">The problem</span>
+    <span class="meta">Frameline</span>
+  </div>
+  <div class="mid">
+    <h1>Don’t ship<br>the default<br>AI look.</h1>
+    <p class="sub">Same hero. Same type. Same empty gradient. You’ve already seen it.</p>
+  </div>
+  <div class="bottom">
+    <span class="meta">A surface you can actually ship.</span>
+    <span class="meta">02</span>
+  </div>
+</section>
+
+<section class="post light" id="three">
+  <div class="wash"></div>
+  <div class="grain"><svg><filter id="n3"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" seed="4" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n3)"/></svg></div>
+  <div class="top">
+    <span class="kicker">In the catalog</span>
+    <span class="meta">frameline.ai</span>
+  </div>
+  <div class="mid">
+    <h1>Three things you actually copy.</h1>
+    <div class="rows">
+      <div class="row">
+        <span class="num">01</span>
+        <h2>Materials</h2>
+        <p>Shaders for heroes, cards, and empty states.</p>
+      </div>
+      <div class="row">
+        <span class="num">02</span>
+        <h2>Screens</h2>
+        <p>Landing pages you preview live, then take.</p>
+      </div>
+      <div class="row">
+        <span class="num">03</span>
+        <h2>Source</h2>
+        <p>Prompt, JSX, or the CLI. It lands in your repo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="post field" id="grain-field">
+  <div class="wash"></div>
+  <div class="grain"><svg><filter id="n4"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" seed="11" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n4)"/></svg></div>
+  <div class="top">
+    <span class="kicker">Material</span>
+    <span class="meta">Frameline</span>
+  </div>
+  <div class="mid">
+    <h1>Grain Field.</h1>
+    <p class="sub">Quiet grain for cards, auth shells, and backgrounds that should stay quiet.</p>
+  </div>
+  <div class="bottom">
+    <span class="meta">frameline.ai/materials/grain-field</span>
+  </div>
+</section>
+
+<section class="post dark" id="nine">
+  <div class="wash"></div>
+  <div class="grain"><svg><filter id="n5"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" seed="5" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n5)"/></svg></div>
+  <div class="top">
+    <span class="kicker">Screen</span>
+    <span class="meta">Frameline</span>
+  </div>
+  <div class="mid">
+    <div class="price"><em>$9</em><span class="per">/mo</span></div>
+    <p class="sub">Unlimited prompt and code copies for one screen.</p>
+    <div class="tiers">
+      <div class="tier"><b>Free</b><span>1 copy / week</span></div>
+      <div class="tier"><b>$49</b><span>per year</span></div>
+      <div class="tier"><b>$150</b><span>lifetime</span></div>
+    </div>
+  </div>
+  <div class="bottom">
+    <span class="meta">You own what you copy.</span>
+    <span class="meta">frameline.ai</span>
+  </div>
+</section>
+
+<section class="post field" id="site">
+  <div class="wash"></div>
+  <div class="grain"><svg><filter id="n6"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" seed="9" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n6)"/></svg></div>
+  <div class="frame">
+    <div class="nav">
+      <div class="links"><span>Materials</span><span>Docs</span><span>Pricing</span></div>
+      <svg class="mark" viewBox="0 0 400 400" fill="#1447E6" style="width:40px;height:40px"><path d="M94 211.232C94.2139 214.334 94.0928 218.658 94.0937 221.835L94.1035 242.01C94.1043 242.8 94.0992 243.602 94.0937 244.412H94V286.386C94 297.159 102.953 305.892 113.998 305.892H150.83C155.373 306.03 159.965 305.9 164.829 305.874C184.226 305.771 197.766 308.329 213.008 294.587C215.696 291.913 217.433 289.859 219.377 286.635C230.63 267.983 222.342 241.265 200.051 235.307C193.92 233.669 185.936 234.113 179.541 234.158L151.681 234.204C142.499 234.203 128.522 234.767 120.099 232.318C112.215 230.025 102.881 223.592 98.1617 217.015C97.4832 216.069 94.5542 211.506 94 211.232Z"/><path d="M289.448 184.368C282.946 179.144 272.807 176.211 264.374 177.049C264.316 177.06 264.258 177.071 264.198 177.082C250.171 178.24 239.064 187.004 236.306 200.7C235.034 207.016 235.47 213.333 235.501 219.737L235.515 253.177C235.521 260.671 236.057 272.636 234.417 279.522C231.901 290.09 222.584 301.717 212.114 305.872L237.21 305.829C238.984 305.836 240.82 305.859 242.674 305.875V305.892H285.706C296.751 305.892 305.704 297.159 305.704 286.386V244.284C305.701 241.455 305.658 238.53 305.63 235.487C305.561 227.801 305.821 220.357 305.142 212.593C304.216 202.026 297.779 191.063 289.448 184.368Z"/><path d="M189.487 94C185.591 94.264 181.19 94.1552 177.227 94.1629L152.988 94.1048C150.639 94.1416 148.593 94.1769 146.509 94.3143H113.998C102.954 94.3143 94.0002 103.048 94 113.821V155.795H94.0684C94.0413 164.905 94.3915 174.149 94.2724 182.973C94.1156 194.606 98.8757 205.296 107.538 213.19C114.305 219.509 121.273 222.379 130.571 223.193C135.609 223.266 139.491 223.089 144.3 221.581C158.424 217.151 165.891 205.332 165.919 191.236C165.947 177.671 166.02 163.99 166.032 150.375L166.041 137.239C166.042 130.918 165.795 125.942 167.53 119.73C169.451 112.847 173.651 106.862 178.76 101.825C181.925 98.7052 185.72 96.3481 189.487 94Z"/><path d="M242.969 94.3143V94.3324C240.309 94.3528 237.688 94.3847 235.329 94.3886L223.439 94.3581C221.416 94.3521 218.212 94.2877 216.261 94.4477C204.935 95.1366 194.342 100.148 186.775 108.396C179.593 116.309 176.654 124.905 177.401 135.426C178.069 144.836 181.23 151.666 188.499 158.004C198.098 166.373 207.98 165.627 219.94 165.6L250.778 165.412C262.307 165.33 275.149 164.575 285.723 169.716C295.542 174.368 299.525 179.191 306 187.736C305.639 184.382 305.822 177.868 305.825 174.338L305.834 155.795H306V113.821C306 103.048 297.046 94.3143 286.002 94.3143H242.969Z"/></svg>
+      <span class="ghost">Sign in</span>
+    </div>
+    <div class="hero">
+      <h1>Design assets for the AI era</h1>
+      <p>Shippable surface — so you don’t ship the default AI look.</p>
+      <div class="btn">Browse materials</div>
+    </div>
+    <div class="tiles">
+      <div class="tile mesh"><span>Aurora Mesh</span></div>
+      <div class="tile dither"><span>Ink Dither</span></div>
+      <div class="tile grainy"><span>Grain Field</span><i><svg><filter id="n6b"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" seed="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n6b)"/></svg></i></div>
+    </div>
+  </div>
+</section>
+
+<section class="post light slide" id="c1">
+  <div class="wash"></div>
+  <div class="grain"><svg><filter id="n7"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" seed="6" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n7)"/></svg></div>
+  <div class="top">
+    <div class="brand"><span class="word">Frameline</span></div>
+    <span class="kicker">01</span>
+  </div>
+  <div class="mid">
+    <h1>Stop shipping the default.</h1>
+    <p class="lede">Frameline is the surface layer for products built with AI. Materials and screens, as source.</p>
+  </div>
+  <div class="bottom">
+    <span class="meta">Swipe</span>
+    <div class="ticks"><i class="on"></i><i></i><i></i><i></i></div>
+  </div>
+</section>
+
+<section class="post light slide" id="c2">
+  <div class="wash"></div>
+  <div class="grain"><svg><filter id="n8"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" seed="6" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n8)"/></svg></div>
+  <div class="top">
+    <span class="kicker">Materials</span>
+    <span class="meta">02</span>
+  </div>
+  <div class="mid">
+    <h1>Shaders you install.</h1>
+    <ul class="list">
+      <li>Aurora Mesh <small>Hero</small></li>
+      <li>Neuro Veil <small>Grain</small></li>
+      <li>Ink Dither <small>Contrast</small></li>
+      <li>Grain Field <small>Quiet</small></li>
+      <li>Tide Wave <small>Bands</small></li>
+    </ul>
+  </div>
+  <div class="bottom">
+    <span class="meta">frameline.ai/materials</span>
+    <div class="ticks"><i class="on"></i><i class="on"></i><i></i><i></i></div>
+  </div>
+</section>
+
+<section class="post light slide" id="c3">
+  <div class="wash"></div>
+  <div class="grain"><svg><filter id="n9"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" seed="6" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n9)"/></svg></div>
+  <div class="top">
+    <span class="kicker">Screens</span>
+    <span class="meta">03</span>
+  </div>
+  <div class="mid">
+    <h1>Pages you can ship.</h1>
+    <ul class="list">
+      <li>Pulse Hero <small>$9/mo</small></li>
+      <li>Passo <small>$9/mo</small></li>
+      <li>FORGE.AI <small>$9/mo</small></li>
+      <li>Softwave <small>$9/mo</small></li>
+    </ul>
+  </div>
+  <div class="bottom">
+    <span class="meta">Copy the prompt, or the code.</span>
+    <div class="ticks"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+  </div>
+</section>
+
+<section class="post light slide" id="c4">
+  <div class="wash"></div>
+  <div class="grain"><svg><filter id="n10"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" seed="6" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n10)"/></svg></div>
+  <div class="top">
+    <span class="kicker">In your repo</span>
+    <span class="meta">04</span>
+  </div>
+  <div class="mid">
+    <h1>You own the component.</h1>
+    <p class="lede">Use it in client and commercial work. The source stays in your tree.</p>
+    <div class="cmd"><em>$</em> npx shadcn@latest add @frameline/aurora-mesh</div>
+  </div>
+  <div class="bottom">
+    <span class="meta">frameline.ai</span>
+    <div class="ticks"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+  </div>
+</section>
+
+</body>
+</html>

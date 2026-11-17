@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8" />
+<title>Frameline · ux.dudu</title>
+<style>
+  @font-face { font-family: Inter; src: url("fonts/Inter-Regular.ttf") format("truetype"); font-weight: 400; font-display: block; }
+  @font-face { font-family: Inter; src: url("fonts/Inter-Medium.ttf") format("truetype"); font-weight: 500; font-display: block; }
+  @font-face { font-family: Inter; src: url("fonts/Inter-Semibold.ttf") format("truetype"); font-weight: 600; font-display: block; }
+  @font-face { font-family: Inter; src: url("fonts/Inter-Bold.ttf") format("truetype"); font-weight: 700; font-display: block; }
+  @font-face { font-family: Inter; src: url("fonts/Inter-ExtraBold.ttf") format("truetype"); font-weight: 800; font-display: block; }
+  @font-face { font-family: "Instrument Serif"; src: url("fonts/InstrumentSerif-Regular.ttf") format("truetype"); font-weight: 400; font-display: block; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1350px; overflow: hidden; background: #070b14; }
+  .post {
+    position: relative;
+    width: 1080px;
+    height: 1350px;
+    padding: 56px 64px 52px;
+    display: flex;
+    flex-direction: column;
+    color: #f4f7ff;
+    font-family: Inter, sans-serif;
+    background:
+      radial-gradient(90% 55% at 100% 0%, rgba(45, 107, 255, 0.55), transparent 58%),
+      radial-gradient(70% 45% at 0% 100%, rgba(27, 77, 209, 0.35), transparent 62%),
+      #070b14;
+  }
+  .grain {
+    position: absolute;
+    inset: 0;
+    background-image: url("grain.png?v=3");
+    background-size: 720px 720px;
+    opacity: 0.4;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+  .stage { position: relative; z-index: 2; height: 860px; }
+  .card {
+    height: 860px;
+    border-radius: 36px;
+    overflow: hidden;
+    background: #fff;
+    color: #0b0d12;
+    -webkit-mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
+  }
+  .nav {
+    height: 78px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 0 22px;
+    border-bottom: 1px solid #e6e8ec;
+    background: #fff;
+  }
+  .links { display: flex; gap: 16px; }
+  .links span, .signin {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6b7280;
+  }
+  .signin { justify-self: end; }
+  .mark { width: 34px; height: 34px; display: block; }
+  .hero {
+    text-align: center;
+    padding: 42px 48px 28px;
+  }
+  .hero h2 {
+    font-family: "Instrument Serif", serif;
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 0.96;
+    letter-spacing: -0.03em;
+  }
+  .hero p {
+    margin: 16px auto 0;
+    max-width: 22em;
+    font-size: 18px;
+    line-height: 1.4;
+    color: #5c6574;
+  }
+  .btn {
+    display: inline-block;
+    margin-top: 22px;
+    background: #0b0d12;
+    color: #fff;
+    border-radius: 999px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 0 18px 18px;
+  }
+  .tile {
+    position: relative;
+    aspect-ratio: 16/9;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #eaf1ff;
+  }
+  .tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .tile::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 54px;
+    background: linear-gradient(to top, rgba(0,0,0,.55), transparent);
+  }
+  .tile b {
+    position: absolute;
+    z-index: 1;
+    left: 12px;
+    bottom: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #fff;
+  }
+  .pill {
+    position: absolute;
+    z-index: 4;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%);
+    background: #2d6bff;
+    color: #fff;
+    border-radius: 999px;
+    padding: 14px 26px;
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+  .copy { position: relative; z-index: 2; margin-top: 48px; }
+  .copy h1 {
+    font-size: 92px;
+    font-weight: 800;
+    letter-spacing: -0.055em;
+    line-height: 0.92;
+  }
+  .copy p {
+    margin-top: 22px;
+    max-width: 16em;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    color: rgba(244, 247, 255, 0.66);
+  }
+  .foot {
+    position: relative;
+    z-index: 2;
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: rgba(244, 247, 255, 0.82);
+    font-size: 26px;
+    font-weight: 500;
+  }
+  .foot .mark { width: 28px; height: 28px; }
+</style>
+</head>
+<body>
+<section class="post">
+  <div class="grain"></div>
+  <div class="stage">
+  <div class="card">
+    <div class="nav">
+      <div class="links"><span>Materials</span><span>Docs</span><span>Pricing</span></div>
+      <svg class="mark" viewBox="0 0 400 400" fill="#1447E6"><path d="M94 211.232C94.2139 214.334 94.0928 218.658 94.0937 221.835L94.1035 242.01C94.1043 242.8 94.0992 243.602 94.0937 244.412H94V286.386C94 297.159 102.953 305.892 113.998 305.892H150.83C155.373 306.03 159.965 305.9 164.829 305.874C184.226 305.771 197.766 308.329 213.008 294.587C215.696 291.913 217.433 289.859 219.377 286.635C230.63 267.983 222.342 241.265 200.051 235.307C193.92 233.669 185.936 234.113 179.541 234.158L151.681 234.204C142.499 234.203 128.522 234.767 120.099 232.318C112.215 230.025 102.881 223.592 98.1617 217.015C97.4832 216.069 94.5542 211.506 94 211.232Z"/><path d="M289.448 184.368C282.946 179.144 272.807 176.211 264.374 177.049C264.316 177.06 264.258 177.071 264.198 177.082C250.171 178.24 239.064 187.004 236.306 200.7C235.034 207.016 235.47 213.333 235.501 219.737L235.515 253.177C235.521 260.671 236.057 272.636 234.417 279.522C231.901 290.09 222.584 301.717 212.114 305.872L237.21 305.829C238.984 305.836 240.82 305.859 242.674 305.875V305.892H285.706C296.751 305.892 305.704 297.159 305.704 286.386V244.284C305.701 241.455 305.658 238.53 305.63 235.487C305.561 227.801 305.821 220.357 305.142 212.593C304.216 202.026 297.779 191.063 289.448 184.368Z"/><path d="M189.487 94C185.591 94.264 181.19 94.1552 177.227 94.1629L152.988 94.1048C150.639 94.1416 148.593 94.1769 146.509 94.3143H113.998C102.954 94.3143 94.0002 103.048 94 113.821V155.795H94.0684C94.0413 164.905 94.3915 174.149 94.2724 182.973C94.1156 194.606 98.8757 205.296 107.538 213.19C114.305 219.509 121.273 222.379 130.571 223.193C135.609 223.266 139.491 223.089 144.3 221.581C158.424 217.151 165.891 205.332 165.919 191.236C165.947 177.671 166.02 163.99 166.032 150.375L166.041 137.239C166.042 130.918 165.795 125.942 167.53 119.73C169.451 112.847 173.651 106.862 178.76 101.825C181.925 98.7052 185.72 96.3481 189.487 94Z"/><path d="M242.969 94.3143V94.3324C240.309 94.3528 237.688 94.3847 235.329 94.3886L223.439 94.3581C221.416 94.3521 218.212 94.2877 216.261 94.4477C204.935 95.1366 194.342 100.148 186.775 108.396C179.593 116.309 176.654 124.905 177.401 135.426C178.069 144.836 181.23 151.666 188.499 158.004C198.098 166.373 207.98 165.627 219.94 165.6L250.778 165.412C262.307 165.33 275.149 164.575 285.723 169.716C295.542 174.368 299.525 179.191 306 187.736C305.639 184.382 305.822 177.868 305.825 174.338L305.834 155.795H306V113.821C306 103.048 297.046 94.3143 286.002 94.3143H242.969Z"/></svg>
+      <span class="signin">Sign in</span>
+    </div>
+    <div class="hero">
+      <h2>Design assets<br>for the AI era</h2>
+      <p>Shippable surface — so you don’t ship the default AI look.</p>
+      <div class="btn">Browse materials</div>
+    </div>
+    <div class="grid">
+      <div class="tile"><img src="file:///agent/repos/frameline/public/screens/health-ai/poster.png" alt="" /><b>Pulse Hero</b></div>
+      <div class="tile"><img src="file:///agent/repos/frameline/public/screens/forgeai/poster.png" alt="" /><b>FORGE.AI</b></div>
+      <div class="tile"><img src="file:///agent/repos/frameline/public/screens/passo/poster.png" alt="" /><b>Passo</b></div>
+      <div class="tile"><img src="file:///agent/repos/frameline/public/screens/softwave/poster.png" alt="" /><b>Softwave</b></div>
+    </div>
+  </div>
+  <div class="pill">frameline.ai</div>
+  </div>
+  <div class="copy">
+    <h1>Frameline</h1>
+    <p>Catálogo de materiais e telas, com o código no seu repo.</p>
+  </div>
+  <div class="foot">
+    <svg class="mark" viewBox="0 0 400 400" fill="#f4f7ff"><path d="M94 211.232C94.2139 214.334 94.0928 218.658 94.0937 221.835L94.1035 242.01C94.1043 242.8 94.0992 243.602 94.0937 244.412H94V286.386C94 297.159 102.953 305.892 113.998 305.892H150.83C155.373 306.03 159.965 305.9 164.829 305.874C184.226 305.771 197.766 308.329 213.008 294.587C215.696 291.913 217.433 289.859 219.377 286.635C230.63 267.983 222.342 241.265 200.051 235.307C193.92 233.669 185.936 234.113 179.541 234.158L151.681 234.204C142.499 234.203 128.522 234.767 120.099 232.318C112.215 230.025 102.881 223.592 98.1617 217.015C97.4832 216.069 94.5542 211.506 94 211.232Z"/><path d="M289.448 184.368C282.946 179.144 272.807 176.211 264.374 177.049C264.316 177.06 264.258 177.071 264.198 177.082C250.171 178.24 239.064 187.004 236.306 200.7C235.034 207.016 235.47 213.333 235.501 219.737L235.515 253.177C235.521 260.671 236.057 272.636 234.417 279.522C231.901 290.09 222.584 301.717 212.114 305.872L237.21 305.829C238.984 305.836 240.82 305.859 242.674 305.875V305.892H285.706C296.751 305.892 305.704 297.159 305.704 286.386V244.284C305.701 241.455 305.658 238.53 305.63 235.487C305.561 227.801 305.821 220.357 305.142 212.593C304.216 202.026 297.779 191.063 289.448 184.368Z"/><path d="M189.487 94C185.591 94.264 181.19 94.1552 177.227 94.1629L152.988 94.1048C150.639 94.1416 148.593 94.1769 146.509 94.3143H113.998C102.954 94.3143 94.0002 103.048 94 113.821V155.795H94.0684C94.0413 164.905 94.3915 174.149 94.2724 182.973C94.1156 194.606 98.8757 205.296 107.538 213.19C114.305 219.509 121.273 222.379 130.571 223.193C135.609 223.266 139.491 223.089 144.3 221.581C158.424 217.151 165.891 205.332 165.919 191.236C165.947 177.671 166.02 163.99 166.032 150.375L166.041 137.239C166.042 130.918 165.795 125.942 167.53 119.73C169.451 112.847 173.651 106.862 178.76 101.825C181.925 98.7052 185.72 96.3481 189.487 94Z"/><path d="M242.969 94.3143V94.3324C240.309 94.3528 237.688 94.3847 235.329 94.3886L223.439 94.3581C221.416 94.3521 218.212 94.2877 216.261 94.4477C204.935 95.1366 194.342 100.148 186.775 108.396C179.593 116.309 176.654 124.905 177.401 135.426C178.069 144.836 181.23 151.666 188.499 158.004C198.098 166.373 207.98 165.627 219.94 165.6L250.778 165.412C262.307 165.33 275.149 164.575 285.723 169.716C295.542 174.368 299.525 179.191 306 187.736C305.639 184.382 305.822 177.868 305.825 174.338L305.834 155.795H306V113.821C306 103.048 297.046 94.3143 286.002 94.3143H242.969Z"/></svg>
+    <span>Materiais · Telas · Código</span>
+  </div>
+</section>
+</body>
+</html>
