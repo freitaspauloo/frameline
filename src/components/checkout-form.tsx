@@ -34,20 +34,14 @@ import { recordWtpIntent } from "@/lib/wtp-intent";
 
 function readStoredUser(): AuthSessionUser | null {
   if (typeof window === "undefined") return null;
+  // Pay step follows the cookie session set by Firebase or magic-link.
+  // sessionStorage alone is not a login and must not unlock payment.
   const fromCookie = getDemoSession();
-  if (fromCookie) return fromCookie;
-  try {
-    const raw = sessionStorage.getItem("fl_demo_user");
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as Partial<AuthSessionUser>;
-    if (!parsed.email || typeof parsed.email !== "string") return null;
-    return {
-      email: parsed.email,
-      role: parsed.role === "admin" ? "admin" : "buyer",
-    };
-  } catch {
-    return null;
-  }
+  if (!fromCookie?.email) return null;
+  return {
+    email: fromCookie.email,
+    role: fromCookie.role === "admin" ? "admin" : "buyer",
+  };
 }
 
 export function CheckoutForm({
@@ -145,12 +139,10 @@ export function CheckoutForm({
 
   async function onPay(e: React.FormEvent) {
     e.preventDefault();
-    const email = (user?.email ?? "").trim().toLowerCase();
+    const session = getDemoSession();
+    const email = (session?.email ?? "").trim().toLowerCase();
     if (!email.includes("@")) {
-      setError("Sign in or enter a valid email to continue.");
-      return;
-    }
-    if (!signedIn) {
+      setUser(null);
       setError("Sign in before paying.");
       return;
     }

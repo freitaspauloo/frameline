@@ -20,7 +20,7 @@ export default function WireframeCheckoutPage() {
         </p>
         <WfTitle className="mt-3 text-2xl sm:text-3xl">Checkout</WfTitle>
         <WfMuted className="mt-2">
-          Guest pay. Email captured for receipt and account access.
+          Sign in or create an account first. Card details are collected on Stripe.
         </WfMuted>
 
         <div className="mt-6 space-y-3">
