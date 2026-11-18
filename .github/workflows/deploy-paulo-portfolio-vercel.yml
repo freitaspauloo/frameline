@@ -1,0 +1,54 @@
+# Builds handoff/paulo-portfolio-frameline-cases as a full Paulo tree and deploys to Vercel.
+# Secrets: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID (Paulo project on paulo.dudesign.us)
+
+name: Deploy Paulo portfolio (Vercel)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [dev]
+    paths:
+      - "handoff/paulo-portfolio-frameline-cases/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          repository: freitaspauloo/Paulo
+          path: paulo-base
+
+      - name: Apply Frameline handoff
+        run: |
+          cp -R handoff/paulo-portfolio-frameline-cases/app \
+                handoff/paulo-portfolio-frameline-cases/public \
+                handoff/paulo-portfolio-frameline-cases/src \
+                paulo-base/
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: paulo-base/package-lock.json
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@59
+
+      - name: Pull Vercel settings
+        working-directory: paulo-base
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Build and deploy production
+        working-directory: paulo-base
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prod --token="$VERCEL_TOKEN"

@@ -1,10 +1,12 @@
 .fl-oasis-skeleton {
+  --reticle-pink-rgb: 214, 0, 191;
   color: inherit;
 }
 
 .fl-oasis-skeleton .bone {
-  --bone: #d4d4d8;
+  --bone: rgba(var(--reticle-pink-rgb), 0.14);
   --shine: rgba(255, 255, 255, 0.92);
+  --bone-glow: rgba(var(--reticle-pink-rgb), 0.28);
   position: relative;
   overflow: hidden;
   background: var(--bone);
@@ -14,8 +16,8 @@
 }
 
 .fl-oasis-skeleton .bone-strong {
-  --bone: #a1a1aa;
-  border-color: rgba(24, 24, 27, 0.12);
+  --bone: rgba(var(--reticle-pink-rgb), 0.24);
+  border-color: rgba(var(--reticle-pink-rgb), 0.18);
 }
 
 .fl-oasis-skeleton .bone::after {
@@ -27,6 +29,7 @@
     transparent 22%,
     rgba(255, 255, 255, 0.35) 42%,
     var(--shine) 50%,
+    var(--bone-glow) 52%,
     rgba(255, 255, 255, 0.35) 58%,
     transparent 78%
   );
@@ -44,7 +47,7 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background: #fafafa;
+  background: linear-gradient(160deg, #f8eef6 0%, #fafafa 45%, #f3e4f0 100%);
 }
 
 .fl-oasis-skeleton .dither-skel-grid {
@@ -55,6 +58,14 @@
   opacity: 0.38;
   mask-image: linear-gradient(to top, black 38%, transparent 90%);
   -webkit-mask-image: linear-gradient(to top, black 38%, transparent 90%);
+}
+
+.fl-oasis-skeleton .dither-skel-tint {
+  position: absolute;
+  inset: 0;
+  background: #d600bf;
+  mix-blend-mode: color;
+  opacity: 0.72;
 }
 
 .fl-oasis-skeleton .dither-skel-sweep {

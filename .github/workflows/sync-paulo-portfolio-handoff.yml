@@ -1,0 +1,51 @@
+# Copies handoff/paulo-portfolio-frameline-cases into freitaspauloo/Paulo and pushes main.
+# Requires repo secret PAULO_DEPLOY_TOKEN (classic PAT with repo scope on Paulo).
+
+name: Sync Paulo portfolio handoff
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [dev]
+    paths:
+      - "handoff/paulo-portfolio-frameline-cases/**"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout Paulo portfolio
+        uses: actions/checkout@v4
+        with:
+          repository: freitaspauloo/Paulo
+          path: paulo-repo
+
+      - name: Apply handoff
+        run: |
+          cp -R handoff/paulo-portfolio-frameline-cases/app \
+                handoff/paulo-portfolio-frameline-cases/public \
+                handoff/paulo-portfolio-frameline-cases/src \
+                paulo-repo/
+
+      - name: Commit and push main
+        env:
+          TOKEN: ${{ secrets.PAULO_DEPLOY_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::error::Add repo secret PAULO_DEPLOY_TOKEN (classic PAT with repo scope on freitaspauloo/Paulo)."
+            exit 1
+          fi
+          cd paulo-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout main
+          git pull origin main
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to push."
+            exit 0
+          fi
+          git commit -m "Sync Frameline portfolio handoff from frameline dev"
+          git push "https://x-access-token:${TOKEN}@github.com/freitaspauloo/Paulo.git" main
